@@ -4,14 +4,19 @@ env:
   DB_HOSTNAME: postgresql.private.svc.cluster.local
   DB_PORT: "5432"
   DB_USERNAME: postgres
-  IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
+  DB_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: immich-secrets
+        key: DB_PASSWORD
   REDIS_HOSTNAME: redis-immich-master.private.svc.cluster.local
   REDIS_PORT: "6379"
-envFrom:
-  - secretRef:
-      name: immich-secrets
-image:
-  tag: release
+  REDIS_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: immich-secrets
+        key: REDIS_PASSWORD
+  IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
 immich:
   persistence:
     library:
