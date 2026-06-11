@@ -1,0 +1,93 @@
+apiVersion: v1
+data:
+  logo.svg: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 600\" width=\"100%\"
+    height=\"100%\">\n  <defs>\n    <!-- Petal and stem gradients (same as v2) -->\n
+    \   <linearGradient id=\"petal-ice\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">\n
+    \     <stop offset=\"0%\" stop-color=\"#EEF2F3\" stop-opacity=\"0.92\"/>\n      <stop
+    offset=\"40%\" stop-color=\"#C5D5D8\" stop-opacity=\"0.75\"/>\n      <stop offset=\"100%\"
+    stop-color=\"#8FAFB5\" stop-opacity=\"0.55\"/>\n    </linearGradient>\n\n    <linearGradient
+    id=\"petal-frost\" x1=\"100%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n      <stop offset=\"0%\"
+    stop-color=\"#DDE6E8\" stop-opacity=\"0.88\"/>\n      <stop offset=\"50%\" stop-color=\"#A8C0C8\"
+    stop-opacity=\"0.7\"/>\n      <stop offset=\"100%\" stop-color=\"#6B9AA6\" stop-opacity=\"0.5\"/>\n
+    \   </linearGradient>\n\n    <linearGradient id=\"keel-glass\" x1=\"0%\" y1=\"0%\"
+    x2=\"0%\" y2=\"100%\">\n      <stop offset=\"0%\" stop-color=\"#D4E6F1\" stop-opacity=\"0.8\"/>\n
+    \     <stop offset=\"100%\" stop-color=\"#85929E\" stop-opacity=\"0.5\"/>\n    </linearGradient>\n\n
+    \   <linearGradient id=\"stem-nordic\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n
+    \     <stop offset=\"0%\" stop-color=\"#A3C9B6\" stop-opacity=\"0.7\"/>\n      <stop
+    offset=\"100%\" stop-color=\"#5D7A6E\" stop-opacity=\"0.9\"/>\n    </linearGradient>\n\n
+    \   <linearGradient id=\"vein\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">\n      <stop
+    offset=\"0%\" stop-color=\"#FFFFFF\" stop-opacity=\"0\"/>\n      <stop offset=\"50%\"
+    stop-color=\"#FFFFFF\" stop-opacity=\"0.35\"/>\n      <stop offset=\"100%\" stop-color=\"#FFFFFF\"
+    stop-opacity=\"0\"/>\n    </linearGradient>\n\n    <!-- Geometric frame gradient
+    -->\n    <linearGradient id=\"geo-glass\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">\n
+    \     <stop offset=\"0%\" stop-color=\"#EEF2F3\" stop-opacity=\"0.25\"/>\n      <stop
+    offset=\"100%\" stop-color=\"#8FAFB5\" stop-opacity=\"0.15\"/>\n    </linearGradient>\n
+    \ </defs>\n\n  <!-- ==================== ISLAMIC GEOMETRIC FRAME ====================
+    -->\n  <g transform=\"translate(300, 300)\" opacity=\"0.7\">\n    <!-- Outer 8-pointed
+    star -->\n    <polygon points=\"0,-180 45,-45 180,0 45,45 0,180 -45,45 -180,0
+    -45,-45\" \n             fill=\"none\" stroke=\"url(#geo-glass)\" stroke-width=\"1.5\"/>\n
+    \   \n    <!-- Inner 8-pointed star -->\n    <polygon points=\"0,-140 35,-35 140,0
+    35,35 0,140 -35,35 -140,0 -35,-35\" \n             fill=\"none\" stroke=\"url(#geo-glass)\"
+    stroke-width=\"1\"/>\n    \n    <!-- Interlacing squares -->\n    <rect x=\"-125\"
+    y=\"-125\" width=\"250\" height=\"250\" \n          fill=\"none\" stroke=\"url(#geo-glass)\"
+    stroke-width=\"1\" transform=\"rotate(45)\"/>\n    <rect x=\"-90\" y=\"-90\" width=\"180\"
+    height=\"180\" \n          fill=\"none\" stroke=\"url(#geo-glass)\" stroke-width=\"0.8\"
+    transform=\"rotate(45)\"/>\n    \n    <!-- Radial lines -->\n    <g stroke=\"url(#geo-glass)\"
+    stroke-width=\"0.6\" opacity=\"0.5\">\n      <line x1=\"0\" y1=\"0\" x2=\"0\"
+    y2=\"-180\"/>\n      <line x1=\"0\" y1=\"0\" x2=\"127\" y2=\"-127\"/>\n      <line
+    x1=\"0\" y1=\"0\" x2=\"180\" y2=\"0\"/>\n      <line x1=\"0\" y1=\"0\" x2=\"127\"
+    y2=\"127\"/>\n      <line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"180\"/>\n      <line
+    x1=\"0\" y1=\"0\" x2=\"-127\" y2=\"127\"/>\n      <line x1=\"0\" y1=\"0\" x2=\"-180\"
+    y2=\"0\"/>\n      <line x1=\"0\" y1=\"0\" x2=\"-127\" y2=\"-127\"/>\n    </g>\n
+    \   \n    <!-- Center octagon -->\n    <polygon points=\"0,-70 50,-50 70,0 50,50
+    0,70 -50,50 -70,0 -50,-50\" \n             fill=\"none\" stroke=\"url(#geo-glass)\"
+    stroke-width=\"1.2\"/>\n    \n    <!-- Corner arabesque arcs -->\n    <g stroke=\"url(#geo-glass)\"
+    stroke-width=\"1\" fill=\"none\" opacity=\"0.4\">\n      <path d=\"M -180 -45
+    Q -120 -120, -45 -180\"/>\n      <path d=\"M 180 -45 Q 120 -120, 45 -180\"/>\n
+    \     <path d=\"M 180 45 Q 120 120, 45 180\"/>\n      <path d=\"M -180 45 Q -120
+    120, -45 180\"/>\n    </g>\n  </g>\n\n  <!-- ==================== SWEETPEA (Scaled
+    up, centered) ==================== -->\n  <g transform=\"translate(300, 300) scale(1.35)\">\n
+    \   <!-- Stem, leaf, tendril, petals, highlights (same as v2) -->\n    <path d=\"M
+    0 85 Q 8 130, -3 170\" stroke=\"url(#stem-nordic)\" stroke-width=\"4\" fill=\"none\"
+    stroke-linecap=\"round\"/>\n    <path d=\"M -3 140 Q -35 130, -50 155 Q -30 160,
+    -3 145\" fill=\"#9CBFAE\" opacity=\"0.5\"/>\n    <path d=\"M -3 140 Q -35 130,
+    -50 155\" stroke=\"#B8D4C8\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.7\"/>\n
+    \   <path d=\"M 0 85 C 25 95, 45 75, 60 90 S 85 115, 75 135\" stroke=\"#C5D5D8\"
+    stroke-width=\"2\" fill=\"none\" opacity=\"0.6\"/>\n    <path d=\"M 60 90 Q 68
+    82, 75 88\" stroke=\"#C5D5D8\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.5\"/>\n\n
+    \   <!-- Petals -->\n    <path d=\"M -6 65 C -55 45, -80 -15, -35 -35 C -12 -46,
+    2 -15, -6 65\" fill=\"url(#petal-ice)\"/>\n    <path d=\"M -6 65 C -40 45, -60
+    0, -30 -20\" stroke=\"url(#vein)\" stroke-width=\"2.5\" fill=\"none\" opacity=\"0.6\"/>\n
+    \   \n    <path d=\"M 6 65 C 55 45, 80 -15, 35 -35 C 12 -46, -2 -15, 6 65\" fill=\"url(#petal-frost)\"/>\n
+    \   <path d=\"M 6 65 C 40 45, 60 0, 30 -20\" stroke=\"url(#vein)\" stroke-width=\"2.5\"
+    fill=\"none\" opacity=\"0.6\"/>\n    \n    <path d=\"M -6 25 C -50 5, -62 -55,
+    -22 -78 C -6 -90, 6 -50, -6 25\" fill=\"url(#petal-frost)\"/>\n    <path d=\"M
+    -6 25 C -35 5, -45 -35, -20 -55\" stroke=\"url(#vein)\" stroke-width=\"2\" fill=\"none\"
+    opacity=\"0.5\"/>\n    \n    <path d=\"M 6 25 C 50 5, 62 -55, 22 -78 C 6 -90,
+    -6 -50, 6 25\" fill=\"url(#petal-ice)\"/>\n    <path d=\"M 6 25 C 35 5, 45 -35,
+    20 -55\" stroke=\"url(#vein)\" stroke-width=\"2\" fill=\"none\" opacity=\"0.5\"/>\n
+    \   \n    <!-- Keel -->\n    <path d=\"M 0 45 C -18 35, -24 5, 0 -8 C 24 5, 18
+    35, 0 45\" fill=\"url(#keel-glass)\"/>\n    <path d=\"M 0 45 C -12 35, -16 10,
+    0 0\" stroke=\"url(#vein)\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.5\"/>\n
+    \   <path d=\"M 0 45 C 12 35, 16 10, 0 0\" stroke=\"url(#vein)\" stroke-width=\"1.5\"
+    fill=\"none\" opacity=\"0.5\"/>\n    <path d=\"M 0 -8 L 0 35\" stroke=\"#D4E6F1\"
+    stroke-width=\"1\" fill=\"none\" opacity=\"0.4\"/>\n\n    <!-- Highlights -->\n
+    \   <ellipse cx=\"-28\" cy=\"-8\" rx=\"10\" ry=\"5\" fill=\"#FFFFFF\" opacity=\"0.45\"
+    transform=\"rotate(-25)\"/>\n    <ellipse cx=\"-32\" cy=\"0\" rx=\"4\" ry=\"2\"
+    fill=\"#FFFFFF\" opacity=\"0.3\" transform=\"rotate(-25)\"/>\n    <ellipse cx=\"28\"
+    cy=\"-8\" rx=\"10\" ry=\"5\" fill=\"#FFFFFF\" opacity=\"0.4\" transform=\"rotate(25)\"/>\n
+    \   <ellipse cx=\"32\" cy=\"0\" rx=\"4\" ry=\"2\" fill=\"#FFFFFF\" opacity=\"0.25\"
+    transform=\"rotate(25)\"/>\n    <ellipse cx=\"-18\" cy=\"-55\" rx=\"6\" ry=\"12\"
+    fill=\"#FFFFFF\" opacity=\"0.35\"/>\n    <path d=\"M -22 -60 Q -18 -68, -14 -60\"
+    stroke=\"#FFFFFF\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.4\"/>\n    <ellipse
+    cx=\"18\" cy=\"-55\" rx=\"6\" ry=\"12\" fill=\"#FFFFFF\" opacity=\"0.3\"/>\n    <path
+    d=\"M 14 -60 Q 18 -68, 22 -60\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" fill=\"none\"
+    opacity=\"0.35\"/>\n    <ellipse cx=\"0\" cy=\"18\" rx=\"5\" ry=\"8\" fill=\"#FFFFFF\"
+    opacity=\"0.5\"/>\n    <circle cx=\"0\" cy=\"8\" r=\"2.5\" fill=\"#FFFFFF\" opacity=\"0.7\"/>\n
+    \   <path d=\"M -20 -70 Q 0 -85, 20 -70\" stroke=\"#FFFFFF\" stroke-width=\"2\"
+    fill=\"none\" opacity=\"0.5\" stroke-linecap=\"round\"/>\n    <circle cx=\"0\"
+    cy=\"18\" r=\"4\" fill=\"#E8F6F3\" opacity=\"0.9\"/>\n  </g>\n</svg>\n"
+kind: ConfigMap
+metadata:
+  name: sweetpea-logo
+  namespace: monitoring
