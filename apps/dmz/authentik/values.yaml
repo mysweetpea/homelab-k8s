@@ -3,9 +3,7 @@ authentik:
   image:
     repository: ghcr.io/goauthentik/server
     tag: "2026.5.2"
-  secret_key:
-    existingSecret: authentik-secret
-    secretKey: secret_key
+  secret_key: ""
   postgresql:
     enabled: true
     image:
@@ -32,6 +30,12 @@ authentik:
       enabled: false
     metrics:
       enabled: true
+    env:
+      - name: AUTHENTIK_SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: authentik-secret
+            key: secret_key
     resources:
       requests:
         memory: "512Mi"
