@@ -1,3 +1,37 @@
-envFrom:
-  - secretRef:
-      name: immich-secrets
+---
+controllers:
+  main:
+    containers:
+      main:
+        env:
+          DB_DATABASE_NAME: immich
+          DB_HOSTNAME: postgresql.private.svc.cluster.local
+          DB_PORT: "5432"
+          DB_USERNAME: postgres
+          REDIS_HOSTNAME: redis-immich-master.private.svc.cluster.local
+          REDIS_PORT: "6379"
+        envFrom:
+          - secretRef:
+              name: immich-secrets
+        image:
+          repository: ghcr.io/immich-app/immich-server
+          tag: release
+    type: deployment
+immich:
+  persistence:
+    library:
+      existingClaim: immich-library
+persistence:
+  data:
+    accessMode: ReadWriteOnce
+    enabled: true
+    existingClaim: immich-library
+    size: 100Gi
+    storageClass: longhorn
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 2283
+    type: LoadBalancer
