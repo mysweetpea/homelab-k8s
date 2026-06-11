@@ -4,6 +4,7 @@ env:
   DB_HOSTNAME: postgresql.private.svc.cluster.local
   DB_PORT: "5432"
   DB_USERNAME: postgres
+  IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
   REDIS_HOSTNAME: redis-immich-master.private.svc.cluster.local
   REDIS_PORT: "6379"
 envFrom:
