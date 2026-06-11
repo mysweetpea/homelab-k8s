@@ -1,0 +1,23 @@
+---
+global:
+  security:
+    allowInsecureImages: true
+image:
+  repository: tensorchord/cloudnative-pgvecto.rs
+  tag: "ubi8-17.4-v0.2.0"
+auth:
+  username: immich
+  database: immich
+  existingSecret: immich-postgresql
+  secretKeys:
+    adminPasswordKey: postgres-password
+primary:
+  persistence:
+    enabled: true
+    storageClass: longhorn
+    size: 8Gi
+  service:
+    type: ClusterIP
+    port: 5432
+readReplicas:
+  replicaCount: 0
