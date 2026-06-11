@@ -1,29 +1,3 @@
-env:
-  DB_DATABASE_NAME: immich
-  DB_HOSTNAME: postgresql.private.svc.cluster.local
-  DB_PASSWORD: HomelabPostgres2026!
-  DB_PORT: '5432'
-  DB_USERNAME: postgres
-  REDIS_HOSTNAME: redis-immich-master.private.svc.cluster.local
-  REDIS_PASSWORD: DWMq2sDlIB4RuW6zyL1AgW5Aj2MlQR6RaNMbiJckIpg=
-  REDIS_PORT: '6379'
-image:
-  tag: release
-immich:
-  persistence:
-    library:
-      existingClaim: immich-library
-machineLearning:
-  service:
-    type: ClusterIP
-postgresql:
-  enabled: false
-redis:
-  enabled: false
-service:
-  main:
-    controller: main
-    ports:
-      http:
-        port: 2283
-    type: LoadBalancer
+envFrom:
+  - secretRef:
+      name: immich-secrets
