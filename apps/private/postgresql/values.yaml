@@ -1,0 +1,34 @@
+---
+architecture: standalone
+auth:
+  existingSecret: postgresql
+  secretKeys:
+    adminPasswordKey: postgres-password
+fullnameOverride: postgresql
+metrics:
+  enabled: false
+primary:
+  livenessProbe:
+    enabled: true
+    failureThreshold: 10
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+  readinessProbe:
+    enabled: true
+    failureThreshold: 6
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    timeoutSeconds: 10
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  service:
+    ports:
+      postgresql: "5432"
+volumePermissions:
+  enabled: true

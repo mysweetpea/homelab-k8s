@@ -1,0 +1,272 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-templates
+  namespace: monitoring
+data:
+  settings.yaml: |
+    title: SweetPea Homelab
+    headerStyle: boxed
+    layout:
+      Media:
+        style: row
+        columns: 2
+      Arr Stack:
+        style: row
+        columns: 4
+      Private:
+        style: row
+        columns: 4
+      Infrastructure:
+        style: row
+        columns: 4
+      Monitoring:
+        style: row
+        columns: 2
+
+  bookmarks.yaml: |
+    - Developer:
+        - GitHub:
+            - abbr: GH
+              href: https://github.com/
+
+  kubernetes.yaml: |
+    mode: cluster
+
+  docker.yaml: |
+    - nginx-dmz:
+        host: 192.168.10.10
+        port: 2375
+
+  widgets.yaml: |
+    - resources:
+        backend: resources
+        cpu: true
+        memory: true
+        expanded: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+    - greeting:
+        text_size: xl
+        text: "Welcome back"
+
+  custom.css: |
+    /* SweetPea Nordic Glassmorphism + Islamic Accent Theme */
+    :root {
+      --color-background: rgba(15, 23, 42, 0.85);
+      --color-card-background: rgba(30, 41, 59, 0.6);
+      --color-accent: #10b981;
+      --color-text: #e2e8f0;
+      --color-text-secondary: #94a3b8;
+      --border-radius: 1rem;
+      --blur-amount: 12px;
+    }
+    .service-card {
+      backdrop-filter: blur(var(--blur-amount));
+      -webkit-backdrop-filter: blur(var(--blur-amount));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--border-radius);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .logo {
+      filter: drop-shadow(0 0 8px rgba(16,185,129,0.4));
+    }
+
+  services.yaml: |
+    - Media:
+        - Jellyfin:
+            href: http://jellyfin.dmz.svc.cluster.local:8096
+            description: Media Server
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
+            widget:
+              type: jellyfin
+              url: http://jellyfin.dmz.svc.cluster.local:8096
+              key: ${JELLYFIN_API_KEY}
+        - Seerr:
+            href: http://seerr-seerr-chart.dmz.svc.cluster.local:5055
+            description: Media Requests
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
+            widget:
+              type: overseerr
+              url: http://seerr-seerr-chart.dmz.svc.cluster.local:5055
+              key: ${SEERR_API_KEY}
+    - Arr Stack:
+        - Radarr:
+            href: http://192.168.20.218:7878
+            description: Movies
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/radarr.svg
+            widget:
+              type: radarr
+              url: http://radarr.private.svc.cluster.local:7878
+              key: ${RADARR_API_KEY}
+        - Sonarr:
+            href: http://192.168.20.219:8989
+            description: TV/Anime
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sonarr.svg
+            widget:
+              type: sonarr
+              url: http://sonarr.private.svc.cluster.local:8989
+              key: ${SONARR_API_KEY}
+        - Bazarr:
+            href: http://bazarr.private.svc.cluster.local:6767
+            description: Subtitles
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/bazarr.svg
+            widget:
+              type: bazarr
+              url: http://bazarr.private.svc.cluster.local:6767
+              key: ${BAZARR_API_KEY}
+        - Prowlarr:
+            href: http://prowlarr.private.svc.cluster.local:9696
+            description: Indexers
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prowlarr.svg
+            widget:
+              type: prowlarr
+              url: http://prowlarr.private.svc.cluster.local:9696
+              key: ${PROWLARR_API_KEY}
+        - qBittorrent:
+            href: http://qbittorrent.private.svc.cluster.local:8080
+            description: Torrents
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qbittorrent.svg
+            widget:
+              type: qbittorrent
+              url: http://qbittorrent.private.svc.cluster.local:8080
+              username: ${QBITTORRENT_USER}
+              password: ${QBITTORRENT_PASS}
+        - FlareSolverr:
+            href: http://flaresolverr.private.svc.cluster.local:8191
+            description: Cloudflare Bypass
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
+        - Questarr:
+            href: http://questarr.private.svc.cluster.local:5000
+            description: Game Manager
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
+        - NzbDAV:
+            href: http://nzbdav.private.svc.cluster.local:8081
+            description: Usenet Stream
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
+    - Private:
+        - Nextcloud:
+            href: http://192.168.20.215:8080
+            description: Files
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/nextcloud.svg
+            widget:
+              type: nextcloud
+              url: http://nextcloud.private.svc.cluster.local:8080
+              username: admin
+              password: ${NEXTCLOUD_ADMIN_PASS}
+        - Immich:
+            href: http://192.168.20.214:2283
+            description: Photos
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/immich.svg
+            widget:
+              type: immich
+              url: http://immich-server.private.svc.cluster.local:2283
+              key: ${IMMICH_API_KEY}
+        - n8n:
+            href: http://192.168.20.212:5678
+            description: Automation
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
+            widget:
+              type: customapi
+              url: http://n8n.private.svc.cluster.local:5678/api/v1
+              mappings:
+                - field: workflows
+                  label: Workflows
+                - field: executions_24h
+                  label: Executions (24h)
+                - field: failed_24h
+                  label: Failed (24h)
+        - Gotify:
+            href: http://192.168.20.222
+            description: Notifications
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/gotify.svg
+            widget:
+              type: gotify
+              url: http://gotify-headless.private.svc.cluster.local:80
+              key: ${GOTIFY_CLIENT_TOKEN}
+        - AFFiNE:
+            href: http://affine.private.svc.cluster.local:3000
+            description: Notes
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
+        - Qdrant:
+            href: http://qdrant.private.svc.cluster.local:6333
+            description: Vector DB
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qdrant.svg
+        - RustDesk:
+            href: http://192.168.20.211:21115
+            description: Remote Desktop
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/rustdesk.svg
+    - Infrastructure:
+        - Traefik:
+            href: http://192.168.20.210:8080
+            description: Ingress Controller
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/traefik.svg
+            widget:
+              type: traefik
+              url: http://traefik.kube-system.svc.cluster.local:8080
+        - Authentik:
+            href: https://auth.mysweetpea.duckdns.org
+            description: SSO Provider
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/authentik.svg
+            widget:
+              type: authentik
+              url: http://authentik-server.dmz.svc.cluster.local
+              key: ${AUTHENTIK_API_TOKEN}
+        - Vaultwarden:
+            href: http://vaultwarden.dmz.svc.cluster.local:80
+            description: Passwords
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
+        - Matrix Synapse:
+            href: http://matrix-synapse.dmz.svc.cluster.local:8008
+            description: Chat Server
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
+        - Element:
+            href: http://element-web.dmz.svc.cluster.local:80
+            description: Matrix Client
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
+        - Open WebUI:
+            href: http://open-webui.dmz.svc.cluster.local:8080
+            description: AI Chat
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
+        - Ollama:
+            href: http://ollama.dmz.svc.cluster.local:11434
+            description: LLM Inference
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/ollama.svg
+            widget:
+              type: customapi
+              url: http://ollama.dmz.svc.cluster.local:11434/api/tags
+              mappings:
+                - field: model_count
+                  label: Models
+                - field: model_names
+                  label: Names
+        - SearXNG:
+            href: http://searxng.dmz.svc.cluster.local:8080
+            description: Search
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
+        - PostgreSQL:
+            href: http://postgresql.private.svc.cluster.local:5432
+            description: Shared DB
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/postgres.svg
+    - Monitoring:
+        - Uptime Kuma:
+            href: http://192.168.20.217:3001
+            description: Uptime Monitor
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/uptime-kuma.svg
+            widget:
+              type: uptimekuma
+              url: http://uptime-kuma.monitoring.svc.cluster.local:3001
+        - Netdata:
+            href: http://netdata.monitoring.svc.cluster.local:19999
+            description: Metrics
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
+            widget:
+              type: netdata
+              url: http://netdata.monitoring.svc.cluster.local:19999

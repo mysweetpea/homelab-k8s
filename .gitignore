@@ -1,0 +1,20 @@
+# NEVER commit these
+secrets/
+*.secret.yaml
+*.secret.yml
+*.env
+*.key
+*.pem
+*.crt
+*.p12
+*.tar.gz
+*.sqlite
+*.sql
+n8n-config-backup/
+helm-values-archive/
+*-ORIGINAL.yaml
+config-ORIGINAL.yaml
+.DS_Store
+.vscode/
+.idea/
+*.tmp
