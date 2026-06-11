@@ -17,6 +17,7 @@ env:
         name: immich-secrets
         key: REDIS_PASSWORD
   IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
+  DB_VECTOR_EXTENSION: pgvector
 immich:
   persistence:
     library:
