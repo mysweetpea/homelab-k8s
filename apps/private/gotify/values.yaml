@@ -1,0 +1,5 @@
+persistence:
+  existingClaim: gotify-data-lh
+service:
+  port: 80
+  type: LoadBalancer

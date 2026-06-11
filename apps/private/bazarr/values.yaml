@@ -1,0 +1,17 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/hotio/bazarr
+          tag: latest
+    type: deployment
+persistence:
+  config:
+    existingClaim: bazarr-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 6767

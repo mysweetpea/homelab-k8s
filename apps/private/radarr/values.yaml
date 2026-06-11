@@ -1,0 +1,18 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/hotio/radarr
+          tag: latest
+    type: deployment
+persistence:
+  config:
+    existingClaim: radarr-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 7878
+    type: LoadBalancer

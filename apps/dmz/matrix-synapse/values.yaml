@@ -1,0 +1,6 @@
+persistence:
+  existingClaim: matrix-synapse
+serverName: mysweetpea.duckdns.org
+signingkey:
+  job:
+    enabled: false

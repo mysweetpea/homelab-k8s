@@ -1,0 +1,18 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/hotio/sonarr
+          tag: latest
+    type: deployment
+persistence:
+  config:
+    existingClaim: sonarr-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 8989
+    type: LoadBalancer

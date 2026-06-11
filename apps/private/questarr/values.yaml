@@ -1,0 +1,17 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/doezer/questarr
+          tag: latest
+    type: deployment
+persistence:
+  data:
+    existingClaim: questarr-data-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 5000

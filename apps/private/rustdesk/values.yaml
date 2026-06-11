@@ -1,0 +1,22 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: rustdesk/rustdesk-server
+          tag: latest
+    type: deployment
+persistence:
+  data:
+    existingClaim: rustdesk-data-lh
+service:
+  main:
+    controller: main
+    ports:
+      hbbr:
+        port: 21116
+      hbbs:
+        port: 21115
+      relay:
+        port: 21117
+    type: LoadBalancer

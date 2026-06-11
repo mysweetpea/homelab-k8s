@@ -1,0 +1,2 @@
+persistence:
+  existingClaim: qdrant-storage-qdrant-0

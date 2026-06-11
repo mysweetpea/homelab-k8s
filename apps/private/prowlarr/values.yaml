@@ -1,0 +1,17 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/hotio/prowlarr
+          tag: latest
+    type: deployment
+persistence:
+  config:
+    existingClaim: prowlarr-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 9696

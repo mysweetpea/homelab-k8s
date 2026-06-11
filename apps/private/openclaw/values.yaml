@@ -1,0 +1,34 @@
+controllers:
+  main:
+    containers:
+      main:
+        command:
+        - sh
+        - -c
+        - mkdir -p /data/.openclaw && cp /config/openclaw.json /data/.openclaw/openclaw.json
+          && export HOME=/data && exec node dist/index.js gateway --allow-unconfigured
+        env:
+          OPENCLAW_GATEWAY_MODE:
+            value: local
+        image:
+          repository: ghcr.io/openclaw/openclaw
+          tag: latest
+        envFrom:
+        - secretRef:
+            name: openclaw-secrets
+    type: deployment
+persistence:
+  config:
+    enabled: true
+    name: openclaw-config
+    type: configMap
+  data:
+    enabled: true
+    existingClaim: openclaw-data
+    type: persistentVolumeClaim
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 8080

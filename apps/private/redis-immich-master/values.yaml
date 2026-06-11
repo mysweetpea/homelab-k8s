@@ -1,0 +1,8 @@
+architecture: standalone
+auth:
+  existingSecret: redis-immich
+  existingSecretPasswordKey: redis-password
+fullnameOverride: redis-immich
+master:
+  persistence:
+    existingClaim: redis-data-redis-immich-master-0

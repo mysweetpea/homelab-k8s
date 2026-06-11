@@ -1,0 +1,21 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ollama/ollama
+          tag: 0.23.2
+    type: deployment
+persistence:
+  data:
+    accessMode: ReadWriteOnce
+    enabled: true
+    size: 20Gi
+    storageClass: longhorn
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 11434
+    type: LoadBalancer

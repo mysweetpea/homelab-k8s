@@ -1,0 +1,37 @@
+controllers:
+  main:
+    containers:
+      main:
+        env:
+          DATABASE_URL:
+            value: postgresql://affine:affine_f4c4856c9a8541205033c6fb@postgresql.private.svc.cluster.local:5432/affine
+          REDIS_HOST:
+            value: redis-affine-master.private.svc.cluster.local
+          REDIS_PORT:
+            value: '6379'
+          REDIS_SERVER_HOST:
+            value: redis-affine-master.private.svc.cluster.local
+          REDIS_SERVER_PORT:
+            value: '6379'
+        image:
+          repository: ghcr.io/toeverything/affine
+          tag: stable
+        ports:
+        - containerPort: 3010
+          name: http
+        envFrom:
+        - secretRef:
+            name: affine-secrets
+    type: deployment
+persistence:
+  config:
+    existingClaim: affine-config-lh
+  uploads:
+    existingClaim: affine-uploads-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 3000
+        targetPort: 3010

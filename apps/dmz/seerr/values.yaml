@@ -1,0 +1,29 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: seerr/seerr
+          tag: latest
+        securityContext:
+          runAsGroup: 1000
+          runAsUser: 1000
+    pod:
+      securityContext:
+        fsGroup: 1000
+    type: deployment
+persistence:
+  config:
+    accessMode: ReadWriteOnce
+    enabled: true
+    globalMounts:
+    - path: /app/config
+    size: 5Gi
+    storageClass: longhorn
+    type: persistentVolumeClaim
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 5055

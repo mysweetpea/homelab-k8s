@@ -1,0 +1,17 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: searxng/searxng
+          tag: latest
+    type: deployment
+persistence:
+  data:
+    existingClaim: searxng-data-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 8080

@@ -1,0 +1,10 @@
+k8sState:
+  persistence:
+    varlib:
+      existingClaim: netdata-k8s-state-varlib
+parent:
+  persistence:
+    alarms:
+      existingClaim: netdata-parent-alarms
+    database:
+      existingClaim: netdata-parent-database

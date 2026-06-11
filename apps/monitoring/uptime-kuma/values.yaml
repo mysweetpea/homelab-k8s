@@ -1,0 +1,7 @@
+persistence:
+  existingClaim: uptime-kuma-pvc
+service:
+  main:
+    type: LoadBalancer
+  port: 3001
+  type: LoadBalancer

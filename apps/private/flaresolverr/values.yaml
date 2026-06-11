@@ -1,0 +1,14 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/flaresolverr/flaresolverr
+          tag: latest
+    type: deployment
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 8191

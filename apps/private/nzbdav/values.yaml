@@ -1,0 +1,17 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/nzbdav-dev/nzbdav
+          tag: latest
+    type: deployment
+persistence:
+  data:
+    existingClaim: nzbdav-data-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 8081

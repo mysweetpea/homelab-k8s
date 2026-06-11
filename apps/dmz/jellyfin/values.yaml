@@ -1,0 +1,21 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: jellyfin/jellyfin
+          tag: 10.11.11
+    type: deployment
+persistence:
+  cache:
+    existingClaim: jellyfin-cache-lh
+  config:
+    existingClaim: jellyfin-config-lh
+  media:
+    existingClaim: jellyfin-media-lh
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 8096
