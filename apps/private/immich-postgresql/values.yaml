@@ -3,8 +3,8 @@ global:
   security:
     allowInsecureImages: true
 image:
-  repository: tensorchord/cloudnative-pgvecto.rs
-  tag: "ubi8-17.4-v0.2.0"
+  repository: pgvector/pgvector
+  tag: "pg17"
 auth:
   username: immich
   database: immich
