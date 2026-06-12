@@ -4,24 +4,8 @@ authentik:
     repository: ghcr.io/goauthentik/server
     tag: "2026.5.2"
   secret_key: "ysoC/gBZLhn8aQeJE+Drch32mNPgQuDxEygwYqecPz+D9MKRRh7UtPGTZ/5YUVrMG9E="
-  postgresql:
-    enabled: true
-    auth:
-      username: authentik
-      database: authentik
-      password: "authentik2026!"
-    volumePermissions:
-      enabled: true
-    primary:
-      persistence:
-        enabled: true
-        storageClass: longhorn
-        size: 8Gi
-  redis:
-    enabled: true
-    architecture: standalone
-    auth:
-      enabled: false
+  error_reporting:
+    enabled: false
   server:
     ingress:
       enabled: false
@@ -42,3 +26,21 @@ authentik:
       limits:
         memory: "512Mi"
         cpu: "500m"
+
+# Bundled Bitnami PostgreSQL subchart — MUST be at ROOT level
+postgresql:
+  enabled: true
+  auth:
+    password: "authentik2026!"
+  primary:
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 8Gi
+
+# Bundled Redis
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
