@@ -3,17 +3,19 @@ reportStats: false
 postgresql:
   enabled: false
 externalPostgresql:
-  hostname: matrix-synapse-postgresql.dmz.svc.cluster.local
+  host: matrix-synapse-postgresql.dmz.svc.cluster.local
   port: 5432
   database: synapse
   username: synapse
-  password: "synapse"
+  existingSecret: matrix-synapse-postgresql
+  existingSecretPasswordKey: password
 redis:
   enabled: false
 externalRedis:
   host: matrix-synapse-redis-master.dmz.svc.cluster.local
   port: 6379
-  password: "synapse"
+  existingSecret: matrix-synapse-postgresql
+  existingSecretPasswordKey: REDIS_PASSWORD
 persistence:
   enabled: true
   existingClaim: matrix-synapse
