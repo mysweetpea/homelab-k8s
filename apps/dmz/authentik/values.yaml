@@ -3,15 +3,20 @@ authentik:
   image:
     repository: ghcr.io/goauthentik/server
     tag: "2026.5.2"
-  secret_key: ""
+  secret_key: "ysoC/gBZLhn8aQeJE+Drch32mNPgQuDxEygwYqecPz+D9MKRRh7UtPGTZ/5YUVrMG9E="
   postgresql:
     enabled: true
-    host: "10.43.85.107"
-    port: 5432
-    name: authentik
-    user: authentik
-    password: "authentik2026!"
-    sslmode: disable
+    auth:
+      username: authentik
+      database: authentik
+      password: "authentik2026!"
+    volumePermissions:
+      enabled: true
+    primary:
+      persistence:
+        enabled: true
+        storageClass: longhorn
+        size: 8Gi
   redis:
     enabled: true
     architecture: standalone
