@@ -4,54 +4,36 @@ authentik:
     repository: ghcr.io/goauthentik/server
     tag: "2026.5.2"
   secret_key: ""
-server:
-  ingress:
-    enabled: false
-  metrics:
+  postgresql:
     enabled: true
-  env:
-    - name: AUTHENTIK_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: secret_key
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "250m"
-    limits:
-      memory: "1Gi"
-      cpu: "1000m"
-worker:
-  env:
-    - name: AUTHENTIK_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: secret_key
-  resources:
-    requests:
-      memory: "256Mi"
-      cpu: "100m"
-    limits:
-      memory: "512Mi"
-      cpu: "500m"
-postgresql:
-  enabled: true
-  auth:
-    username: authentik
-    database: authentik
-    existingSecret: authentik-postgresql
-    secretKeys:
-      userPasswordKey: password
-      adminPasswordKey: postgres-password
-  primary:
-    persistence:
+    host: "10.43.85.107"
+    port: 5432
+    name: authentik
+    user: authentik
+    password: "authentik2026!"
+    sslmode: disable
+  redis:
+    enabled: true
+    architecture: standalone
+    auth:
+      enabled: false
+  server:
+    ingress:
+      enabled: false
+    metrics:
       enabled: true
-      storageClass: longhorn
-      size: 8Gi
-redis:
-  enabled: true
-  architecture: standalone
-  auth:
-    enabled: false
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+      limits:
+        memory: "1Gi"
+        cpu: "1000m"
+  worker:
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
