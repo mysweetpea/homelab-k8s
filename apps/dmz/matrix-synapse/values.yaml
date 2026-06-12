@@ -7,17 +7,13 @@ externalPostgresql:
   port: 5432
   database: synapse
   username: synapse
-  password:
-    secret: matrix-synapse-postgresql
-    key: password
+  password: "synapse"
 redis:
   enabled: false
 externalRedis:
   host: matrix-synapse-redis-master.dmz.svc.cluster.local
   port: 6379
-  password:
-    secret: matrix-synapse-postgresql
-    key: REDIS_PASSWORD
+  password: "synapse"
 persistence:
   enabled: true
   existingClaim: matrix-synapse
