@@ -44,3 +44,11 @@ redis:
   architecture: standalone
   auth:
     enabled: false
+
+postgresql:
+  enabled: true
+  auth:
+    username: authentik
+    password: authentik2026!
+    database: authentik
+    existingSecret: authentik-postgresql
