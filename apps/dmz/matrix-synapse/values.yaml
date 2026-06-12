@@ -1,6 +1,32 @@
-persistence:
-  existingClaim: matrix-synapse
 serverName: mysweetpea.duckdns.org
+reportStats: false
+postgresql:
+  enabled: false
+externalPostgresql:
+  hostname: matrix-synapse-postgresql.dmz.svc.cluster.local
+  port: 5432
+  database: synapse
+  username: synapse
+  password:
+    secret: matrix-synapse-postgresql
+    key: password
+redis:
+  enabled: false
+externalRedis:
+  host: matrix-synapse-redis-master.dmz.svc.cluster.local
+  port: 6379
+  password:
+    secret: matrix-synapse-postgresql
+    key: REDIS_PASSWORD
+persistence:
+  enabled: true
+  existingClaim: matrix-synapse
 signingkey:
   job:
     enabled: false
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 250m
+  limits:
+    memory: 2Gi
