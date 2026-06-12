@@ -1,32 +1,37 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: immich
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: immich=ghcr.io/immich-app/immich-server
+    argocd-image-updater.argoproj.io/immich.update-strategy: semver
+    argocd-image-updater.argoproj.io/immich.helm.image-spec: image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
   project: default
   destination:
     server: https://kubernetes.default.svc
     namespace: private
   sources:
-    - repoURL: https://immich-app.github.io/immich-charts
-      chart: immich
-      targetRevision: "0.9.0"
-      helm:
-        valueFiles:
-          - $values/apps/private/immich/values.yaml
-    - repoURL: https://github.com/bananamaker123/homelab-k8s.git
-      targetRevision: HEAD
-      ref: values
+  - repoURL: https://immich-app.github.io/immich-charts
+    chart: immich
+    targetRevision: 0.9.0
+    helm:
+      valueFiles:
+      - $values/apps/private/immich/values.yaml
+  - repoURL: https://github.com/bananamaker123/homelab-k8s.git
+    targetRevision: HEAD
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false
+    - CreateNamespace=false
     retry:
       limit: 5
       backoff:

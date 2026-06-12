@@ -1,32 +1,37 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: uptime-kuma
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: uptimekuma=docker.io/louislam/uptime-kuma
+    argocd-image-updater.argoproj.io/uptimekuma.update-strategy: semver
+    argocd-image-updater.argoproj.io/uptimekuma.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
   project: default
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
   sources:
-    - repoURL: https://dirsigler.github.io/uptime-kuma-helm/
-      chart: uptime-kuma
-      targetRevision: "4.1.0"
-      helm:
-        valueFiles:
-          - $values/apps/monitoring/uptime-kuma/values.yaml
-    - repoURL: https://github.com/bananamaker123/homelab-k8s.git
-      targetRevision: HEAD
-      ref: values
+  - repoURL: https://dirsigler.github.io/uptime-kuma-helm/
+    chart: uptime-kuma
+    targetRevision: 4.1.0
+    helm:
+      valueFiles:
+      - $values/apps/monitoring/uptime-kuma/values.yaml
+  - repoURL: https://github.com/bananamaker123/homelab-k8s.git
+    targetRevision: HEAD
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false
+    - CreateNamespace=false
     retry:
       limit: 5
       backoff:

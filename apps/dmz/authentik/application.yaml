@@ -1,34 +1,38 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: authentik
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: '2'
+    argocd-image-updater.argoproj.io/image-list: authentik=ghcr.io/goauthentik/server
+    argocd-image-updater.argoproj.io/authentik.update-strategy: semver
+    argocd-image-updater.argoproj.io/authentik.helm.image-spec: authentik.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
   project: default
   destination:
     server: https://kubernetes.default.svc
     namespace: dmz
   sources:
-    - repoURL: https://charts.goauthentik.io
-      chart: authentik
-      targetRevision: "2026.5.2"
-      helm:
-        valueFiles:
-          - $values/apps/dmz/authentik/values.yaml
-    - repoURL: https://github.com/bananamaker123/homelab-k8s.git
-      targetRevision: HEAD
-      ref: values
+  - repoURL: https://charts.goauthentik.io
+    chart: authentik
+    targetRevision: 2026.5.2
+    helm:
+      valueFiles:
+      - $values/apps/dmz/authentik/values.yaml
+  - repoURL: https://github.com/bananamaker123/homelab-k8s.git
+    targetRevision: HEAD
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false
+    - CreateNamespace=false
     retry:
       limit: 5
       backoff:

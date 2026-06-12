@@ -1,32 +1,37 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: ollama
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: ollama=docker.io/ollama/ollama
+    argocd-image-updater.argoproj.io/ollama.update-strategy: semver
+    argocd-image-updater.argoproj.io/ollama.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
   project: default
   destination:
     server: https://kubernetes.default.svc
     namespace: dmz
   sources:
-    - repoURL: https://bjw-s-labs.github.io/helm-charts
-      chart: app-template
-      targetRevision: "3.7.3"
-      helm:
-        valueFiles:
-          - $values/apps/dmz/ollama/values.yaml
-    - repoURL: https://github.com/bananamaker123/homelab-k8s.git
-      targetRevision: HEAD
-      ref: values
+  - repoURL: https://bjw-s-labs.github.io/helm-charts
+    chart: app-template
+    targetRevision: 3.7.3
+    helm:
+      valueFiles:
+      - $values/apps/dmz/ollama/values.yaml
+  - repoURL: https://github.com/bananamaker123/homelab-k8s.git
+    targetRevision: HEAD
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false
+    - CreateNamespace=false
     retry:
       limit: 5
       backoff:
