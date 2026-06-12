@@ -22,16 +22,15 @@ spec:
         - containerPort: 8448
           name: federation
         env:
+        - name: SYNAPSE_SERVER_NAME
+          value: "mysweetpea.duckdns.org"
+        - name: SYNAPSE_REPORT_STATS
+          value: "no"
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: matrix-synapse-postgresql
               key: password
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: matrix-synapse-postgresql
-              key: REDIS_PASSWORD
         volumeMounts:
         - name: data
           mountPath: /data
