@@ -1,10 +1,21 @@
-k8sState:
-  persistence:
-    varlib:
-      existingClaim: netdata-k8s-state-varlib
 parent:
   persistence:
-    alarms:
-      existingClaim: netdata-parent-alarms
-    database:
-      existingClaim: netdata-parent-database
+    enabled: true
+    storageclass: longhorn
+    size: 5Gi
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+child:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi

@@ -1,0 +1,18 @@
+config:
+  argocd:
+    serverAddress: argocd-server.argocd.svc.cluster.local
+    insecure: true
+  log:
+    level: info
+
+# Use ArgoCD params for write-back (no SSH/Git auth needed)
+extraArgs:
+  - --write-back-method=argocd
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

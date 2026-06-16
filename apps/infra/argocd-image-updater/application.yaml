@@ -12,26 +12,8 @@ spec:
     chart: argocd-image-updater
     targetRevision: 1.2.2
     helm:
-      valuesObject:
-        config:
-          argocd:
-            serverAddress: argocd-server.argocd.svc.cluster.local
-            insecure: true
-          logLevel: info
-        auth:
-          # No private registries needed for your public images
-          {}
-        # Git write-back requires the deploy key to be mounted
-        extraArgs:
-          - --write-back-method=git
-          - --git-branch=main
-          - --git-commit-user=argocd-image-updater
-          - --git-commit-email=argocd@homelab.local
-        serviceAccount:
-          create: true
-          name: argocd-image-updater
-        rbac:
-          enabled: true
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
@@ -39,5 +21,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=false

@@ -4,37 +4,20 @@ metadata:
   name: netdata
   namespace: argocd
   finalizers:
-  - resources-finalizer.argocd.argoproj.io
-  annotations:
-    argocd-image-updater.argoproj.io/image-list: netdata=docker.io/netdata/netdata
-    argocd-image-updater.argoproj.io/netdata.update-strategy: semver
-    argocd-image-updater.argoproj.io/netdata.helm.image-spec: controllers.main.containers.main.image
-    argocd-image-updater.argoproj.io/write-back-method: git
-    argocd-image-updater.argoproj.io/write-back-target: helmvalues
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: monitoring
-  sources:
-  - repoURL: https://netdata.github.io/helmchart/
+  source:
+    repoURL: https://netdata.github.io/helmchart
     chart: netdata
     targetRevision: 3.7.165
     helm:
       valueFiles:
-      - $values/apps/monitoring/netdata/values.yaml
-  - repoURL: https://github.com/bananamaker123/homelab-k8s.git
-    targetRevision: HEAD
-    ref: values
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-    - CreateNamespace=false
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
