@@ -3,21 +3,20 @@ kind: Application
 metadata:
   name: immich
   namespace: argocd
-  annotations:
-    argocd-image-updater.argoproj.io/image-list: immich=ghcr.io/immich-app/immich-server
-    argocd-image-updater.argoproj.io/immich.update-strategy: semver
-    argocd-image-updater.argoproj.io/immich.helm.image-spec: controllers.main.containers.main.image.tag
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://immich-app.github.io/immich-charts
-    chart: immich
-    targetRevision: 0.9.3
-    helm:
-      valueFiles:
-        - values.yaml
+  sources:
+    - chart: immich
+      repoURL: https://immich-app.github.io/immich-charts
+      targetRevision: 0.12.0
+      helm:
+        valueFiles:
+          - $values/apps/private/immich/values.yaml
+    - ref: values
+      repoURL: https://github.com/bananamaker123/homelab-k8s.git
+      targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
     namespace: private
