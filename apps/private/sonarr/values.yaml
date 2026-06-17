@@ -16,3 +16,4 @@ service:
       http:
         port: 8989
     type: LoadBalancer
+    allocateLoadBalancerNodePorts: false

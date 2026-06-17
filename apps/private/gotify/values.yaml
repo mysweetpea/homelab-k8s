@@ -8,6 +8,7 @@ persistence:
 
 service:
   type: LoadBalancer
+  allocateLoadBalancerNodePorts: false
   loadBalancerIP: 192.168.20.222
   port: 80
   targetPort: 8080

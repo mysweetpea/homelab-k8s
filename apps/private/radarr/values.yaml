@@ -16,3 +16,4 @@ service:
       http:
         port: 7878
     type: LoadBalancer
+    allocateLoadBalancerNodePorts: false

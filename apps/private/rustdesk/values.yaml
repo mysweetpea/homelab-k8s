@@ -20,3 +20,4 @@ service:
       relay:
         port: 21117
     type: LoadBalancer
+    allocateLoadBalancerNodePorts: false

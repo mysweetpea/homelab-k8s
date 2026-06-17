@@ -62,3 +62,4 @@ service:
       http:
         port: 3000
     type: LoadBalancer
+    allocateLoadBalancerNodePorts: false

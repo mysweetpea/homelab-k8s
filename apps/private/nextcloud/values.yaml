@@ -10,6 +10,7 @@ postgresql:
 service:
   port: 8080
   type: LoadBalancer
+  allocateLoadBalancerNodePorts: false
 
 externalDatabase:
   enabled: true
