@@ -17,6 +17,22 @@ spec:
       labels:
         app.kubernetes.io/name: immich-postgresql
     spec:
+      initContainers:
+        - name: init-data
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              echo "Cleaning mount point..."
+              rm -rf /var/lib/postgresql/data/lost+found 2>/dev/null || true
+              echo "Creating pgdata subdirectory..."
+              mkdir -p /var/lib/postgresql/data/pgdata
+              chmod 700 /var/lib/postgresql/data/pgdata
+              echo "Done."
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
       containers:
         - name: postgresql
           image: ghcr.io/immich-app/postgres:17-vectorchord0.4.3-pgvectors0.3.0
