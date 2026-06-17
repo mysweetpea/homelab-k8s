@@ -8,7 +8,7 @@ spec:
   writeBackConfig:
     method: "git"
     gitConfig:
-      repository: "git@github.com:mysweetpea/homelab-k8s.git"
+      repository: "https://github.com/mysweetpea/homelab-k8s.git"
       branch: "main"
 
   # ── Global update settings ──
