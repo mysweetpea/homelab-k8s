@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/bananamaker123/homelab-k8s.git
+    repoURL: https://github.com/mysweetpea/homelab-k8s.git
     targetRevision: HEAD
     path: apps
     directory:

@@ -18,7 +18,7 @@ spec:
       helm:
         valueFiles:
           - $values/apps/private/redis-immich-master/values.yaml
-    - repoURL: https://github.com/bananamaker123/homelab-k8s.git
+    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
       targetRevision: HEAD
       ref: values
   syncPolicy:

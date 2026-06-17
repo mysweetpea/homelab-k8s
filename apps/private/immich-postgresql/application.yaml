@@ -17,7 +17,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: private
   source:
-    repoURL: https://github.com/bananamaker123/homelab-k8s.git
+    repoURL: https://github.com/mysweetpea/homelab-k8s.git
     targetRevision: HEAD
     path: apps/private/immich-postgresql
   syncPolicy:
