@@ -17,7 +17,7 @@ controllers:
               name: n8n-db-creds
         image:
           repository: n8nio/n8n
-          tag: 1.122.4
+          tag: "2.25.7"
     type: deployment
 persistence:
   data:
