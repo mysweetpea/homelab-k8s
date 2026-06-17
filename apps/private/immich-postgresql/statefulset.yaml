@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -57,15 +56,15 @@ spec:
               command: ["pg_isready", "-U", "immich", "-d", "immich"]
             initialDelaySeconds: 10
             periodSeconds: 5
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
-        resources:
-          requests:
-            storage: 8Gi
+      volumeClaimTemplates:
+        - metadata:
+            name: data
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: longhorn
+            resources:
+              requests:
+                storage: 8Gi
 ---
 apiVersion: v1
 kind: Service
@@ -73,6 +72,7 @@ metadata:
   name: immich-postgresql
   namespace: private
 spec:
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: immich-postgresql
   ports:
