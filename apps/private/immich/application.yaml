@@ -15,7 +15,7 @@ spec:
         valueFiles:
           - $values/apps/private/immich/values.yaml
     - ref: values
-      repoURL: git@github.com:mysweetpea/homelab-k8s.git
+      repoURL: https://github.com/mysweetpea/homelab-k8s.git
       targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
