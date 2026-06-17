@@ -3,5 +3,7 @@ persistence:
 service:
   main:
     type: LoadBalancer
-  port: 3001
-  type: LoadBalancer
+    allocateLoadBalancerNodePorts: false
+    ports:
+      http:
+        port: 3001
