@@ -1,47 +1,94 @@
-# immich chart 0.12.0 — bjw-s common library v4 format
+# ──────────────────────────────────────────────
+# Immich Helm Chart 0.12.0 — values.yaml
+# Session 15: Nuclear redeploy with VectorChord
+# Access: Internal only (ClusterIP, no ingress)
+# ──────────────────────────────────────────────
+
+# Shared configuration across all Immich components
 controllers:
   main:
     containers:
       main:
         image:
-          repository: ghcr.io/immich-app/immich-server
-          tag: v1.119.0
+          tag: v2.7.5
         env:
-          DB_HOSTNAME:
-            value: immich-postgresql.private.svc.cluster.local
-          DB_PORT:
-            value: "5432"
-          DB_DATABASE_NAME:
-            value: immich
-          DB_USERNAME:
-            value: immich
-          DB_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: immich-secrets
-                key: DB_PASSWORD
-          REDIS_HOSTNAME:
-            value: redis-immich-master.private.svc.cluster.local
-          REDIS_PORT:
-            value: "6379"
-          REDIS_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: immich-secrets
-                key: REDIS_PASSWORD
+          # Database connection (immich-postgresql in private namespace)
+          DB_HOSTNAME: immich-postgresql.private.svc.cluster.local
+          DB_PORT: "5432"
+          DB_USERNAME: immich
+          DB_PASSWORD: HomelabPostgres2026!
+          DB_DATABASE_NAME: immich
+          DB_VECTOR_EXTENSION: vectorchord
+          # Redis (bundled Valkey — no password needed)
+          REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
+          IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+          # Security: enable CSP (recommended in v2.7.0 release notes)
+          IMMICH_HELMET_FILE: "true"
 
-service:
-  main:
-    ports:
-      http:
-        port: 2283
+# Immich-specific configuration
+immich:
+  metrics:
+    enabled: false
+  persistence:
+    library:
+      existingClaim: immich-library-lh
 
-persistence:
-  library:
-    enabled: true
-    type: persistentVolumeClaim
-    storageClassName: longhorn
-    accessMode: ReadWriteOnce
-    size: 100Gi
-    globalMounts:
-      - path: /data
+# Configuration (set via admin UI after first boot)
+configuration: {}
+configurationKind: ConfigMap
+
+# ── Bundled Valkey (replaces external redis-immich-master) ──
+valkey:
+  enabled: true
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: docker.io/valkey/valkey
+            tag: 9.1-alpine
+            pullPolicy: IfNotPresent
+          persistence:
+            data:
+              enabled: true
+              size: 1Gi
+              type: persistentVolumeClaim
+              accessMode: ReadWriteOnce
+              storageClass: longhorn
+
+# ── Immich Server ──
+server:
+  enabled: true
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: ghcr.io/immich-app/immich-server
+            pullPolicy: IfNotPresent
+  # No ingress — internal access only (Option A)
+  ingress:
+    main:
+      enabled: false
+
+# ── Machine Learning ──
+machine-learning:
+  enabled: true
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: ghcr.io/immich-app/immich-machine-learning
+            pullPolicy: IfNotPresent
+          env:
+            TRANSFORMERS_CACHE: /cache
+            HF_XET_CACHE: /cache/huggingface-xet
+            MPLCONFIGDIR: /cache/matplotlib-config
+          persistence:
+            cache:
+              enabled: true
+              size: 10Gi
+              type: persistentVolumeClaim
+              accessMode: ReadWriteOnce
+              storageClass: longhorn
