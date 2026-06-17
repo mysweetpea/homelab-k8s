@@ -1,0 +1,62 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: homelab-image-updater
+  namespace: argocd
+spec:
+  # ── Global write-back config (declarative Git) ──
+  writeBackConfig:
+    method: "git"
+    gitConfig:
+      repository: "git@github.com:mysweetpea/homelab-k8s.git"
+      branch: "main"
+
+  # ── Global update settings ──
+  commonUpdateSettings:
+    updateStrategy: "semver"
+
+  # ── Application-specific configurations ──
+  applicationRefs:
+    # ── n8n ──
+    - namePattern: "n8n"
+      images:
+        - alias: "n8n"
+          imageName: "n8nio/n8n"
+          commonUpdateSettings:
+            allowTags: "regexp:^2\\.\\d+\\.\\d+$"
+          manifestTargets:
+            helm:
+              tag: "controllers.main.containers.main.image.tag"
+
+    # ── Immich ──
+    - namePattern: "immich"
+      images:
+        - alias: "immich"
+          imageName: "ghcr.io/immich-app/immich-server"
+          commonUpdateSettings:
+            allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+          manifestTargets:
+            helm:
+              tag: "controllers.main.containers.main.image.tag"
+
+    # ── Homepage ──
+    - namePattern: "homepage"
+      images:
+        - alias: "homepage"
+          imageName: "ghcr.io/gethomepage/homepage"
+          commonUpdateSettings:
+            allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+          manifestTargets:
+            helm:
+              tag: "controllers.main.containers.main.image.tag"
+
+    # ── Jellyfin ──
+    - namePattern: "jellyfin"
+      images:
+        - alias: "jellyfin"
+          imageName: "jellyfin/jellyfin"
+          commonUpdateSettings:
+            allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+          manifestTargets:
+            helm:
+              tag: "controllers.main.containers.main.image.tag"
