@@ -10,7 +10,6 @@ controllers:
 persistence:
   config:
     existingClaim: questarr-data-lh
-    mountPath: /app/data
 
 service:
   main:
