@@ -8,7 +8,6 @@ service:
   type: LoadBalancer
   loadBalancerIP: 192.168.20.214
   port: 80
-  targetPort: 8080
 env:
   GOTIFY_DEFAULTUSER_NAME: "admin"
   GOTIFY_DEFAULTUSER_PASS: "admin"
