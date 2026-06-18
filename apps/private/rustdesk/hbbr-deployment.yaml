@@ -24,13 +24,6 @@ spec:
           protocol: TCP
         - containerPort: 21119
           protocol: TCP
-        volumeMounts:
-        - name: data
-          mountPath: /root
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: rustdesk-data-lh
 ---
 apiVersion: v1
 kind: Service

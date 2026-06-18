@@ -8,16 +8,10 @@ spec:
     namespace: private
     server: https://kubernetes.default.svc
   project: default
-  sources:
-    - chart: gotify
-      repoURL: https://charts.pmoscode.dev
-      targetRevision: "*"
-      helm:
-        valueFiles:
-          - $values/apps/private/gotify/values.yaml
-    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
-      targetRevision: HEAD
-      ref: values
+  source:
+    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    path: apps/private/gotify
   syncPolicy:
     automated:
       prune: true
