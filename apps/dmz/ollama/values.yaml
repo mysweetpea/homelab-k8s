@@ -19,4 +19,5 @@ service:
       http:
         port: 11434
     type: LoadBalancer
+    loadBalancerIP: 192.168.20.213
     allocateLoadBalancerNodePorts: false
