@@ -8,16 +8,10 @@ spec:
     namespace: private
     server: https://kubernetes.default.svc
   project: default
-  sources:
-    - chart: rustdesk-server
-      repoURL: https://sachajw.github.io/k8s-helm-rustdesk
-      targetRevision: 1.0.1
-      helm:
-        valueFiles:
-          - $values/apps/private/rustdesk/values.yaml
-    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
-      targetRevision: HEAD
-      ref: values
+  source:
+    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    path: apps/private/rustdesk
   syncPolicy:
     automated:
       prune: true
