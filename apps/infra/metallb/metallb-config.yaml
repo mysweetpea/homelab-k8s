@@ -17,6 +17,3 @@ metadata:
 spec:
   ipAddressPools:
     - homelab-pool
-  nodeSelectors:
-    - matchLabels:
-        metallb-speaker: enabled
