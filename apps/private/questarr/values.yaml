@@ -1,18 +1,41 @@
-controllers:
-  main:
-    containers:
-      main:
-        image:
-          repository: ghcr.io/doezer/questarr
-          tag: latest
-    type: deployment
-persistence:
-  data:
-    existingClaim: questarr-data-lh
-    mountPath: /app/data
+image:
+  repository: ghcr.io/doezer/questarr
+  tag: "1.3.0"
+  pullPolicy: IfNotPresent
+
+controller:
+  type: deployment
+  replicas: 1
+
 service:
   main:
-    controller: main
+    enabled: true
+    type: ClusterIP
     ports:
       http:
+        enabled: true
         port: 5000
+        protocol: HTTP
+
+persistence:
+  data:
+    enabled: true
+    type: pvc
+    mountPath: /app/data
+    existingClaim: questarr-data-lh
+    accessMode: ReadWriteOnce
+    size: 5Gi
+
+env:
+  TZ: UTC
+
+probes:
+  liveness:
+    enabled: true
+    type: TCP
+  readiness:
+    enabled: true
+    type: TCP
+  startup:
+    enabled: true
+    type: TCP
