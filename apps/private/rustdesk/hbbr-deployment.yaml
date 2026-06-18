@@ -30,6 +30,8 @@ kind: Service
 metadata:
   name: rustdesk-hbbr
   namespace: private
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "rustdesk"
 spec:
   type: LoadBalancer
   loadBalancerIP: 192.168.20.216
