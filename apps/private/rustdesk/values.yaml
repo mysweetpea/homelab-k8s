@@ -5,7 +5,9 @@ controllers:
         image:
           repository: rustdesk/rustdesk-server
           tag: latest
-    type: deployment
+        command:
+        - hbbs
+        type: deployment
 persistence:
   data:
     existingClaim: rustdesk-data-lh
@@ -20,6 +22,5 @@ service:
       relay:
         port: 21117
     type: LoadBalancer
-    loadBalancerIP: 192.168.20.216
     loadBalancerIP: 192.168.20.216
     allocateLoadBalancerNodePorts: false
