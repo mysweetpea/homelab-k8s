@@ -16,7 +16,7 @@ spec:
       imageName: n8nio/n8n
       commonUpdateSettings:
         updateStrategy: semver
-        allowTags: "regexp:^2\.26\.\d+$"
+        allowTags: "regexp:^2\\.26\\.\d+$"
       manifestTargets:
         helm:
           tag: controllers.main.containers.main.image.tag
