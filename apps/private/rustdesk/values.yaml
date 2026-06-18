@@ -1,26 +1,36 @@
-controllers:
-  main:
-    containers:
-      main:
-        image:
-          repository: rustdesk/rustdesk-server
-          tag: latest
-        command:
-        - hbbs
-        type: deployment
+replicaCount: 1
+
+image:
+  repository: rustdesk/rustdesk-server
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
 persistence:
-  data:
-    existingClaim: rustdesk-data-lh
-service:
-  main:
-    controller: main
-    ports:
-      hbbr:
-        port: 21116
-      hbbs:
-        port: 21115
-      relay:
-        port: 21117
+  enabled: true
+  storageClass: longhorn
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  existingClaim: rustdesk-data-lh
+
+hbbs:
+  service:
     type: LoadBalancer
-    loadBalancerIP: 192.168.20.216
-    allocateLoadBalancerNodePorts: false
+  resources: {}
+
+hbbr:
+  service:
+    type: LoadBalancer
+  resources: {}
+
+loadBalancer:
+  enabled: true
+  annotations: {}
+
+ingress:
+  enabled: false
+
+bitwarden:
+  enabled: false
+
+keyExtraction:
+  enabled: true
