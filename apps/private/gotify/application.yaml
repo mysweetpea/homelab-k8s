@@ -11,7 +11,7 @@ spec:
   sources:
     - chart: gotify
       repoURL: https://charts.pmoscode.dev
-      targetRevision: latest
+      targetRevision: "*"
       helm:
         valueFiles:
           - $values/apps/private/gotify/values.yaml

@@ -11,7 +11,7 @@ spec:
   sources:
     - chart: netdata
       repoURL: https://netdata.github.io/helmchart/
-      targetRevision: latest
+      targetRevision: "*"
       helm:
         valueFiles:
           - $values/apps/monitoring/netdata/values.yaml
