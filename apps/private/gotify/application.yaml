@@ -3,21 +3,24 @@ kind: Application
 metadata:
   name: gotify
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
-  project: default
-  source:
-    repoURL: https://pmoscode-helm.github.io/gotify
-    chart: gotify
-    targetRevision: 0.5.0
-    helm:
-      valueFiles:
-        - values.yaml
   destination:
-    server: https://kubernetes.default.svc
     namespace: private
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+    - chart: gotify
+      repoURL: https://charts.pmoscode.dev
+      targetRevision: latest
+      helm:
+        valueFiles:
+          - $values/apps/private/gotify/values.yaml
+    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+      targetRevision: HEAD
+      ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

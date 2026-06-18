@@ -3,21 +3,24 @@ kind: Application
 metadata:
   name: netdata
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
-  project: default
-  source:
-    repoURL: https://netdata.github.io/helmchart
-    chart: netdata
-    targetRevision: 3.7.165
-    helm:
-      valueFiles:
-        - values.yaml
   destination:
-    server: https://kubernetes.default.svc
     namespace: monitoring
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+    - chart: netdata
+      repoURL: https://netdata.github.io/helmchart/
+      targetRevision: latest
+      helm:
+        valueFiles:
+          - $values/apps/monitoring/netdata/values.yaml
+    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+      targetRevision: HEAD
+      ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
