@@ -11,6 +11,23 @@ spec:
   policyTypes:
     - Egress
   egress:
+    # Cloudflare Edge — public internet (QUIC tunnel on 443, 7844 TCP/UDP)
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 7844
+        - protocol: UDP
+          port: 7844
+        - protocol: UDP
+          port: 443
     # Traefik in kube-system (port 80)
     - to:
         - namespaceSelector:
