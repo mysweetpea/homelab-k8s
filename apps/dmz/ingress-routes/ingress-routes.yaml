@@ -1,0 +1,80 @@
+---
+# Vaultwarden — vault.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: vaultwarden
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`vault.mysweetpea.duckdns.org`) || Host(`vault.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: vaultwarden
+          port: 80
+---
+# Authentik — auth.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: authentik
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`auth.mysweetpea.duckdns.org`) || Host(`auth.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: authentik-server
+          port: 80
+---
+# Seerr — request.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: seerr
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`request.mysweetpea.duckdns.org`) || Host(`request.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: seerr
+          port: 5055
+---
+# Element Web — chat.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: element-web
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`chat.mysweetpea.duckdns.org`) || Host(`chat.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: element-web
+          port: 80
+---
+# Jellyfin — media.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyfin
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`media.mysweetpea.duckdns.org`) || Host(`media.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: jellyfin
+          port: 8096

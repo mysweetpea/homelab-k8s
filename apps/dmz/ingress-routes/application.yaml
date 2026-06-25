@@ -1,0 +1,23 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dmz-ingress-routes
+  namespace: argocd
+  labels:
+    app: dmz-ingress-routes
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    path: apps/dmz/ingress-routes
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dmz
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
