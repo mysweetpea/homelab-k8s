@@ -16,6 +16,8 @@ spec:
       labels:
         app: cloudflared
     spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       automountServiceAccountToken: false
       affinity:
         podAntiAffinity:
@@ -24,13 +26,6 @@ spec:
                 matchLabels:
                   app: cloudflared
               topologyKey: kubernetes.io/hostname
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65532
-        runAsGroup: 65532
-        fsGroup: 65532
-        seccompProfile:
-          type: RuntimeDefault
       containers:
         - name: cloudflared
           image: cloudflare/cloudflared:2026.6.1
@@ -52,7 +47,6 @@ spec:
             - run
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
