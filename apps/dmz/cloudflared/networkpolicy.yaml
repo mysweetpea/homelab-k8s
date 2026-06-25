@@ -11,25 +11,23 @@ spec:
   policyTypes:
     - Egress
   egress:
-    # Cloudflare Edge — public internet egress for QUIC tunnel connection
-    # The existing allow-internet-egress policy in dmz already permits
-    # egress to non-10.0.0.0/8 IPs. This policy adds explicit internal targets.
-    
-    # Traefik ingress controller (192.168.20.210:80)
+    # Traefik in kube-system (port 80)
     - to:
-        - ipBlock:
-            cidr: 192.168.20.210/32
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
       ports:
         - protocol: TCP
           port: 80
-    # n8n MetalLB (192.168.20.213:5678)
+    # n8n in private (port 5678)
     - to:
-        - ipBlock:
-            cidr: 192.168.20.213/32
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: private
       ports:
         - protocol: TCP
           port: 5678
-    # kube-dns (kube-system namespace, port 53)
+    # DNS in kube-system (port 53)
     - to:
         - namespaceSelector:
             matchLabels:
