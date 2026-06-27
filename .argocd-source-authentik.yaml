@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: authentik.image.tag
+    value: 2026.5.3
+    forcestring: true
+  - name: image.name
+    value: ghcr.io/goauthentik/server
+    forcestring: true
