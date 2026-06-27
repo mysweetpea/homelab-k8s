@@ -50,3 +50,153 @@ spec:
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
+    - namePattern: radarr
+      images:
+      - alias: radarr
+        imageName: ghcr.io/hotio/radarr
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: sonarr
+      images:
+      - alias: sonarr
+        imageName: ghcr.io/hotio/sonarr
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: bazarr
+      images:
+      - alias: bazarr
+        imageName: ghcr.io/hotio/bazarr
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: prowlarr
+      images:
+      - alias: prowlarr
+        imageName: ghcr.io/hotio/prowlarr
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: qbittorrent
+      images:
+      - alias: qbittorrent
+        imageName: ghcr.io/hotio/qbittorrent
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: flaresolverr
+      images:
+      - alias: flaresolverr
+        imageName: ghcr.io/flaresolverr/flaresolverr
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: searxng
+      images:
+      - alias: searxng
+        imageName: docker.io/searxng/searxng
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: seerr
+      images:
+      - alias: seerr
+        imageName: ghcr.io/fallenbagel/jellyseerr
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: ollama
+      images:
+      - alias: ollama
+        imageName: docker.io/ollama/ollama
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: authentik
+      images:
+      - alias: authentik
+        imageName: ghcr.io/goauthentik/server
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^20\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: authentik.image.tag
+    - namePattern: nextcloud
+      images:
+      - alias: nextcloud
+        imageName: docker.io/nextcloud
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: image.tag
+    - namePattern: vaultwarden
+      images:
+      - alias: vaultwarden
+        imageName: ghcr.io/dani-garcia/vaultwarden
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^1\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: qdrant
+      images:
+      - alias: qdrant
+        imageName: docker.io/qdrant/qdrant
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: uptime-kuma
+      images:
+      - alias: uptimekuma
+        imageName: docker.io/louislam/uptime-kuma
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: element-web
+      images:
+      - alias: elementweb
+        imageName: docker.io/vectorim/element-web
+        commonUpdateSettings:
+          updateStrategy: semver
+          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
