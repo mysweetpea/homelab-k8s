@@ -21,7 +21,7 @@ spec:
           ingress:
             enabled: false
           postgresql:
-            enabled: false
+            enabled: true
           existingPostgresql:
             host: matrix-synapse-postgresql.dmz.svc.cluster.local
             port: 5432
