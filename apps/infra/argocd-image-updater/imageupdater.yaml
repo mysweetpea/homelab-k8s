@@ -153,3 +153,54 @@ spec:
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
+    # ── hotio images (GHCR — requires auth, now configured) ──
+    - namePattern: radarr
+      images:
+      - alias: radarr
+        imageName: ghcr.io/hotio/radarr
+        commonUpdateSettings:
+          updateStrategy: latest
+          allowTags: "latest"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: sonarr
+      images:
+      - alias: sonarr
+        imageName: ghcr.io/hotio/sonarr
+        commonUpdateSettings:
+          updateStrategy: latest
+          allowTags: "latest"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: bazarr
+      images:
+      - alias: bazarr
+        imageName: ghcr.io/hotio/bazarr
+        commonUpdateSettings:
+          updateStrategy: latest
+          allowTags: "latest"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: prowlarr
+      images:
+      - alias: prowlarr
+        imageName: ghcr.io/hotio/prowlarr
+        commonUpdateSettings:
+          updateStrategy: latest
+          allowTags: "latest"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: qbittorrent
+      images:
+      - alias: qbittorrent
+        imageName: ghcr.io/hotio/qbittorrent
+        commonUpdateSettings:
+          updateStrategy: latest
+          allowTags: "latest"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
