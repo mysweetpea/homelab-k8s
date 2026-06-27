@@ -1,0 +1,123 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: affine
+  namespace: dmz
+  labels:
+    app.kubernetes.io/name: affine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: affine
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: affine
+    spec:
+      initContainers:
+        - name: migrate
+          image: ghcr.io/toeverything/affine:stable
+          command: ["sh", "-c", "node ./apps/server/dist/migrations/main.js"]
+          env:
+            - name: AFFINE_CONFIG_PATH
+              value: /root/.affine/config
+            - name: NODE_ENV
+              value: production
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: affine-secrets
+                  key: database-url
+          volumeMounts:
+            - name: config
+              mountPath: /root/.affine/config
+      containers:
+        - name: affine
+          image: ghcr.io/toeverything/affine:stable
+          ports:
+            - containerPort: 3010
+              name: http
+          env:
+            - name: AFFINE_CONFIG_PATH
+              value: /root/.affine/config
+            - name: NODE_ENV
+              value: production
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: affine-secrets
+                  key: database-url
+            - name: REDIS_SERVER_HOST
+              value: redis-affine-master.private.svc.cluster.local
+            - name: REDIS_SERVER_PORT
+              value: "6379"
+            - name: REDIS_SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-affine
+                  key: redis-password
+          volumeMounts:
+            - name: config
+              mountPath: /root/.affine/config
+            - name: uploads
+              mountPath: /root/.affine/storage
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 3010
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/ready
+              port: 3010
+            initialDelaySeconds: 30
+            periodSeconds: 30
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: affine-config-lh
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: affine-uploads-lh
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: affine
+  namespace: dmz
+spec:
+  selector:
+    app.kubernetes.io/name: affine
+  ports:
+    - port: 3010
+      targetPort: 3010
+      name: http
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: affine-config-lh
+  namespace: dmz
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: affine-uploads-lh
+  namespace: dmz
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
