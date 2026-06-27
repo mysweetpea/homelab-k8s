@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: controllers.main.containers.main.image.tag
+    value: release-4.0.19.2979
+    forcestring: true
+  - name: image.name
+    value: ghcr.io/hotio/sonarr
+    forcestring: true
