@@ -1,6 +1,3 @@
-# RustDesk has two containers: hbbs (rendezvous) and hbbr (relay)
-# Both share MetalLB IP 192.168.20.216 via annotation
-
 controllers:
   hbbs:
     type: deployment
@@ -14,17 +11,6 @@ controllers:
         - hbbs
         - -r
         - 192.168.20.216:21117
-        ports:
-        - containerPort: 21115
-          name: nat-test
-        - containerPort: 21116
-          name: id-reg
-          protocol: TCP
-        - containerPort: 21116
-          name: id-reg-udp
-          protocol: UDP
-        - containerPort: 21118
-          name: websocket
 
   hbbr:
     type: deployment
@@ -36,11 +22,6 @@ controllers:
           pullPolicy: IfNotPresent
         command:
         - hbbr
-        ports:
-        - containerPort: 21117
-          name: relay
-        - containerPort: 21119
-          name: websocket
 
 service:
   hbbs:
@@ -88,4 +69,3 @@ persistence:
     storageClass: longhorn
     globalMounts:
     - path: /root
-    controller: hbbs  # Only hbbs needs persistent storage

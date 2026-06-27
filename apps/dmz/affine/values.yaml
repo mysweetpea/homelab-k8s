@@ -74,7 +74,7 @@ controllers:
               httpGet:
                 path: /api/ready
                 port: 3010
-            initialDelaySeconds: 30
+              initialDelaySeconds: 30
           readiness:
             enabled: true
             custom: true
@@ -82,6 +82,7 @@ controllers:
               httpGet:
                 path: /api/ready
                 port: 3010
+              initialDelaySeconds: 10
 
 service:
   main:
@@ -97,9 +98,12 @@ ingress:
       traefik.ingress.kubernetes.io/router.entrypoints: web
     hosts:
     - host: notes.mysweetpea.cc
-      service:
-        name: main
-        port: 3010
+      paths:
+      - path: /
+        pathType: Prefix
+        service:
+          identifier: main
+          port: http
 
 persistence:
   config:

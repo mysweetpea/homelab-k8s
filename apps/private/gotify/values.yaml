@@ -17,7 +17,7 @@ controllers:
               httpGet:
                 path: /health
                 port: 80
-            initialDelaySeconds: 30
+              initialDelaySeconds: 30
           readiness:
             enabled: true
             custom: true
@@ -25,10 +25,15 @@ controllers:
               httpGet:
                 path: /health
                 port: 80
+              initialDelaySeconds: 10
 
 service:
   main:
     controller: main
+    type: LoadBalancer
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: 192.168.20.214
+    allocateLoadBalancerNodePorts: false
     ports:
       http:
         port: 80
