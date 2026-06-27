@@ -10,6 +10,7 @@ spec:
       repository: https://github.com/mysweetpea/homelab-k8s.git
       branch: main
   applicationRefs:
+    # ── Existing (4 apps) ──
     - namePattern: n8n
       images:
       - alias: n8n
@@ -50,13 +51,14 @@ spec:
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
+    # ── hotio images (tag format: release-6.2.1.10461) ──
     - namePattern: radarr
       images:
       - alias: radarr
         imageName: ghcr.io/hotio/radarr
         commonUpdateSettings:
-          updateStrategy: semver
-          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+          updateStrategy: latest
+          allowTags: "latest"
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
@@ -65,8 +67,8 @@ spec:
       - alias: sonarr
         imageName: ghcr.io/hotio/sonarr
         commonUpdateSettings:
-          updateStrategy: semver
-          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+          updateStrategy: latest
+          allowTags: "latest"
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
@@ -75,8 +77,8 @@ spec:
       - alias: bazarr
         imageName: ghcr.io/hotio/bazarr
         commonUpdateSettings:
-          updateStrategy: semver
-          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+          updateStrategy: latest
+          allowTags: "latest"
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
@@ -85,8 +87,8 @@ spec:
       - alias: prowlarr
         imageName: ghcr.io/hotio/prowlarr
         commonUpdateSettings:
-          updateStrategy: semver
-          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+          updateStrategy: latest
+          allowTags: "latest"
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
@@ -95,11 +97,12 @@ spec:
       - alias: qbittorrent
         imageName: ghcr.io/hotio/qbittorrent
         commonUpdateSettings:
-          updateStrategy: semver
-          allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+          updateStrategy: latest
+          allowTags: "latest"
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
+    # ── Other bjw-s app-template charts ──
     - namePattern: flaresolverr
       images:
       - alias: flaresolverr
@@ -115,8 +118,8 @@ spec:
       - alias: searxng
         imageName: docker.io/searxng/searxng
         commonUpdateSettings:
-          updateStrategy: semver
-          allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+          updateStrategy: latest
+          allowTags: "latest"
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
@@ -140,6 +143,7 @@ spec:
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
+    # ── Non-bjw-s Helm charts ──
     - namePattern: authentik
       images:
       - alias: authentik
