@@ -10,7 +10,6 @@ config:
       api_url: https://ghcr.io
       credentials: pullsecret:argocd/ghcr-credentials
 extraArgs:
-  - --write-back-method=argocd
   - --registries-conf-path
   - /app/config/registries.conf
 resources:
