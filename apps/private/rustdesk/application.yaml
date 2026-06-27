@@ -3,18 +3,33 @@ kind: Application
 metadata:
   name: rustdesk
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: rustdesk=rustdesk/rustdesk-server
+    argocd-image-updater.argoproj.io/rustdesk.update-strategy: latest
+    argocd-image-updater.argoproj.io/rustdesk.allow-tags: "regexp:^1\\.\\d+\\.\\d+"
+    argocd-image-updater.argoproj.io/rustdesk.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
-  destination:
-    namespace: private
-    server: https://kubernetes.default.svc
   project: default
-  source:
-    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: private
+  sources:
+  - repoURL: https://bjw-s-labs.github.io/helm-charts
+    chart: app-template
+    targetRevision: 3.7.1
+    helm:
+      valueFiles:
+      - $values/apps/private/rustdesk/values.yaml
+  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
     targetRevision: HEAD
-    path: apps/private/rustdesk
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false
+    - CreateNamespace=false

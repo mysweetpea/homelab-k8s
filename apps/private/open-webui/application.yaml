@@ -3,16 +3,33 @@ kind: Application
 metadata:
   name: open-webui
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: openwebui=ghcr.io/open-webui/open-webui
+    argocd-image-updater.argoproj.io/openwebui.update-strategy: semver
+    argocd-image-updater.argoproj.io/openwebui.allow-tags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+    argocd-image-updater.argoproj.io/openwebui.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
-  destination:
-    namespace: private
-    server: https://kubernetes.default.svc
   project: default
-  source:
-    repoURL: https://github.com/mysweetpea/homelab-k8s.git
-    path: apps/private/open-webui
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: private
+  sources:
+  - repoURL: https://bjw-s-labs.github.io/helm-charts
+    chart: app-template
+    targetRevision: 3.7.1
+    helm:
+      valueFiles:
+      - $values/apps/private/open-webui/values.yaml
+  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
     targetRevision: HEAD
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+    - CreateNamespace=false

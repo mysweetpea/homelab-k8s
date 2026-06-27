@@ -3,16 +3,33 @@ kind: Application
 metadata:
   name: affine
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: affine=ghcr.io/toeverything/affine-self-hosted
+    argocd-image-updater.argoproj.io/affine.update-strategy: semver
+    argocd-image-updater.argoproj.io/affine.allow-tags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+    argocd-image-updater.argoproj.io/affine.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
-  destination:
-    namespace: dmz
-    server: https://kubernetes.default.svc
   project: default
-  source:
-    repoURL: https://github.com/mysweetpea/homelab-k8s.git
-    path: apps/dmz/affine
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dmz
+  sources:
+  - repoURL: https://bjw-s-labs.github.io/helm-charts
+    chart: app-template
+    targetRevision: 3.7.1
+    helm:
+      valueFiles:
+      - $values/apps/dmz/affine/values.yaml
+  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
     targetRevision: HEAD
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+    - CreateNamespace=false

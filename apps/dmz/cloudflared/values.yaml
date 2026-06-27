@@ -1,0 +1,67 @@
+controllers:
+  main:
+    replicas: 2
+    strategy: RollingUpdate
+    pod:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      annotations:
+        metallb.universe.tf/allow-shared-ip: "cloudflared"
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: cloudflared
+            topologyKey: kubernetes.io/hostname
+    containers:
+      main:
+        image:
+          repository: cloudflare/cloudflared
+          tag: "2026.6.1"
+          pullPolicy: IfNotPresent
+        args:
+        - tunnel
+        - --no-autoupdate
+        - --metrics
+        - 0.0.0.0:2000
+        - run
+        env:
+        - name: TUNNEL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: cloudflared-token
+              key: tunnel-token
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /ready
+                port: 2000
+            initialDelaySeconds: 15
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /ready
+                port: 2000
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 65532
+
+podDisruptionBudget:
+  main:
+    enabled: true
+    minAvailable: 1
+
+service:
+  main:
+    enabled: false  # hostNetwork, no service needed

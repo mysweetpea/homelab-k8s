@@ -1,0 +1,91 @@
+# RustDesk has two containers: hbbs (rendezvous) and hbbr (relay)
+# Both share MetalLB IP 192.168.20.216 via annotation
+
+controllers:
+  hbbs:
+    type: deployment
+    containers:
+      main:
+        image:
+          repository: rustdesk/rustdesk-server
+          tag: "latest"
+          pullPolicy: IfNotPresent
+        command:
+        - hbbs
+        - -r
+        - 192.168.20.216:21117
+        ports:
+        - containerPort: 21115
+          name: nat-test
+        - containerPort: 21116
+          name: id-reg
+          protocol: TCP
+        - containerPort: 21116
+          name: id-reg-udp
+          protocol: UDP
+        - containerPort: 21118
+          name: websocket
+
+  hbbr:
+    type: deployment
+    containers:
+      main:
+        image:
+          repository: rustdesk/rustdesk-server
+          tag: "latest"
+          pullPolicy: IfNotPresent
+        command:
+        - hbbr
+        ports:
+        - containerPort: 21117
+          name: relay
+        - containerPort: 21119
+          name: websocket
+
+service:
+  hbbs:
+    controller: hbbs
+    type: LoadBalancer
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: 192.168.20.216
+      metallb.universe.tf/allow-shared-ip: "rustdesk"
+    allocateLoadBalancerNodePorts: false
+    ports:
+      nat-test:
+        port: 21115
+        targetPort: 21115
+      id-reg:
+        port: 21116
+        targetPort: 21116
+        protocol: TCP
+      id-reg-udp:
+        port: 21116
+        targetPort: 21116
+        protocol: UDP
+      websocket:
+        port: 21118
+        targetPort: 21118
+
+  hbbr:
+    controller: hbbr
+    type: LoadBalancer
+    annotations:
+      metallb.universe.tf/allow-shared-ip: "rustdesk"
+    allocateLoadBalancerNodePorts: false
+    ports:
+      relay:
+        port: 21117
+        targetPort: 21117
+      websocket:
+        port: 21119
+        targetPort: 21119
+
+persistence:
+  data:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    storageClass: longhorn
+    globalMounts:
+    - path: /root
+    controller: hbbs  # Only hbbs needs persistent storage

@@ -3,18 +3,33 @@ kind: Application
 metadata:
   name: gotify
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: gotify=gotify/server
+    argocd-image-updater.argoproj.io/gotify.update-strategy: semver
+    argocd-image-updater.argoproj.io/gotify.allow-tags: "regexp:^2\\.\\d+\\.\\d+$"
+    argocd-image-updater.argoproj.io/gotify.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
-  destination:
-    namespace: private
-    server: https://kubernetes.default.svc
   project: default
-  source:
-    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: private
+  sources:
+  - repoURL: https://bjw-s-labs.github.io/helm-charts
+    chart: app-template
+    targetRevision: 3.7.1
+    helm:
+      valueFiles:
+      - $values/apps/private/gotify/values.yaml
+  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
     targetRevision: HEAD
-    path: apps/private/gotify
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=false
+    - CreateNamespace=false

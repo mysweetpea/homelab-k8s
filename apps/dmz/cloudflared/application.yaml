@@ -1,23 +1,35 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: cloudflared
   namespace: argocd
-  labels:
-    app: cloudflared
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: cloudflared=cloudflare/cloudflared
+    argocd-image-updater.argoproj.io/cloudflared.update-strategy: semver
+    argocd-image-updater.argoproj.io/cloudflared.allow-tags: "regexp:^2026\\.\\d+\\.\\d+$"
+    argocd-image-updater.argoproj.io/cloudflared.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
   project: default
-  source:
-    repoURL: https://github.com/mysweetpea/homelab-k8s.git
-    targetRevision: HEAD
-    path: apps/dmz/cloudflared
   destination:
     server: https://kubernetes.default.svc
     namespace: dmz
+  sources:
+  - repoURL: https://bjw-s-labs.github.io/helm-charts
+    chart: app-template
+    targetRevision: 3.7.1
+    helm:
+      valueFiles:
+      - $values/apps/dmz/cloudflared/values.yaml
+  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=false
