@@ -1,0 +1,2 @@
+# Additional Matrix Synapse configuration overrides
+# The main values are in application.yaml helm.values block

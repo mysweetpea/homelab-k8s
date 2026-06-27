@@ -3,18 +3,42 @@ kind: Application
 metadata:
   name: matrix-synapse
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
-  project: default
-  source:
-    repoURL: https://github.com/mysweetpea/homelab-k8s
-    targetRevision: HEAD
-    path: apps/dmz/matrix-synapse/manifests
   destination:
-    server: https://kubernetes.default.svc
     namespace: dmz
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+    - repoURL: https://ananace.gitlab.io/charts
+      chart: matrix-synapse
+      targetRevision: "3.12.30"
+      helm:
+        values: |
+          serverName: mysweetpea.cc
+          publicServerName: matrix.mysweetpea.cc
+          wellknown:
+            enabled: true
+          ingress:
+            enabled: false
+          postgresql:
+            enabled: false
+          existingPostgresql:
+            host: matrix-synapse-postgresql.dmz.svc.cluster.local
+            port: 5432
+            database: synapse
+            username: synapse
+            password:
+              secretKeyRef:
+                name: matrix-synapse-postgresql
+                key: password
+          redis:
+            enabled: false
+          extraConfig:
+            max_upload_size: 50M
+    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+      path: apps/dmz/matrix-synapse
+      targetRevision: HEAD
   syncPolicy:
     automated:
-      prune: false
-      selfHeal: false
+      prune: true
+      selfHeal: true
