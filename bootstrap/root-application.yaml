@@ -3,32 +3,23 @@ kind: Application
 metadata:
   name: root-homelab
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
   project: default
   source:
     repoURL: https://github.com/mysweetpea/homelab-k8s.git
-    targetRevision: HEAD
     path: apps
+    targetRevision: HEAD
     directory:
       recurse: true
-      exclude: '{values.yaml,secrets/**,*.md,*.enc.yaml}'
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
+      include: "{application.yaml,network-policies.yaml}"
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-      allowEmpty: false
     syncOptions:
-      - CreateNamespace=true
-      - PrunePropagationPolicy=foreground
-      - PruneLast=true
-    retry:
-      limit: 5
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m
+    - CreateNamespace=true
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
