@@ -51,7 +51,58 @@ spec:
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
-    # ─ Other bjw-s app-template charts ──
+    # ── hotio images (GHCR, tag format: release-6.2.1.10461) ──
+    - namePattern: radarr
+      images:
+      - alias: radarr
+        imageName: ghcr.io/hotio/radarr
+        commonUpdateSettings:
+          updateStrategy: newest-build
+          allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: sonarr
+      images:
+      - alias: sonarr
+        imageName: ghcr.io/hotio/sonarr
+        commonUpdateSettings:
+          updateStrategy: newest-build
+          allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: bazarr
+      images:
+      - alias: bazarr
+        imageName: ghcr.io/hotio/bazarr
+        commonUpdateSettings:
+          updateStrategy: newest-build
+          allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: prowlarr
+      images:
+      - alias: prowlarr
+        imageName: ghcr.io/hotio/prowlarr
+        commonUpdateSettings:
+          updateStrategy: newest-build
+          allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    - namePattern: qbittorrent
+      images:
+      - alias: qbittorrent
+        imageName: ghcr.io/hotio/qbittorrent
+        commonUpdateSettings:
+          updateStrategy: newest-build
+          allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+\\.\\d+$"
+        manifestTargets:
+          helm:
+            tag: controllers.main.containers.main.image.tag
+    # ── Other bjw-s app-template charts ──
     - namePattern: flaresolverr
       images:
       - alias: flaresolverr
@@ -67,8 +118,8 @@ spec:
       - alias: searxng
         imageName: docker.io/searxng/searxng
         commonUpdateSettings:
-          updateStrategy: latest
-          allowTags: "latest"
+          updateStrategy: newest-build
+          allowTags: "regexp:^\\d+\\.\\d+\\.\\d+"
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
@@ -150,57 +201,6 @@ spec:
         commonUpdateSettings:
           updateStrategy: semver
           allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
-        manifestTargets:
-          helm:
-            tag: controllers.main.containers.main.image.tag
-    # ── hotio images (GHCR — requires auth, now configured) ──
-    - namePattern: radarr
-      images:
-      - alias: radarr
-        imageName: ghcr.io/hotio/radarr
-        commonUpdateSettings:
-          updateStrategy: latest
-          allowTags: "latest"
-        manifestTargets:
-          helm:
-            tag: controllers.main.containers.main.image.tag
-    - namePattern: sonarr
-      images:
-      - alias: sonarr
-        imageName: ghcr.io/hotio/sonarr
-        commonUpdateSettings:
-          updateStrategy: latest
-          allowTags: "latest"
-        manifestTargets:
-          helm:
-            tag: controllers.main.containers.main.image.tag
-    - namePattern: bazarr
-      images:
-      - alias: bazarr
-        imageName: ghcr.io/hotio/bazarr
-        commonUpdateSettings:
-          updateStrategy: latest
-          allowTags: "latest"
-        manifestTargets:
-          helm:
-            tag: controllers.main.containers.main.image.tag
-    - namePattern: prowlarr
-      images:
-      - alias: prowlarr
-        imageName: ghcr.io/hotio/prowlarr
-        commonUpdateSettings:
-          updateStrategy: latest
-          allowTags: "latest"
-        manifestTargets:
-          helm:
-            tag: controllers.main.containers.main.image.tag
-    - namePattern: qbittorrent
-      images:
-      - alias: qbittorrent
-        imageName: ghcr.io/hotio/qbittorrent
-        commonUpdateSettings:
-          updateStrategy: latest
-          allowTags: "latest"
         manifestTargets:
           helm:
             tag: controllers.main.containers.main.image.tag
