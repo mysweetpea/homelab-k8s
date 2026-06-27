@@ -19,7 +19,7 @@ spec:
       initContainers:
         - name: migrate
           image: ghcr.io/toeverything/affine:stable
-          command: ["sh", "-c", "node ./apps/server/dist/migrations/main.js"]
+          command: ["sh", "-c", "node ./scripts/self-host-predeploy.js"]
           env:
             - name: AFFINE_CONFIG_PATH
               value: /root/.affine/config
@@ -30,9 +30,22 @@ spec:
                 secretKeyRef:
                   name: affine-secrets
                   key: database-url
+            - name: REDIS_SERVER_HOST
+              value: redis-affine-master.private.svc.cluster.local
+            - name: REDIS_SERVER_PORT
+              value: "6379"
+            - name: REDIS_SERVER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-affine
+                  key: redis-password
+            - name: AFFINE_INDEXER_ENABLED
+              value: "false"
           volumeMounts:
             - name: config
               mountPath: /root/.affine/config
+            - name: uploads
+              mountPath: /root/.affine/storage
       containers:
         - name: affine
           image: ghcr.io/toeverything/affine:stable
@@ -58,6 +71,12 @@ spec:
                 secretKeyRef:
                   name: redis-affine
                   key: redis-password
+            - name: AFFINE_SERVER_HOST
+              value: notes.mysweetpea.cc
+            - name: AFFINE_SERVER_HTTPS
+              value: "true"
+            - name: AFFINE_INDEXER_ENABLED
+              value: "false"
           volumeMounts:
             - name: config
               mountPath: /root/.affine/config
