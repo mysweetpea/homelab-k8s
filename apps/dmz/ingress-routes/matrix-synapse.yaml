@@ -1,0 +1,20 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: matrix-synapse
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`matrix.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: matrix-synapse
+          port: 8008
+    # Matrix federation well-known
+    - match: Host(`matrix.mysweetpea.cc`) && PathPrefix(`/.well-known/matrix`)
+      kind: Rule
+      services:
+        - name: matrix-synapse
+          port: 8008
