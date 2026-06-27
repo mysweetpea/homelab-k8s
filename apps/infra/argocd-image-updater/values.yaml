@@ -9,9 +9,10 @@ config:
       prefix: ghcr.io
       api_url: https://ghcr.io
       credentials: pullsecret:argocd/ghcr-credentials
-# Use ArgoCD params for write-back (no SSH/Git auth needed)
 extraArgs:
   - --write-back-method=argocd
+  - --registries-conf-path
+  - /app/config/registries.conf
 resources:
   limits:
     cpu: 500m
