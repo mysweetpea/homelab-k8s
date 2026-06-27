@@ -4,19 +4,22 @@ metadata:
   name: argocd-image-updater
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://argoproj.github.io/argo-helm
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  sources:
+  - repoURL: https://argoproj.github.io/argo-helm
     chart: argocd-image-updater
     targetRevision: 1.2.2
     helm:
       valueFiles:
-        - values.yaml
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
+      - $values/apps/infra/argocd-image-updater/values.yaml
+  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    ref: values
   syncPolicy:
     automated:
       prune: true
