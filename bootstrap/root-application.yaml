@@ -14,7 +14,7 @@ spec:
     targetRevision: HEAD
     directory:
       recurse: true
-      include: "**/application.yaml,**/network-policies.yaml"
+      include: "{application.yaml,network-policies.yaml}"
   syncPolicy:
     automated:
       prune: true
