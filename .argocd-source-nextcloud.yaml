@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: image.name
+    value: docker.io/nextcloud
+    forcestring: true
+  - name: image.tag
+    value: 34.0.0
+    forcestring: true
