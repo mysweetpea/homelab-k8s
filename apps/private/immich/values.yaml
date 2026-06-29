@@ -23,7 +23,7 @@ controllers:
           REDIS_HOSTNAME: '{{ printf "%s-valkey" .Release.Name }}'
           IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
           # Security: enable CSP (recommended in v2.7.0 release notes)
-          IMMICH_HELMET_FILE: "true"
+          IMMICH_HELMET_FILE: "false"
 
 # Immich-specific configuration
 immich:
