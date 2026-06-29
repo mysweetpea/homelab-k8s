@@ -23,14 +23,12 @@ spec:
           postgresql:
             enabled: true
             auth:
-              existingSecret: matrix-synapse-postgresql
-              secretKeys:
-                usernameKey: username
-                passwordKey: password
+              password: synapse
+              username: synapse
+              database: synapse
           redis:
             enabled: true
-            existingSecret: matrix-synapse-redis
-            existingSecretPasswordKey: redis-password
+            password: synapse-redis-2026
           extraConfig:
             max_upload_size: 50M
     - repoURL: https://github.com/mysweetpea/homelab-k8s.git
