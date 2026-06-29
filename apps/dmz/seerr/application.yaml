@@ -6,7 +6,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd-image-updater.argoproj.io/image-list: seerr=ghcr.io/fallenbagel/jellyseerr
+    argocd-image-updater.argoproj.io/image-list: seerr=ghcr.io/seerr-team/seerr
     argocd-image-updater.argoproj.io/seerr.update-strategy: semver
     argocd-image-updater.argoproj.io/seerr.helm.image-spec: controllers.main.containers.main.image
     argocd-image-updater.argoproj.io/write-back-method: git

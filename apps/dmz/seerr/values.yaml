@@ -3,7 +3,7 @@ controllers:
     containers:
       main:
         image:
-          repository: ghcr.io/fallenbagel/jellyseerr
+          repository: ghcr.io/seerr-team/seerr
           tag: latest
         securityContext:
           runAsGroup: 1000

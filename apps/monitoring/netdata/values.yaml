@@ -10,14 +10,6 @@ parent:
     requests:
       cpu: 100m
       memory: 256Mi
-  service:
-    type: LoadBalancer
-    annotations:
-      metallb.universe.tf/loadBalancerIPs: "192.168.20.229"
-    allocateLoadBalancerNodePorts: false
-    ports:
-      http:
-        port: 19999
 
 child:
   resources:
@@ -27,3 +19,8 @@ child:
     requests:
       cpu: 50m
       memory: 128Mi
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.20.229
+  port: 19999

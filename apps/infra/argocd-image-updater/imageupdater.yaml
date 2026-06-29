@@ -126,7 +126,7 @@ spec:
     - namePattern: seerr
       images:
       - alias: seerr
-        imageName: ghcr.io/fallenbagel/jellyseerr
+        imageName: ghcr.io/seerr-team/seerr
         commonUpdateSettings:
           updateStrategy: semver
           allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
