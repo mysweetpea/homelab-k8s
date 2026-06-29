@@ -30,6 +30,10 @@ controllers:
 service:
   main:
     controller: main
+    type: LoadBalancer
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: "192.168.20.226"
+    allocateLoadBalancerNodePorts: false
     ports:
       http:
         port: 8080

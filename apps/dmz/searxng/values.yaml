@@ -12,6 +12,10 @@ persistence:
 service:
   main:
     controller: main
+    type: LoadBalancer
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: "192.168.20.227"
+    allocateLoadBalancerNodePorts: false
     ports:
       http:
         port: 8080
