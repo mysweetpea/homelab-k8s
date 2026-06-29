@@ -3,7 +3,7 @@ controllers:
     initContainers:
       migrate:
         image:
-          repository: ghcr.io/toeverything/affine-self-hosted
+          repository: ghcr.io/toeverything/affine
           tag: "stable"
           pullPolicy: IfNotPresent
         command:
@@ -35,7 +35,7 @@ controllers:
     containers:
       main:
         image:
-          repository: ghcr.io/toeverything/affine-self-hosted
+          repository: ghcr.io/toeverything/affine
           tag: "stable"
           pullPolicy: IfNotPresent
         env:
