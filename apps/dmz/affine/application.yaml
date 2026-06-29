@@ -6,7 +6,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd-image-updater.argoproj.io/image-list: affine=ghcr.io/toeverything/affine-self-hosted
+    argocd-image-updater.argoproj.io/image-list: affine=ghcr.io/toeverything/affine
     argocd-image-updater.argoproj.io/affine.update-strategy: semver
     argocd-image-updater.argoproj.io/affine.allow-tags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
     argocd-image-updater.argoproj.io/affine.helm.image-spec: controllers.main.containers.main.image
@@ -20,7 +20,7 @@ spec:
   sources:
   - repoURL: https://bjw-s-labs.github.io/helm-charts
     chart: app-template
-    targetRevision: 3.7.1
+    targetRevision: 3.7.3
     helm:
       valueFiles:
       - $values/apps/dmz/affine/values.yaml

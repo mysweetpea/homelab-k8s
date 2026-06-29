@@ -2,6 +2,16 @@ image:
   tag: 34.0.0
 nextcloud:
   host: nextcloud.mysweetpea.duckdns.org
+  username: admin
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-admin-creds
+    usernameKey: username
+    passwordKey: password
+  trustedDomains:
+    - nextcloud.mysweetpea.duckdns.org
+    - 192.168.20.215
+    - nextcloud.private.svc.cluster.local
 persistence:
   enabled: true
   existingClaim: nextcloud-nextcloud-lh
@@ -10,7 +20,6 @@ postgresql:
 service:
   port: 8080
   type: LoadBalancer
-  loadBalancerIP: 192.168.20.215
   loadBalancerIP: 192.168.20.215
   allocateLoadBalancerNodePorts: false
 
@@ -25,15 +34,6 @@ externalDatabase:
     secretName: nextcloud-db-creds
     usernameKey: username
     passwordKey: password
-
-nextcloud:
-  host: nextcloud.mysweetpea.duckdns.org
-  username: admin
-  password: H1vqWaiNyd
-  trustedDomains:
-    - nextcloud.mysweetpea.duckdns.org
-    - 192.168.20.215
-    - nextcloud.private.svc.cluster.local
 
 mariadb:
   enabled: false

@@ -2,14 +2,15 @@ authentik:
   image:
     repository: ghcr.io/goauthentik/server
     tag: "2026.5.2"
-  secret_key: "ysoC/gBZLhn8aQeJE+Drch32mNPgQuDxEygwYqecPz+D9MKRRh7UtPGTZ/5YUVrMG9E="
+  existingSecret: authentik-secret-key
   error_reporting:
     enabled: false
   postgresql:
     host: "authentik-postgresql.dmz.svc.cluster.local"
     name: "authentik"
     user: "authentik"
-    password: "authentik2026!"
+    existingSecret: authentik-postgresql
+    passwordKey: password
     port: 5432
   server:
     ingress:
