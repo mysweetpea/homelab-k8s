@@ -86,14 +86,12 @@ controllers:
 
 service:
   main:
-    controller: main
     ports:
       http:
         port: 3010
 
 ingress:
   main:
-    controller: main
     annotations:
       traefik.ingress.kubernetes.io/router.entrypoints: web
     hosts:
