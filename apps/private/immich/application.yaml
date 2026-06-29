@@ -17,6 +17,11 @@ spec:
     - ref: values
       repoURL: https://github.com/mysweetpea/homelab-k8s.git
       targetRevision: HEAD
+    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+      targetRevision: HEAD
+      path: apps/private/immich
+      directory:
+        include: immich-lb.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: private

@@ -1,0 +1,30 @@
+# ──────────────────────────────────────────────
+# Immich LoadBalancer Service
+# Session 20: Created to expose Immich server via MetalLB
+# IP: 192.168.20.221:2283
+# NOTE: The immich Helm chart creates the server as ClusterIP.
+# This separate LoadBalancer service exposes it on the LAN/VPN.
+# Selector MUST match the immich-server pod labels:
+#   app.kubernetes.io/controller=main
+#   app.kubernetes.io/instance=immich
+#   app.kubernetes.io/name=server
+# ──────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-lb
+  namespace: private
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: "192.168.20.221"
+spec:
+  type: LoadBalancer
+  allocateLoadBalancerNodePorts: false
+  ports:
+    - name: http
+      port: 2283
+      targetPort: 2283
+      protocol: TCP
+  selector:
+    app.kubernetes.io/controller: main
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: server
