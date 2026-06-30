@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: controllers.hbbs.containers.main.image.tag
+    value: 1.1.15-amd64
+    forcestring: true
+  - name: image.name
+    value: rustdesk/rustdesk-server
+    forcestring: true
