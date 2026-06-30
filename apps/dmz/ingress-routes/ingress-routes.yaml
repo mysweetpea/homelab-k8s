@@ -14,8 +14,9 @@ spec:
       services:
         - name: vaultwarden
           port: 80
+
 ---
-# Authentik — auth.mysweetpea.cc
+# Authentik — auth.mysweetpea.cc (with HTTPS header middleware)
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -23,13 +24,16 @@ metadata:
   namespace: dmz
 spec:
   entryPoints:
-    - websecure
+    - web
   routes:
     - match: Host(`auth.mysweetpea.duckdns.org`) || Host(`auth.mysweetpea.cc`)
       kind: Rule
+      middlewares:
+        - name: authentik-https-headers
       services:
         - name: authentik-server
           port: 80
+
 ---
 # Seerr — request.mysweetpea.cc
 apiVersion: traefik.io/v1alpha1
