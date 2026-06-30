@@ -23,7 +23,7 @@ metadata:
   namespace: dmz
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - match: Host(`auth.mysweetpea.duckdns.org`) || Host(`auth.mysweetpea.cc`)
       kind: Rule
