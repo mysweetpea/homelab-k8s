@@ -7,29 +7,80 @@ metadata:
 data:
   settings.yaml: |
     title: SweetPea Homelab
-    headerStyle: boxed
+    description: A self-hosted sanctuary
+    headerStyle: boxedWidgets
+    theme: dark
+    color: slate
+    iconStyle: theme
+    target: _blank
+    fullWidth: true
+    disableCollapse: true
+    useEqualHeights: true
+    statusStyle: dot
+    hideVersion: true
+    quicklaunch:
+      searchDescriptions: true
+      hideInternetSearch: false
+      showSearchSuggestions: true
+      provider: duckduckgo
     layout:
+      Info Widgets:
+        tab: 🏠 Home
+        header: false
+        style: row
+        columns: 4
       Media:
+        tab: 🎬 Media
+        icon: sh-mediathekview
         style: row
         columns: 2
       Arr Stack:
+        tab: 🎬 Media
+        icon: sh-quickstack
         style: row
         columns: 4
       Private:
+        tab: 🔒 Private
+        icon: sh-files
         style: row
         columns: 4
       Infrastructure:
+        tab: ⚙️ System
+        icon: sh-linux-containers-lxc
         style: row
         columns: 4
       Monitoring:
+        tab: ⚙️ System
+        icon: sh-mozilla-monitor
         style: row
-        columns: 2
+        columns: 3
+      Coming Soon:
+        tab: 🚀 Coming Soon
+        icon: sh-rocket
+        style: row
+        columns: 4
 
   bookmarks.yaml: |
-    - Developer:
+    - Quick Links:
         - GitHub:
             - abbr: GH
-              href: https://github.com/
+              href: https://github.com/mysweetpea
+        - ArgoCD:
+            - abbr: AR
+              href: http://192.168.20.220
+        - Traefik:
+            - abbr: TR
+              href: http://192.168.20.210:8080
+    - Resources:
+        - Kubernetes Docs:
+            - abbr: K8
+              href: https://kubernetes.io/docs/
+        - Homepage Docs:
+            - abbr: HP
+              href: https://gethomepage.dev/
+        - Helm Docs:
+            - abbr: HL
+              href: https://helm.sh/docs/
 
   kubernetes.yaml: |
     mode: cluster
@@ -40,46 +91,447 @@ data:
         port: 2375
 
   widgets.yaml: |
+    - greeting:
+        text_size: 2xl
+        text: "Welcome back, sweetpea"
+    - datetime:
+        text_size: xl
+        format:
+          timeStyle: short
+          dateStyle: full
+          hour12: false
+    - search:
+        provider: duckduckgo
+        target: _blank
+        focus: false
     - resources:
         backend: resources
         cpu: true
         memory: true
         expanded: true
-    - search:
-        provider: duckduckgo
-        target: _blank
-    - greeting:
-        text_size: xl
-        text: "Welcome back"
+        disk: /
+    - openweathermap:
+        label: Wellington
+        latitude: -41.2865
+        longitude: 174.7762
+        units: metric
+        provider: openweathermap
 
   custom.css: |
-    /* SweetPea Nordic Glassmorphism + Islamic Accent Theme */
+    /* ═══════════════════════════════════════════════════════════════
+       SweetPea Homelab — Nordic Glassmorphism + Islamic Geometry Theme
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ── CSS Variables ── */
     :root {
-      --color-background: rgba(15, 23, 42, 0.85);
-      --color-card-background: rgba(30, 41, 59, 0.6);
-      --color-accent: #10b981;
-      --color-text: #e2e8f0;
-      --color-text-secondary: #94a3b8;
-      --border-radius: 1rem;
-      --blur-amount: 12px;
-    }
-    .service-card {
-      backdrop-filter: blur(var(--blur-amount));
-      -webkit-backdrop-filter: blur(var(--blur-amount));
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: var(--border-radius);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .service-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      border-color: rgba(16, 185, 129, 0.3);
-    }
-    .logo {
-      filter: drop-shadow(0 0 8px rgba(16,185,129,0.4));
+      --glass-bg: rgba(15, 23, 42, 0.75);
+      --glass-card: rgba(30, 41, 59, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --glass-border-hover: rgba(16, 185, 129, 0.25);
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.3);
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --blur: 16px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* ── Body Background ── */
+    body {
+      background: linear-gradient(135deg, #0b1120 0%, #0f172a 30%, #1a1f35 60%, #0d1525 100%) !important;
+      background-attachment: fixed !important;
+    }
+
+    /* Subtle grid overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header / Logo Area ── */
+    .header {
+      position: relative;
+      padding: 1.5rem 0 0.5rem 0 !important;
+    }
+
+    /* Logo container — make it prominent */
+    .header .logo {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      margin-bottom: 0.75rem !important;
+    }
+
+    .header .logo img {
+      height: 72px !important;
+      width: auto !important;
+      filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5))
+              drop-shadow(0 0 40px rgba(16, 185, 129, 0.2)) !important;
+      transition: filter var(--transition) !important;
+    }
+
+    .header .logo img:hover {
+      filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.7))
+              drop-shadow(0 0 60px rgba(16, 185, 129, 0.35)) !important;
+    }
+
+    /* Title styling */
+    .header h1 {
+      font-size: 1.6rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.02em !important;
+      background: linear-gradient(135deg, #e2e8f0 0%, #10b981 50%, #34d399 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      text-align: center !important;
+    }
+
+    /* ── Tab Navigation ── */
+    #tabs ul {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      padding: 6px !important;
+      margin: 0 auto 1.5rem auto !important;
+      width: fit-content !important;
+      background: rgba(30, 41, 59, 0.4) !important;
+      backdrop-filter: blur(var(--blur)) !important;
+      -webkit-backdrop-filter: blur(var(--blur)) !important;
+      border: 1px solid var(--glass-border) !important;
+      border-radius: 50px !important;
+    }
+
+    #tabs ul li {
+      flex: 0 0 auto !important;
+      width: auto !important;
+    }
+
+    #tabs ul li button {
+      width: auto !important;
+      border-radius: 50px !important;
+      padding: 8px 22px !important;
+      min-height: unset !important;
+      font-size: 0.875rem !important;
+      font-weight: 500 !important;
+      color: var(--text-secondary) !important;
+      background: transparent !important;
+      transition: all var(--transition) !important;
+    }
+
+    #tabs ul li button:hover {
+      color: var(--text-primary) !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    #tabs ul li button[aria-selected="true"] {
+      color: #fff !important;
+      background: rgba(16, 185, 129, 0.2) !important;
+      font-weight: 600 !important;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.15) !important;
+    }
+
+    /* ── Service Cards — Glassmorphism ── */
+    .service-card {
+      position: relative !important;
+      background: var(--glass-card) !important;
+      backdrop-filter: blur(var(--blur)) !important;
+      -webkit-backdrop-filter: blur(var(--blur)) !important;
+      border: 1px solid var(--glass-border) !important;
+      border-radius: var(--radius-lg) !important;
+      overflow: hidden !important;
+      isolation: isolate !important;
+      transition: all var(--transition) !important;
+    }
+
+    .service-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+        rgba(255,255,255,0.04) 0%,
+        rgba(255,255,255,0.01) 50%,
+        rgba(255,255,255,0) 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px) !important;
+      border-color: var(--glass-border-hover) !important;
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(16, 185, 129, 0.1),
+        0 0 60px rgba(16, 185, 129, 0.08) !important;
+    }
+
+    .service-card > div {
+      position: relative !important;
+      z-index: 1 !important;
+    }
+
+    /* ── Service Card Color Tinting ── */
+    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.25), transparent 70%) !important; }
+    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.25), transparent 70%) !important; }
+    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.25), transparent 70%) !important; }
+    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.25), transparent 70%) !important; }
+    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.25), transparent 70%) !important; }
+    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.25), transparent 70%) !important; }
+    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.25), transparent 70%) !important; }
+    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
+    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.25), transparent 70%) !important; }
+    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.25), transparent 70%) !important; }
+    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.25), transparent 70%) !important; }
+    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.25), transparent 70%) !important; }
+    #traefik-card::before   { background: radial-gradient(circle at top left, rgba(37,193,255,0.25), transparent 70%) !important; }
+    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.25), transparent 70%) !important; }
+    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
+    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.25), transparent 70%) !important; }
+    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.25), transparent 70%) !important; }
+    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.25), transparent 70%) !important; }
+    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.25), transparent 70%) !important; }
+    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.25), transparent 70%) !important; }
+    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.25), transparent 70%) !important; }
+    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.25), transparent 70%) !important; }
+    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.25), transparent 70%) !important; }
+    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
+    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.25), transparent 70%) !important; }
+    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.25), transparent 70%) !important; }
+    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
+    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.25), transparent 70%) !important; }
+    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
+
+    /* ── Coming Soon Cards — Special Styling ── */
+    #grafana-card, #prometheus-card, #syncthing-card,
+    #stalwart-card, #remux-card {
+      opacity: 0.7 !important;
+      border-style: dashed !important;
+      border-color: rgba(255,255,255,0.1) !important;
+    }
+
+    #grafana-card:hover, #prometheus-card:hover, #syncthing-card:hover,
+    #stalwart-card:hover, #remux-card:hover {
+      opacity: 0.9 !important;
+      border-style: solid !important;
+      border-color: var(--glass-border-hover) !important;
+    }
+
+    /* ── Service Name & Description ── */
+    .service-name {
+      color: var(--text-primary) !important;
+      font-weight: 600 !important;
+      font-size: 0.9rem !important;
+    }
+
+    .service-description {
+      color: var(--text-muted) !important;
+      font-size: 0.75rem !important;
+    }
+
+    /* ── Status & Ping Badges ── */
+    .service-tags {
+      position: absolute !important;
+      top: 10px !important;
+      right: 12px !important;
+      z-index: 10 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-end !important;
+      gap: 4px !important;
+    }
+
+    .service-ping .ping-status {
+      background: rgba(255,255,255,0.05) !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      border-radius: 8px !important;
+      padding: 2px 8px !important;
+      height: auto !important;
+      width: auto !important;
+      background-image: none !important;
+    }
+
+    .service-ping .ping-status div {
+      font-size: 9px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      opacity: 1 !important;
+      line-height: 1.2 !important;
+    }
+
+    /* ── Group Headers ── */
+    .service-group-name, .bookmark-group-name {
+      color: var(--text-secondary) !important;
+      font-weight: 700 !important;
+      font-size: 0.8rem !important;
+      letter-spacing: 0.05em !important;
+      text-transform: uppercase !important;
+      opacity: 0.7 !important;
+    }
+
+    /* ── Info Widgets (Greeting, DateTime, Search, Resources, Weather) ── */
+    .widget-container,
+    .information-widget-logo,
+    [class*="information-widget-glances"] {
+      background: var(--glass-card) !important;
+      backdrop-filter: blur(var(--blur)) !important;
+      -webkit-backdrop-filter: blur(var(--blur)) !important;
+      border: 1px solid var(--glass-border) !important;
+      border-radius: var(--radius-lg) !important;
+      padding: 16px 20px !important;
+      margin-bottom: 12px !important;
+      box-shadow: none !important;
+    }
+
+    /* ── Resource Bars ── */
+    .information-widget-resource div[style*="width"] {
+      background: linear-gradient(90deg, #10b981 0%, #34d399 40%, #22d3ee 75%, #a78bfa 100%) !important;
+      opacity: 0.5 !important;
+      border-radius: 10px !important;
+    }
+
+    .information-widget-resource:nth-of-type(1) svg { color: #10b981 !important; }
+    .information-widget-resource:nth-of-type(2) svg { color: #22d3ee !important; }
+    .information-widget-resource:nth-of-type(3) svg { color: #ef4444 !important; }
+    .information-widget-resource:nth-of-type(4) svg { color: #a78bfa !important; }
+
+    /* ── Bookmarks ── */
+    li.bookmark a {
+      border-radius: var(--radius-md) !important;
+      background: rgba(255,255,255,0.03) !important;
+      border: 1px solid var(--glass-border) !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+      margin-bottom: 8px !important;
+      transition: all var(--transition) !important;
+    }
+
+    li.bookmark a:hover {
+      background: rgba(255,255,255,0.08) !important;
+      transform: translateY(-2px) !important;
+      border-color: var(--glass-border-hover) !important;
+    }
+
+    li.bookmark .bookmark-icon {
+      border-radius: 0 !important;
+      background: rgba(255,255,255,0.02) !important;
+      border-right: 1px solid var(--glass-border) !important;
+    }
+
+    .bookmark-name {
+      color: var(--text-secondary) !important;
+      font-weight: 600 !important;
+      font-size: 0.8rem !important;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .header .logo img { height: 48px !important; }
+      .header h1 { font-size: 1.2rem !important; }
+      #tabs ul li button { padding: 6px 14px !important; font-size: 0.8rem !important; }
+      .service-card { border-radius: var(--radius-md) !important; }
+    }
+
+  custom.js: |
+    /* ── Add subtle particle animation to background ── */
+    (function() {
+      const canvas = document.createElement('canvas');
+      canvas.id = 'particle-canvas';
+      canvas.style.cssText = 'position:fixed;inset:0;z-index:-1;pointer-events:none;';
+      document.body.prepend(canvas);
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      for (let i = 0; i < 30; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          o: Math.random() * 0.4 + 0.1
+        });
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(16,185,129,${p.o})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
   services.yaml: |
+    - Info Widgets:
+        - Logo:
+            icon: /images/logo.svg
+            href: ""
+            description: ""
+            widget:
+              type: logo
+        - Greeting:
+            icon: ""
+            href: ""
+            description: ""
+            widget:
+              type: greeting
+              text_size: 2xl
+              text: "Welcome back, sweetpea"
+        - DateTime:
+            icon: ""
+            href: ""
+            description: ""
+            widget:
+              type: datetime
+              text_size: xl
+              format:
+                timeStyle: short
+                dateStyle: full
+                hour12: false
+        - Search:
+            icon: ""
+            href: ""
+            description: ""
+            widget:
+              type: search
+              provider: duckduckgo
+              target: _blank
     - Media:
         - Jellyfin:
             href: http://192.168.20.222:8096
@@ -108,7 +560,7 @@ data:
               key: ${RADARR_API_KEY}
         - Sonarr:
             href: http://192.168.20.219:8989
-            description: TV/Anime
+            description: TV & Anime
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sonarr.svg
             widget:
               type: sonarr
@@ -154,7 +606,7 @@ data:
     - Private:
         - Nextcloud:
             href: http://192.168.20.215:8080
-            description: Files
+            description: Files & Sync
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/nextcloud.svg
             widget:
               type: nextcloud
@@ -163,7 +615,7 @@ data:
               password: ${NEXTCLOUD_ADMIN_PASS}
         - Immich:
             href: http://192.168.20.221:2283
-            description: Photos
+            description: Photos & Memories
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/immich.svg
             widget:
               type: immich
@@ -171,7 +623,7 @@ data:
               key: ${IMMICH_API_KEY}
         - n8n:
             href: https://n8n.mysweetpea.cc
-            description: Automation
+            description: Workflow Automation
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
             widget:
               type: n8n
@@ -187,11 +639,11 @@ data:
               key: ${GOTIFY_CLIENT_TOKEN}
         - AFFiNE:
             href: https://notes.mysweetpea.cc
-            description: Notes
+            description: Knowledge Base
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
         - Qdrant:
             href: http://qdrant.private.svc.cluster.local:6333
-            description: Vector DB
+            description: Vector Database
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qdrant.svg
         - RustDesk:
             href: http://192.168.20.216:21115
@@ -207,7 +659,7 @@ data:
               url: http://traefik.kube-system.svc.cluster.local:8080
         - Authentik:
             href: https://auth.mysweetpea.cc
-            description: SSO Provider
+            description: SSO & Identity
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/authentik.svg
             widget:
               type: authentik
@@ -215,7 +667,7 @@ data:
               key: ${AUTHENTIK_API_TOKEN}
         - Vaultwarden:
             href: https://vault.mysweetpea.cc
-            description: Passwords
+            description: Password Manager
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
         - Matrix Synapse:
             href: https://matrix.mysweetpea.cc
@@ -227,7 +679,7 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
         - Open WebUI:
             href: http://192.168.20.226:8080
-            description: AI Chat
+            description: AI Chat Interface
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
         - Ollama:
             href: http://192.168.20.213:11434
@@ -238,11 +690,11 @@ data:
               url: http://ollama.dmz.svc.cluster.local:11434
         - SearXNG:
             href: http://192.168.20.227:8080
-            description: Search
+            description: Private Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
         - PostgreSQL:
             href: http://postgresql.private.svc.cluster.local:5432
-            description: Shared DB
+            description: Shared Database
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/postgres.svg
     - Monitoring:
         - Uptime Kuma:
@@ -255,13 +707,39 @@ data:
               key: ${UPTIME_KUMA_API_KEY}
         - Netdata:
             href: http://192.168.20.229:19999
-            description: Metrics
+            description: System Metrics
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
         - ArgoCD:
             href: http://192.168.20.220
-            description: GitOps
+            description: GitOps Deployments
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/argocd.svg
             widget:
               type: argocd
               url: http://argocd-server.argocd.svc.cluster.local
               key: ${ARGOCD_API_TOKEN}
+    - Coming Soon:
+        - Grafana:
+            href: ""
+            description: Dashboards — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/grafana.svg
+            server: ""
+        - Prometheus:
+            href: ""
+            description: Metrics — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prometheus.svg
+            server: ""
+        - Syncthing:
+            href: ""
+            description: File Sync — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/syncthing.svg
+            server: ""
+        - Stalwart:
+            href: ""
+            description: Mail Server — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/stalwart.svg
+            server: ""
+        - Remux:
+            href: ""
+            description: Media Transcoder — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/tdarr.svg
+            server: ""
