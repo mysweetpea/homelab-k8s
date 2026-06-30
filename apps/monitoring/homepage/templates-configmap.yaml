@@ -534,7 +534,7 @@ data:
               target: _blank
     - Media:
         - Jellyfin:
-            href: http://192.168.20.222:8096
+            href: http://jellyfin.dmz.svc.cluster.local:8096
             description: Media Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
             widget:
@@ -542,7 +542,7 @@ data:
               url: http://jellyfin.dmz.svc.cluster.local:8096
               key: ${JELLYFIN_API_KEY}
         - Seerr:
-            href: http://192.168.20.228:5055
+            href: http://seerr-seerr-chart.dmz.svc.cluster.local:5055
             description: Media Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
             widget:
@@ -682,14 +682,14 @@ data:
             description: AI Chat Interface
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
         - Ollama:
-            href: http://192.168.20.213:11434
+            href: http://ollama.dmz.svc.cluster.local:11434
             description: LLM Inference
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/ollama.svg
             widget:
               type: ollama
               url: http://ollama.dmz.svc.cluster.local:11434
         - SearXNG:
-            href: http://192.168.20.227:8080
+            href: http://searxng.dmz.svc.cluster.local:8080
             description: Private Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
         - PostgreSQL:
