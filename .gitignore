@@ -2,6 +2,7 @@
 secrets/
 *.secret.yaml
 *.secret.yml
+homepage-secrets.yaml
 *.env
 *.key
 *.pem

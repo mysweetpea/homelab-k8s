@@ -82,7 +82,7 @@ data:
   services.yaml: |
     - Media:
         - Jellyfin:
-            href: http://jellyfin.dmz.svc.cluster.local:8096
+            href: http://192.168.20.222:8096
             description: Media Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
             widget:
@@ -90,7 +90,7 @@ data:
               url: http://jellyfin.dmz.svc.cluster.local:8096
               key: ${JELLYFIN_API_KEY}
         - Seerr:
-            href: http://seerr-seerr-chart.dmz.svc.cluster.local:5055
+            href: http://192.168.20.228:5055
             description: Media Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
             widget:
@@ -115,7 +115,7 @@ data:
               url: http://sonarr.private.svc.cluster.local:8989
               key: ${SONARR_API_KEY}
         - Bazarr:
-            href: http://bazarr.private.svc.cluster.local:6767
+            href: http://192.168.20.223:6767
             description: Subtitles
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/bazarr.svg
             widget:
@@ -123,7 +123,7 @@ data:
               url: http://bazarr.private.svc.cluster.local:6767
               key: ${BAZARR_API_KEY}
         - Prowlarr:
-            href: http://prowlarr.private.svc.cluster.local:9696
+            href: http://192.168.20.224:9696
             description: Indexers
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prowlarr.svg
             widget:
@@ -131,7 +131,7 @@ data:
               url: http://prowlarr.private.svc.cluster.local:9696
               key: ${PROWLARR_API_KEY}
         - qBittorrent:
-            href: http://qbittorrent.private.svc.cluster.local:8080
+            href: http://192.168.20.225:8080
             description: Torrents
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qbittorrent.svg
             widget:
@@ -162,7 +162,7 @@ data:
               username: admin
               password: ${NEXTCLOUD_ADMIN_PASS}
         - Immich:
-            href: http://192.168.20.214:2283
+            href: http://192.168.20.221:2283
             description: Photos
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/immich.svg
             widget:
@@ -170,21 +170,15 @@ data:
               url: http://immich-server.private.svc.cluster.local:2283
               key: ${IMMICH_API_KEY}
         - n8n:
-            href: http://192.168.20.212:5678
+            href: https://n8n.mysweetpea.cc
             description: Automation
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
             widget:
-              type: customapi
-              url: http://n8n.private.svc.cluster.local:5678/api/v1
-              mappings:
-                - field: workflows
-                  label: Workflows
-                - field: executions_24h
-                  label: Executions (24h)
-                - field: failed_24h
-                  label: Failed (24h)
+              type: n8n
+              url: http://n8n.private.svc.cluster.local:5678
+              key: ${N8N_API_KEY}
         - Gotify:
-            href: http://192.168.20.222
+            href: http://192.168.20.214
             description: Notifications
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/gotify.svg
             widget:
@@ -192,7 +186,7 @@ data:
               url: http://gotify-headless.private.svc.cluster.local:80
               key: ${GOTIFY_CLIENT_TOKEN}
         - AFFiNE:
-            href: http://affine.private.svc.cluster.local:3000
+            href: https://notes.mysweetpea.cc
             description: Notes
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
         - Qdrant:
@@ -200,7 +194,7 @@ data:
             description: Vector DB
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qdrant.svg
         - RustDesk:
-            href: http://192.168.20.211:21115
+            href: http://192.168.20.216:21115
             description: Remote Desktop
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/rustdesk.svg
     - Infrastructure:
@@ -212,7 +206,7 @@ data:
               type: traefik
               url: http://traefik.kube-system.svc.cluster.local:8080
         - Authentik:
-            href: https://auth.mysweetpea.duckdns.org
+            href: https://auth.mysweetpea.cc
             description: SSO Provider
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/authentik.svg
             widget:
@@ -220,35 +214,30 @@ data:
               url: http://authentik-server.dmz.svc.cluster.local
               key: ${AUTHENTIK_API_TOKEN}
         - Vaultwarden:
-            href: http://vaultwarden.dmz.svc.cluster.local:80
+            href: https://vault.mysweetpea.cc
             description: Passwords
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
         - Matrix Synapse:
-            href: http://matrix-synapse.dmz.svc.cluster.local:8008
+            href: https://matrix.mysweetpea.cc
             description: Chat Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
         - Element:
-            href: http://element-web.dmz.svc.cluster.local:80
+            href: https://chat.mysweetpea.cc
             description: Matrix Client
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
         - Open WebUI:
-            href: http://open-webui.dmz.svc.cluster.local:8080
+            href: http://192.168.20.226:8080
             description: AI Chat
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
         - Ollama:
-            href: http://ollama.dmz.svc.cluster.local:11434
+            href: http://192.168.20.213:11434
             description: LLM Inference
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/ollama.svg
             widget:
-              type: customapi
-              url: http://ollama.dmz.svc.cluster.local:11434/api/tags
-              mappings:
-                - field: model_count
-                  label: Models
-                - field: model_names
-                  label: Names
+              type: ollama
+              url: http://ollama.dmz.svc.cluster.local:11434
         - SearXNG:
-            href: http://searxng.dmz.svc.cluster.local:8080
+            href: http://192.168.20.227:8080
             description: Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
         - PostgreSQL:
@@ -263,10 +252,16 @@ data:
             widget:
               type: uptimekuma
               url: http://uptime-kuma.monitoring.svc.cluster.local:3001
+              key: ${UPTIME_KUMA_API_KEY}
         - Netdata:
-            href: http://netdata.monitoring.svc.cluster.local:19999
+            href: http://192.168.20.229:19999
             description: Metrics
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
+        - ArgoCD:
+            href: http://192.168.20.220
+            description: GitOps
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/argocd.svg
             widget:
-              type: netdata
-              url: http://netdata.monitoring.svc.cluster.local:19999
+              type: argocd
+              url: http://argocd-server.argocd.svc.cluster.local
+              key: ${ARGOCD_API_TOKEN}
