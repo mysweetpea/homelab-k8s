@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: controllers.main.containers.main.image.tag
+    value: 2026.7.0
+    forcestring: true
+  - name: image.name
+    value: cloudflare/cloudflared
+    forcestring: true
