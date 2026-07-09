@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: controllers.main.containers.main.image.tag
-    value: v3.0.1
+    value: v3.0.2
     forcestring: true
   - name: image.name
     value: ghcr.io/immich-app/immich-server
