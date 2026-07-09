@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: controllers.main.containers.main.image.tag
-    value: 2026.7.0
+    value: 2026.7.1
     forcestring: true
   - name: image.name
     value: cloudflare/cloudflared
