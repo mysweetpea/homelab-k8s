@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: controllers.main.containers.main.image.tag
-    value: 2.30.1
+    value: 2.30.2
     forcestring: true
   - name: image.name
     value: n8nio/n8n
