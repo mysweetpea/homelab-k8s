@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: controllers.main.containers.main.image.tag
-    value: release-6.2.1.10461
+    value: release-6.3.0.10514
     forcestring: true
   - name: image.name
     value: ghcr.io/hotio/radarr
