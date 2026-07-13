@@ -6,6 +6,7 @@ controllers:
         image:
           repository: alpine
           tag: latest
+          pullPolicy: IfNotPresent
         command:
           - sh
           - -c
