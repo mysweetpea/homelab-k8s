@@ -498,40 +498,6 @@ data:
     })();
 
   services.yaml: |
-    - Info Widgets:
-        - Logo:
-            icon: /images/logo.svg
-            href: ""
-            description: ""
-            widget:
-              type: logo
-        - Greeting:
-            icon: ""
-            href: ""
-            description: ""
-            widget:
-              type: greeting
-              text_size: 2xl
-              text: "Welcome back, sweetpea"
-        - DateTime:
-            icon: ""
-            href: ""
-            description: ""
-            widget:
-              type: datetime
-              text_size: xl
-              format:
-                timeStyle: short
-                dateStyle: full
-                hour12: false
-        - Search:
-            icon: ""
-            href: ""
-            description: ""
-            widget:
-              type: search
-              provider: duckduckgo
-              target: _blank
     - Media:
         - Jellyfin:
             href: http://jellyfin.dmz.svc.cluster.local:8096
@@ -643,7 +609,7 @@ data:
             widget:
               type: gotify
               url: http://gotify.private.svc.cluster.local:80
-              key: ${GOTIFY_CLIENT_TOKEN}
+              key: ${GOTIFY_APP_TOKEN}
         - AFFiNE:
             href: https://notes.mysweetpea.cc
             description: Knowledge Base
