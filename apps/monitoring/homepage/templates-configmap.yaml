@@ -642,7 +642,7 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/gotify.svg
             widget:
               type: gotify
-              url: http://gotify-headless.private.svc.cluster.local:80
+              url: http://gotify.private.svc.cluster.local:80
               key: ${GOTIFY_CLIENT_TOKEN}
         - AFFiNE:
             href: https://notes.mysweetpea.cc
@@ -668,6 +668,7 @@ data:
             widget:
               type: authentik
               url: http://authentik-server.dmz.svc.cluster.local:80
+              version: 2
               key: ${AUTHENTIK_API_TOKEN}
         - Vaultwarden:
             href: https://vault.mysweetpea.cc
