@@ -7,7 +7,7 @@ metadata:
 data:
   settings.yaml: |
     title: SweetPea Homelab
-    description: A self-hosted sanctuary
+    description: A self-hosted sanctuary — built with care, secured with Authentik
     headerStyle: boxedWidgets
     theme: dark
     color: slate
@@ -76,6 +76,9 @@ data:
         - Traefik:
             - abbr: TR
               href: http://192.168.20.210:8080
+        - Uptime Kuma:
+            - abbr: UK
+              href: http://192.168.20.217:3001
     - Resources:
         - Kubernetes Docs:
             - abbr: K8
@@ -120,120 +123,115 @@ data:
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
-       SweetPea Homelab — Nordic Glassmorphism v2 — Refined & Polished
+       SweetPea Homelab — Nordic Glassmorphism v3 — Professional Polish
        ═══════════════════════════════════════════════════════════════ */
 
-    /* ── CSS Variables ── */
     :root {
-      --glass-bg: rgba(15, 23, 42, 0.75);
-      --glass-card: rgba(30, 41, 59, 0.55);
-      --glass-card-hover: rgba(30, 41, 59, 0.7);
-      --glass-border: rgba(255, 255, 255, 0.06);
-      --glass-border-hover: rgba(16, 185, 129, 0.3);
+      --glass-bg: rgba(15, 23, 42, 0.78);
+      --glass-card: rgba(30, 41, 59, 0.58);
+      --glass-card-hover: rgba(30, 41, 59, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.07);
+      --glass-border-hover: rgba(16, 185, 129, 0.35);
       --accent: #10b981;
       --accent-light: #34d399;
-      --accent-glow: rgba(16, 185, 129, 0.3);
-      --text-primary: #e2e8f0;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --text-primary: #f1f5f9;
       --text-secondary: #94a3b8;
       --text-muted: #64748b;
       --radius-xl: 24px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --radius-sm: 10px;
-      --blur: 20px;
-      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.2);
-      --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.12), 0 0 80px rgba(16, 185, 129, 0.06);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --blur: 22px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.22);
+      --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(16, 185, 129, 0.12), 0 0 60px rgba(16, 185, 129, 0.08);
     }
 
-    /* ── Body Background — Multi-layer gradient ── */
     body {
       background:
-        radial-gradient(ellipse at 20% 0%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
-        linear-gradient(135deg, #0b1120 0%, #0f172a 30%, #1a1f35 60%, #0d1525 100%) !important;
+        radial-gradient(ellipse at 15% 0%, rgba(16, 185, 129, 0.05) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(99, 102, 241, 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.015) 0%, transparent 70%),
+        linear-gradient(135deg, #0a0f1c 0%, #0f172a 35%, #151d2e 65%, #0b1220 100%) !important;
       background-attachment: fixed !important;
     }
 
-    /* Subtle grid overlay */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
-      background-size: 60px 60px;
+        linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+      background-size: 80px 80px;
       pointer-events: none;
       z-index: 0;
     }
 
-    /* ── Header / Logo Area ── */
     .header {
       position: relative;
-      padding: 2rem 0 0.75rem 0 !important;
+      padding: 2.5rem 0 1rem 0 !important;
+      margin-bottom: 0.5rem !important;
     }
 
-    /* Logo container — centered and prominent */
-    /* Logo widget — upscaled */
     .information-widget-logo,
     .information-widget-logo img,
     .header .logo img,
     [class*="information-widget-logo"] img {
       height: 120px !important;
       width: auto !important;
-      max-width: 200px !important;
+      max-width: 220px !important;
       object-fit: contain !important;
-      filter: drop-shadow(0 0 24px rgba(16, 185, 129, 0.5))
-              drop-shadow(0 0 48px rgba(16, 185, 129, 0.2)) !important;
+      filter: drop-shadow(0 0 28px rgba(16, 185, 129, 0.55))
+              drop-shadow(0 0 56px rgba(16, 185, 129, 0.22)) !important;
       transition: filter var(--transition), transform var(--transition) !important;
     }
 
     .information-widget-logo img:hover,
     .header .logo img:hover,
     [class*="information-widget-logo"] img:hover {
-      filter: drop-shadow(0 0 36px rgba(16, 185, 129, 0.7))
-              drop-shadow(0 0 72px rgba(16, 185, 129, 0.35)) !important;
-      transform: scale(1.05) !important;
+      filter: drop-shadow(0 0 40px rgba(16, 185, 129, 0.8))
+              drop-shadow(0 0 80px rgba(16, 185, 129, 0.35)) !important;
+      transform: scale(1.06) !important;
     }
 
-    /* Title styling — gradient text */
     .header h1 {
-      font-size: 1.7rem !important;
-      font-weight: 700 !important;
-      letter-spacing: 0.03em !important;
-      background: linear-gradient(135deg, #e2e8f0 0%, #10b981 50%, #34d399 100%) !important;
+      font-size: 1.8rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.02em !important;
+      background: linear-gradient(135deg, #f8fafc 0%, #10b981 40%, #34d399 100%) !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
       background-clip: text !important;
       text-align: center !important;
-      margin-bottom: 0.25rem !important;
+      margin-bottom: 0.35rem !important;
     }
 
-    /* Description subtitle */
     .header p {
       text-align: center !important;
       color: var(--text-muted) !important;
-      font-size: 0.8rem !important;
-      letter-spacing: 0.05em !important;
+      font-size: 0.82rem !important;
+      letter-spacing: 0.06em !important;
+      text-transform: uppercase !important;
     }
 
-    /* ── Tab Navigation — Pill style with glow ── */
     #tabs ul {
       display: flex !important;
       flex-direction: row !important;
       flex-wrap: wrap !important;
       justify-content: center !important;
-      gap: 4px !important;
-      padding: 6px !important;
-      margin: 0 auto 2rem auto !important;
+      gap: 6px !important;
+      padding: 8px !important;
+      margin: 0 auto 2.5rem auto !important;
       width: fit-content !important;
-      background: rgba(30, 41, 59, 0.5) !important;
+      max-width: 95% !important;
+      background: rgba(30, 41, 59, 0.55) !important;
       backdrop-filter: blur(var(--blur)) !important;
       -webkit-backdrop-filter: blur(var(--blur)) !important;
       border: 1px solid var(--glass-border) !important;
       border-radius: 50px !important;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18) !important;
     }
 
     #tabs ul li {
@@ -244,9 +242,9 @@ data:
     #tabs ul li button {
       width: auto !important;
       border-radius: 50px !important;
-      padding: 9px 24px !important;
+      padding: 10px 26px !important;
       min-height: unset !important;
-      font-size: 0.875rem !important;
+      font-size: 0.9rem !important;
       font-weight: 500 !important;
       color: var(--text-secondary) !important;
       background: transparent !important;
@@ -256,17 +254,16 @@ data:
 
     #tabs ul li button:hover {
       color: var(--text-primary) !important;
-      background: rgba(255, 255, 255, 0.06) !important;
+      background: rgba(255, 255, 255, 0.07) !important;
     }
 
     #tabs ul li button[aria-selected="true"] {
       color: #fff !important;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(52, 211, 153, 0.15)) !important;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.28), rgba(52, 211, 153, 0.18)) !important;
       font-weight: 600 !important;
-      box-shadow: 0 0 24px rgba(16, 185, 129, 0.2), inset 0 0 0 1px rgba(16, 185, 129, 0.15) !important;
+      box-shadow: 0 0 28px rgba(16, 185, 129, 0.25), inset 0 0 0 1px rgba(16, 185, 129, 0.18) !important;
     }
 
-    /* ── Service Cards — Enhanced Glassmorphism ── */
     .service-card {
       position: relative !important;
       background: var(--glass-card) !important;
@@ -285,36 +282,31 @@ data:
       position: absolute;
       inset: 0;
       background: linear-gradient(135deg,
-        rgba(255,255,255,0.05) 0%,
-        rgba(255,255,255,0.01) 50%,
+        rgba(255,255,255,0.06) 0%,
+        rgba(255,255,255,0.02) 50%,
         rgba(255,255,255,0) 100%);
       z-index: 0;
       pointer-events: none;
       transition: opacity var(--transition) !important;
     }
 
-    /* Subtle top highlight line */
     .service-card::after {
       content: "";
       position: absolute;
       top: 0;
-      left: 10%;
-      right: 10%;
+      left: 12%;
+      right: 12%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
       z-index: 2;
       pointer-events: none;
     }
 
     .service-card:hover {
-      transform: translateY(-5px) !important;
+      transform: translateY(-6px) !important;
       background: var(--glass-card-hover) !important;
       border-color: var(--glass-border-hover) !important;
       box-shadow: var(--shadow-hover) !important;
-    }
-
-    .service-card:hover::before {
-      opacity: 1.5 !important;
     }
 
     .service-card > div {
@@ -322,54 +314,53 @@ data:
       z-index: 1 !important;
     }
 
-    /* ── Service Card Color Tinting ── */
-    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.22), transparent 70%) !important; }
-    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.22), transparent 70%) !important; }
-    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.22), transparent 70%) !important; }
-    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.22), transparent 70%) !important; }
-    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.22), transparent 70%) !important; }
-    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.22), transparent 70%) !important; }
-    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.22), transparent 70%) !important; }
-    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
-    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.22), transparent 70%) !important; }
-    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.22), transparent 70%) !important; }
-    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.22), transparent 70%) !important; }
-    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.22), transparent 70%) !important; }
-    #traefik-card::before   { background: radial-gradient(circle at top left, rgba(37,193,255,0.22), transparent 70%) !important; }
-    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.22), transparent 70%) !important; }
-    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
-    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.22), transparent 70%) !important; }
-    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.22), transparent 70%) !important; }
-    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.22), transparent 70%) !important; }
-    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.22), transparent 70%) !important; }
-    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.22), transparent 70%) !important; }
-    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.22), transparent 70%) !important; }
-    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.22), transparent 70%) !important; }
-    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.22), transparent 70%) !important; }
-    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
-    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.22), transparent 70%) !important; }
-    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.22), transparent 70%) !important; }
-    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
-    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.22), transparent 70%) !important; }
-    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
-    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.22), transparent 70%) !important; }
+    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.20), transparent 70%) !important; }
+    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.20), transparent 70%) !important; }
+    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.20), transparent 70%) !important; }
+    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.20), transparent 70%) !important; }
+    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.20), transparent 70%) !important; }
+    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.20), transparent 70%) !important; }
+    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.20), transparent 70%) !important; }
+    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.20), transparent 70%) !important; }
+    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.20), transparent 70%) !important; }
+    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.20), transparent 70%) !important; }
+    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.20), transparent 70%) !important; }
+    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.20), transparent 70%) !important; }
+    #traefik-card::before   { background: radial-gradient(circle at top left, rgba(37,193,255,0.20), transparent 70%) !important; }
+    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.20), transparent 70%) !important; }
+    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.20), transparent 70%) !important; }
+    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.20), transparent 70%) !important; }
+    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.20), transparent 70%) !important; }
+    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.20), transparent 70%) !important; }
+    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.20), transparent 70%) !important; }
+    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.20), transparent 70%) !important; }
+    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.20), transparent 70%) !important; }
+    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.20), transparent 70%) !important; }
+    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.20), transparent 70%) !important; }
+    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.20), transparent 70%) !important; }
+    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.20), transparent 70%) !important; }
+    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.20), transparent 70%) !important; }
+    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.20), transparent 70%) !important; }
+    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.20), transparent 70%) !important; }
+    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.20), transparent 70%) !important; }
+    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.20), transparent 70%) !important; }
+    #jellyfin2-card::before { background: radial-gradient(circle at top left, rgba(170,92,195,0.15), transparent 70%) !important; }
+    #seerr2-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.15), transparent 70%) !important; }
 
-    /* ── Coming Soon Cards — Special Styling ── */
     #grafana-card, #prometheus-card, #syncthing-card,
-    #stalwart-card, #remux-card, #koalasync-card {
-      opacity: 0.65 !important;
+    #stalwart-card, #remux-card {
+      opacity: 0.6 !important;
       border-style: dashed !important;
       border-color: rgba(255,255,255,0.08) !important;
     }
 
     #grafana-card:hover, #prometheus-card:hover, #syncthing-card:hover,
-    #stalwart-card:hover, #remux-card:hover, #koalasync-card:hover {
+    #stalwart-card:hover, #remux-card:hover {
       opacity: 0.85 !important;
       border-style: solid !important;
       border-color: var(--glass-border-hover) !important;
     }
 
-    /* ── Service Name & Description ── */
     .service-name {
       color: var(--text-primary) !important;
       font-weight: 600 !important;
@@ -382,7 +373,6 @@ data:
       font-size: 0.75rem !important;
     }
 
-    /* ── Status & Ping Badges ── */
     .service-tags {
       position: absolute !important;
       top: 10px !important;
@@ -412,18 +402,16 @@ data:
       line-height: 1.2 !important;
     }
 
-    /* ── Group Headers ── */
     .service-group-name, .bookmark-group-name {
       color: var(--text-secondary) !important;
       font-weight: 700 !important;
-      font-size: 0.8rem !important;
-      letter-spacing: 0.06em !important;
+      font-size: 0.78rem !important;
+      letter-spacing: 0.07em !important;
       text-transform: uppercase !important;
-      opacity: 0.65 !important;
-      margin-bottom: 0.5rem !important;
+      opacity: 0.7 !important;
+      margin-bottom: 0.6rem !important;
     }
 
-    /* ── Info Widgets — Glass cards ── */
     .widget-container,
     .information-widget-logo,
     [class*="information-widget-glances"] {
@@ -440,11 +428,10 @@ data:
 
     .widget-container:hover,
     [class*="information-widget-glances"]:hover {
-      border-color: rgba(255,255,255,0.1) !important;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
+      border-color: rgba(255,255,255,0.12) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28) !important;
     }
 
-    /* ── Resource Bars ── */
     .information-widget-resource div[style*="width"] {
       background: linear-gradient(90deg, #10b981 0%, #34d399 40%, #22d3ee 75%, #a78bfa 100%) !important;
       opacity: 0.6 !important;
@@ -456,7 +443,6 @@ data:
     .information-widget-resource:nth-of-type(3) svg { color: #ef4444 !important; }
     .information-widget-resource:nth-of-type(4) svg { color: #a78bfa !important; }
 
-    /* ── Bookmarks ── */
     li.bookmark a {
       border-radius: var(--radius-md) !important;
       background: rgba(255,255,255,0.03) !important;
@@ -485,7 +471,6 @@ data:
       font-size: 0.8rem !important;
     }
 
-    /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb {
@@ -494,16 +479,14 @@ data:
     }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-    /* ── Responsive ── */
     @media (max-width: 768px) {
       .header .logo img { height: 52px !important; }
-      .header h1 { font-size: 1.2rem !important; }
-      #tabs ul li button { padding: 7px 16px !important; font-size: 0.8rem !important; }
+      .header h1 { font-size: 1.25rem !important; }
+      #tabs ul li button { padding: 8px 18px !important; font-size: 0.8rem !important; }
       .service-card { border-radius: var(--radius-md) !important; }
     }
 
   custom.js: |
-    /* ── Add subtle particle animation to background ── */
     (function() {
       const canvas = document.createElement('canvas');
       canvas.id = 'particle-canvas';
@@ -517,14 +500,14 @@ data:
       }
       resize();
       window.addEventListener('resize', resize);
-      for (let i = 0; i < 35; i++) {
+      for (let i = 0; i < 30; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: Math.random() * 1.8 + 0.4,
-          vx: (Math.random() - 0.5) * 0.25,
-          vy: (Math.random() - 0.5) * 0.25,
-          o: Math.random() * 0.35 + 0.08
+          r: Math.random() * 1.6 + 0.3,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
+          o: Math.random() * 0.3 + 0.06
         });
       }
       function animate() {
@@ -549,6 +532,7 @@ data:
   services.yaml: |
     - Public Services:
         - Jellyfin:
+            id: jellyfin
             href: https://media.mysweetpea.cc
             description: Media Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
@@ -557,6 +541,7 @@ data:
               url: http://jellyfin.dmz.svc.cluster.local:8096
               key: ${JELLYFIN_API_KEY}
         - Seerr:
+            id: seerr
             href: https://request.mysweetpea.cc
             description: Media Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
@@ -564,11 +549,18 @@ data:
               type: seerr
               url: http://seerr.dmz.svc.cluster.local:5055
               key: ${SEERR_API_KEY}
+        - KoalaSync:
+            id: koalasync
+            href: https://sync.mysweetpea.cc
+            description: Synchronized Video Playback
+            icon: mdi-sync
         - AFFiNE:
+            id: affine
             href: https://notes.mysweetpea.cc
             description: Knowledge Base
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
         - Authentik:
+            id: authentik
             href: https://auth.mysweetpea.cc
             description: SSO & Identity
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/authentik.svg
@@ -578,18 +570,22 @@ data:
               version: 2
               key: ${AUTHENTIK_API_TOKEN}
         - Vaultwarden:
+            id: vaultwarden
             href: https://vault.mysweetpea.cc
             description: Password Manager
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
         - Element:
+            id: element
             href: https://chat.mysweetpea.cc
             description: Matrix Chat Client
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
         - Matrix Synapse:
+            id: matrix
             href: https://matrix.mysweetpea.cc
             description: Chat Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
         - n8n:
+            id: n8n
             href: https://n8n.mysweetpea.cc
             description: Workflow Automation
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
@@ -605,6 +601,7 @@ data:
                   format: number
     - Media:
         - Jellyfin:
+            id: jellyfin2
             href: http://jellyfin.dmz.svc.cluster.local:8096
             description: Media Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
@@ -613,6 +610,7 @@ data:
               url: http://jellyfin.dmz.svc.cluster.local:8096
               key: ${JELLYFIN_API_KEY}
         - Seerr:
+            id: seerr2
             href: https://request.mysweetpea.cc
             description: Media Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
@@ -622,6 +620,7 @@ data:
               key: ${SEERR_API_KEY}
     - Arr Stack:
         - Radarr:
+            id: radarr
             href: http://192.168.20.218:7878
             description: Movies
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/radarr.svg
@@ -630,6 +629,7 @@ data:
               url: http://radarr.private.svc.cluster.local:7878
               key: ${RADARR_API_KEY}
         - Sonarr:
+            id: sonarr
             href: http://192.168.20.219:8989
             description: TV & Anime
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sonarr.svg
@@ -638,6 +638,7 @@ data:
               url: http://sonarr.private.svc.cluster.local:8989
               key: ${SONARR_API_KEY}
         - Bazarr:
+            id: bazarr
             href: http://192.168.20.223:6767
             description: Subtitles
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/bazarr.svg
@@ -646,6 +647,7 @@ data:
               url: http://bazarr.private.svc.cluster.local:6767
               key: ${BAZARR_API_KEY}
         - Prowlarr:
+            id: prowlarr
             href: http://192.168.20.224:9696
             description: Indexers
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prowlarr.svg
@@ -654,6 +656,7 @@ data:
               url: http://prowlarr.private.svc.cluster.local:9696
               key: ${PROWLARR_API_KEY}
         - qBittorrent:
+            id: qbittorrent
             href: http://192.168.20.225:8080
             description: Torrents
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qbittorrent.svg
@@ -663,19 +666,23 @@ data:
               username: ${QBITTORRENT_USER}
               password: ${QBITTORRENT_PASS}
         - FlareSolverr:
+            id: flaresolverr
             href: http://flaresolverr.private.svc.cluster.local:8191
             description: Cloudflare Bypass
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
         - Questarr:
+            id: questarr
             href: http://questarr.private.svc.cluster.local:5000
             description: Game Manager
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
         - NzbDAV:
+            id: nzbdav
             href: http://nzbdav.private.svc.cluster.local:8081
             description: Usenet Stream
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
     - Private:
         - Nextcloud:
+            id: nextcloud
             href: http://192.168.20.215:8080
             description: Files & Sync
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/nextcloud.svg
@@ -685,6 +692,7 @@ data:
               username: admin
               password: ${NEXTCLOUD_ADMIN_PASS}
         - Immich:
+            id: immich
             href: http://192.168.20.221:2283
             description: Photos & Memories
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/immich.svg
@@ -694,6 +702,7 @@ data:
               key: ${IMMICH_API_KEY}
               version: 2
         - n8n:
+            id: n8n2
             href: https://n8n.mysweetpea.cc
             description: Workflow Automation
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
@@ -708,6 +717,7 @@ data:
                   label: Workflows
                   format: number
         - Gotify:
+            id: gotify
             href: http://192.168.20.214
             description: Notifications
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/gotify.svg
@@ -716,23 +726,31 @@ data:
               url: http://gotify.private.svc.cluster.local:80
               key: ${GOTIFY_APP_TOKEN}
         - AFFiNE:
+            id: affine2
             href: https://notes.mysweetpea.cc
             description: Knowledge Base
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
         - Qdrant:
+            id: qdrant
             href: http://qdrant.private.svc.cluster.local:6333
             description: Vector Database
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qdrant.svg
         - RustDesk:
+            id: rustdesk
             href: http://192.168.20.216:21115
             description: Remote Desktop
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/rustdesk.svg
     - Infrastructure:
         - Traefik:
+            id: traefik
             href: http://192.168.20.210:8080
             description: Ingress Controller
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/traefik.svg
+            widget:
+              type: traefik
+              url: http://traefik.kube-system.svc.cluster.local:8080
         - Authentik:
+            id: authentik2
             href: https://auth.mysweetpea.cc
             description: SSO & Identity
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/authentik.svg
@@ -742,22 +760,27 @@ data:
               version: 2
               key: ${AUTHENTIK_API_TOKEN}
         - Vaultwarden:
+            id: vaultwarden2
             href: https://vault.mysweetpea.cc
             description: Password Manager
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
         - Matrix Synapse:
+            id: matrix2
             href: https://matrix.mysweetpea.cc
             description: Chat Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
         - Element:
+            id: element2
             href: https://chat.mysweetpea.cc
             description: Matrix Client
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
         - Open WebUI:
+            id: open-webui
             href: http://192.168.20.226:8080
             description: AI Chat Interface
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
         - Ollama:
+            id: ollama
             href: http://ollama.dmz.svc.cluster.local:11434
             description: LLM Inference
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/ollama.svg
@@ -770,15 +793,18 @@ data:
                   label: Models
                   format: number
         - SearXNG:
+            id: searxng
             href: http://searxng.dmz.svc.cluster.local:8080
             description: Private Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
         - PostgreSQL:
+            id: postgresql
             href: http://postgresql.private.svc.cluster.local:5432
             description: Shared Database
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/postgres.svg
     - Monitoring:
         - Uptime Kuma:
+            id: uptime-kuma
             href: http://192.168.20.217:3001
             description: Uptime Monitor
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/uptime-kuma.svg
@@ -787,10 +813,12 @@ data:
               url: http://uptime-kuma.monitoring.svc.cluster.local:3001
               slug: ${UPTIME_KUMA_SLUG}
         - Netdata:
+            id: netdata
             href: http://192.168.20.229:19999
             description: System Metrics
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
         - ArgoCD:
+            id: argocd
             href: http://192.168.20.220
             description: GitOps Deployments
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/argocd.svg
@@ -800,33 +828,33 @@ data:
               key: ${ARGOCD_API_TOKEN}
     - Coming Soon:
         - Grafana:
+            id: grafana
             href: ""
             description: Dashboards — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/grafana.svg
             server: ""
         - Prometheus:
+            id: prometheus
             href: ""
             description: Metrics — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prometheus.svg
             server: ""
         - Syncthing:
+            id: syncthing
             href: ""
             description: File Sync — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/syncthing.svg
             server: ""
         - Stalwart:
+            id: stalwart
             href: ""
             description: Mail Server — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/stalwart.svg
             server: ""
         - Remux:
+            id: remux
             href: ""
             description: Media Transcoder — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/tdarr.svg
-            server: ""
-        - KoalaSync:
-            href: https://github.com/Shik3i/KoalaSync
-            description: Sync Video Playback — Coming Soon
-            icon: mdi-sync
             server: ""
 
