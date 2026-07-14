@@ -11,8 +11,10 @@ controllers:
           MIN_VERSION: "1.0.0"
           MAX_ROOMS: "100"
           MAX_PEERS_PER_ROOM: "50"
-          SERVER_SALT: "Homelab2026!KoalaSyncSalt-9f8e7d6c5b4a"
           DEBUG_LOGGING: "0"
+        envFrom:
+          - secretRef:
+              name: koalasync-secrets
         probes:
           liveness:
             enabled: true
@@ -38,4 +40,3 @@ service:
     ports:
       http:
         port: 3000
-
