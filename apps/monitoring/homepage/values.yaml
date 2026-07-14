@@ -12,6 +12,28 @@ controllers:
           - -c
           - |
             cp /templates/* /app/config/
+            for f in /app/config/*.yaml; do
+              sed -i \
+                -e "s|\${JELLYFIN_API_KEY}|${JELLYFIN_API_KEY}|g" \
+                -e "s|\${SEERR_API_KEY}|${SEERR_API_KEY}|g" \
+                -e "s|\${RADARR_API_KEY}|${RADARR_API_KEY}|g" \
+                -e "s|\${SONARR_API_KEY}|${SONARR_API_KEY}|g" \
+                -e "s|\${BAZARR_API_KEY}|${BAZARR_API_KEY}|g" \
+                -e "s|\${PROWLARR_API_KEY}|${PROWLARR_API_KEY}|g" \
+                -e "s|\${QBITTORRENT_USER}|${QBITTORRENT_USER}|g" \
+                -e "s|\${QBITTORRENT_PASS}|${QBITTORRENT_PASS}|g" \
+                -e "s|\${NEXTCLOUD_ADMIN_PASS}|${NEXTCLOUD_ADMIN_PASS}|g" \
+                -e "s|\${IMMICH_API_KEY}|${IMMICH_API_KEY}|g" \
+                -e "s|\${N8N_API_KEY}|${N8N_API_KEY}|g" \
+                -e "s|\${GOTIFY_APP_TOKEN}|${GOTIFY_APP_TOKEN}|g" \
+                -e "s|\${AUTHENTIK_API_TOKEN}|${AUTHENTIK_API_TOKEN}|g" \
+                -e "s|\${ARGOCD_API_TOKEN}|${ARGOCD_API_TOKEN}|g" \
+                -e "s|\${UPTIME_KUMA_SLUG}|${UPTIME_KUMA_SLUG}|g" \
+                "$f"
+            done
+        envFrom:
+          - secretRef:
+              name: homepage-secrets
     containers:
       main:
         env:
