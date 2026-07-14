@@ -1,41 +1,24 @@
 ---
 controllers:
   main:
-    initContainers:
-      config-merge:
-        image:
-          repository: alpine
-          tag: latest
-          pullPolicy: IfNotPresent
-        command:
-          - sh
-          - -c
-          - |
-            apk add --no-cache gettext envsubst
-            mkdir -p /app/config
-            cp /templates/* /app/config/
-            for f in /app/config/*.yaml; do
-              envsubst < "$f" > "$f.tmp"
-              mv "$f.tmp" "$f"
-            done
-        envFrom:
-          - secretRef:
-              name: homepage-secrets
     containers:
       main:
         env:
           HOMEPAGE_ALLOWED_HOSTS: "192.168.20.211:3000,homepage.mysweetpea.cc"
+        envFrom:
+          - secretRef:
+              name: homepage-secrets
         image:
           repository: ghcr.io/gethomepage/homepage
           tag: v1.13.2
     type: deployment
 persistence:
-  templates:
+  config:
     enabled: true
     type: configMap
     name: homepage-templates
     globalMounts:
-      - path: /templates
+      - path: /app/config
   logo:
     enabled: true
     type: configMap
@@ -45,11 +28,6 @@ persistence:
         main:
           - path: /app/public/logo.svg
             subPath: logo.svg
-  merged:
-    enabled: true
-    type: emptyDir
-    globalMounts:
-      - path: /app/config
   logs:
     enabled: true
     type: emptyDir
@@ -64,4 +42,3 @@ service:
     type: LoadBalancer
     loadBalancerIP: 192.168.20.211
     allocateLoadBalancerNodePorts: false
-
