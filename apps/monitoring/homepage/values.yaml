@@ -18,10 +18,6 @@ controllers:
               envsubst < "$f" > "$f.tmp"
               mv "$f.tmp" "$f"
             done
-            if [ -f /logo/logo.svg ]; then
-              mkdir -p /app/public
-              cp /logo/logo.svg /app/public/logo.svg
-            fi
         envFrom:
           - secretRef:
               name: homepage-secrets
@@ -44,8 +40,11 @@ persistence:
     enabled: true
     type: configMap
     name: sweetpea-logo
-    globalMounts:
-      - path: /logo
+    advancedMounts:
+      main:
+        main:
+          - path: /app/public/logo.svg
+            subPath: logo.svg
   merged:
     enabled: true
     type: emptyDir
@@ -65,3 +64,4 @@ service:
     type: LoadBalancer
     loadBalancerIP: 192.168.20.211
     allocateLoadBalancerNodePorts: false
+
