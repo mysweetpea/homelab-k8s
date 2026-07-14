@@ -109,34 +109,39 @@ data:
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
-       SweetPea Homelab — Branch Navigation Theme
+       SweetPea Homelab — Black & Gold Branch Navigation
        ═══════════════════════════════════════════════════════════════ */
 
     :root {
-      --glass-card: rgba(30, 41, 59, 0.55);
-      --glass-card-hover: rgba(30, 41, 59, 0.72);
-      --glass-border: rgba(255, 255, 255, 0.06);
-      --glass-border-hover: rgba(16, 185, 129, 0.3);
-      --accent: #10b981;
-      --accent-light: #34d399;
-      --text-primary: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --blur: 20px;
-      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.22);
-      --shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(16, 185, 129, 0.12), 0 0 60px rgba(16, 185, 129, 0.08);
+      --gold: #d4af37;
+      --gold-light: #f0c75e;
+      --gold-dark: #b8941f;
+      --gold-glow: rgba(212, 175, 55, 0.3);
+      --gold-faint: rgba(212, 175, 55, 0.08);
+      --black-bg: #0a0a0a;
+      --black-card: rgba(20, 20, 20, 0.65);
+      --black-card-hover: rgba(25, 25, 25, 0.8);
+      --border: rgba(212, 175, 55, 0.08);
+      --border-hover: rgba(212, 175, 55, 0.3);
+      --text-primary: #f5f5f5;
+      --text-secondary: #a8a8a8;
+      --text-muted: #666;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --blur: 16px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(212, 175, 55, 0.1), 0 0 50px rgba(212, 175, 55, 0.06);
     }
 
-    /* ── Body Background ── */
+    /* ── Body — Deep Black ── */
     body {
       background:
-        radial-gradient(ellipse at 15% 0%, rgba(16, 185, 129, 0.04) 0%, transparent 55%),
-        radial-gradient(ellipse at 85% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 55%),
-        linear-gradient(135deg, #0a0f1c 0%, #0f172a 35%, #151d2e 65%, #0b1220 100%) !important;
+        radial-gradient(ellipse at 50% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(212, 175, 55, 0.02) 0%, transparent 50%),
+        #0a0a0a !important;
       background-attachment: fixed !important;
+      color: var(--text-primary) !important;
     }
 
     /* ── Hide Default Header & Tabs ── */
@@ -152,47 +157,55 @@ data:
       left: 0 !important;
       right: 0 !important;
       z-index: 100 !important;
-      background: rgba(10, 15, 28, 0.88) !important;
+      background: rgba(8, 8, 8, 0.92) !important;
       backdrop-filter: blur(20px) !important;
       -webkit-backdrop-filter: blur(20px) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-      padding: 10px 24px !important;
+      border-bottom: 1px solid var(--border) !important;
+      padding: 8px 24px !important;
       margin: 0 !important;
       border-radius: 0 !important;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
     }
 
     #information-widgets .widget-container {
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
-      padding: 4px 12px !important;
+      padding: 2px 10px !important;
       margin: 0 !important;
     }
 
     .information-widget-resource div[style*="width"] {
-      background: linear-gradient(90deg, #10b981 0%, #34d399 40%, #22d3ee 100%) !important;
-      opacity: 0.6 !important;
+      background: linear-gradient(90deg, #d4af37 0%, #f0c75e 50%, #d4af37 100%) !important;
+      opacity: 0.5 !important;
       border-radius: 10px !important;
     }
 
-    .information-widget-resource:nth-of-type(1) svg { color: #10b981 !important; }
-    .information-widget-resource:nth-of-type(2) svg { color: #22d3ee !important; }
-    .information-widget-resource:nth-of-type(3) svg { color: #a78bfa !important; }
+    .information-widget-resource:nth-of-type(1) svg { color: #d4af37 !important; }
+    .information-widget-resource:nth-of-type(2) svg { color: #f0c75e !important; }
+    .information-widget-resource:nth-of-type(3) svg { color: #b8941f !important; }
 
-    /* ── Container Padding (space for fixed stats bar) ── */
+    /* ── Container ── */
     .container {
-      padding-top: 80px !important;
+      padding-top: 70px !important;
     }
 
-    body.service-view .container {
-      padding-top: 130px !important;
+    /* ── Service Content — Hidden by Default ── */
+    #inner_wrapper > .container > div:not(#information-widgets):not(#footer):not(#branch-overlay):not(#back-btn) {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    body.service-view #inner_wrapper > .container > div:not(#information-widgets):not(#footer):not(#branch-overlay):not(#back-btn) {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     /* ── Branch Overlay ── */
     #branch-overlay {
       position: fixed;
-      top: 70px;
+      top: 60px;
       left: 0;
       right: 0;
       bottom: 0;
@@ -201,7 +214,6 @@ data:
       align-items: center;
       justify-content: center;
       transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
-      overflow: hidden;
     }
 
     #branch-overlay.exit {
@@ -213,11 +225,11 @@ data:
     #branch-content {
       position: relative;
       width: 100%;
-      max-width: 1200px;
-      height: 500px;
+      max-width: 1400px;
+      height: 600px;
     }
 
-    /* ── Branch SVG Lines ── */
+    /* ── Branch SVG Lines — Gold Vines ── */
     #branch-svg {
       position: absolute;
       top: 0;
@@ -229,32 +241,56 @@ data:
 
     .branch-line {
       fill: none;
-      stroke: #1e293b;
-      stroke-width: 2;
+      stroke: var(--gold-dark);
+      stroke-width: 1.5;
       stroke-linecap: round;
       transition: stroke 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease;
-      stroke-dasharray: 600;
-      stroke-dashoffset: 600;
-      animation: draw-line 1.2s ease forwards;
+      stroke-dasharray: 800;
+      stroke-dashoffset: 800;
+      animation: draw-line 1.5s ease forwards;
+      opacity: 0.5;
     }
 
-    .branch-line:nth-child(1) { animation-delay: 0.1s; }
-    .branch-line:nth-child(2) { animation-delay: 0.25s; }
-    .branch-line:nth-child(3) { animation-delay: 0.4s; }
-    .branch-line:nth-child(4) { animation-delay: 0.55s; }
-    .branch-line:nth-child(5) { animation-delay: 0.7s; }
+    .branch-line:nth-child(1) { animation-delay: 0.2s; }
+    .branch-line:nth-child(2) { animation-delay: 0.4s; }
+    .branch-line:nth-child(3) { animation-delay: 0.6s; }
+    .branch-line:nth-child(4) { animation-delay: 0.8s; }
+    .branch-line:nth-child(5) { animation-delay: 1s; }
 
     @keyframes draw-line {
       to { stroke-dashoffset: 0; }
     }
 
     .branch-line.active {
-      stroke: #10b981;
-      stroke-width: 3;
-      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+      stroke: var(--gold);
+      stroke-width: 2.5;
+      opacity: 1;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
     }
 
-    /* ── Center Logo ── */
+    /* ── Vine Leaves on Branches ── */
+    .vine-leaf {
+      fill: var(--gold-dark);
+      opacity: 0;
+      animation: leaf-appear 0.6s ease forwards;
+    }
+
+    .vine-leaf:nth-child(6) { animation-delay: 1.5s; }
+    .vine-leaf:nth-child(7) { animation-delay: 1.7s; }
+    .vine-leaf:nth-child(8) { animation-delay: 1.9s; }
+    .vine-leaf:nth-child(9) { animation-delay: 2.1s; }
+    .vine-leaf:nth-child(10) { animation-delay: 2.3s; }
+    .vine-leaf:nth-child(11) { animation-delay: 2.5s; }
+    .vine-leaf:nth-child(12) { animation-delay: 2.7s; }
+    .vine-leaf:nth-child(13) { animation-delay: 2.9s; }
+    .vine-leaf:nth-child(14) { animation-delay: 3.1s; }
+    .vine-leaf:nth-child(15) { animation-delay: 3.3s; }
+
+    @keyframes leaf-appear {
+      to { opacity: 0.25; }
+    }
+
+    /* ── Center Logo — Large & Illuminated ── */
     #branch-logo {
       position: absolute;
       top: 50%;
@@ -264,20 +300,20 @@ data:
     }
 
     #branch-logo img {
-      height: 130px;
+      height: 220px;
       width: auto;
       object-fit: contain;
-      animation: pulse-glow 4s ease-in-out infinite;
+      animation: pulse-gold 5s ease-in-out infinite;
     }
 
-    @keyframes pulse-glow {
+    @keyframes pulse-gold {
       0%, 100% {
-        filter: drop-shadow(0 0 24px rgba(16, 185, 129, 0.5))
-                drop-shadow(0 0 48px rgba(16, 185, 129, 0.2));
+        filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.4))
+                drop-shadow(0 0 60px rgba(212, 175, 55, 0.15));
       }
       50% {
-        filter: drop-shadow(0 0 36px rgba(16, 185, 129, 0.75))
-                drop-shadow(0 0 72px rgba(16, 185, 129, 0.32));
+        filter: drop-shadow(0 0 45px rgba(212, 175, 55, 0.65))
+                drop-shadow(0 0 90px rgba(212, 175, 55, 0.28));
       }
     }
 
@@ -285,56 +321,55 @@ data:
     .branch-btn {
       position: absolute;
       transform: translate(-50%, -50%);
-      background: rgba(30, 41, 59, 0.6);
+      background: rgba(15, 15, 15, 0.7);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 14px;
-      padding: 14px 28px;
-      color: #94a3b8;
-      font-size: 0.95rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 32px;
+      color: var(--text-secondary);
+      font-size: 1rem;
       font-weight: 600;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 4;
       white-space: nowrap;
       opacity: 0;
-      animation: fade-in-btn 0.5s ease forwards;
-      animation-delay: 1s;
+      animation: fade-in-btn 0.6s ease forwards;
+      animation-delay: 1.2s;
     }
 
-    .branch-btn:nth-child(3) { animation-delay: 1.1s; }
-    .branch-btn:nth-child(4) { animation-delay: 1.2s; }
-    .branch-btn:nth-child(5) { animation-delay: 1.3s; }
-    .branch-btn:nth-child(6) { animation-delay: 1.4s; }
-    .branch-btn:nth-child(7) { animation-delay: 1.5s; }
+    .branch-btn:nth-of-type(2) { animation-delay: 1.3s; }
+    .branch-btn:nth-of-type(3) { animation-delay: 1.4s; }
+    .branch-btn:nth-of-type(4) { animation-delay: 1.5s; }
+    .branch-btn:nth-of-type(5) { animation-delay: 1.6s; }
 
     @keyframes fade-in-btn {
       to { opacity: 1; }
     }
 
     .branch-btn:hover {
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.35);
-      color: #fff;
-      box-shadow: 0 0 28px rgba(16, 185, 129, 0.2), 0 8px 24px rgba(0, 0, 0, 0.3);
-      transform: translate(-50%, -50%) scale(1.05);
+      background: rgba(212, 175, 55, 0.08);
+      border-color: var(--border-hover);
+      color: var(--gold-light);
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.15), 0 8px 24px rgba(0, 0, 0, 0.4);
+      transform: translate(-50%, -50%) scale(1.06);
     }
 
     /* ── Back Button ── */
     #back-btn {
       position: fixed;
-      top: 82px;
+      top: 72px;
       left: 24px;
       z-index: 90;
-      background: rgba(30, 41, 59, 0.6);
+      background: rgba(15, 15, 15, 0.7);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 12px;
-      padding: 10px 20px;
-      color: #94a3b8;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 22px;
+      color: var(--text-secondary);
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
@@ -352,19 +387,19 @@ data:
     }
 
     #back-btn:hover {
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.35);
-      color: #fff;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+      background: rgba(212, 175, 55, 0.08);
+      border-color: var(--border-hover);
+      color: var(--gold-light);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.12);
     }
 
-    /* ── Service Cards — Glassmorphism ── */
+    /* ── Service Cards — Black & Gold ── */
     .service-card {
       position: relative !important;
-      background: var(--glass-card) !important;
+      background: var(--black-card) !important;
       backdrop-filter: blur(var(--blur)) !important;
       -webkit-backdrop-filter: blur(var(--blur)) !important;
-      border: 1px solid var(--glass-border) !important;
+      border: 1px solid var(--border) !important;
       border-radius: var(--radius-lg) !important;
       overflow: hidden !important;
       isolation: isolate !important;
@@ -376,7 +411,7 @@ data:
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 50%, rgba(255,255,255,0) 100%);
+      background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 50%, transparent 100%);
       z-index: 0;
       pointer-events: none;
     }
@@ -388,15 +423,15 @@ data:
       left: 12%;
       right: 12%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.12), transparent);
       z-index: 2;
       pointer-events: none;
     }
 
     .service-card:hover {
       transform: translateY(-5px) !important;
-      background: var(--glass-card-hover) !important;
-      border-color: var(--glass-border-hover) !important;
+      background: var(--black-card-hover) !important;
+      border-color: var(--border-hover) !important;
       box-shadow: var(--shadow-hover) !important;
     }
 
@@ -405,58 +440,58 @@ data:
       z-index: 1 !important;
     }
 
-    /* ── Service Card Color Tints ── */
-    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.18), transparent 70%) !important; }
-    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.18), transparent 70%) !important; }
-    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.18), transparent 70%) !important; }
-    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.18), transparent 70%) !important; }
-    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.18), transparent 70%) !important; }
-    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.18), transparent 70%) !important; }
-    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.18), transparent 70%) !important; }
-    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 70%) !important; }
-    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.18), transparent 70%) !important; }
-    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.18), transparent 70%) !important; }
-    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.18), transparent 70%) !important; }
-    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.18), transparent 70%) !important; }
-    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.18), transparent 70%) !important; }
-    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 70%) !important; }
-    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.18), transparent 70%) !important; }
-    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.18), transparent 70%) !important; }
-    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.18), transparent 70%) !important; }
-    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.18), transparent 70%) !important; }
-    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.18), transparent 70%) !important; }
-    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.18), transparent 70%) !important; }
-    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.18), transparent 70%) !important; }
-    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.18), transparent 70%) !important; }
-    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 70%) !important; }
-    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.18), transparent 70%) !important; }
-    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.18), transparent 70%) !important; }
-    #jellyfin2-card::before { background: radial-gradient(circle at top left, rgba(170,92,195,0.12), transparent 70%) !important; }
-    #seerr2-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.12), transparent 70%) !important; }
-    #n8n2-card::before      { background: radial-gradient(circle at top left, rgba(236,72,72,0.12), transparent 70%) !important; }
-    #affine2-card::before   { background: radial-gradient(circle at top left, rgba(168,85,247,0.12), transparent 70%) !important; }
-    #authentik2-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.12), transparent 70%) !important; }
-    #vaultwarden2-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
-    #matrix2-card::before   { background: radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 70%) !important; }
-    #element2-card::before  { background: radial-gradient(circle at top left, rgba(14,165,233,0.12), transparent 70%) !important; }
-    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.18), transparent 70%) !important; }
-    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 70%) !important; }
-    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.18), transparent 70%) !important; }
-    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 70%) !important; }
+    /* ── Service Card Gold Tints ── */
+    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.12), transparent 70%) !important; }
+    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.12), transparent 70%) !important; }
+    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.12), transparent 70%) !important; }
+    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.12), transparent 70%) !important; }
+    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.12), transparent 70%) !important; }
+    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.12), transparent 70%) !important; }
+    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.12), transparent 70%) !important; }
+    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
+    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.12), transparent 70%) !important; }
+    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.12), transparent 70%) !important; }
+    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.12), transparent 70%) !important; }
+    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.12), transparent 70%) !important; }
+    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.12), transparent 70%) !important; }
+    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
+    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 70%) !important; }
+    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.12), transparent 70%) !important; }
+    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.12), transparent 70%) !important; }
+    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.12), transparent 70%) !important; }
+    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.12), transparent 70%) !important; }
+    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.12), transparent 70%) !important; }
+    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.12), transparent 70%) !important; }
+    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.12), transparent 70%) !important; }
+    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
+    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.12), transparent 70%) !important; }
+    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.12), transparent 70%) !important; }
+    #jellyfin2-card::before { background: radial-gradient(circle at top left, rgba(170,92,195,0.08), transparent 70%) !important; }
+    #seerr2-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.08), transparent 70%) !important; }
+    #n8n2-card::before      { background: radial-gradient(circle at top left, rgba(236,72,72,0.08), transparent 70%) !important; }
+    #affine2-card::before   { background: radial-gradient(circle at top left, rgba(168,85,247,0.08), transparent 70%) !important; }
+    #authentik2-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.08), transparent 70%) !important; }
+    #vaultwarden2-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 70%) !important; }
+    #matrix2-card::before   { background: radial-gradient(circle at top left, rgba(16,185,129,0.08), transparent 70%) !important; }
+    #element2-card::before  { background: radial-gradient(circle at top left, rgba(14,165,233,0.08), transparent 70%) !important; }
+    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.12), transparent 70%) !important; }
+    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
+    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.12), transparent 70%) !important; }
+    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
 
     /* ── Coming Soon Cards ── */
     #grafana-card, #prometheus-card, #syncthing-card,
     #stalwart-card, #remux-card {
-      opacity: 0.55 !important;
+      opacity: 0.5 !important;
       border-style: dashed !important;
-      border-color: rgba(255,255,255,0.06) !important;
+      border-color: rgba(212,175,55,0.06) !important;
     }
 
     #grafana-card:hover, #prometheus-card:hover, #syncthing-card:hover,
     #stalwart-card:hover, #remux-card:hover {
-      opacity: 0.8 !important;
+      opacity: 0.75 !important;
       border-style: solid !important;
-      border-color: var(--glass-border-hover) !important;
+      border-color: var(--border-hover) !important;
     }
 
     /* ── Service Text ── */
@@ -480,8 +515,8 @@ data:
     }
 
     .service-ping .ping-status {
-      background: rgba(255,255,255,0.05) !important;
-      border: 1px solid rgba(255,255,255,0.08) !important;
+      background: rgba(212,175,55,0.05) !important;
+      border: 1px solid var(--border) !important;
       border-radius: 8px !important;
       padding: 2px 8px !important;
     }
@@ -494,20 +529,20 @@ data:
 
     /* ── Group Headers ── */
     .service-group-name, .bookmark-group-name {
-      color: var(--text-secondary) !important;
+      color: var(--gold-dark) !important;
       font-weight: 700 !important;
       font-size: 0.78rem !important;
       letter-spacing: 0.07em !important;
       text-transform: uppercase !important;
-      opacity: 0.7 !important;
+      opacity: 0.8 !important;
       margin-bottom: 0.6rem !important;
     }
 
     /* ── Bookmarks ── */
     li.bookmark a {
       border-radius: var(--radius-md) !important;
-      background: rgba(255,255,255,0.03) !important;
-      border: 1px solid var(--glass-border) !important;
+      background: rgba(212,175,55,0.02) !important;
+      border: 1px solid var(--border) !important;
       box-shadow: none !important;
       overflow: hidden !important;
       margin-bottom: 8px !important;
@@ -515,15 +550,15 @@ data:
     }
 
     li.bookmark a:hover {
-      background: rgba(255,255,255,0.07) !important;
+      background: rgba(212,175,55,0.06) !important;
       transform: translateY(-2px) !important;
-      border-color: var(--glass-border-hover) !important;
+      border-color: var(--border-hover) !important;
     }
 
     li.bookmark .bookmark-icon {
       border-radius: 0 !important;
-      background: rgba(255,255,255,0.02) !important;
-      border-right: 1px solid var(--glass-border) !important;
+      background: rgba(212,175,55,0.01) !important;
+      border-right: 1px solid var(--border) !important;
     }
 
     .bookmark-name {
@@ -535,8 +570,8 @@ data:
     /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.2); }
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
@@ -560,13 +595,13 @@ data:
       .branch-btn:hover {
         transform: scale(1.02) !important;
       }
-      #branch-logo img { height: 80px !important; }
-      #back-btn { top: 78px; left: 12px; }
+      #branch-logo img { height: 120px !important; }
+      #back-btn { top: 68px; left: 12px; }
     }
 
   custom.js: |
     (function() {
-      let initialized = false;
+      var initialized = false;
 
       function init() {
         if (initialized) return;
@@ -579,7 +614,7 @@ data:
         var tabs = document.getElementById('tabs');
         if (tabs) tabs.style.display = 'none';
 
-        // 2. Create particle canvas
+        // 2. Create particle canvas (gold dust)
         var canvas = document.createElement('canvas');
         canvas.id = 'particle-canvas';
         canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;';
@@ -592,14 +627,14 @@ data:
         }
         resize();
         window.addEventListener('resize', resize);
-        for (var i = 0; i < 20; i++) {
+        for (var i = 0; i < 25; i++) {
           particles.push({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
-            r: Math.random() * 1.4 + 0.3,
-            vx: (Math.random() - 0.5) * 0.15,
-            vy: (Math.random() - 0.5) * 0.15,
-            o: Math.random() * 0.25 + 0.05
+            r: Math.random() * 1.2 + 0.2,
+            vx: (Math.random() - 0.5) * 0.12,
+            vy: (Math.random() - 0.5) * 0.12,
+            o: Math.random() * 0.2 + 0.03
           });
         }
         function animate() {
@@ -613,45 +648,56 @@ data:
             if (p.y > canvas.height) p.y = 0;
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(16,185,129,' + p.o + ')';
+            ctx.fillStyle = 'rgba(212,175,55,' + p.o + ')';
             ctx.fill();
           });
           requestAnimationFrame(animate);
         }
         animate();
 
-        // 3. Create branch overlay
+        // 3. Create branch overlay with vine leaves
         var overlay = document.createElement('div');
         overlay.id = 'branch-overlay';
-        overlay.innerHTML = '\
-          <div id="branch-content">\
-            <svg id="branch-svg" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid meet">\
-              <path class="branch-line" d="M 600 250 Q 400 200, 200 150" />\
-              <path class="branch-line" d="M 600 250 Q 400 300, 200 350" />\
-              <path class="branch-line" d="M 600 250 Q 800 180, 1000 100" />\
-              <path class="branch-line" d="M 600 250 Q 800 250, 1000 250" />\
-              <path class="branch-line" d="M 600 250 Q 800 320, 1000 400" />\
-            </svg>\
-            <div id="branch-logo">\
-              <img src="https://raw.githubusercontent.com/mysweetpea/portfolio/main/workers/site/logo.svg" alt="SweetPea" />\
-            </div>\
-            <button class="branch-btn" data-tab-index="0" style="left: 16.67%; top: 30%;">\
-              <span>Public</span>\
-            </button>\
-            <button class="branch-btn" data-tab-index="4" style="left: 16.67%; top: 70%;">\
-              <span>Coming Soon</span>\
-            </button>\
-            <button class="branch-btn" data-tab-index="1" style="left: 83.33%; top: 20%;">\
-              <span>Media</span>\
-            </button>\
-            <button class="branch-btn" data-tab-index="2" style="left: 83.33%; top: 50%;">\
-              <span>Private</span>\
-            </button>\
-            <button class="branch-btn" data-tab-index="3" style="left: 83.33%; top: 80%;">\
-              <span>System</span>\
-            </button>\
-          </div>\
-        ';
+        overlay.innerHTML =
+          '<div id="branch-content">' +
+            '<svg id="branch-svg" viewBox="0 0 1400 600" preserveAspectRatio="xMidYMid meet">' +
+              // Branch lines (vines)
+              '<path class="branch-line" d="M 700 300 C 500 280, 350 220, 180 160" />' +
+              '<path class="branch-line" d="M 700 300 C 500 320, 350 380, 180 440" />' +
+              '<path class="branch-line" d="M 700 300 C 900 260, 1100 180, 1220 120" />' +
+              '<path class="branch-line" d="M 700 300 C 900 300, 1100 300, 1220 300" />' +
+              '<path class="branch-line" d="M 700 300 C 900 340, 1100 420, 1220 480" />' +
+              // Vine leaves (small gold ellipses along branches)
+              '<ellipse class="vine-leaf" cx="420" cy="265" rx="6" ry="3" transform="rotate(-25 420 265)" />' +
+              '<ellipse class="vine-leaf" cx="340" cy="235" rx="5" ry="2.5" transform="rotate(-30 340 235)" />' +
+              '<ellipse class="vine-leaf" cx="520" cy="315" rx="6" ry="3" transform="rotate(20 520 315)" />' +
+              '<ellipse class="vine-leaf" cx="380" cy="365" rx="5" ry="2.5" transform="rotate(25 380 365)" />' +
+              '<ellipse class="vine-leaf" cx="900" cy="275" rx="6" ry="3" transform="rotate(20 900 275)" />' +
+              '<ellipse class="vine-leaf" cx="1050" cy="225" rx="5" ry="2.5" transform="rotate(30 1050 225)" />' +
+              '<ellipse class="vine-leaf" cx="950" cy="305" rx="5" ry="2.5" transform="rotate(-10 950 305)" />' +
+              '<ellipse class="vine-leaf" cx="1100" cy="305" rx="5" ry="2.5" transform="rotate(-5 1100 305)" />' +
+              '<ellipse class="vine-leaf" cx="920" cy="335" rx="6" ry="3" transform="rotate(-20 920 335)" />' +
+              '<ellipse class="vine-leaf" cx="1080" cy="395" rx="5" ry="2.5" transform="rotate(-25 1080 395)" />' +
+            '</svg>' +
+            '<div id="branch-logo">' +
+              '<img src="https://raw.githubusercontent.com/mysweetpea/portfolio/main/workers/site/logo.svg" alt="SweetPea" />' +
+            '</div>' +
+            '<button class="branch-btn" data-tab-index="0" style="left: 12.86%; top: 26.67%;">' +
+              '<span>Public</span>' +
+            '</button>' +
+            '<button class="branch-btn" data-tab-index="4" style="left: 12.86%; top: 73.33%;">' +
+              '<span>Coming Soon</span>' +
+            '</button>' +
+            '<button class="branch-btn" data-tab-index="1" style="left: 87.14%; top: 20%;">' +
+              '<span>Media</span>' +
+            '</button>' +
+            '<button class="branch-btn" data-tab-index="2" style="left: 87.14%; top: 50%;">' +
+              '<span>Private</span>' +
+            '</button>' +
+            '<button class="branch-btn" data-tab-index="3" style="left: 87.14%; top: 80%;">' +
+              '<span>System</span>' +
+            '</button>' +
+          '</div>';
         document.body.appendChild(overlay);
 
         // 4. Create back button
@@ -688,7 +734,6 @@ data:
             // Animate overlay out (push up)
             overlay.classList.add('exit');
             document.body.classList.add('service-view');
-            document.body.classList.remove('branch-view');
 
             // Show back button after animation
             setTimeout(function() {
@@ -701,26 +746,22 @@ data:
         backBtn.addEventListener('click', function() {
           backBtn.classList.remove('visible');
           overlay.classList.remove('exit');
-          document.body.classList.add('branch-view');
           document.body.classList.remove('service-view');
 
-          // Reset tab to first (optional)
+          // Reset tab to first
           var tabButtons = document.querySelectorAll('#tabs ul li button');
           if (tabButtons[0]) {
             tabButtons[0].click();
           }
         });
-
-        // 9. Set initial state
-        document.body.classList.add('branch-view');
       }
 
       // Wait for page load + hydration
       if (document.readyState === 'complete') {
-        setTimeout(init, 800);
+        setTimeout(init, 1000);
       } else {
         window.addEventListener('load', function() {
-          setTimeout(init, 800);
+          setTimeout(init, 1000);
         });
       }
     })();
