@@ -1,3 +1,4 @@
+---
 controllers:
   main:
     containers:
@@ -5,7 +6,21 @@ controllers:
         image:
           repository: ghcr.io/hotio/qbittorrent
           tag: latest
+        env:
+          # Set a permanent admin password on first boot
+          # The hotio image reads this on startup if the config doesn't exist yet
+          QBITTORRENT__WebUI__Password: "Homelab2026!"
+          QBITTORRENT__WebUI__Username: "admin"
     type: deployment
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 5Gi
+    storageClass: longhorn
+    globalMounts:
+      - path: /config
 service:
   main:
     controller: main
@@ -16,3 +31,4 @@ service:
     ports:
       http:
         port: 8080
+
