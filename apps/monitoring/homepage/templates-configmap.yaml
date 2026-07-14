@@ -109,7 +109,7 @@ data:
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
-       SweetPea Homelab — Black & Gold Branch Navigation
+       SweetPea Homelab — Black & Gold Branch Navigation v3
        ═══════════════════════════════════════════════════════════════ */
 
     :root {
@@ -117,28 +117,27 @@ data:
       --gold-light: #f0c75e;
       --gold-dark: #b8941f;
       --gold-glow: rgba(212, 175, 55, 0.3);
-      --gold-faint: rgba(212, 175, 55, 0.08);
       --black-bg: #0a0a0a;
-      --black-card: rgba(20, 20, 20, 0.65);
-      --black-card-hover: rgba(25, 25, 25, 0.8);
-      --border: rgba(212, 175, 55, 0.08);
-      --border-hover: rgba(212, 175, 55, 0.3);
-      --text-primary: #f5f5f5;
-      --text-secondary: #a8a8a8;
-      --text-muted: #666;
+      --black-card: rgba(18, 18, 18, 0.7);
+      --black-card-hover: rgba(22, 22, 22, 0.85);
+      --border: rgba(212, 175, 55, 0.1);
+      --border-hover: rgba(212, 175, 55, 0.35);
+      --text-primary: #f0f0f0;
+      --text-secondary: #a0a0a0;
+      --text-muted: #555;
       --radius-lg: 16px;
       --radius-md: 10px;
       --blur: 16px;
       --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
-      --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(212, 175, 55, 0.1), 0 0 50px rgba(212, 175, 55, 0.06);
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.5);
+      --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(212, 175, 55, 0.12), 0 0 50px rgba(212, 175, 55, 0.08);
     }
 
     /* ── Body — Deep Black ── */
     body {
       background:
-        radial-gradient(ellipse at 50% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 60%),
-        radial-gradient(ellipse at 20% 80%, rgba(212, 175, 55, 0.02) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 40%, rgba(212, 175, 55, 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse at 30% 70%, rgba(212, 175, 55, 0.02) 0%, transparent 45%),
         #0a0a0a !important;
       background-attachment: fixed !important;
       color: var(--text-primary) !important;
@@ -156,15 +155,15 @@ data:
       top: 0 !important;
       left: 0 !important;
       right: 0 !important;
-      z-index: 100 !important;
-      background: rgba(8, 8, 8, 0.92) !important;
+      z-index: 200 !important;
+      background: rgba(6, 6, 6, 0.95) !important;
       backdrop-filter: blur(20px) !important;
       -webkit-backdrop-filter: blur(20px) !important;
       border-bottom: 1px solid var(--border) !important;
       padding: 8px 24px !important;
       margin: 0 !important;
       border-radius: 0 !important;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6) !important;
     }
 
     #information-widgets .widget-container {
@@ -187,25 +186,59 @@ data:
 
     /* ── Container ── */
     .container {
-      padding-top: 70px !important;
+      padding-top: 60px !important;
     }
 
-    /* ── Service Content — Hidden by Default ── */
-    #inner_wrapper > .container > div:not(#information-widgets):not(#footer):not(#branch-overlay):not(#back-btn) {
-      opacity: 0;
+    /* ── HIDE ALL service content, bookmarks, footer in branch view ── */
+    body.branch-view .service-group,
+    body.branch-view .bookmark-group,
+    body.branch-view #footer,
+    body.branch-view [class*="service-group"],
+    body.branch-view [class*="bookmark"] {
+      display: none !important;
+    }
+
+    /* ── Service View — Blurred Background ── */
+    body.service-view #branch-overlay {
+      filter: blur(12px) brightness(0.3);
+      transform: scale(1.05);
       pointer-events: none;
-      transition: opacity 0.5s ease;
+      transition: filter 0.5s ease, transform 0.5s ease;
     }
 
-    body.service-view #inner_wrapper > .container > div:not(#information-widgets):not(#footer):not(#branch-overlay):not(#back-btn) {
+    body.service-view #branch-overlay.exit {
+      transform: translateY(0) scale(1.05);
+    }
+
+    /* ── Service Content Wrapper ── */
+    #service-content-wrapper {
+      position: fixed;
+      top: 55px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 150;
+      overflow-y: auto;
+      background: rgba(8, 8, 8, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      transform: translateY(30px);
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      padding: 20px 24px 60px 24px;
+    }
+
+    body.service-view #service-content-wrapper {
       opacity: 1;
+      transform: translateY(0);
       pointer-events: auto;
     }
 
     /* ── Branch Overlay ── */
     #branch-overlay {
       position: fixed;
-      top: 60px;
+      top: 55px;
       left: 0;
       right: 0;
       bottom: 0;
@@ -213,20 +246,14 @@ data:
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
-    }
-
-    #branch-overlay.exit {
-      transform: translateY(-100vh);
-      opacity: 0;
-      pointer-events: none;
+      transition: filter 0.5s ease, transform 0.5s ease, opacity 0.4s ease;
     }
 
     #branch-content {
       position: relative;
       width: 100%;
-      max-width: 1400px;
-      height: 600px;
+      max-width: 1600px;
+      height: 700px;
     }
 
     /* ── Branch SVG Lines — Gold Vines ── */
@@ -244,18 +271,18 @@ data:
       stroke: var(--gold-dark);
       stroke-width: 1.5;
       stroke-linecap: round;
-      transition: stroke 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease;
-      stroke-dasharray: 800;
-      stroke-dashoffset: 800;
-      animation: draw-line 1.5s ease forwards;
-      opacity: 0.5;
+      transition: stroke 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: draw-line 1.8s ease forwards;
+      opacity: 0.4;
     }
 
-    .branch-line:nth-child(1) { animation-delay: 0.2s; }
-    .branch-line:nth-child(2) { animation-delay: 0.4s; }
-    .branch-line:nth-child(3) { animation-delay: 0.6s; }
-    .branch-line:nth-child(4) { animation-delay: 0.8s; }
-    .branch-line:nth-child(5) { animation-delay: 1s; }
+    .branch-line:nth-child(1) { animation-delay: 0.3s; }
+    .branch-line:nth-child(2) { animation-delay: 0.5s; }
+    .branch-line:nth-child(3) { animation-delay: 0.7s; }
+    .branch-line:nth-child(4) { animation-delay: 0.9s; }
+    .branch-line:nth-child(5) { animation-delay: 1.1s; }
 
     @keyframes draw-line {
       to { stroke-dashoffset: 0; }
@@ -263,34 +290,34 @@ data:
 
     .branch-line.active {
       stroke: var(--gold);
-      stroke-width: 2.5;
+      stroke-width: 3;
       opacity: 1;
-      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
+      filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
     }
 
-    /* ── Vine Leaves on Branches ── */
+    /* ── Vine Leaves ── */
     .vine-leaf {
       fill: var(--gold-dark);
       opacity: 0;
-      animation: leaf-appear 0.6s ease forwards;
+      animation: leaf-appear 0.8s ease forwards;
     }
 
-    .vine-leaf:nth-child(6) { animation-delay: 1.5s; }
-    .vine-leaf:nth-child(7) { animation-delay: 1.7s; }
-    .vine-leaf:nth-child(8) { animation-delay: 1.9s; }
-    .vine-leaf:nth-child(9) { animation-delay: 2.1s; }
-    .vine-leaf:nth-child(10) { animation-delay: 2.3s; }
-    .vine-leaf:nth-child(11) { animation-delay: 2.5s; }
-    .vine-leaf:nth-child(12) { animation-delay: 2.7s; }
-    .vine-leaf:nth-child(13) { animation-delay: 2.9s; }
-    .vine-leaf:nth-child(14) { animation-delay: 3.1s; }
-    .vine-leaf:nth-child(15) { animation-delay: 3.3s; }
+    .vine-leaf:nth-child(6) { animation-delay: 1.8s; }
+    .vine-leaf:nth-child(7) { animation-delay: 2s; }
+    .vine-leaf:nth-child(8) { animation-delay: 2.2s; }
+    .vine-leaf:nth-child(9) { animation-delay: 2.4s; }
+    .vine-leaf:nth-child(10) { animation-delay: 2.6s; }
+    .vine-leaf:nth-child(11) { animation-delay: 2.8s; }
+    .vine-leaf:nth-child(12) { animation-delay: 3s; }
+    .vine-leaf:nth-child(13) { animation-delay: 3.2s; }
+    .vine-leaf:nth-child(14) { animation-delay: 3.4s; }
+    .vine-leaf:nth-child(15) { animation-delay: 3.6s; }
 
     @keyframes leaf-appear {
-      to { opacity: 0.25; }
+      to { opacity: 0.2; }
     }
 
-    /* ── Center Logo — Large & Illuminated ── */
+    /* ── Center Logo — Very Large & Illuminated ── */
     #branch-logo {
       position: absolute;
       top: 50%;
@@ -300,70 +327,112 @@ data:
     }
 
     #branch-logo img {
-      height: 220px;
+      height: 320px;
       width: auto;
       object-fit: contain;
-      animation: pulse-gold 5s ease-in-out infinite;
+      animation: pulse-gold 6s ease-in-out infinite;
     }
 
     @keyframes pulse-gold {
       0%, 100% {
-        filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.4))
-                drop-shadow(0 0 60px rgba(212, 175, 55, 0.15));
+        filter: drop-shadow(0 0 35px rgba(212, 175, 55, 0.35))
+                drop-shadow(0 0 70px rgba(212, 175, 55, 0.12));
       }
       50% {
-        filter: drop-shadow(0 0 45px rgba(212, 175, 55, 0.65))
-                drop-shadow(0 0 90px rgba(212, 175, 55, 0.28));
+        filter: drop-shadow(0 0 55px rgba(212, 175, 55, 0.6))
+                drop-shadow(0 0 110px rgba(212, 175, 55, 0.25));
       }
     }
 
-    /* ── Branch Buttons ── */
-    .branch-btn {
+    /* ── Branch Buttons with Gold Vine Border ── */
+    .branch-btn-wrapper {
       position: absolute;
       transform: translate(-50%, -50%);
-      background: rgba(15, 15, 15, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 32px;
-      color: var(--text-secondary);
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 4;
-      white-space: nowrap;
       opacity: 0;
       animation: fade-in-btn 0.6s ease forwards;
-      animation-delay: 1.2s;
+      animation-delay: 1.4s;
     }
 
-    .branch-btn:nth-of-type(2) { animation-delay: 1.3s; }
-    .branch-btn:nth-of-type(3) { animation-delay: 1.4s; }
-    .branch-btn:nth-of-type(4) { animation-delay: 1.5s; }
-    .branch-btn:nth-of-type(5) { animation-delay: 1.6s; }
+    .branch-btn-wrapper:nth-of-type(2) { animation-delay: 1.5s; }
+    .branch-btn-wrapper:nth-of-type(3) { animation-delay: 1.6s; }
+    .branch-btn-wrapper:nth-of-type(4) { animation-delay: 1.7s; }
+    .branch-btn-wrapper:nth-of-type(5) { animation-delay: 1.8s; }
 
     @keyframes fade-in-btn {
       to { opacity: 1; }
     }
 
-    .branch-btn:hover {
-      background: rgba(212, 175, 55, 0.08);
+    .branch-btn-vine {
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      right: -8px;
+      bottom: -8px;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .branch-btn-vine path {
+      fill: none;
+      stroke: var(--gold-dark);
+      stroke-width: 1;
+      opacity: 0.3;
+      transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+    }
+
+    .branch-btn-vine .vine-flower {
+      fill: var(--gold-dark);
+      opacity: 0.15;
+      transition: opacity 0.3s ease, fill 0.3s ease;
+    }
+
+    .branch-btn-wrapper:hover .branch-btn-vine path {
+      stroke: var(--gold);
+      stroke-width: 1.5;
+      opacity: 0.7;
+      filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.4));
+    }
+
+    .branch-btn-wrapper:hover .branch-btn-vine .vine-flower {
+      fill: var(--gold);
+      opacity: 0.4;
+    }
+
+    .branch-btn {
+      background: rgba(12, 12, 12, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 36px;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      display: block;
+      position: relative;
+      z-index: 2;
+    }
+
+    .branch-btn-wrapper:hover .branch-btn {
+      background: rgba(212, 175, 55, 0.06);
       border-color: var(--border-hover);
       color: var(--gold-light);
-      box-shadow: 0 0 30px rgba(212, 175, 55, 0.15), 0 8px 24px rgba(0, 0, 0, 0.4);
-      transform: translate(-50%, -50%) scale(1.06);
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.12), 0 8px 24px rgba(0, 0, 0, 0.5);
+      transform: scale(1.05);
     }
 
     /* ── Back Button ── */
     #back-btn {
       position: fixed;
-      top: 72px;
+      top: 68px;
       left: 24px;
-      z-index: 90;
-      background: rgba(15, 15, 15, 0.7);
+      z-index: 250;
+      background: rgba(12, 12, 12, 0.8);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
@@ -411,7 +480,7 @@ data:
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(212,175,55,0.04) 0%, rgba(255,255,255,0.01) 50%, transparent 100%);
+      background: linear-gradient(135deg, rgba(212,175,55,0.03) 0%, rgba(255,255,255,0.01) 50%, transparent 100%);
       z-index: 0;
       pointer-events: none;
     }
@@ -423,7 +492,7 @@ data:
       left: 12%;
       right: 12%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.12), transparent);
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.1), transparent);
       z-index: 2;
       pointer-events: none;
     }
@@ -441,55 +510,55 @@ data:
     }
 
     /* ── Service Card Gold Tints ── */
-    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.12), transparent 70%) !important; }
-    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.12), transparent 70%) !important; }
-    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.12), transparent 70%) !important; }
-    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.12), transparent 70%) !important; }
-    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.12), transparent 70%) !important; }
-    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.12), transparent 70%) !important; }
-    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.12), transparent 70%) !important; }
-    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
-    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.12), transparent 70%) !important; }
-    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.12), transparent 70%) !important; }
-    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.12), transparent 70%) !important; }
-    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.12), transparent 70%) !important; }
-    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.12), transparent 70%) !important; }
-    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
-    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.12), transparent 70%) !important; }
-    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.12), transparent 70%) !important; }
-    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.12), transparent 70%) !important; }
-    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.12), transparent 70%) !important; }
-    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.12), transparent 70%) !important; }
-    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.12), transparent 70%) !important; }
-    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.12), transparent 70%) !important; }
-    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.12), transparent 70%) !important; }
-    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
-    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.12), transparent 70%) !important; }
-    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.12), transparent 70%) !important; }
-    #jellyfin2-card::before { background: radial-gradient(circle at top left, rgba(170,92,195,0.08), transparent 70%) !important; }
-    #seerr2-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.08), transparent 70%) !important; }
-    #n8n2-card::before      { background: radial-gradient(circle at top left, rgba(236,72,72,0.08), transparent 70%) !important; }
-    #affine2-card::before   { background: radial-gradient(circle at top left, rgba(168,85,247,0.08), transparent 70%) !important; }
-    #authentik2-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.08), transparent 70%) !important; }
-    #vaultwarden2-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.08), transparent 70%) !important; }
-    #matrix2-card::before   { background: radial-gradient(circle at top left, rgba(16,185,129,0.08), transparent 70%) !important; }
-    #element2-card::before  { background: radial-gradient(circle at top left, rgba(14,165,233,0.08), transparent 70%) !important; }
-    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.12), transparent 70%) !important; }
-    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
-    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.12), transparent 70%) !important; }
-    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.12), transparent 70%) !important; }
+    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.10), transparent 70%) !important; }
+    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.10), transparent 70%) !important; }
+    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.10), transparent 70%) !important; }
+    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.10), transparent 70%) !important; }
+    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.10), transparent 70%) !important; }
+    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.10), transparent 70%) !important; }
+    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.10), transparent 70%) !important; }
+    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.10), transparent 70%) !important; }
+    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.10), transparent 70%) !important; }
+    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.10), transparent 70%) !important; }
+    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.10), transparent 70%) !important; }
+    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.10), transparent 70%) !important; }
+    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.10), transparent 70%) !important; }
+    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.10), transparent 70%) !important; }
+    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.10), transparent 70%) !important; }
+    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.10), transparent 70%) !important; }
+    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.10), transparent 70%) !important; }
+    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.10), transparent 70%) !important; }
+    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.10), transparent 70%) !important; }
+    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.10), transparent 70%) !important; }
+    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.10), transparent 70%) !important; }
+    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.10), transparent 70%) !important; }
+    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.10), transparent 70%) !important; }
+    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.10), transparent 70%) !important; }
+    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.10), transparent 70%) !important; }
+    #jellyfin2-card::before { background: radial-gradient(circle at top left, rgba(170,92,195,0.07), transparent 70%) !important; }
+    #seerr2-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.07), transparent 70%) !important; }
+    #n8n2-card::before      { background: radial-gradient(circle at top left, rgba(236,72,72,0.07), transparent 70%) !important; }
+    #affine2-card::before   { background: radial-gradient(circle at top left, rgba(168,85,247,0.07), transparent 70%) !important; }
+    #authentik2-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.07), transparent 70%) !important; }
+    #vaultwarden2-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.07), transparent 70%) !important; }
+    #matrix2-card::before   { background: radial-gradient(circle at top left, rgba(16,185,129,0.07), transparent 70%) !important; }
+    #element2-card::before  { background: radial-gradient(circle at top left, rgba(14,165,233,0.07), transparent 70%) !important; }
+    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.10), transparent 70%) !important; }
+    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.10), transparent 70%) !important; }
+    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.10), transparent 70%) !important; }
+    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.10), transparent 70%) !important; }
 
     /* ── Coming Soon Cards ── */
     #grafana-card, #prometheus-card, #syncthing-card,
     #stalwart-card, #remux-card {
-      opacity: 0.5 !important;
+      opacity: 0.45 !important;
       border-style: dashed !important;
-      border-color: rgba(212,175,55,0.06) !important;
+      border-color: rgba(212,175,55,0.05) !important;
     }
 
     #grafana-card:hover, #prometheus-card:hover, #syncthing-card:hover,
     #stalwart-card:hover, #remux-card:hover {
-      opacity: 0.75 !important;
+      opacity: 0.7 !important;
       border-style: solid !important;
       border-color: var(--border-hover) !important;
     }
@@ -584,19 +653,18 @@ data:
         padding: 40px 20px;
       }
       #branch-svg { display: none; }
-      .branch-btn {
+      .branch-btn-wrapper {
         position: relative !important;
         left: auto !important;
         top: auto !important;
         transform: none !important;
         width: 80%;
-        text-align: center;
       }
-      .branch-btn:hover {
+      .branch-btn-wrapper:hover .branch-btn {
         transform: scale(1.02) !important;
       }
-      #branch-logo img { height: 120px !important; }
-      #back-btn { top: 68px; left: 12px; }
+      #branch-logo img { height: 160px !important; }
+      #back-btn { top: 64px; left: 12px; }
     }
 
   custom.js: |
@@ -610,7 +678,6 @@ data:
         // 1. Hide default header and tabs
         var header = document.querySelector('.header, [class*="header"]');
         if (header) header.style.display = 'none';
-
         var tabs = document.getElementById('tabs');
         if (tabs) tabs.style.display = 'none';
 
@@ -632,9 +699,9 @@ data:
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
             r: Math.random() * 1.2 + 0.2,
-            vx: (Math.random() - 0.5) * 0.12,
-            vy: (Math.random() - 0.5) * 0.12,
-            o: Math.random() * 0.2 + 0.03
+            vx: (Math.random() - 0.5) * 0.1,
+            vy: (Math.random() - 0.5) * 0.1,
+            o: Math.random() * 0.18 + 0.03
           });
         }
         function animate() {
@@ -655,73 +722,120 @@ data:
         }
         animate();
 
-        // 3. Create branch overlay with vine leaves
+        // 3. Create service content wrapper (for blurred overlay effect)
+        var serviceWrapper = document.createElement('div');
+        serviceWrapper.id = 'service-content-wrapper';
+        document.body.appendChild(serviceWrapper);
+
+        // 4. Move all service groups and bookmarks into the wrapper
+        function moveContentToWrapper() {
+          var container = document.querySelector('.container');
+          if (!container) return;
+          var children = Array.prototype.slice.call(container.children);
+          children.forEach(function(child) {
+            if (child.id === 'information-widgets' || child.id === 'branch-overlay' || child.id === 'back-btn') return;
+            if (child.classList && (child.classList.contains('header') || child.id === 'tabs')) return;
+            // Move service groups, bookmarks, footer into wrapper
+            if (child.id !== 'information-widgets' && child.id !== 'footer') {
+              serviceWrapper.appendChild(child);
+            } else if (child.id === 'footer') {
+              serviceWrapper.appendChild(child);
+            }
+          });
+        }
+
+        // 5. Create branch overlay with vine borders on buttons
         var overlay = document.createElement('div');
         overlay.id = 'branch-overlay';
+
+        // Vine border SVG for buttons (wraps around the button)
+        function vineBorderSVG() {
+          return '<svg class="branch-btn-vine" viewBox="0 0 200 60" preserveAspectRatio="none">' +
+            '<path d="M 5 30 Q 10 10, 25 12 Q 45 8, 60 15 Q 80 5, 100 10 Q 120 5, 140 15 Q 160 8, 175 12 Q 190 15, 195 30 Q 190 45, 175 48 Q 160 52, 140 45 Q 120 55, 100 50 Q 80 55, 60 45 Q 45 52, 25 48 Q 10 50, 5 30 Z" />' +
+            '<circle class="vine-flower" cx="15" cy="15" r="3" />' +
+            '<circle class="vine-flower" cx="100" cy="8" r="2.5" />' +
+            '<circle class="vine-flower" cx="185" cy="15" r="3" />' +
+            '<circle class="vine-flower" cx="15" cy="45" r="2.5" />' +
+            '<circle class="vine-flower" cx="100" cy="52" r="3" />' +
+            '<circle class="vine-flower" cx="185" cy="45" r="2.5" />' +
+            '</svg>';
+        }
+
         overlay.innerHTML =
           '<div id="branch-content">' +
-            '<svg id="branch-svg" viewBox="0 0 1400 600" preserveAspectRatio="xMidYMid meet">' +
-              // Branch lines (vines)
-              '<path class="branch-line" d="M 700 300 C 500 280, 350 220, 180 160" />' +
-              '<path class="branch-line" d="M 700 300 C 500 320, 350 380, 180 440" />' +
-              '<path class="branch-line" d="M 700 300 C 900 260, 1100 180, 1220 120" />' +
-              '<path class="branch-line" d="M 700 300 C 900 300, 1100 300, 1220 300" />' +
-              '<path class="branch-line" d="M 700 300 C 900 340, 1100 420, 1220 480" />' +
-              // Vine leaves (small gold ellipses along branches)
-              '<ellipse class="vine-leaf" cx="420" cy="265" rx="6" ry="3" transform="rotate(-25 420 265)" />' +
-              '<ellipse class="vine-leaf" cx="340" cy="235" rx="5" ry="2.5" transform="rotate(-30 340 235)" />' +
-              '<ellipse class="vine-leaf" cx="520" cy="315" rx="6" ry="3" transform="rotate(20 520 315)" />' +
-              '<ellipse class="vine-leaf" cx="380" cy="365" rx="5" ry="2.5" transform="rotate(25 380 365)" />' +
-              '<ellipse class="vine-leaf" cx="900" cy="275" rx="6" ry="3" transform="rotate(20 900 275)" />' +
-              '<ellipse class="vine-leaf" cx="1050" cy="225" rx="5" ry="2.5" transform="rotate(30 1050 225)" />' +
-              '<ellipse class="vine-leaf" cx="950" cy="305" rx="5" ry="2.5" transform="rotate(-10 950 305)" />' +
-              '<ellipse class="vine-leaf" cx="1100" cy="305" rx="5" ry="2.5" transform="rotate(-5 1100 305)" />' +
-              '<ellipse class="vine-leaf" cx="920" cy="335" rx="6" ry="3" transform="rotate(-20 920 335)" />' +
-              '<ellipse class="vine-leaf" cx="1080" cy="395" rx="5" ry="2.5" transform="rotate(-25 1080 395)" />' +
+            '<svg id="branch-svg" viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid meet">' +
+              '<path class="branch-line" d="M 800 350 C 550 320, 350 250, 160 180" />' +
+              '<path class="branch-line" d="M 800 350 C 550 380, 350 450, 160 520" />' +
+              '<path class="branch-line" d="M 800 350 C 1050 300, 1250 200, 1440 130" />' +
+              '<path class="branch-line" d="M 800 350 C 1050 350, 1250 350, 1440 350" />' +
+              '<path class="branch-line" d="M 800 350 C 1050 400, 1250 500, 1440 570" />' +
+              // Vine leaves
+              '<ellipse class="vine-leaf" cx="480" cy="305" rx="7" ry="3.5" transform="rotate(-25 480 305)" />' +
+              '<ellipse class="vine-leaf" cx="350" cy="265" rx="6" ry="3" transform="rotate(-30 350 265)" />' +
+              '<ellipse class="vine-leaf" cx="580" cy="365" rx="7" ry="3.5" transform="rotate(20 580 365)" />' +
+              '<ellipse class="vine-leaf" cx="380" cy="425" rx="6" ry="3" transform="rotate(25 380 425)" />' +
+              '<ellipse class="vine-leaf" cx="1020" cy="315" rx="7" ry="3.5" transform="rotate(20 1020 315)" />' +
+              '<ellipse class="vine-leaf" cx="1200" cy="245" rx="6" ry="3" transform="rotate(30 1200 245)" />' +
+              '<ellipse class="vine-leaf" cx="1080" cy="355" rx="6" ry="3" transform="rotate(-10 1080 355)" />' +
+              '<ellipse class="vine-leaf" cx="1250" cy="355" rx="6" ry="3" transform="rotate(-5 1250 355)" />' +
+              '<ellipse class="vine-leaf" cx="1050" cy="395" rx="7" ry="3.5" transform="rotate(-20 1050 395)" />' +
+              '<ellipse class="vine-leaf" cx="1230" cy="465" rx="6" ry="3" transform="rotate(-25 1230 465)" />' +
             '</svg>' +
             '<div id="branch-logo">' +
               '<img src="https://raw.githubusercontent.com/mysweetpea/portfolio/main/workers/site/logo.svg" alt="SweetPea" />' +
             '</div>' +
-            '<button class="branch-btn" data-tab-index="0" style="left: 12.86%; top: 26.67%;">' +
-              '<span>Public</span>' +
-            '</button>' +
-            '<button class="branch-btn" data-tab-index="4" style="left: 12.86%; top: 73.33%;">' +
-              '<span>Coming Soon</span>' +
-            '</button>' +
-            '<button class="branch-btn" data-tab-index="1" style="left: 87.14%; top: 20%;">' +
-              '<span>Media</span>' +
-            '</button>' +
-            '<button class="branch-btn" data-tab-index="2" style="left: 87.14%; top: 50%;">' +
-              '<span>Private</span>' +
-            '</button>' +
-            '<button class="branch-btn" data-tab-index="3" style="left: 87.14%; top: 80%;">' +
-              '<span>System</span>' +
-            '</button>' +
+            '<div class="branch-btn-wrapper" style="left: 10%; top: 25.7%;">' +
+              vineBorderSVG() +
+              '<button class="branch-btn" data-tab-index="0">Public</button>' +
+            '</div>' +
+            '<div class="branch-btn-wrapper" style="left: 10%; top: 74.3%;">' +
+              vineBorderSVG() +
+              '<button class="branch-btn" data-tab-index="4">Coming Soon</button>' +
+            '</div>' +
+            '<div class="branch-btn-wrapper" style="left: 90%; top: 18.6%;">' +
+              vineBorderSVG() +
+              '<button class="branch-btn" data-tab-index="1">Media</button>' +
+            '</div>' +
+            '<div class="branch-btn-wrapper" style="left: 90%; top: 50%;">' +
+              vineBorderSVG() +
+              '<button class="branch-btn" data-tab-index="2">Private</button>' +
+            '</div>' +
+            '<div class="branch-btn-wrapper" style="left: 90%; top: 81.4%;">' +
+              vineBorderSVG() +
+              '<button class="branch-btn" data-tab-index="3">System</button>' +
+            '</div>' +
           '</div>';
         document.body.appendChild(overlay);
 
-        // 4. Create back button
+        // 6. Create back button
         var backBtn = document.createElement('button');
         backBtn.id = 'back-btn';
         backBtn.innerHTML = '\u2190 Back to Home';
         document.body.appendChild(backBtn);
 
-        // 5. Branch line elements for hover effects
-        var branchLines = overlay.querySelectorAll('.branch-line');
-        var branchBtns = overlay.querySelectorAll('.branch-btn');
+        // 7. Move content to wrapper after a delay (let Homepage render)
+        setTimeout(moveContentToWrapper, 200);
+        setTimeout(moveContentToWrapper, 1000);
+        setTimeout(moveContentToWrapper, 2000);
 
-        // 6. Branch button hover — highlight corresponding line
-        branchBtns.forEach(function(btn, idx) {
-          btn.addEventListener('mouseenter', function() {
+        // 8. Branch line elements for hover effects
+        var branchLines = overlay.querySelectorAll('.branch-line');
+        var branchBtnWrappers = overlay.querySelectorAll('.branch-btn-wrapper');
+
+        // 9. Branch button hover — highlight corresponding line
+        branchBtnWrappers.forEach(function(wrapper, idx) {
+          wrapper.addEventListener('mouseenter', function() {
             if (branchLines[idx]) branchLines[idx].classList.add('active');
           });
-          btn.addEventListener('mouseleave', function() {
+          wrapper.addEventListener('mouseleave', function() {
             if (branchLines[idx]) branchLines[idx].classList.remove('active');
           });
         });
 
-        // 7. Branch button click — navigate to services
-        branchBtns.forEach(function(btn) {
+        // 10. Branch button click — show services with blurred background
+        branchBtnWrappers.forEach(function(wrapper) {
+          var btn = wrapper.querySelector('.branch-btn');
+          if (!btn) return;
           btn.addEventListener('click', function() {
             var tabIndex = parseInt(this.dataset.tabIndex);
 
@@ -731,22 +845,22 @@ data:
               tabButtons[tabIndex].click();
             }
 
-            // Animate overlay out (push up)
-            overlay.classList.add('exit');
+            // Switch to service view (blur the branch overlay, show services)
+            document.body.classList.remove('branch-view');
             document.body.classList.add('service-view');
 
-            // Show back button after animation
+            // Show back button
             setTimeout(function() {
               backBtn.classList.add('visible');
-            }, 400);
+            }, 300);
           });
         });
 
-        // 8. Back button click — return to branch view
+        // 11. Back button click — return to branch view
         backBtn.addEventListener('click', function() {
           backBtn.classList.remove('visible');
-          overlay.classList.remove('exit');
           document.body.classList.remove('service-view');
+          document.body.classList.add('branch-view');
 
           // Reset tab to first
           var tabButtons = document.querySelectorAll('#tabs ul li button');
@@ -754,14 +868,17 @@ data:
             tabButtons[0].click();
           }
         });
+
+        // 12. Set initial state
+        document.body.classList.add('branch-view');
       }
 
       // Wait for page load + hydration
       if (document.readyState === 'complete') {
-        setTimeout(init, 1000);
+        setTimeout(init, 1200);
       } else {
         window.addEventListener('load', function() {
-          setTimeout(init, 1000);
+          setTimeout(init, 1200);
         });
       }
     })();
