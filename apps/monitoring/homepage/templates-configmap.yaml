@@ -97,7 +97,7 @@ data:
 
   widgets.yaml: |
     - logo:
-        icon: /logo.svg
+        icon: https://raw.githubusercontent.com/mysweetpea/portfolio/main/workers/site/logo.svg
     - greeting:
         text_size: 2xl
         text: "Welcome back, sweetpea"
