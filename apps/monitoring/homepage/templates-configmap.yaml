@@ -109,7 +109,7 @@ data:
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
-       SweetPea Homelab — Black & Gold Branch Navigation v3
+       SweetPea Homelab — Black & Gold Branch Navigation v4
        ═══════════════════════════════════════════════════════════════ */
 
     :root {
@@ -133,20 +133,31 @@ data:
       --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(212, 175, 55, 0.12), 0 0 50px rgba(212, 175, 55, 0.08);
     }
 
-    /* ── Body — Deep Black ── */
+    /* ── Body — Black & Gold ── */
     body {
       background:
-        radial-gradient(ellipse at 50% 40%, rgba(212, 175, 55, 0.04) 0%, transparent 55%),
-        radial-gradient(ellipse at 30% 70%, rgba(212, 175, 55, 0.02) 0%, transparent 45%),
-        #0a0a0a !important;
+        radial-gradient(ellipse at 50% 35%, rgba(212, 175, 55, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 20% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 20%, rgba(212, 175, 55, 0.03) 0%, transparent 40%),
+        linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 50%, #0a0a0a 100%) !important;
       background-attachment: fixed !important;
       color: var(--text-primary) !important;
     }
 
-    /* ── Hide Default Header & Tabs ── */
-    .header,
-    #tabs {
+    /* ── Hide Default Header ── */
+    .header {
       display: none !important;
+    }
+
+    /* ── Tabs — Hidden but functional ── */
+    #tabs {
+      position: absolute !important;
+      top: -9999px !important;
+      left: -9999px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      height: 0 !important;
+      overflow: hidden !important;
     }
 
     /* ── Stats Bar — Fixed at Top ── */
@@ -189,50 +200,35 @@ data:
       padding-top: 60px !important;
     }
 
-    /* ── HIDE ALL service content, bookmarks, footer in branch view ── */
+    /* ── BRANCH VIEW: Hide all service content, bookmarks, footer ── */
     body.branch-view .service-group,
-    body.branch-view .bookmark-group,
-    body.branch-view #footer,
     body.branch-view [class*="service-group"],
-    body.branch-view [class*="bookmark"] {
+    body.branch-view .bookmark-group,
+    body.branch-view [class*="bookmark"],
+    body.branch-view #footer,
+    body.branch-view [id*="footer"] {
       display: none !important;
     }
 
-    /* ── Service View — Blurred Background ── */
+    /* ── SERVICE VIEW: Show content, blur the branch overlay behind ── */
     body.service-view #branch-overlay {
-      filter: blur(12px) brightness(0.3);
+      filter: blur(15px) brightness(0.2);
+      opacity: 0.3;
+      pointer-events: none;
       transform: scale(1.05);
-      pointer-events: none;
-      transition: filter 0.5s ease, transform 0.5s ease;
+      transition: filter 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+      z-index: 1 !important;
     }
 
-    body.service-view #branch-overlay.exit {
-      transform: translateY(0) scale(1.05);
-    }
-
-    /* ── Service Content Wrapper ── */
-    #service-content-wrapper {
-      position: fixed;
-      top: 55px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 150;
-      overflow-y: auto;
-      background: rgba(8, 8, 8, 0.92);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      opacity: 0;
-      transform: translateY(30px);
-      pointer-events: none;
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      padding: 20px 24px 60px 24px;
-    }
-
-    body.service-view #service-content-wrapper {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
+    /* Service content rises above the blurred overlay */
+    body.service-view .container {
+      position: relative;
+      z-index: 100;
+      background: rgba(8, 8, 8, 0.85);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      min-height: 100vh;
+      padding-bottom: 40px;
     }
 
     /* ── Branch Overlay ── */
@@ -246,14 +242,14 @@ data:
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: filter 0.5s ease, transform 0.5s ease, opacity 0.4s ease;
+      transition: filter 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
     }
 
     #branch-content {
       position: relative;
       width: 100%;
-      max-width: 1600px;
-      height: 700px;
+      max-width: 1800px;
+      height: 750px;
     }
 
     /* ── Branch SVG Lines — Gold Vines ── */
@@ -269,13 +265,13 @@ data:
     .branch-line {
       fill: none;
       stroke: var(--gold-dark);
-      stroke-width: 1.5;
+      stroke-width: 2;
       stroke-linecap: round;
       transition: stroke 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      animation: draw-line 1.8s ease forwards;
-      opacity: 0.4;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+      animation: draw-line 2s ease forwards;
+      opacity: 0.5;
     }
 
     .branch-line:nth-child(1) { animation-delay: 0.3s; }
@@ -290,31 +286,31 @@ data:
 
     .branch-line.active {
       stroke: var(--gold);
-      stroke-width: 3;
+      stroke-width: 3.5;
       opacity: 1;
-      filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+      filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.7));
     }
 
     /* ── Vine Leaves ── */
     .vine-leaf {
       fill: var(--gold-dark);
       opacity: 0;
-      animation: leaf-appear 0.8s ease forwards;
+      animation: leaf-appear 1s ease forwards;
     }
 
-    .vine-leaf:nth-child(6) { animation-delay: 1.8s; }
-    .vine-leaf:nth-child(7) { animation-delay: 2s; }
-    .vine-leaf:nth-child(8) { animation-delay: 2.2s; }
-    .vine-leaf:nth-child(9) { animation-delay: 2.4s; }
-    .vine-leaf:nth-child(10) { animation-delay: 2.6s; }
-    .vine-leaf:nth-child(11) { animation-delay: 2.8s; }
-    .vine-leaf:nth-child(12) { animation-delay: 3s; }
-    .vine-leaf:nth-child(13) { animation-delay: 3.2s; }
-    .vine-leaf:nth-child(14) { animation-delay: 3.4s; }
-    .vine-leaf:nth-child(15) { animation-delay: 3.6s; }
+    .vine-leaf:nth-child(6) { animation-delay: 2s; }
+    .vine-leaf:nth-child(7) { animation-delay: 2.2s; }
+    .vine-leaf:nth-child(8) { animation-delay: 2.4s; }
+    .vine-leaf:nth-child(9) { animation-delay: 2.6s; }
+    .vine-leaf:nth-child(10) { animation-delay: 2.8s; }
+    .vine-leaf:nth-child(11) { animation-delay: 3s; }
+    .vine-leaf:nth-child(12) { animation-delay: 3.2s; }
+    .vine-leaf:nth-child(13) { animation-delay: 3.4s; }
+    .vine-leaf:nth-child(14) { animation-delay: 3.6s; }
+    .vine-leaf:nth-child(15) { animation-delay: 3.8s; }
 
     @keyframes leaf-appear {
-      to { opacity: 0.2; }
+      to { opacity: 0.25; }
     }
 
     /* ── Center Logo — Very Large & Illuminated ── */
@@ -327,7 +323,7 @@ data:
     }
 
     #branch-logo img {
-      height: 320px;
+      height: 420px;
       width: auto;
       object-fit: contain;
       animation: pulse-gold 6s ease-in-out infinite;
@@ -335,29 +331,29 @@ data:
 
     @keyframes pulse-gold {
       0%, 100% {
-        filter: drop-shadow(0 0 35px rgba(212, 175, 55, 0.35))
-                drop-shadow(0 0 70px rgba(212, 175, 55, 0.12));
+        filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.4))
+                drop-shadow(0 0 80px rgba(212, 175, 55, 0.15));
       }
       50% {
-        filter: drop-shadow(0 0 55px rgba(212, 175, 55, 0.6))
-                drop-shadow(0 0 110px rgba(212, 175, 55, 0.25));
+        filter: drop-shadow(0 0 60px rgba(212, 175, 55, 0.65))
+                drop-shadow(0 0 120px rgba(212, 175, 55, 0.28));
       }
     }
 
-    /* ── Branch Buttons with Gold Vine Border ── */
+    /* ── Branch Buttons with Prominent Gold Vine Border ── */
     .branch-btn-wrapper {
       position: absolute;
       transform: translate(-50%, -50%);
       z-index: 4;
       opacity: 0;
       animation: fade-in-btn 0.6s ease forwards;
-      animation-delay: 1.4s;
+      animation-delay: 1.5s;
     }
 
-    .branch-btn-wrapper:nth-of-type(2) { animation-delay: 1.5s; }
-    .branch-btn-wrapper:nth-of-type(3) { animation-delay: 1.6s; }
-    .branch-btn-wrapper:nth-of-type(4) { animation-delay: 1.7s; }
-    .branch-btn-wrapper:nth-of-type(5) { animation-delay: 1.8s; }
+    .branch-btn-wrapper:nth-of-type(2) { animation-delay: 1.6s; }
+    .branch-btn-wrapper:nth-of-type(3) { animation-delay: 1.7s; }
+    .branch-btn-wrapper:nth-of-type(4) { animation-delay: 1.8s; }
+    .branch-btn-wrapper:nth-of-type(5) { animation-delay: 1.9s; }
 
     @keyframes fade-in-btn {
       to { opacity: 1; }
@@ -365,10 +361,10 @@ data:
 
     .branch-btn-vine {
       position: absolute;
-      top: -8px;
-      left: -8px;
-      right: -8px;
-      bottom: -8px;
+      top: -14px;
+      left: -14px;
+      right: -14px;
+      bottom: -14px;
       pointer-events: none;
       overflow: visible;
     }
@@ -376,12 +372,18 @@ data:
     .branch-btn-vine path {
       fill: none;
       stroke: var(--gold-dark);
-      stroke-width: 1;
-      opacity: 0.3;
-      transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+      stroke-width: 1.5;
+      opacity: 0.4;
+      transition: stroke 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
     }
 
     .branch-btn-vine .vine-flower {
+      fill: var(--gold-dark);
+      opacity: 0.25;
+      transition: opacity 0.3s ease, fill 0.3s ease;
+    }
+
+    .branch-btn-vine .vine-flower-small {
       fill: var(--gold-dark);
       opacity: 0.15;
       transition: opacity 0.3s ease, fill 0.3s ease;
@@ -389,25 +391,30 @@ data:
 
     .branch-btn-wrapper:hover .branch-btn-vine path {
       stroke: var(--gold);
-      stroke-width: 1.5;
-      opacity: 0.7;
-      filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.4));
+      stroke-width: 2.5;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
     }
 
     .branch-btn-wrapper:hover .branch-btn-vine .vine-flower {
       fill: var(--gold);
-      opacity: 0.4;
+      opacity: 0.5;
+    }
+
+    .branch-btn-wrapper:hover .branch-btn-vine .vine-flower-small {
+      fill: var(--gold-light);
+      opacity: 0.35;
     }
 
     .branch-btn {
-      background: rgba(12, 12, 12, 0.75);
+      background: rgba(10, 10, 10, 0.8);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px 36px;
+      padding: 18px 40px;
       color: var(--text-secondary);
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 600;
       letter-spacing: 0.04em;
       cursor: pointer;
@@ -419,10 +426,10 @@ data:
     }
 
     .branch-btn-wrapper:hover .branch-btn {
-      background: rgba(212, 175, 55, 0.06);
+      background: rgba(212, 175, 55, 0.08);
       border-color: var(--border-hover);
       color: var(--gold-light);
-      box-shadow: 0 0 30px rgba(212, 175, 55, 0.12), 0 8px 24px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.15), 0 8px 24px rgba(0, 0, 0, 0.5);
       transform: scale(1.05);
     }
 
@@ -432,7 +439,7 @@ data:
       top: 68px;
       left: 24px;
       z-index: 250;
-      background: rgba(12, 12, 12, 0.8);
+      background: rgba(10, 10, 10, 0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
@@ -663,7 +670,7 @@ data:
       .branch-btn-wrapper:hover .branch-btn {
         transform: scale(1.02) !important;
       }
-      #branch-logo img { height: 160px !important; }
+      #branch-logo img { height: 200px !important; }
       #back-btn { top: 64px; left: 12px; }
     }
 
@@ -675,11 +682,9 @@ data:
         if (initialized) return;
         initialized = true;
 
-        // 1. Hide default header and tabs
+        // 1. Hide default header (tabs are hidden via CSS but still functional)
         var header = document.querySelector('.header, [class*="header"]');
         if (header) header.style.display = 'none';
-        var tabs = document.getElementById('tabs');
-        if (tabs) tabs.style.display = 'none';
 
         // 2. Create particle canvas (gold dust)
         var canvas = document.createElement('canvas');
@@ -694,14 +699,14 @@ data:
         }
         resize();
         window.addEventListener('resize', resize);
-        for (var i = 0; i < 25; i++) {
+        for (var i = 0; i < 30; i++) {
           particles.push({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
-            r: Math.random() * 1.2 + 0.2,
+            r: Math.random() * 1.4 + 0.2,
             vx: (Math.random() - 0.5) * 0.1,
             vy: (Math.random() - 0.5) * 0.1,
-            o: Math.random() * 0.18 + 0.03
+            o: Math.random() * 0.2 + 0.03
           });
         }
         function animate() {
@@ -722,107 +727,93 @@ data:
         }
         animate();
 
-        // 3. Create service content wrapper (for blurred overlay effect)
-        var serviceWrapper = document.createElement('div');
-        serviceWrapper.id = 'service-content-wrapper';
-        document.body.appendChild(serviceWrapper);
-
-        // 4. Move all service groups and bookmarks into the wrapper
-        function moveContentToWrapper() {
-          var container = document.querySelector('.container');
-          if (!container) return;
-          var children = Array.prototype.slice.call(container.children);
-          children.forEach(function(child) {
-            if (child.id === 'information-widgets' || child.id === 'branch-overlay' || child.id === 'back-btn') return;
-            if (child.classList && (child.classList.contains('header') || child.id === 'tabs')) return;
-            // Move service groups, bookmarks, footer into wrapper
-            if (child.id !== 'information-widgets' && child.id !== 'footer') {
-              serviceWrapper.appendChild(child);
-            } else if (child.id === 'footer') {
-              serviceWrapper.appendChild(child);
-            }
-          });
-        }
-
-        // 5. Create branch overlay with vine borders on buttons
+        // 3. Create branch overlay with prominent vine borders
         var overlay = document.createElement('div');
         overlay.id = 'branch-overlay';
 
-        // Vine border SVG for buttons (wraps around the button)
+        // Elaborate vine border SVG for buttons
         function vineBorderSVG() {
-          return '<svg class="branch-btn-vine" viewBox="0 0 200 60" preserveAspectRatio="none">' +
-            '<path d="M 5 30 Q 10 10, 25 12 Q 45 8, 60 15 Q 80 5, 100 10 Q 120 5, 140 15 Q 160 8, 175 12 Q 190 15, 195 30 Q 190 45, 175 48 Q 160 52, 140 45 Q 120 55, 100 50 Q 80 55, 60 45 Q 45 52, 25 48 Q 10 50, 5 30 Z" />' +
-            '<circle class="vine-flower" cx="15" cy="15" r="3" />' +
-            '<circle class="vine-flower" cx="100" cy="8" r="2.5" />' +
-            '<circle class="vine-flower" cx="185" cy="15" r="3" />' +
-            '<circle class="vine-flower" cx="15" cy="45" r="2.5" />' +
-            '<circle class="vine-flower" cx="100" cy="52" r="3" />' +
-            '<circle class="vine-flower" cx="185" cy="45" r="2.5" />' +
+          return '<svg class="branch-btn-vine" viewBox="0 0 240 80" preserveAspectRatio="none">' +
+            // Main vine border path — organic, wavy
+            '<path d="M 8 40 Q 12 12, 30 14 Q 50 8, 70 16 Q 90 6, 120 10 Q 150 6, 170 16 Q 190 8, 210 14 Q 228 12, 232 40 Q 228 68, 210 66 Q 190 72, 170 64 Q 150 74, 120 70 Q 90 74, 70 64 Q 50 72, 30 66 Q 12 68, 8 40 Z" />' +
+            // Inner decorative vine
+            '<path d="M 16 40 Q 20 20, 35 22 Q 55 16, 75 24 Q 95 14, 120 18 Q 145 14, 165 24 Q 185 16, 205 22 Q 220 20, 224 40 Q 220 60, 205 58 Q 185 64, 165 56 Q 145 66, 120 62 Q 95 66, 75 56 Q 55 64, 35 58 Q 20 60, 16 40 Z" opacity="0.5" />' +
+            // Vine flowers (larger)
+            '<circle class="vine-flower" cx="18" cy="18" r="4" />' +
+            '<circle class="vine-flower" cx="120" cy="10" r="3.5" />' +
+            '<circle class="vine-flower" cx="222" cy="18" r="4" />' +
+            '<circle class="vine-flower" cx="18" cy="62" r="3.5" />' +
+            '<circle class="vine-flower" cx="120" cy="70" r="4" />' +
+            '<circle class="vine-flower" cx="222" cy="62" r="3.5" />' +
+            // Small vine leaves
+            '<ellipse class="vine-flower-small" cx="45" cy="16" rx="4" ry="2" transform="rotate(-30 45 16)" />' +
+            '<ellipse class="vine-flower-small" cx="80" cy="14" rx="4" ry="2" transform="rotate(20 80 14)" />' +
+            '<ellipse class="vine-flower-small" cx="160" cy="14" rx="4" ry="2" transform="rotate(-20 160 14)" />' +
+            '<ellipse class="vine-flower-small" cx="195" cy="16" rx="4" ry="2" transform="rotate(30 195 16)" />' +
+            '<ellipse class="vine-flower-small" cx="45" cy="64" rx="4" ry="2" transform="rotate(30 45 64)" />' +
+            '<ellipse class="vine-flower-small" cx="80" cy="66" rx="4" ry="2" transform="rotate(-20 80 66)" />' +
+            '<ellipse class="vine-flower-small" cx="160" cy="66" rx="4" ry="2" transform="rotate(20 160 66)" />' +
+            '<ellipse class="vine-flower-small" cx="195" cy="64" rx="4" ry="2" transform="rotate(-30 195 64)" />' +
             '</svg>';
         }
 
         overlay.innerHTML =
           '<div id="branch-content">' +
-            '<svg id="branch-svg" viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid meet">' +
-              '<path class="branch-line" d="M 800 350 C 550 320, 350 250, 160 180" />' +
-              '<path class="branch-line" d="M 800 350 C 550 380, 350 450, 160 520" />' +
-              '<path class="branch-line" d="M 800 350 C 1050 300, 1250 200, 1440 130" />' +
-              '<path class="branch-line" d="M 800 350 C 1050 350, 1250 350, 1440 350" />' +
-              '<path class="branch-line" d="M 800 350 C 1050 400, 1250 500, 1440 570" />' +
+            '<svg id="branch-svg" viewBox="0 0 1800 750" preserveAspectRatio="xMidYMid meet">' +
+              '<path class="branch-line" d="M 900 375 C 600 340, 380 260, 160 180" />' +
+              '<path class="branch-line" d="M 900 375 C 600 410, 380 490, 160 570" />' +
+              '<path class="branch-line" d="M 900 375 C 1200 320, 1400 210, 1640 130" />' +
+              '<path class="branch-line" d="M 900 375 C 1200 375, 1400 375, 1640 375" />' +
+              '<path class="branch-line" d="M 900 375 C 1200 430, 1400 540, 1640 620" />' +
               // Vine leaves
-              '<ellipse class="vine-leaf" cx="480" cy="305" rx="7" ry="3.5" transform="rotate(-25 480 305)" />' +
-              '<ellipse class="vine-leaf" cx="350" cy="265" rx="6" ry="3" transform="rotate(-30 350 265)" />' +
-              '<ellipse class="vine-leaf" cx="580" cy="365" rx="7" ry="3.5" transform="rotate(20 580 365)" />' +
-              '<ellipse class="vine-leaf" cx="380" cy="425" rx="6" ry="3" transform="rotate(25 380 425)" />' +
-              '<ellipse class="vine-leaf" cx="1020" cy="315" rx="7" ry="3.5" transform="rotate(20 1020 315)" />' +
-              '<ellipse class="vine-leaf" cx="1200" cy="245" rx="6" ry="3" transform="rotate(30 1200 245)" />' +
-              '<ellipse class="vine-leaf" cx="1080" cy="355" rx="6" ry="3" transform="rotate(-10 1080 355)" />' +
-              '<ellipse class="vine-leaf" cx="1250" cy="355" rx="6" ry="3" transform="rotate(-5 1250 355)" />' +
-              '<ellipse class="vine-leaf" cx="1050" cy="395" rx="7" ry="3.5" transform="rotate(-20 1050 395)" />' +
-              '<ellipse class="vine-leaf" cx="1230" cy="465" rx="6" ry="3" transform="rotate(-25 1230 465)" />' +
+              '<ellipse class="vine-leaf" cx="540" cy="325" rx="8" ry="4" transform="rotate(-25 540 325)" />' +
+              '<ellipse class="vine-leaf" cx="380" cy="280" rx="7" ry="3.5" transform="rotate(-30 380 280)" />' +
+              '<ellipse class="vine-leaf" cx="640" cy="395" rx="8" ry="4" transform="rotate(20 640 395)" />' +
+              '<ellipse class="vine-leaf" cx="410" cy="465" rx="7" ry="3.5" transform="rotate(25 410 465)" />' +
+              '<ellipse class="vine-leaf" cx="1160" cy="335" rx="8" ry="4" transform="rotate(20 1160 335)" />' +
+              '<ellipse class="vine-leaf" cx="1360" cy="255" rx="7" ry="3.5" transform="rotate(30 1360 255)" />' +
+              '<ellipse class="vine-leaf" cx="1220" cy="375" rx="7" ry="3.5" transform="rotate(-10 1220 375)" />' +
+              '<ellipse class="vine-leaf" cx="1420" cy="375" rx="7" ry="3.5" transform="rotate(-5 1420 375)" />' +
+              '<ellipse class="vine-leaf" cx="1190" cy="415" rx="8" ry="4" transform="rotate(-20 1190 415)" />' +
+              '<ellipse class="vine-leaf" cx="1380" cy="505" rx="7" ry="3.5" transform="rotate(-25 1380 505)" />' +
             '</svg>' +
             '<div id="branch-logo">' +
               '<img src="https://raw.githubusercontent.com/mysweetpea/portfolio/main/workers/site/logo.svg" alt="SweetPea" />' +
             '</div>' +
-            '<div class="branch-btn-wrapper" style="left: 10%; top: 25.7%;">' +
+            '<div class="branch-btn-wrapper" style="left: 8.9%; top: 24%;">' +
               vineBorderSVG() +
               '<button class="branch-btn" data-tab-index="0">Public</button>' +
             '</div>' +
-            '<div class="branch-btn-wrapper" style="left: 10%; top: 74.3%;">' +
+            '<div class="branch-btn-wrapper" style="left: 8.9%; top: 76%;">' +
               vineBorderSVG() +
               '<button class="branch-btn" data-tab-index="4">Coming Soon</button>' +
             '</div>' +
-            '<div class="branch-btn-wrapper" style="left: 90%; top: 18.6%;">' +
+            '<div class="branch-btn-wrapper" style="left: 91.1%; top: 17.3%;">' +
               vineBorderSVG() +
               '<button class="branch-btn" data-tab-index="1">Media</button>' +
             '</div>' +
-            '<div class="branch-btn-wrapper" style="left: 90%; top: 50%;">' +
+            '<div class="branch-btn-wrapper" style="left: 91.1%; top: 50%;">' +
               vineBorderSVG() +
               '<button class="branch-btn" data-tab-index="2">Private</button>' +
             '</div>' +
-            '<div class="branch-btn-wrapper" style="left: 90%; top: 81.4%;">' +
+            '<div class="branch-btn-wrapper" style="left: 91.1%; top: 82.7%;">' +
               vineBorderSVG() +
               '<button class="branch-btn" data-tab-index="3">System</button>' +
             '</div>' +
           '</div>';
         document.body.appendChild(overlay);
 
-        // 6. Create back button
+        // 4. Create back button
         var backBtn = document.createElement('button');
         backBtn.id = 'back-btn';
         backBtn.innerHTML = '\u2190 Back to Home';
         document.body.appendChild(backBtn);
 
-        // 7. Move content to wrapper after a delay (let Homepage render)
-        setTimeout(moveContentToWrapper, 200);
-        setTimeout(moveContentToWrapper, 1000);
-        setTimeout(moveContentToWrapper, 2000);
-
-        // 8. Branch line elements for hover effects
+        // 5. Branch line elements for hover effects
         var branchLines = overlay.querySelectorAll('.branch-line');
         var branchBtnWrappers = overlay.querySelectorAll('.branch-btn-wrapper');
 
-        // 9. Branch button hover — highlight corresponding line
+        // 6. Branch button hover — highlight corresponding line
         branchBtnWrappers.forEach(function(wrapper, idx) {
           wrapper.addEventListener('mouseenter', function() {
             if (branchLines[idx]) branchLines[idx].classList.add('active');
@@ -832,7 +823,7 @@ data:
           });
         });
 
-        // 10. Branch button click — show services with blurred background
+        // 7. Branch button click — switch to service view with correct tab
         branchBtnWrappers.forEach(function(wrapper) {
           var btn = wrapper.querySelector('.branch-btn');
           if (!btn) return;
@@ -845,7 +836,7 @@ data:
               tabButtons[tabIndex].click();
             }
 
-            // Switch to service view (blur the branch overlay, show services)
+            // Switch to service view
             document.body.classList.remove('branch-view');
             document.body.classList.add('service-view');
 
@@ -853,10 +844,13 @@ data:
             setTimeout(function() {
               backBtn.classList.add('visible');
             }, 300);
+
+            // Scroll to top of service content
+            window.scrollTo(0, 0);
           });
         });
 
-        // 11. Back button click — return to branch view
+        // 8. Back button click — return to branch view
         backBtn.addEventListener('click', function() {
           backBtn.classList.remove('visible');
           document.body.classList.remove('service-view');
@@ -869,7 +863,7 @@ data:
           }
         });
 
-        // 12. Set initial state
+        // 9. Set initial state
         document.body.classList.add('branch-view');
       }
 
