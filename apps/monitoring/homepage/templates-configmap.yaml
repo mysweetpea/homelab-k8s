@@ -175,22 +175,23 @@ data:
     }
 
     /* Logo container — centered and prominent */
-    .header .logo {
-      display: flex !important;
-      justify-content: center !important;
-      align-items: center !important;
-      margin-bottom: 1rem !important;
-    }
-
-    .header .logo img {
-      height: 80px !important;
+    /* Logo widget — upscaled */
+    .information-widget-logo,
+    .information-widget-logo img,
+    .header .logo img,
+    [class*="information-widget-logo"] img {
+      height: 120px !important;
       width: auto !important;
+      max-width: 200px !important;
+      object-fit: contain !important;
       filter: drop-shadow(0 0 24px rgba(16, 185, 129, 0.5))
               drop-shadow(0 0 48px rgba(16, 185, 129, 0.2)) !important;
       transition: filter var(--transition), transform var(--transition) !important;
     }
 
-    .header .logo img:hover {
+    .information-widget-logo img:hover,
+    .header .logo img:hover,
+    [class*="information-widget-logo"] img:hover {
       filter: drop-shadow(0 0 36px rgba(16, 185, 129, 0.7))
               drop-shadow(0 0 72px rgba(16, 185, 129, 0.35)) !important;
       transform: scale(1.05) !important;
