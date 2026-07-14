@@ -1,0 +1,42 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: koalasync
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.org
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: koalasync=ghcr.io/shik3i/koalasync
+    argocd-image-updater.argoproj.io/koalasync.update-strategy: latest
+    argocd-image-updater.argoproj.io/koalasync.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dmz
+  sources:
+  - repoURL: https://bjw-s-labs.github.io/helm-charts
+    chart: app-template
+    targetRevision: 3.7.3
+    helm:
+      valueFiles:
+      - $values/apps/dmz/koalasync/values.yaml
+  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=false
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
