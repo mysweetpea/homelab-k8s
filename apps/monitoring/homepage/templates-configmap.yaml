@@ -25,13 +25,13 @@ data:
       provider: duckduckgo
     layout:
       Info Widgets:
-        tab: 🏠 Home
+        tab: 🏠 Public
         header: false
         style: row
         columns: 4
       Public Services:
-        tab: 🏠 Home
-        icon: sh-globe
+        tab: 🏠 Public
+        icon: mdi-cloud-outline
         style: row
         columns: 4
       Media:
@@ -46,7 +46,7 @@ data:
         columns: 4
       Private:
         tab: 🔒 Private
-        icon: sh-files
+        icon: mdi-shield-lock-outline
         style: row
         columns: 4
       Infrastructure:
@@ -61,7 +61,7 @@ data:
         columns: 3
       Coming Soon:
         tab: 🚀 Coming Soon
-        icon: sh-rocket
+        icon: mdi-rocket-launch
         style: row
         columns: 4
 
@@ -96,6 +96,8 @@ data:
         port: 2375
 
   widgets.yaml: |
+    - logo:
+        icon: /logo.svg
     - greeting:
         text_size: 2xl
         text: "Welcome back, sweetpea"
@@ -115,40 +117,41 @@ data:
         memory: true
         expanded: true
         disk: /
-    - openmeteo:
-        label: Wellington
-        latitude: -41.2865
-        longitude: 174.7762
-        timezone: Pacific/Auckland
-        units: metric
-        cache: 5
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
-       SweetPea Homelab — Nordic Glassmorphism + Islamic Geometry Theme
+       SweetPea Homelab — Nordic Glassmorphism v2 — Refined & Polished
        ═══════════════════════════════════════════════════════════════ */
 
     /* ── CSS Variables ── */
     :root {
       --glass-bg: rgba(15, 23, 42, 0.75);
       --glass-card: rgba(30, 41, 59, 0.55);
+      --glass-card-hover: rgba(30, 41, 59, 0.7);
       --glass-border: rgba(255, 255, 255, 0.06);
-      --glass-border-hover: rgba(16, 185, 129, 0.25);
+      --glass-border-hover: rgba(16, 185, 129, 0.3);
       --accent: #10b981;
+      --accent-light: #34d399;
       --accent-glow: rgba(16, 185, 129, 0.3);
       --text-primary: #e2e8f0;
       --text-secondary: #94a3b8;
       --text-muted: #64748b;
+      --radius-xl: 24px;
       --radius-lg: 20px;
       --radius-md: 14px;
       --radius-sm: 10px;
-      --blur: 16px;
-      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --blur: 20px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.2);
+      --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.12), 0 0 80px rgba(16, 185, 129, 0.06);
     }
 
-    /* ── Body Background ── */
+    /* ── Body Background — Multi-layer gradient ── */
     body {
-      background: linear-gradient(135deg, #0b1120 0%, #0f172a 30%, #1a1f35 60%, #0d1525 100%) !important;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
+        linear-gradient(135deg, #0b1120 0%, #0f172a 30%, #1a1f35 60%, #0d1525 100%) !important;
       background-attachment: fixed !important;
     }
 
@@ -158,8 +161,8 @@ data:
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
       background-size: 60px 60px;
       pointer-events: none;
       z-index: 0;
@@ -168,57 +171,68 @@ data:
     /* ── Header / Logo Area ── */
     .header {
       position: relative;
-      padding: 1.5rem 0 0.5rem 0 !important;
+      padding: 2rem 0 0.75rem 0 !important;
     }
 
-    /* Logo container — make it prominent */
+    /* Logo container — centered and prominent */
     .header .logo {
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
-      margin-bottom: 0.75rem !important;
+      margin-bottom: 1rem !important;
     }
 
     .header .logo img {
-      height: 72px !important;
+      height: 80px !important;
       width: auto !important;
-      filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5))
-              drop-shadow(0 0 40px rgba(16, 185, 129, 0.2)) !important;
-      transition: filter var(--transition) !important;
+      filter: drop-shadow(0 0 24px rgba(16, 185, 129, 0.5))
+              drop-shadow(0 0 48px rgba(16, 185, 129, 0.2)) !important;
+      transition: filter var(--transition), transform var(--transition) !important;
     }
 
     .header .logo img:hover {
-      filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.7))
-              drop-shadow(0 0 60px rgba(16, 185, 129, 0.35)) !important;
+      filter: drop-shadow(0 0 36px rgba(16, 185, 129, 0.7))
+              drop-shadow(0 0 72px rgba(16, 185, 129, 0.35)) !important;
+      transform: scale(1.05) !important;
     }
 
-    /* Title styling */
+    /* Title styling — gradient text */
     .header h1 {
-      font-size: 1.6rem !important;
+      font-size: 1.7rem !important;
       font-weight: 700 !important;
-      letter-spacing: 0.02em !important;
+      letter-spacing: 0.03em !important;
       background: linear-gradient(135deg, #e2e8f0 0%, #10b981 50%, #34d399 100%) !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
       background-clip: text !important;
       text-align: center !important;
+      margin-bottom: 0.25rem !important;
     }
 
-    /* ── Tab Navigation ── */
+    /* Description subtitle */
+    .header p {
+      text-align: center !important;
+      color: var(--text-muted) !important;
+      font-size: 0.8rem !important;
+      letter-spacing: 0.05em !important;
+    }
+
+    /* ── Tab Navigation — Pill style with glow ── */
     #tabs ul {
       display: flex !important;
       flex-direction: row !important;
       flex-wrap: wrap !important;
       justify-content: center !important;
-      gap: 6px !important;
+      gap: 4px !important;
       padding: 6px !important;
-      margin: 0 auto 1.5rem auto !important;
+      margin: 0 auto 2rem auto !important;
       width: fit-content !important;
-      background: rgba(30, 41, 59, 0.4) !important;
+      background: rgba(30, 41, 59, 0.5) !important;
       backdrop-filter: blur(var(--blur)) !important;
       -webkit-backdrop-filter: blur(var(--blur)) !important;
       border: 1px solid var(--glass-border) !important;
       border-radius: 50px !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
     }
 
     #tabs ul li {
@@ -229,28 +243,29 @@ data:
     #tabs ul li button {
       width: auto !important;
       border-radius: 50px !important;
-      padding: 8px 22px !important;
+      padding: 9px 24px !important;
       min-height: unset !important;
       font-size: 0.875rem !important;
       font-weight: 500 !important;
       color: var(--text-secondary) !important;
       background: transparent !important;
       transition: all var(--transition) !important;
+      border: none !important;
     }
 
     #tabs ul li button:hover {
       color: var(--text-primary) !important;
-      background: rgba(255, 255, 255, 0.05) !important;
+      background: rgba(255, 255, 255, 0.06) !important;
     }
 
     #tabs ul li button[aria-selected="true"] {
       color: #fff !important;
-      background: rgba(16, 185, 129, 0.2) !important;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(52, 211, 153, 0.15)) !important;
       font-weight: 600 !important;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.15) !important;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.2), inset 0 0 0 1px rgba(16, 185, 129, 0.15) !important;
     }
 
-    /* ── Service Cards — Glassmorphism ── */
+    /* ── Service Cards — Enhanced Glassmorphism ── */
     .service-card {
       position: relative !important;
       background: var(--glass-card) !important;
@@ -261,6 +276,7 @@ data:
       overflow: hidden !important;
       isolation: isolate !important;
       transition: all var(--transition) !important;
+      box-shadow: var(--shadow-card) !important;
     }
 
     .service-card::before {
@@ -268,20 +284,36 @@ data:
       position: absolute;
       inset: 0;
       background: linear-gradient(135deg,
-        rgba(255,255,255,0.04) 0%,
+        rgba(255,255,255,0.05) 0%,
         rgba(255,255,255,0.01) 50%,
         rgba(255,255,255,0) 100%);
       z-index: 0;
       pointer-events: none;
+      transition: opacity var(--transition) !important;
+    }
+
+    /* Subtle top highlight line */
+    .service-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      z-index: 2;
+      pointer-events: none;
     }
 
     .service-card:hover {
-      transform: translateY(-4px) !important;
+      transform: translateY(-5px) !important;
+      background: var(--glass-card-hover) !important;
       border-color: var(--glass-border-hover) !important;
-      box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(16, 185, 129, 0.1),
-        0 0 60px rgba(16, 185, 129, 0.08) !important;
+      box-shadow: var(--shadow-hover) !important;
+    }
+
+    .service-card:hover::before {
+      opacity: 1.5 !important;
     }
 
     .service-card > div {
@@ -290,48 +322,48 @@ data:
     }
 
     /* ── Service Card Color Tinting ── */
-    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.25), transparent 70%) !important; }
-    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.25), transparent 70%) !important; }
-    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.25), transparent 70%) !important; }
-    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.25), transparent 70%) !important; }
-    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.25), transparent 70%) !important; }
-    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.25), transparent 70%) !important; }
-    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.25), transparent 70%) !important; }
-    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
-    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.25), transparent 70%) !important; }
-    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.25), transparent 70%) !important; }
-    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.25), transparent 70%) !important; }
-    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.25), transparent 70%) !important; }
-    #traefik-card::before   { background: radial-gradient(circle at top left, rgba(37,193,255,0.25), transparent 70%) !important; }
-    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.25), transparent 70%) !important; }
-    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
-    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.25), transparent 70%) !important; }
-    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.25), transparent 70%) !important; }
-    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.25), transparent 70%) !important; }
-    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.25), transparent 70%) !important; }
-    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.25), transparent 70%) !important; }
-    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.25), transparent 70%) !important; }
-    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.25), transparent 70%) !important; }
-    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.25), transparent 70%) !important; }
-    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
-    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.25), transparent 70%) !important; }
-    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.25), transparent 70%) !important; }
-    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
-    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.25), transparent 70%) !important; }
-    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
-    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.25), transparent 70%) !important; }
+    #jellyfin-card::before  { background: radial-gradient(circle at top left, rgba(170,92,195,0.22), transparent 70%) !important; }
+    #seerr-card::before     { background: radial-gradient(circle at top left, rgba(245,158,11,0.22), transparent 70%) !important; }
+    #radarr-card::before    { background: radial-gradient(circle at top left, rgba(251,191,36,0.22), transparent 70%) !important; }
+    #sonarr-card::before    { background: radial-gradient(circle at top left, rgba(37,193,255,0.22), transparent 70%) !important; }
+    #bazarr-card::before    { background: radial-gradient(circle at top left, rgba(147,51,234,0.22), transparent 70%) !important; }
+    #prowlarr-card::before  { background: radial-gradient(circle at top left, rgba(239,68,68,0.22), transparent 70%) !important; }
+    #qbittorrent-card::before { background: radial-gradient(circle at top left, rgba(57,186,93,0.22), transparent 70%) !important; }
+    #nextcloud-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
+    #immich-card::before    { background: radial-gradient(circle at top left, rgba(234,34,34,0.22), transparent 70%) !important; }
+    #n8n-card::before       { background: radial-gradient(circle at top left, rgba(236,72,72,0.22), transparent 70%) !important; }
+    #gotify-card::before    { background: radial-gradient(circle at top left, rgba(74,222,128,0.22), transparent 70%) !important; }
+    #affine-card::before    { background: radial-gradient(circle at top left, rgba(168,85,247,0.22), transparent 70%) !important; }
+    #traefik-card::before   { background: radial-gradient(circle at top left, rgba(37,193,255,0.22), transparent 70%) !important; }
+    #authentik-card::before { background: radial-gradient(circle at top left, rgba(249,115,22,0.22), transparent 70%) !important; }
+    #vaultwarden-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
+    #matrix-card::before    { background: radial-gradient(circle at top left, rgba(16,185,129,0.22), transparent 70%) !important; }
+    #element-card::before   { background: radial-gradient(circle at top left, rgba(14,165,233,0.22), transparent 70%) !important; }
+    #open-webui-card::before { background: radial-gradient(circle at top left, rgba(99,102,241,0.22), transparent 70%) !important; }
+    #ollama-card::before    { background: radial-gradient(circle at top left, rgba(236,72,153,0.22), transparent 70%) !important; }
+    #searxng-card::before   { background: radial-gradient(circle at top left, rgba(100,116,139,0.22), transparent 70%) !important; }
+    #uptime-kuma-card::before { background: radial-gradient(circle at top left, rgba(97,239,173,0.22), transparent 70%) !important; }
+    #netdata-card::before   { background: radial-gradient(circle at top left, rgba(34,211,238,0.22), transparent 70%) !important; }
+    #argocd-card::before    { background: radial-gradient(circle at top left, rgba(249,115,22,0.22), transparent 70%) !important; }
+    #rustdesk-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
+    #qdrant-card::before    { background: radial-gradient(circle at top left, rgba(220,38,38,0.22), transparent 70%) !important; }
+    #flaresolverr-card::before { background: radial-gradient(circle at top left, rgba(251,146,60,0.22), transparent 70%) !important; }
+    #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
+    #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.22), transparent 70%) !important; }
+    #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.22), transparent 70%) !important; }
+    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.22), transparent 70%) !important; }
 
     /* ── Coming Soon Cards — Special Styling ── */
     #grafana-card, #prometheus-card, #syncthing-card,
     #stalwart-card, #remux-card, #koalasync-card {
-      opacity: 0.7 !important;
+      opacity: 0.65 !important;
       border-style: dashed !important;
-      border-color: rgba(255,255,255,0.1) !important;
+      border-color: rgba(255,255,255,0.08) !important;
     }
 
     #grafana-card:hover, #prometheus-card:hover, #syncthing-card:hover,
     #stalwart-card:hover, #remux-card:hover, #koalasync-card:hover {
-      opacity: 0.9 !important;
+      opacity: 0.85 !important;
       border-style: solid !important;
       border-color: var(--glass-border-hover) !important;
     }
@@ -341,6 +373,7 @@ data:
       color: var(--text-primary) !important;
       font-weight: 600 !important;
       font-size: 0.9rem !important;
+      letter-spacing: 0.01em !important;
     }
 
     .service-description {
@@ -383,12 +416,13 @@ data:
       color: var(--text-secondary) !important;
       font-weight: 700 !important;
       font-size: 0.8rem !important;
-      letter-spacing: 0.05em !important;
+      letter-spacing: 0.06em !important;
       text-transform: uppercase !important;
-      opacity: 0.7 !important;
+      opacity: 0.65 !important;
+      margin-bottom: 0.5rem !important;
     }
 
-    /* ── Info Widgets (Greeting, DateTime, Search, Resources, Weather) ── */
+    /* ── Info Widgets — Glass cards ── */
     .widget-container,
     .information-widget-logo,
     [class*="information-widget-glances"] {
@@ -397,15 +431,22 @@ data:
       -webkit-backdrop-filter: blur(var(--blur)) !important;
       border: 1px solid var(--glass-border) !important;
       border-radius: var(--radius-lg) !important;
-      padding: 16px 20px !important;
+      padding: 18px 22px !important;
       margin-bottom: 12px !important;
-      box-shadow: none !important;
+      box-shadow: var(--shadow-card) !important;
+      transition: all var(--transition) !important;
+    }
+
+    .widget-container:hover,
+    [class*="information-widget-glances"]:hover {
+      border-color: rgba(255,255,255,0.1) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25) !important;
     }
 
     /* ── Resource Bars ── */
     .information-widget-resource div[style*="width"] {
       background: linear-gradient(90deg, #10b981 0%, #34d399 40%, #22d3ee 75%, #a78bfa 100%) !important;
-      opacity: 0.5 !important;
+      opacity: 0.6 !important;
       border-radius: 10px !important;
     }
 
@@ -454,9 +495,9 @@ data:
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
-      .header .logo img { height: 48px !important; }
+      .header .logo img { height: 52px !important; }
       .header h1 { font-size: 1.2rem !important; }
-      #tabs ul li button { padding: 6px 14px !important; font-size: 0.8rem !important; }
+      #tabs ul li button { padding: 7px 16px !important; font-size: 0.8rem !important; }
       .service-card { border-radius: var(--radius-md) !important; }
     }
 
@@ -475,14 +516,14 @@ data:
       }
       resize();
       window.addEventListener('resize', resize);
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 35; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          r: Math.random() * 1.5 + 0.5,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          o: Math.random() * 0.4 + 0.1
+          r: Math.random() * 1.8 + 0.4,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          o: Math.random() * 0.35 + 0.08
         });
       }
       function animate() {
@@ -514,6 +555,14 @@ data:
               type: jellyfin
               url: http://jellyfin.dmz.svc.cluster.local:8096
               key: ${JELLYFIN_API_KEY}
+        - Seerr:
+            href: https://request.mysweetpea.cc
+            description: Media Requests
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
+            widget:
+              type: seerr
+              url: http://seerr.dmz.svc.cluster.local:5055
+              key: ${SEERR_API_KEY}
         - AFFiNE:
             href: https://notes.mysweetpea.cc
             description: Knowledge Base
@@ -535,6 +584,24 @@ data:
             href: https://chat.mysweetpea.cc
             description: Matrix Chat Client
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
+        - Matrix Synapse:
+            href: https://matrix.mysweetpea.cc
+            description: Chat Server
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
+        - n8n:
+            href: https://n8n.mysweetpea.cc
+            description: Workflow Automation
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
+            widget:
+              type: customapi
+              url: http://n8n.private.svc.cluster.local:5678/api/v1/workflows
+              method: GET
+              headers:
+                X-N8N-API-KEY: ${N8N_API_KEY}
+              mappings:
+                - field: count
+                  label: Workflows
+                  format: number
     - Media:
         - Jellyfin:
             href: http://jellyfin.dmz.svc.cluster.local:8096
