@@ -109,7 +109,7 @@ data:
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
-       SweetPea Homelab — Black & Gold Branch Navigation v7
+       SweetPea Homelab — Black & Gold Branch Navigation v8
        ═══════════════════════════════════════════════════════════════ */
 
     :root {
@@ -132,7 +132,7 @@ data:
       display: none !important;
     }
 
-    /* ── Stats Bar — Fixed at Top ── */
+    /* ── Stats Bar — Only visible on branch view ── */
     #information-widgets {
       position: fixed !important;
       top: 0 !important;
@@ -145,6 +145,13 @@ data:
       padding: 8px 24px !important;
       margin: 0 !important;
       border-radius: 0 !important;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Hide stats bar in service view */
+    body.service-active #information-widgets {
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
 
     #information-widgets .widget-container {
@@ -165,9 +172,22 @@ data:
     .information-widget-resource:nth-of-type(2) svg { color: #f0c75e !important; }
     .information-widget-resource:nth-of-type(3) svg { color: #b8941f !important; }
 
-    /* ── Container Padding ── */
+    /* ── Container ── */
     .container {
       padding-top: 60px !important;
+    }
+
+    /* In service view, no top padding needed (no stats bar) */
+    body.service-active .container {
+      padding-top: 20px !important;
+    }
+
+    /* ── Hide bookmarks/footer in service view ── */
+    body.service-active .bookmark-group,
+    body.service-active [class*="bookmark-group"],
+    body.service-active #footer,
+    body.service-active [id*="footer"] {
+      display: none !important;
     }
 
     /* ── Service Cards ── */
@@ -419,7 +439,7 @@ data:
     /* ── Back Button ── */
     #back-btn {
       position: fixed;
-      top: 68px;
+      top: 20px;
       left: 24px;
       z-index: 10000;
       background: rgba(8, 8, 8, 0.9);
@@ -472,7 +492,7 @@ data:
         transform: scale(1.02) !important;
       }
       #branch-logo img { height: 260px !important; }
-      #back-btn { top: 64px; left: 12px; }
+      #back-btn { top: 12px; left: 12px; }
     }
 
   custom.js: |
@@ -487,10 +507,10 @@ data:
         var header = document.querySelector('.header, [class*="header"]');
         if (header) header.style.display = 'none';
 
-        // 2. Create falling golden petals canvas
+        // 2. Create falling golden petals canvas — always visible, behind everything
         var canvas = document.createElement('canvas');
         canvas.id = 'petal-canvas';
-        canvas.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none;';
+        canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;';
         document.body.prepend(canvas);
         var ctx = canvas.getContext('2d');
         var petals = [];
@@ -516,7 +536,7 @@ data:
           };
         }
 
-        for (var i = 0; i < 45; i++) {
+        for (var i = 0; i < 50; i++) {
           var p = createPetal();
           p.y = Math.random() * canvas.height;
           petals.push(p);
@@ -543,7 +563,6 @@ data:
             ctx.rotate(p.rotation);
             ctx.globalAlpha = p.opacity;
             ctx.fillStyle = '#d4af37';
-            // Draw a simple petal shape
             ctx.beginPath();
             ctx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
             ctx.fill();
@@ -658,6 +677,9 @@ data:
             // Hide the branch overlay (slide up)
             overlay.classList.add('hidden');
 
+            // Mark service active (hides stats bar, bookmarks, footer)
+            document.body.classList.add('service-active');
+
             // Show back button
             setTimeout(function() {
               backBtn.classList.add('visible');
@@ -672,6 +694,7 @@ data:
         backBtn.addEventListener('click', function() {
           backBtn.classList.remove('visible');
           overlay.classList.remove('hidden');
+          document.body.classList.remove('service-active');
 
           // Reset tab to first
           var tabButtons = document.querySelectorAll('#tabs ul li button');
