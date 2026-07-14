@@ -25,3 +25,4 @@ sanitize-flagged-apps.py
 batch-migrate.py
 batch-patch-apps.sh
 sanitize-flagged-apps.py
+*-secrets.yaml
