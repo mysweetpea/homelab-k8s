@@ -1,6 +1,17 @@
 ---
 controllers:
   main:
+    initContainers:
+      config-copy:
+        image:
+          repository: alpine
+          tag: latest
+          pullPolicy: IfNotPresent
+        command:
+          - sh
+          - -c
+          - |
+            cp /templates/* /app/config/
     containers:
       main:
         env:
@@ -13,10 +24,15 @@ controllers:
           tag: v1.13.2
     type: deployment
 persistence:
-  config:
+  templates:
     enabled: true
     type: configMap
     name: homepage-templates
+    globalMounts:
+      - path: /templates
+  config:
+    enabled: true
+    type: emptyDir
     globalMounts:
       - path: /app/config
   logo:
