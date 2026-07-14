@@ -110,12 +110,13 @@ data:
         memory: true
         expanded: true
         disk: /
-    - openweathermap:
+    - openmeteo:
         label: Wellington
         latitude: -41.2865
         longitude: 174.7762
+        timezone: Pacific/Auckland
         units: metric
-        provider: openweathermap
+        cache: 5
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
@@ -508,11 +509,11 @@ data:
               url: http://jellyfin.dmz.svc.cluster.local:8096
               key: ${JELLYFIN_API_KEY}
         - Seerr:
-            href: http://seerr.dmz.svc.cluster.local:5055
+            href: https://request.mysweetpea.cc
             description: Media Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
             widget:
-              type: overseerr
+              type: seerr
               url: http://seerr.dmz.svc.cluster.local:5055
               key: ${SEERR_API_KEY}
     - Arr Stack:
@@ -680,7 +681,7 @@ data:
             widget:
               type: uptimekuma
               url: http://uptime-kuma.monitoring.svc.cluster.local:3001
-              key: ${UPTIME_KUMA_API_KEY}
+              slug: ${UPTIME_KUMA_SLUG}
         - Netdata:
             href: http://192.168.20.229:19999
             description: System Metrics
@@ -719,3 +720,4 @@ data:
             description: Media Transcoder — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/tdarr.svg
             server: ""
+
