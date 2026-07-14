@@ -29,6 +29,11 @@ data:
         header: false
         style: row
         columns: 4
+      Public Services:
+        tab: 🏠 Home
+        icon: sh-globe
+        style: row
+        columns: 4
       Media:
         tab: 🎬 Media
         icon: sh-mediathekview
@@ -314,17 +319,18 @@ data:
     #questarr-card::before  { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
     #nzbdav-card::before    { background: radial-gradient(circle at top left, rgba(245,158,11,0.25), transparent 70%) !important; }
     #postgresql-card::before { background: radial-gradient(circle at top left, rgba(59,130,246,0.25), transparent 70%) !important; }
+    #koalasync-card::before { background: radial-gradient(circle at top left, rgba(139,115,85,0.25), transparent 70%) !important; }
 
     /* ── Coming Soon Cards — Special Styling ── */
     #grafana-card, #prometheus-card, #syncthing-card,
-    #stalwart-card, #remux-card {
+    #stalwart-card, #remux-card, #koalasync-card {
       opacity: 0.7 !important;
       border-style: dashed !important;
       border-color: rgba(255,255,255,0.1) !important;
     }
 
     #grafana-card:hover, #prometheus-card:hover, #syncthing-card:hover,
-    #stalwart-card:hover, #remux-card:hover {
+    #stalwart-card:hover, #remux-card:hover, #koalasync-card:hover {
       opacity: 0.9 !important;
       border-style: solid !important;
       border-color: var(--glass-border-hover) !important;
@@ -499,6 +505,36 @@ data:
     })();
 
   services.yaml: |
+    - Public Services:
+        - Jellyfin:
+            href: https://media.mysweetpea.cc
+            description: Media Server
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
+            widget:
+              type: jellyfin
+              url: http://jellyfin.dmz.svc.cluster.local:8096
+              key: ${JELLYFIN_API_KEY}
+        - AFFiNE:
+            href: https://notes.mysweetpea.cc
+            description: Knowledge Base
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
+        - Authentik:
+            href: https://auth.mysweetpea.cc
+            description: SSO & Identity
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/authentik.svg
+            widget:
+              type: authentik
+              url: http://authentik-server.dmz.svc.cluster.local:80
+              version: 2
+              key: ${AUTHENTIK_API_TOKEN}
+        - Vaultwarden:
+            href: https://vault.mysweetpea.cc
+            description: Password Manager
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
+        - Element:
+            href: https://chat.mysweetpea.cc
+            description: Matrix Chat Client
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
     - Media:
         - Jellyfin:
             href: http://jellyfin.dmz.svc.cluster.local:8096
@@ -719,5 +755,10 @@ data:
             href: ""
             description: Media Transcoder — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/tdarr.svg
+            server: ""
+        - KoalaSync:
+            href: https://github.com/Shik3i/KoalaSync
+            description: Sync Video Playback — Coming Soon
+            icon: mdi-sync
             server: ""
 
