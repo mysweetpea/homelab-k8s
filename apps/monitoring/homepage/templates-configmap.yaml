@@ -109,15 +109,13 @@ data:
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
-       SweetPea Homelab — Black & Gold Full-Screen Branch Navigation
+       SweetPea Homelab — Black & Gold Branch Navigation v7
        ═══════════════════════════════════════════════════════════════ */
 
     :root {
       --gold: #d4af37;
       --gold-light: #f0c75e;
       --gold-dark: #b8941f;
-      --black: #050505;
-      --black-light: #0a0a0a;
       --border: rgba(212, 175, 55, 0.15);
       --border-hover: rgba(212, 175, 55, 0.4);
     }
@@ -172,7 +170,7 @@ data:
       padding-top: 60px !important;
     }
 
-    /* ── Service Cards — Black & Gold ── */
+    /* ── Service Cards ── */
     .service-card {
       background: rgba(15, 15, 15, 0.8) !important;
       border: 1px solid var(--border) !important;
@@ -209,7 +207,7 @@ data:
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.15); border-radius: 3px; }
 
-    /* ── Branch Overlay — Full Screen Cover ── */
+    /* ── Branch Overlay ── */
     #branch-overlay {
       position: fixed !important;
       inset: 0 !important;
@@ -299,7 +297,7 @@ data:
       to { opacity: 0.3; }
     }
 
-    /* ── Center Logo — Massive & Illuminated ── */
+    /* ── Center Logo ── */
     #branch-logo {
       position: absolute;
       top: 50%;
@@ -326,7 +324,7 @@ data:
       }
     }
 
-    /* ── Branch Buttons with Elegant Gold Vine Border ── */
+    /* ── Branch Buttons with Vine Border ── */
     .branch-btn-wrapper {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -489,42 +487,67 @@ data:
         var header = document.querySelector('.header, [class*="header"]');
         if (header) header.style.display = 'none';
 
-        // 2. Create particle canvas (gold dust)
+        // 2. Create falling golden petals canvas
         var canvas = document.createElement('canvas');
-        canvas.id = 'particle-canvas';
+        canvas.id = 'petal-canvas';
         canvas.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none;';
         document.body.prepend(canvas);
         var ctx = canvas.getContext('2d');
-        var particles = [];
+        var petals = [];
         function resize() {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
         }
         resize();
         window.addEventListener('resize', resize);
-        for (var i = 0; i < 40; i++) {
-          particles.push({
+
+        function createPetal() {
+          return {
             x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: Math.random() * 1.8 + 0.2,
-            vx: (Math.random() - 0.5) * 0.08,
-            vy: (Math.random() - 0.5) * 0.08,
-            o: Math.random() * 0.25 + 0.03
-          });
+            y: -20,
+            size: Math.random() * 6 + 3,
+            speedY: Math.random() * 1.2 + 0.4,
+            speedX: (Math.random() - 0.5) * 0.8,
+            rotation: Math.random() * Math.PI * 2,
+            rotationSpeed: (Math.random() - 0.5) * 0.03,
+            opacity: Math.random() * 0.4 + 0.2,
+            sway: Math.random() * 0.02 + 0.01,
+            swayOffset: Math.random() * Math.PI * 2
+          };
         }
+
+        for (var i = 0; i < 45; i++) {
+          var p = createPetal();
+          p.y = Math.random() * canvas.height;
+          petals.push(p);
+        }
+
+        var frame = 0;
         function animate() {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          particles.forEach(function(p) {
-            p.x += p.vx;
-            p.y += p.vy;
-            if (p.x < 0) p.x = canvas.width;
-            if (p.x > canvas.width) p.x = 0;
-            if (p.y < 0) p.y = canvas.height;
-            if (p.y > canvas.height) p.y = 0;
+          frame++;
+          petals.forEach(function(p) {
+            p.y += p.speedY;
+            p.x += p.speedX + Math.sin(frame * p.sway + p.swayOffset) * 0.4;
+            p.rotation += p.rotationSpeed;
+
+            if (p.y > canvas.height + 20) {
+              p.y = -20;
+              p.x = Math.random() * canvas.width;
+            }
+            if (p.x < -20) p.x = canvas.width + 20;
+            if (p.x > canvas.width + 20) p.x = -20;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            ctx.globalAlpha = p.opacity;
+            ctx.fillStyle = '#d4af37';
+            // Draw a simple petal shape
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(212,175,55,' + p.o + ')';
+            ctx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
             ctx.fill();
+            ctx.restore();
           });
           requestAnimationFrame(animate);
         }
