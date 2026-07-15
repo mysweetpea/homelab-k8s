@@ -11,9 +11,9 @@ controllers:
     pod:
       securityContext:
         fsGroup: 1000
+      nodeSelector:
+        kubernetes.io/hostname: k3s-master
     type: deployment
-    nodeSelector:
-      kubernetes.io/hostname: k3s-master
 persistence:
   config:
     accessMode: ReadWriteOnce
