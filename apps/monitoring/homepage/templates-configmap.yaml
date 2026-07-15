@@ -578,7 +578,7 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
         - NzbDAV:
             id: nzbdav
-            href: http://nzbdav.private.svc.cluster.local:8081
+            href: http://nzbdav.private.svc.cluster.local:8080
             description: Usenet Stream
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
     - Private:
