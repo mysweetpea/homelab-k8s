@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: controllers.main.containers.main.image.tag
-    value: preview-new-oidc
+    value: v3.3.0
     forcestring: true
   - name: image.name
     value: ghcr.io/seerr-team/seerr
