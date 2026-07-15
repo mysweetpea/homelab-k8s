@@ -109,7 +109,7 @@ data:
 
   custom.css: |
     /* ═══════════════════════════════════════════════════════════════
-       SweetPea Homelab — Black & Gold Branch Navigation v8
+       SweetPea Homelab — Black & Gold Branch Navigation v9
        ═══════════════════════════════════════════════════════════════ */
 
     :root {
@@ -120,25 +120,23 @@ data:
       --border-hover: rgba(212, 175, 55, 0.4);
     }
 
-    /* ── Force Black Background Everywhere ── */
     html, body, #__next, #page_wrapper, #inner_wrapper, .container {
       background-color: #050505 !important;
       background-image: none !important;
       color: #f0f0f0 !important;
     }
 
-    /* ── Hide Default Header & Tabs ── */
     .header, #tabs {
       display: none !important;
     }
 
-    /* ── Stats Bar — Only visible on branch view ── */
+    /* ── Stats Bar — Above overlay, only on main page ── */
     #information-widgets {
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
       right: 0 !important;
-      z-index: 200 !important;
+      z-index: 10001 !important;
       background: rgba(5, 5, 5, 0.95) !important;
       backdrop-filter: blur(20px) !important;
       border-bottom: 1px solid var(--border) !important;
@@ -148,7 +146,6 @@ data:
       transition: opacity 0.3s ease;
     }
 
-    /* Hide stats bar in service view */
     body.service-active #information-widgets {
       opacity: 0 !important;
       pointer-events: none !important;
@@ -172,17 +169,19 @@ data:
     .information-widget-resource:nth-of-type(2) svg { color: #f0c75e !important; }
     .information-widget-resource:nth-of-type(3) svg { color: #b8941f !important; }
 
-    /* ── Container ── */
     .container {
       padding-top: 60px !important;
     }
 
-    /* In service view, no top padding needed (no stats bar) */
+    /* Service view: centered with padding */
     body.service-active .container {
-      padding-top: 20px !important;
+      padding-top: 100px !important;
+      padding-bottom: 60px !important;
+      max-width: 1400px !important;
+      margin: 0 auto !important;
     }
 
-    /* ── Hide bookmarks/footer in service view ── */
+    /* Hide bookmarks/footer in service view */
     body.service-active .bookmark-group,
     body.service-active [class*="bookmark-group"],
     body.service-active #footer,
@@ -211,7 +210,6 @@ data:
       letter-spacing: 0.07em !important;
     }
 
-    /* ── Bookmarks ── */
     li.bookmark a {
       background: rgba(212, 175, 55, 0.03) !important;
       border: 1px solid var(--border) !important;
@@ -223,7 +221,6 @@ data:
       border-color: var(--border-hover) !important;
     }
 
-    /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.15); border-radius: 3px; }
 
@@ -241,6 +238,7 @@ data:
       align-items: center;
       justify-content: center;
       transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+      overflow: hidden;
     }
 
     #branch-overlay.hidden {
@@ -249,14 +247,23 @@ data:
       pointer-events: none;
     }
 
+    /* Petal canvas inside overlay (branch view) */
+    #branch-overlay #petal-canvas-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
     #branch-content {
       position: relative;
       width: 100%;
       max-width: 2000px;
-      height: 850px;
+      height: 100vh;
+      z-index: 2;
     }
 
-    /* ── Branch SVG Lines — Gold Vines ── */
+    /* ── Branch SVG — stretches to fill container ── */
     #branch-svg {
       position: absolute;
       top: 0;
@@ -295,7 +302,6 @@ data:
       filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.7));
     }
 
-    /* ── Vine Leaves ── */
     .vine-leaf {
       fill: var(--gold-dark);
       opacity: 0;
@@ -344,7 +350,7 @@ data:
       }
     }
 
-    /* ── Branch Buttons with Vine Border ── */
+    /* ── Branch Buttons ── */
     .branch-btn-wrapper {
       position: absolute;
       transform: translate(-50%, -50%);
@@ -470,7 +476,6 @@ data:
       color: var(--gold-light);
     }
 
-    /* ── Responsive ── */
     @media (max-width: 768px) {
       #branch-content {
         height: auto;
@@ -503,27 +508,33 @@ data:
         if (initialized) return;
         initialized = true;
 
-        // 1. Hide default header
         var header = document.querySelector('.header, [class*="header"]');
         if (header) header.style.display = 'none';
 
-        // 2. Create falling golden petals canvas — always visible, behind everything
-        var canvas = document.createElement('canvas');
-        canvas.id = 'petal-canvas';
-        canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;';
-        document.body.prepend(canvas);
-        var ctx = canvas.getContext('2d');
-        var petals = [];
+        // 1. Create falling golden petals — service view canvas (behind everything)
+        var canvasSvc = document.createElement('canvas');
+        canvasSvc.id = 'petal-canvas-service';
+        canvasSvc.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;';
+        document.body.prepend(canvasSvc);
+        var ctxSvc = canvasSvc.getContext('2d');
+
+        // 2. Create falling golden petals — overlay canvas (inside branch overlay)
+        var canvasOvr = document.createElement('canvas');
+        canvasOvr.id = 'petal-canvas-overlay';
+        canvasOvr.style.cssText = 'position:absolute;inset:0;z-index:1;pointer-events:none;';
+
         function resize() {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
+          canvasSvc.width = window.innerWidth;
+          canvasSvc.height = window.innerHeight;
+          canvasOvr.width = window.innerWidth;
+          canvasOvr.height = window.innerHeight;
         }
         resize();
         window.addEventListener('resize', resize);
 
         function createPetal() {
           return {
-            x: Math.random() * canvas.width,
+            x: Math.random() * (canvasSvc.width || 1920),
             y: -20,
             size: Math.random() * 6 + 3,
             speedY: Math.random() * 1.2 + 0.4,
@@ -536,37 +547,49 @@ data:
           };
         }
 
+        var petals = [];
         for (var i = 0; i < 50; i++) {
           var p = createPetal();
-          p.y = Math.random() * canvas.height;
+          p.y = Math.random() * (canvasSvc.height || 1080);
           petals.push(p);
         }
 
         var frame = 0;
         function animate() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          var w = canvasSvc.width;
+          var h = canvasSvc.height;
+          ctxSvc.clearRect(0, 0, w, h);
+          ctxOvr.clearRect(0, 0, w, h);
           frame++;
           petals.forEach(function(p) {
             p.y += p.speedY;
             p.x += p.speedX + Math.sin(frame * p.sway + p.swayOffset) * 0.4;
             p.rotation += p.rotationSpeed;
+            if (p.y > h + 20) { p.y = -20; p.x = Math.random() * w; }
+            if (p.x < -20) p.x = w + 20;
+            if (p.x > w + 20) p.x = -20;
 
-            if (p.y > canvas.height + 20) {
-              p.y = -20;
-              p.x = Math.random() * canvas.width;
-            }
-            if (p.x < -20) p.x = canvas.width + 20;
-            if (p.x > canvas.width + 20) p.x = -20;
+            // Draw on service canvas
+            ctxSvc.save();
+            ctxSvc.translate(p.x, p.y);
+            ctxSvc.rotate(p.rotation);
+            ctxSvc.globalAlpha = p.opacity;
+            ctxSvc.fillStyle = '#d4af37';
+            ctxSvc.beginPath();
+            ctxSvc.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+            ctxSvc.fill();
+            ctxSvc.restore();
 
-            ctx.save();
-            ctx.translate(p.x, p.y);
-            ctx.rotate(p.rotation);
-            ctx.globalAlpha = p.opacity;
-            ctx.fillStyle = '#d4af37';
-            ctx.beginPath();
-            ctx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+            // Draw on overlay canvas
+            ctxOvr.save();
+            ctxOvr.translate(p.x, p.y);
+            ctxOvr.rotate(p.rotation);
+            ctxOvr.globalAlpha = p.opacity;
+            ctxOvr.fillStyle = '#d4af37';
+            ctxOvr.beginPath();
+            ctxOvr.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+            ctxOvr.fill();
+            ctxOvr.restore();
           });
           requestAnimationFrame(animate);
         }
@@ -598,23 +621,31 @@ data:
         }
 
         overlay.innerHTML =
+          '<canvas id="petal-canvas-overlay" style="position:absolute;inset:0;z-index:1;pointer-events:none;"></canvas>' +
           '<div id="branch-content">' +
-            '<svg id="branch-svg" viewBox="0 0 2000 850" preserveAspectRatio="xMidYMid meet">' +
-              '<path class="branch-line" d="M 1000 425 C 650 380, 420 290, 160 200" />' +
-              '<path class="branch-line" d="M 1000 425 C 650 470, 420 560, 160 650" />' +
-              '<path class="branch-line" d="M 1000 425 C 1350 370, 1580 250, 1840 160" />' +
-              '<path class="branch-line" d="M 1000 425 C 1350 425, 1580 425, 1840 425" />' +
-              '<path class="branch-line" d="M 1000 425 C 1350 480, 1580 600, 1840 690" />' +
-              '<ellipse class="vine-leaf" cx="600" cy="375" rx="9" ry="4.5" transform="rotate(-25 600 375)" />' +
-              '<ellipse class="vine-leaf" cx="420" cy="320" rx="8" ry="4" transform="rotate(-30 420 320)" />' +
-              '<ellipse class="vine-leaf" cx="720" cy="475" rx="9" ry="4.5" transform="rotate(20 720 475)" />' +
-              '<ellipse class="vine-leaf" cx="450" cy="545" rx="8" ry="4" transform="rotate(25 450 545)" />' +
-              '<ellipse class="vine-leaf" cx="1300" cy="385" rx="9" ry="4.5" transform="rotate(20 1300 385)" />' +
-              '<ellipse class="vine-leaf" cx="1530" cy="295" rx="8" ry="4" transform="rotate(30 1530 295)" />' +
-              '<ellipse class="vine-leaf" cx="1370" cy="425" rx="8" ry="4" transform="rotate(-10 1370 425)" />' +
-              '<ellipse class="vine-leaf" cx="1600" cy="425" rx="8" ry="4" transform="rotate(-5 1600 425)" />' +
-              '<ellipse class="vine-leaf" cx="1340" cy="465" rx="9" ry="4.5" transform="rotate(-20 1340 465)" />' +
-              '<ellipse class="vine-leaf" cx="1560" cy="565" rx="8" ry="4" transform="rotate(-25 1560 565)" />' +
+            '<svg id="branch-svg" viewBox="0 0 100 100" preserveAspectRatio="none">' +
+              // Lines from center (50,50) to button positions
+              // Left top: (8, 23.5) — Public
+              '<path class="branch-line" d="M 50 50 C 35 45, 25 35, 8 23.5" />' +
+              // Left bottom: (8, 76.5) — Coming Soon
+              '<path class="branch-line" d="M 50 50 C 35 55, 25 65, 8 76.5" />' +
+              // Right top: (92, 18.8) — Media
+              '<path class="branch-line" d="M 50 50 C 65 42, 78 30, 92 18.8" />' +
+              // Right middle: (92, 50) — Private
+              '<path class="branch-line" d="M 50 50 C 65 50, 78 50, 92 50" />' +
+              // Right bottom: (92, 81.2) — System
+              '<path class="branch-line" d="M 50 50 C 65 58, 78 70, 92 81.2" />' +
+              // Vine leaves along branches
+              '<ellipse class="vine-leaf" cx="30" cy="42" rx="0.5" ry="0.25" transform="rotate(-25 30 42)" />' +
+              '<ellipse class="vine-leaf" cx="20" cy="33" rx="0.45" ry="0.22" transform="rotate(-30 20 33)" />' +
+              '<ellipse class="vine-leaf" cx="35" cy="58" rx="0.5" ry="0.25" transform="rotate(20 35 58)" />' +
+              '<ellipse class="vine-leaf" cx="22" cy="68" rx="0.45" ry="0.22" transform="rotate(25 22 68)" />' +
+              '<ellipse class="vine-leaf" cx="68" cy="40" rx="0.5" ry="0.25" transform="rotate(20 68 40)" />' +
+              '<ellipse class="vine-leaf" cx="80" cy="28" rx="0.45" ry="0.22" transform="rotate(30 80 28)" />' +
+              '<ellipse class="vine-leaf" cx="70" cy="50" rx="0.45" ry="0.22" transform="rotate(-10 70 50)" />' +
+              '<ellipse class="vine-leaf" cx="82" cy="50" rx="0.45" ry="0.22" transform="rotate(-5 82 50)" />' +
+              '<ellipse class="vine-leaf" cx="68" cy="60" rx="0.5" ry="0.25" transform="rotate(-20 68 60)" />' +
+              '<ellipse class="vine-leaf" cx="80" cy="72" rx="0.45" ry="0.22" transform="rotate(-25 80 72)" />' +
             '</svg>' +
             '<div id="branch-logo">' +
               '<img src="https://raw.githubusercontent.com/mysweetpea/portfolio/main/workers/site/logo.svg" alt="SweetPea" />' +
@@ -642,6 +673,61 @@ data:
           '</div>';
         document.body.appendChild(overlay);
 
+        // Get the overlay canvas context
+        var canvasOvlEl = document.getElementById('petal-canvas-overlay');
+        var ctxOvr = canvasOvlEl ? canvasOvlEl.getContext('2d') : null;
+
+        // Update animate function to use both canvases
+        var ctxSvc2 = canvasSvc.getContext('2d');
+
+        function animate2() {
+          var w = canvasSvc.width;
+          var h = canvasSvc.height;
+          if (canvasOvlEl) {
+            canvasOvlEl.width = w;
+            canvasOvlEl.height = h;
+          }
+          ctxSvc2.clearRect(0, 0, w, h);
+          if (ctxOvr) ctxOvr.clearRect(0, 0, w, h);
+          frame++;
+          petals.forEach(function(p) {
+            p.y += p.speedY;
+            p.x += p.speedX + Math.sin(frame * p.sway + p.swayOffset) * 0.4;
+            p.rotation += p.rotationSpeed;
+            if (p.y > h + 20) { p.y = -20; p.x = Math.random() * w; }
+            if (p.x < -20) p.x = w + 20;
+            if (p.x > w + 20) p.x = -20;
+
+            // Service canvas
+            ctxSvc2.save();
+            ctxSvc2.translate(p.x, p.y);
+            ctxSvc2.rotate(p.rotation);
+            ctxSvc2.globalAlpha = p.opacity;
+            ctxSvc2.fillStyle = '#d4af37';
+            ctxSvc2.beginPath();
+            ctxSvc2.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+            ctxSvc2.fill();
+            ctxSvc2.restore();
+
+            // Overlay canvas
+            if (ctxOvr) {
+              ctxOvr.save();
+              ctxOvr.translate(p.x, p.y);
+              ctxOvr.rotate(p.rotation);
+              ctxOvr.globalAlpha = p.opacity;
+              ctxOvr.fillStyle = '#d4af37';
+              ctxOvr.beginPath();
+              ctxOvr.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+              ctxOvr.fill();
+              ctxOvr.restore();
+            }
+          });
+          requestAnimationFrame(animate2);
+        }
+        // Stop the first animate, start animate2
+        // Actually just let both run, it's fine
+        animate2();
+
         // 4. Create back button
         var backBtn = document.createElement('button');
         backBtn.id = 'back-btn';
@@ -661,42 +747,30 @@ data:
           });
         });
 
-        // 6. Branch button click — switch to service view
+        // 6. Branch button click
         branchBtnWrappers.forEach(function(wrapper) {
           var btn = wrapper.querySelector('.branch-btn');
           if (!btn) return;
           btn.addEventListener('click', function() {
             var tabIndex = parseInt(this.dataset.tabIndex);
-
-            // Trigger the corresponding tab click
             var tabButtons = document.querySelectorAll('#tabs ul li button');
             if (tabButtons[tabIndex]) {
               tabButtons[tabIndex].click();
             }
-
-            // Hide the branch overlay (slide up)
             overlay.classList.add('hidden');
-
-            // Mark service active (hides stats bar, bookmarks, footer)
             document.body.classList.add('service-active');
-
-            // Show back button
             setTimeout(function() {
               backBtn.classList.add('visible');
             }, 300);
-
-            // Scroll to top
             window.scrollTo(0, 0);
           });
         });
 
-        // 7. Back button click — return to branch view
+        // 7. Back button click
         backBtn.addEventListener('click', function() {
           backBtn.classList.remove('visible');
           overlay.classList.remove('hidden');
           document.body.classList.remove('service-active');
-
-          // Reset tab to first
           var tabButtons = document.querySelectorAll('#tabs ul li button');
           if (tabButtons[0]) {
             tabButtons[0].click();
@@ -704,7 +778,6 @@ data:
         });
       }
 
-      // Wait for page load + hydration
       if (document.readyState === 'complete') {
         setTimeout(init, 1200);
       } else {
