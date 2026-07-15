@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/seerr-team/seerr
-          tag: latest
+          tag: preview-new-oidc
         securityContext:
           runAsGroup: 1000
           runAsUser: 1000
