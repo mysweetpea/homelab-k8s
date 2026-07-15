@@ -5,6 +5,10 @@ controllers:
         image:
           repository: ghcr.io/nzbdav-dev/nzbdav
           tag: latest
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
     type: deployment
 persistence:
   data:
@@ -15,3 +19,4 @@ service:
     ports:
       http:
         port: 8080
+        targetPort: 8080
