@@ -1,2 +1,12 @@
 persistence:
   existingClaim: vaultwarden
+
+controllers:
+  main:
+    containers:
+      main:
+        env:
+          DOMAIN: "https://vault.mysweetpea.cc"
+        envFrom:
+          - secretRef:
+              name: vaultwarden-sso
