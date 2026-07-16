@@ -1,6 +1,9 @@
 persistence:
   existingClaim: vaultwarden
 
+image:
+  tag: testing
+
 vaultwarden:
   domain: "https://vault.mysweetpea.cc"
   sso:
