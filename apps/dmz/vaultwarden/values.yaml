@@ -3,14 +3,12 @@ persistence:
 
 vaultwarden:
   domain: "https://vault.mysweetpea.cc"
-
-sso:
-  enabled: true
-  authority: "https://auth.mysweetpea.cc/application/o/vaultwarden/"
-  clientId: "IomC2F9mfPulTpE19LTm22AxdwyWwRkfDaKpLpMr"
-  clientSecret: "Mc44IJHyo7k77S5qGCOPDlIgsAvX5Lyz1HlEQblbedPjw0ZnRgzMjDd4KrheLNOoxWEYtC7fuH1dNUh5E6YoGkfFDqBbmqaKI3FWOW3wetmyTyfFQ6XBvi9ianpTUfeb"
-  scopes: "email profile offline_access"
-  only: false
-  signupsMatchEmail: true
-  allowUnknownEmailVerification: false
-  clientCacheExpiration: 0
+  sso:
+    enabled: true
+    authority: "https://auth.mysweetpea.cc/application/o/vaultwarden/"
+    scopes: "email profile offline_access"
+    only: false
+    signupsMatchEmail: true
+    allowUnknownEmailVerification: false
+    clientCacheExpiration: 0
+    existingSecret: "vaultwarden-sso"
