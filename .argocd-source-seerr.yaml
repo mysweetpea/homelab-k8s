@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: controllers.main.containers.main.image.tag
-    value: v3.3.0
+    value: latest
     forcestring: true
   - name: image.name
     value: ghcr.io/seerr-team/seerr
