@@ -6,11 +6,12 @@ image:
 
 vaultwarden:
   domain: "https://vault.mysweetpea.cc"
+  allowSignups: false
   sso:
     enabled: true
-    authority: "https://auth.mysweetpea.cc/application/o/vaultwarden/"
+    authority: "http://auth.mysweetpea.cc/application/o/vaultwarden/"
     scopes: "email profile offline_access"
-    only: false
+    only: true
     signupsMatchEmail: true
     allowUnknownEmailVerification: false
     clientCacheExpiration: 0
