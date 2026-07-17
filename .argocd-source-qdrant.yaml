@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: controllers.main.containers.main.image.tag
-    value: v1.18.2
+    value: v1.18.3
     forcestring: true
   - name: image.name
     value: docker.io/qdrant/qdrant
