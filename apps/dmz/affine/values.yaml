@@ -64,7 +64,7 @@ controllers:
         - name: AFFINE_INDEXER_ENABLED
           value: "false"
         - name: OAUTH_OIDC_ISSUER
-          value: "https://auth.mysweetpea.cc/application/o/affine"
+          value: "http://auth.mysweetpea.cc/application/o/affine"
         - name: OAUTH_OIDC_CLIENT_ID
           value: "wnWQaSxzyuafhDDzklANZlrFkUP0pb32GX5Tsurb"
         - name: OAUTH_OIDC_CLIENT_SECRET
