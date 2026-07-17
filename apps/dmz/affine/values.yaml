@@ -119,3 +119,12 @@ persistence:
     storageClass: longhorn
     globalMounts:
     - path: /root/.affine/storage
+  oauth-config:
+    type: configMap
+    name: affine-oauth-config
+    advancedMounts:
+      main:
+        main:
+        - path: /app/dist/config/affine.js
+          readOnly: true
+          subPath: affine.js
