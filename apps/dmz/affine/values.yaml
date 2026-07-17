@@ -63,6 +63,20 @@ controllers:
           value: "true"
         - name: AFFINE_INDEXER_ENABLED
           value: "false"
+        - name: OAUTH_OIDC_ISSUER
+          value: "https://auth.mysweetpea.cc/application/o/affine"
+        - name: OAUTH_OIDC_CLIENT_ID
+          value: "wnWQaSxzyuafhDDzklANZlrFkUP0pb32GX5Tsurb"
+        - name: OAUTH_OIDC_CLIENT_SECRET
+          value: "WJQt32b30KZcTVDefNKgv6M8B5jMj963WnBfBVtnWMcpbQ9hpMRgJJKyfVjDyJii7FcZf5OjiXW3PzniarIcUXsHbpOfekX49reeGC8WhzLCEB9Ok5Lq7tZfpxWH21DD"
+        - name: OAUTH_OIDC_SCOPE
+          value: "openid email profile offline_access"
+        - name: OAUTH_OIDC_CLAIM_MAP_USERNAME
+          value: "preferred_username"
+        - name: OAUTH_OIDC_CLAIM_MAP_EMAIL
+          value: "email"
+        - name: OAUTH_OIDC_CLAIM_MAP_NAME
+          value: "name"
         ports:
         - containerPort: 3010
           name: http
@@ -119,12 +133,3 @@ persistence:
     storageClass: longhorn
     globalMounts:
     - path: /root/.affine/storage
-  oauth-config:
-    type: configMap
-    name: affine-oauth-config
-    advancedMounts:
-      main:
-        main:
-        - path: /app/dist/config/affine.js
-          readOnly: true
-          subPath: affine.js
