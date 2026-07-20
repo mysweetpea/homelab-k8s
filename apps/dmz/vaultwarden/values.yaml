@@ -9,7 +9,7 @@ vaultwarden:
   allowSignups: false
   sso:
     enabled: true
-    authority: "https://auth.mysweetpea.cc/application/o/vaultwarden/"
+    authority: "http://auth.mysweetpea.cc/application/o/vaultwarden/"
     scopes: "email profile offline_access"
     only: true
     signupsMatchEmail: true

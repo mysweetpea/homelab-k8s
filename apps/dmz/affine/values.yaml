@@ -66,6 +66,7 @@ controllers:
         - name: NODE_TLS_REJECT_UNAUTHORIZED
           value: "0"
         - name: OAUTH_OIDC_ISSUER
+          value: "http://auth.mysweetpea.cc/application/o/affine"
           value: "https://auth.mysweetpea.cc/application/o/affine"
         - name: OAUTH_OIDC_CLIENT_ID
           value: "wnWQaSxzyuafhDDzklANZlrFkUP0pb32GX5Tsurb"
