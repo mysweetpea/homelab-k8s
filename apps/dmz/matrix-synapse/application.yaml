@@ -29,6 +29,9 @@ spec:
           redis:
             enabled: true
             password: synapse-redis-2026
+          # Pin to k3s-master to fix cross-node CNI issue with Traefik
+          nodeSelector:
+            kubernetes.io/hostname: k3s-master
           extraConfig:
             max_upload_size: 50M
             public_baseurl: "https://matrix.mysweetpea.cc/"
