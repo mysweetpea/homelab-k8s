@@ -2,14 +2,14 @@ persistence:
   existingClaim: vaultwarden
 
 image:
-  tag: testing
+  tag: "1.36.0"
 
 vaultwarden:
   domain: "https://vault.mysweetpea.cc"
   allowSignups: false
   sso:
     enabled: true
-    authority: "http://auth.mysweetpea.cc/application/o/vaultwarden/"
+    authority: "https://auth.mysweetpea.cc/application/o/vaultwarden/"
     scopes: "email profile offline_access"
     only: true
     signupsMatchEmail: true
