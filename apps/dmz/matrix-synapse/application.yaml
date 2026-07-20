@@ -36,11 +36,14 @@ spec:
             oidc_providers:
               - idp_id: authentik
                 idp_name: authentik
-                discover: true
-                backchannel_logout_enabled: true
-                issuer: "http://auth.mysweetpea.cc/application/o/matrix-synapse/"
+                discover: false
+                issuer: "https://auth.mysweetpea.cc/application/o/matrix-synapse/"
                 client_id: "OOCZ9OYQ4NknTxzzT2MzZBzEXDBs1bYrgvootaaw"
                 client_secret: "NsJiUBmCydpNU1fi4MIWUtYKysb4JJnsRxsPWMOPEkF2zRS9Vc8dMbhovkoP6FqVFjCgYODvrPtPwwy4L128s9cZ95o5pzkgVV5TAVrcbKRvqLNrelgRMZz4JhA5A2KM"
+                authorization_endpoint: "http://auth.mysweetpea.cc/application/o/authorize/"
+                token_endpoint: "http://auth.mysweetpea.cc/application/o/token/"
+                userinfo_endpoint: "http://auth.mysweetpea.cc/application/o/userinfo/"
+                jwks_uri: "http://auth.mysweetpea.cc/application/o/matrix-synapse/jwks/"
                 scopes:
                   - "openid"
                   - "profile"
