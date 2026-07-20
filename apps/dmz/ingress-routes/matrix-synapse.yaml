@@ -9,12 +9,16 @@ spec:
   routes:
     - match: Host(`matrix.mysweetpea.cc`)
       kind: Rule
+      middlewares:
+        - name: authentik-https-headers
       services:
         - name: matrix-synapse
           port: 8008
     # Matrix federation well-known
     - match: Host(`matrix.mysweetpea.cc`) && PathPrefix(`/.well-known/matrix`)
       kind: Rule
+      middlewares:
+        - name: authentik-https-headers
       services:
         - name: matrix-synapse
           port: 8008
