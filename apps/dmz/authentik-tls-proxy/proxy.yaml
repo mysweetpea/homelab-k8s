@@ -1,0 +1,88 @@
+---
+# ConfigMap with nginx config
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-tls-proxy
+  namespace: dmz
+data:
+  nginx.conf: |
+    events {}
+    http {
+      server {
+        listen 8443 ssl;
+        server_name auth.mysweetpea.cc;
+
+        ssl_certificate /etc/nginx/tls/tls.crt;
+        ssl_certificate_key /etc/nginx/tls/tls.key;
+
+        location / {
+          proxy_pass http://authentik-server.dmz.svc.cluster.local:80;
+          proxy_set_header Host auth.mysweetpea.cc;
+          proxy_set_header X-Forwarded-Proto https;
+          proxy_set_header X-Forwarded-Ssl on;
+          proxy_set_header X-Real-IP $remote_addr;
+        }
+      }
+    }
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentik-tls-proxy
+  namespace: dmz
+spec:
+  selector:
+    app: authentik-tls-proxy
+  ports:
+    - port: 443
+      targetPort: 8443
+      name: https
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentik-tls-proxy
+  namespace: dmz
+  labels:
+    app: authentik-tls-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentik-tls-proxy
+  template:
+    metadata:
+      labels:
+        app: authentik-tls-proxy
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-master
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 8443
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: tls
+              mountPath: /etc/nginx/tls
+              readOnly: true
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: authentik-tls-proxy
+        - name: tls
+          secret:
+            secretName: authentik-tls-proxy-cert
