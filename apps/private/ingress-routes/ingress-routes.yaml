@@ -1,5 +1,5 @@
 ---
-# n8n — n8n.mysweetpea.cc (with Authentik forward auth)
+# n8n — n8n.mysweetpea.cc + subscribe.mysweetpea.cc
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -9,15 +9,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`n8n.mysweetpea.duckdns.org`) || Host(`n8n.mysweetpea.cc`)
-      kind: Rule
-      middlewares:
-        - name: authentik-forward-auth
-      services:
-        - name: n8n
-          port: 5678
-    # Webhook endpoints bypass auth (for external webhooks)
-    - match: Host(`subscribe.mysweetpea.cc`) || Host(`subscribe.mysweetpea.duckdns.org`)
+    - match: Host(`n8n.mysweetpea.duckdns.org`) || Host(`n8n.mysweetpea.cc`) || Host(`subscribe.mysweetpea.cc`) || Host(`subscribe.mysweetpea.duckdns.org`)
       kind: Rule
       services:
         - name: n8n
