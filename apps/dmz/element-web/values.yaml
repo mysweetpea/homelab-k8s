@@ -5,3 +5,4 @@ config:
   disable_custom_urls: true
   disable_guests: true
   disable_3pid_login: true
+  disable_registration: true
