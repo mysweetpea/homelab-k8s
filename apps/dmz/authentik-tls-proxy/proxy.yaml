@@ -9,13 +9,22 @@ data:
   nginx.conf: |
     events {}
     http {
+      # HTTP server — no X-Forwarded-Proto (returns http:// URLs for Vaultwarden/AFFiNE)
+      server {
+        listen 8000;
+        server_name auth.mysweetpea.cc;
+        location / {
+          proxy_pass http://authentik-server.dmz.svc.cluster.local:80;
+          proxy_set_header Host auth.mysweetpea.cc;
+          proxy_set_header X-Real-IP $remote_addr;
+        }
+      }
+      # HTTPS server — with X-Forwarded-Proto: https (returns https:// URLs for Synapse)
       server {
         listen 8443 ssl;
         server_name auth.mysweetpea.cc;
-
         ssl_certificate /etc/nginx/tls/tls.crt;
         ssl_certificate_key /etc/nginx/tls/tls.key;
-
         location / {
           proxy_pass http://authentik-server.dmz.svc.cluster.local:80;
           proxy_set_header Host auth.mysweetpea.cc;
@@ -36,9 +45,12 @@ spec:
   selector:
     app: authentik-tls-proxy
   ports:
-    - port: 443
+    - name: http
+      port: 80
+      targetPort: 8000
+    - name: https
+      port: 443
       targetPort: 8443
-      name: https
 ---
 # Deployment
 apiVersion: apps/v1
@@ -64,7 +76,10 @@ spec:
         - name: nginx
           image: nginx:alpine
           ports:
+            - containerPort: 8000
+              name: http
             - containerPort: 8443
+              name: https
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
