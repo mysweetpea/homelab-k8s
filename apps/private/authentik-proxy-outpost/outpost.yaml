@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentik-proxy-outpost
+  namespace: private
+  labels:
+    app: authentik-proxy-outpost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentik-proxy-outpost
+  template:
+    metadata:
+      labels:
+        app: authentik-proxy-outpost
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-master
+      containers:
+        - name: proxy
+          image: ghcr.io/goauthentik/proxy:2026.5.5
+          env:
+            - name: AUTHENTIK_HOST
+              value: "http://authentik-server.dmz.svc.cluster.local:80"
+            - name: AUTHENTIK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-proxy-outpost-token
+                  key: token
+          ports:
+            - containerPort: 9000
+              name: http
+            - containerPort: 9443
+              name: https
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentik-proxy-outpost
+  namespace: private
+spec:
+  selector:
+    app: authentik-proxy-outpost
+  ports:
+    - name: http
+      port: 9000
+      targetPort: 9000
+    - name: https
+      port: 9443
+      targetPort: 9443
