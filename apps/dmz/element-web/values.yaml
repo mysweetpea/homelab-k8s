@@ -6,3 +6,28 @@ config:
   disable_guests: true
   disable_3pid_login: true
   disable_registration: true
+nginxConfig:
+  default.conf: |
+    server {
+        listen       8080;
+        listen  [::]:8080;
+        server_name  localhost;
+        root   /usr/share/nginx/html;
+        index  index.html;
+
+        add_header X-Frame-Options SAMEORIGIN;
+        add_header X-Content-Type-Options nosniff;
+        add_header X-XSS-Protection "1; mode=block";
+        add_header Content-Security-Policy "frame-ancestors 'self'";
+
+        # Inject CSS to hide Create Account button
+        sub_filter '</head>' '<style>[data-testid="create-account"]{display:none!important}.mx_Login_create{display:none!important}</style></head>';
+        sub_filter_once on;
+        sub_filter_types text/html;
+
+        location = /index.html {
+            add_header Cache-Control "no-cache";
+        }
+
+        error_page   500 502 503 504  /50x.html;
+    }
