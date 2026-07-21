@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentik-ldap-outpost
+  namespace: dmz
+  labels:
+    app: authentik-ldap-outpost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentik-ldap-outpost
+  template:
+    metadata:
+      labels:
+        app: authentik-ldap-outpost
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-master
+      containers:
+        - name: ldap
+          image: ghcr.io/goauthentik/ldap:2026.5.5
+          env:
+            - name: AUTHENTIK_HOST
+              value: "http://authentik-server.dmz.svc.cluster.local:80"
+            - name: AUTHENTIK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-ldap-outpost-token
+                  key: token
+          ports:
+            - containerPort: 3389
+              name: ldap
+            - containerPort: 6636
+              name: ldaps
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentik-ldap-outpost
+  namespace: dmz
+spec:
+  selector:
+    app: authentik-ldap-outpost
+  ports:
+    - name: ldap
+      port: 3389
+      targetPort: 3389
+    - name: ldaps
+      port: 6636
+      targetPort: 6636
