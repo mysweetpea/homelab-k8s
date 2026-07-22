@@ -6,3 +6,8 @@ config:
   disable_guests: true
   disable_3pid_login: true
   disable_registration: true
+  setting_defaults:
+    "UIFeature.registration": false
+  sso_redirect_options:
+    "on_welcome_page": true
+    "on_login_page": true

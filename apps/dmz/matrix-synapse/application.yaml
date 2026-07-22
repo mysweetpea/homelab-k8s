@@ -28,7 +28,9 @@ spec:
               database: synapse
           redis:
             enabled: true
-            password: synapse-redis-2026
+            auth:
+              enabled: true
+              password: synapse-redis-2026
           # Pin to k3s-master to fix cross-node CNI issue with Traefik
           nodeSelector:
             kubernetes.io/hostname: k3s-master
@@ -67,4 +69,4 @@ spec:
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+      selfHeal: false

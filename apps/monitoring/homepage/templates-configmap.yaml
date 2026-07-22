@@ -519,6 +519,11 @@ data:
               type: seerr
               url: http://seerr.dmz.svc.cluster.local:5055
               key: ${SEERR_API_KEY}
+        - AIOStreams:
+            id: aiostreams
+            href: http://192.168.20.222:3000
+            description: Stream Aggregator
+            icon: mdi-all-inclusive-box
     - Arr Stack:
         - Radarr:
             id: radarr
