@@ -8,3 +8,5 @@ config:
   disable_registration: true
   setting_defaults:
     "UIFeature.registration": false
+  embedded_pages:
+    login_for_welcome: true
