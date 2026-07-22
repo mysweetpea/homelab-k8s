@@ -402,45 +402,28 @@ data:
 
     (function() {
       "use strict";
-
       var initialized = false;
-
-      function log(msg) {
-        console.log("[SweetPea Homepage]", msg);
+      function log(msg) { console.log("[SweetPea Homepage]", msg); }
+      function waitForHomepage(cb, n) {
+        n = n || 0;
+        if (document.querySelector(".container")) { cb(); }
+        else if (n < 50) { setTimeout(function(){ waitForHomepage(cb, n+1); }, 100); }
+        else { log("ERROR: container never appeared"); }
       }
-
-      function waitForHomepage(callback, attempts) {
-        attempts = attempts || 0;
-        if (document.querySelector(".container")) {
-          callback();
-        } else if (attempts < 50) {
-          setTimeout(function() { waitForHomepage(callback, attempts + 1); }, 100);
-        } else {
-          log("ERROR: Homepage container never appeared");
-        }
-      }
-
       function init() {
         if (initialized) return;
         initialized = true;
         log("Starting initialization");
-
         try {
           var header = document.querySelector(".header");
           if (header) header.style.display = "none";
-
           var canvas = document.createElement("canvas");
           canvas.id = "petal-canvas";
           document.body.prepend(canvas);
           var ctx = canvas.getContext("2d");
-
-          function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-          }
+          function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
           resizeCanvas();
           window.addEventListener("resize", resizeCanvas);
-
           var petals = [];
           var count = Math.min(70, Math.max(30, Math.floor((canvas.width * canvas.height) / 50000)));
           for (var i = 0; i < count; i++) {
@@ -450,15 +433,14 @@ data:
               size: Math.random() * 6 + 3,
               speedY: Math.random() * 1.0 + 0.3,
               speedX: (Math.random() - 0.5) * 0.6,
-              rotation: Math.random() *Math.PI* 2,
+              rotation: Math.random() * Math.PI * 2,
               rotationSpeed: (Math.random() - 0.5) * 0.025,
               opacity: Math.random() * 0.35 + 0.15,
               sway: Math.random() * 0.02 + 0.005,
-              swayOffset: Math.random() *Math.PI* 2
+              swayOffset: Math.random() * Math.PI * 2
             });
           }
           log("Created " + count + " petals");
-
           var frame = 0;
           function animatePetals() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -468,14 +450,9 @@ data:
               p.y += p.speedY;
               p.x += p.speedX + Math.sin(frame * p.sway + p.swayOffset) * 0.4;
               p.rotation += p.rotationSpeed;
-
-              if (p.y > canvas.height + 30) {
-                p.y = -30;
-                p.x = Math.random() * canvas.width;
-              }
+              if (p.y > canvas.height + 30) { p.y = -30; p.x = Math.random() * canvas.width; }
               if (p.x < -30) p.x = canvas.width + 30;
               if (p.x > canvas.width + 30) p.x = -30;
-
               ctx.save();
               ctx.translate(p.x, p.y);
               ctx.rotate(p.rotation);
@@ -489,31 +466,17 @@ data:
             requestAnimationFrame(animatePetals);
           }
           animatePetals();
-
-          var logoSvg =
-            "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">" +
-              "<defs>" +
-                "<linearGradient id=\"spGold\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">" +
-                  "<stop offset=\"0%\" stop-color=\"#f0c75e\"/>" +
-                  "<stop offset=\"100%\" stop-color=\"#b8941f\"/>" +
-                "</linearGradient>" +
-                "<filter id=\"spGlow\">" +
-                  "<feGaussianBlur stdDeviation=\"4\" result=\"blur\"/>" +
-                  "<feMerge><feMergeNode in=\"blur\"/><feMergeNode in=\"SourceGraphic\"/></feMerge>" +
-                "</filter>" +
-              "</defs>" +
-              "<path d=\"M100,170 Q100,130 100,100\" stroke=\"#b8941f\" stroke-width=\"3\" fill=\"none\"/>" +
-              "<path d=\"M100,150 Q75,130 70,145 Q85,160 100,150\" fill=\"#b8941f\" opacity=\"0.5\"/>" +
-              "<path d=\"M100,130 Q125,110 130,125 Q115,140 100,130\" fill=\"#b8941f\" opacity=\"0.5\"/>" +
-              "<path d=\"M100,100 C75,65 55,80 70,100 C80,115 100,105 100,100\" fill=\"url(#spGold)\" opacity=\"0.9\" filter=\"url(#spGlow)\"/>" +
-              "<path d=\"M100,100 C125,65 145,80 130,100 C120,115 100,105 100,100\" fill=\"url(#spGold)\" opacity=\"0.9\" filter=\"url(#spGlow)\"/>" +
-              "<path d=\"M100,100 C90,55 110,55 100,100\" fill=\"#f0c75e\" opacity=\"0.85\" filter=\"url(#spGlow)\"/>" +
-              "<circle cx=\"100\" cy=\"100\" r=\"7\" fill=\"#f0c75e\"/>" +
-            "</svg>";
-
+          var logoSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">" +
+            "<defs><linearGradient id=\"spGold\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">" +
+            "<stop offset=\"0%\" stop-color=\"#f0c75e\"/><stop offset=\"100%\" stop-color=\"#b8941f\"/>" +
+            "</linearGradient></defs>" +
+            "<path d=\"M100,170 Q100,130 100,100\" stroke=\"#b8941f\" stroke-width=\"3\" fill=\"none\"/>" +
+            "<path d=\"M100,100 C75,65 55,80 70,100 C80,115 100,105 100,100\" fill=\"url(#spGold)\" opacity=\"0.9\"/>" +
+            "<path d=\"M100,100 C125,65 145,80 130,100 C120,115 100,105 100,100\" fill=\"url(#spGold)\" opacity=\"0.9\"/>" +
+            "<path d=\"M100,100 C90,55 110,55 100,100\" fill=\"#f0c75e\" opacity=\"0.85\"/>" +
+            "<circle cx=\"100\" cy=\"100\" r=\"7\" fill=\"#f0c75e\"/></svg>";
           var overlay = document.createElement("div");
           overlay.id = "branch-overlay";
-
           overlay.innerHTML =
             "<div id=\"branch-content\">" +
               "<svg id=\"branch-vines\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" xmlns=\"http://www.w3.org/2000/svg\">" +
@@ -534,36 +497,22 @@ data:
             "</div>";
           document.body.appendChild(overlay);
           log("Overlay appended");
-
           var backBtn = document.createElement("button");
           backBtn.id = "back-btn";
-          backBtn.innerHTML = "← Back to Home";
+          backBtn.innerHTML = "\u2190 Back to Home";
           document.body.appendChild(backBtn);
-
           var wrappers = overlay.querySelectorAll(".branch-btn-wrapper");
           wrappers.forEach(function(wrapper, idx) {
             var btn = wrapper.querySelector(".branch-btn");
             if (!btn) return;
-
             wrapper.addEventListener("mouseenter", function() {
               var line = document.querySelector("#branch-vines .branch-line[data-line-index=\"" + idx + "\"]");
-              if (line) {
-                line.style.stroke = "#d4af37";
-                line.style.opacity = "0.9";
-                line.style.filter = "drop-shadow(0 0 8px rgba(212,175,55,0.6))";
-                line.style.strokeWidth = "0.9";
-              }
+              if (line) { line.style.stroke = "#d4af37"; line.style.opacity = "0.9"; line.style.filter = "drop-shadow(0 0 8px rgba(212,175,55,0.6))"; line.style.strokeWidth = "0.9"; }
             });
             wrapper.addEventListener("mouseleave", function() {
               var line = document.querySelector("#branch-vines .branch-line[data-line-index=\"" + idx + "\"]");
-              if (line) {
-                line.style.stroke = "";
-                line.style.opacity = "";
-                line.style.filter = "";
-                line.style.strokeWidth = "";
-              }
+              if (line) { line.style.stroke = ""; line.style.opacity = ""; line.style.filter = ""; line.style.strokeWidth = ""; }
             });
-
             btn.addEventListener("click", function() {
               var tabIndex = parseInt(wrapper.dataset.tabIndex);
               var tabButtons = document.querySelectorAll("#tabs ul li button");
@@ -575,7 +524,6 @@ data:
               window.scrollTo(0, 0);
             });
           });
-
           backBtn.addEventListener("click", function() {
             backBtn.classList.remove("visible");
             overlay.classList.remove("hidden");
@@ -583,18 +531,11 @@ data:
             var tabButtons = document.querySelectorAll("#tabs ul li button");
             if (tabButtons[0]) tabButtons[0].click();
           });
-
           log("Initialization complete");
-        } catch (err) {
-          console.error("SWEETPEA CUSTOM JS ERROR:", err);
-        }
+        } catch (err) { console.error("SWEETPEA CUSTOM JS ERROR:", err); }
       }
-
-      if (document.readyState === "complete") {
-        waitForHomepage(init);
-      } else {
-        window.addEventListener("load", function() { waitForHomepage(init); });
-      }
+      if (document.readyState === "complete") { waitForHomepage(init); }
+      else { window.addEventListener("load", function() { waitForHomepage(init); }); }
     })();
 
   services.yaml: |
