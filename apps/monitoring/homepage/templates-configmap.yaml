@@ -65,6 +65,9 @@ data:
         style: row
         columns: 4
 
+
+
+
   bookmarks.yaml: |
     - Quick Links:
         - GitHub:
@@ -90,10 +93,22 @@ data:
             - abbr: HL
               href: https://helm.sh/docs/
 
+
+
+
   kubernetes.yaml: |
     mode: cluster
 
   docker.yaml: ""
+
+
+
+
+
+
+
+
+
 
   widgets.yaml: |
     - resources:
@@ -107,293 +122,95 @@ data:
         target: _blank
         focus: false
 
+
+
+
   custom.css: |
     :root {
       --gold: #d4af37;
       --gold-light: #f0c75e;
       --gold-dark: #b8941f;
-      --border: rgba(212, 175, 55, 0.18);
-      --border-hover: rgba(212, 175, 55, 0.55);
-      --bg: #050505;
-      --card-bg: rgba(18, 18, 18, 0.78);
+      --border: rgba(212, 175, 55, 0.3);
+      --border-hover: rgba(212, 175, 55, 0.7);
+      --bg: #0a0a0a;
+      --card-bg: rgba(20, 20, 20, 0.82);
     }
-
     html, body, #__next, #page_wrapper, #inner_wrapper, .container {
       background-color: var(--bg) !important;
       background-image: none !important;
       color: #f0f0f0 !important;
     }
-
-    #petal-canvas {
-      position: fixed !important;
-      inset: 0 !important;
-      z-index: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .header { display: none !important; }
-    #tabs {
-      position: fixed !important;
-      top: -100px !important;
-      left: -100px !important;
-      width: 1px !important;
-      height: 1px !important;
-      opacity: 0 !important;
-      overflow: hidden !important;
-      z-index: -1 !important;
-    }
-
-    #information-widgets {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      z-index: 10001 !important;
-      background: rgba(5, 5, 5, 0.85) !important;
-      backdrop-filter: blur(20px) !important;
-      border-bottom: 1px solid var(--border) !important;
-      padding: 10px 28px !important;
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-
-    body.service-active #information-widgets {
-      opacity: 0 !important;
-      transform: translateY(-100%);
-      pointer-events: none !important;
-    }
-
-    .container {
-      padding-top: 72px !important;
-      position: relative;
-      z-index: 1;
-    }
-
-    body.service-active .container {
-      padding-top: 0 !important;
-      min-height: 100vh !important;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: center !important;
-    }
-
-    body.service-active .bookmark-group,
-    body.service-active #footer {
-      display: none !important;
-    }
-
-    .service-card {
-      background: var(--card-bg) !important;
-      border: 1px solid var(--border) !important;
-      border-radius: 16px !important;
-      transition: all 0.3s ease !important;
-      backdrop-filter: blur(8px) !important;
-    }
-
-    .service-card:hover {
-      transform: translateY(-5px) !important;
-      border-color: var(--border-hover) !important;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 30px rgba(212,175,55,0.12) !important;
-    }
-
-    .service-group-name {
-      color: var(--gold-dark) !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.08em !important;
-    }
-
-    #branch-overlay {
-      position: fixed !important;
-      inset: 0 !important;
-      z-index: 9999 !important;
+    body::after {
+      content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background:
-        radial-gradient(ellipse at 50% 40%, rgba(212, 175, 55, 0.12) 0%, transparent 55%),
-        radial-gradient(ellipse at 15% 85%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
-        radial-gradient(ellipse at 85% 15%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
-        var(--bg) !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+        radial-gradient(ellipse at 50% 30%, rgba(212, 175, 55, 0.18) 0%, transparent 50%),
+        radial-gradient(ellipse at 15% 85%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+        radial-gradient(ellipse at 85% 15%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.55) 100%);
+      animation: bg-shift 30s ease-in-out infinite;
     }
-
-    #branch-overlay.hidden {
-      transform: translateY(-100%);
-      opacity: 0;
-      pointer-events: none;
+    @keyframes bg-shift {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+      33% { transform: scale(1.12) rotate(1deg); opacity: 0.9; }
+      66% { transform: scale(1.05) rotate(-1deg); opacity: 0.95; }
     }
-
-    #branch-content {
-      position: relative;
-      width: min(90vw, 1000px);
-      aspect-ratio: 1 / 1;
-      max-height: 90vh;
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grain 0.5s steps(10) infinite;
     }
-
-    #branch-vines {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      pointer-events: none;
-      overflow: visible;
+    @keyframes grain {
+      0%,100% { transform: translate(0,0); } 10% { transform: translate(-2%,-2%); }
+      20% { transform: translate(2%,2%); } 30% { transform: translate(-1%,1%); }
+      40% { transform: translate(1%,-1%); } 50% { transform: translate(-2%,2%); }
+      60% { transform: translate(2%,-2%); } 70% { transform: translate(-1%,-1%); }
+      80% { transform: translate(1%,1%); } 90% { transform: translate(-2%,-1%); }
     }
-
-    .branch-line {
-      fill: none;
-      stroke: var(--gold-dark);
-      stroke-width: 0.6;
-      stroke-linecap: round;
-      opacity: 0.5;
-      transition: all 0.3s ease;
-      stroke-dasharray: 200;
-      stroke-dashoffset: 200;
-      animation: draw-line 1.5s ease forwards;
-    }
-
-    @keyframes draw-line {
-      to { stroke-dashoffset: 0; }
-    }
-
-    #branch-center {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-    }
-
-    #branch-logo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 35%;
-      height: 35%;
-      z-index: 3;
-      animation: logo-entrance 1s ease forwards;
-    }
-
-    #branch-logo svg {
-      width: 100%;
-      height: 100%;
-      filter: drop-shadow(0 0 40px rgba(212,175,55,0.4));
-      animation: pulse-gold 6s ease-in-out infinite;
-    }
-
-    @keyframes logo-entrance {
-      0% { opacity: 0; transform: translate(-50%, -55%) scale(0.9); }
-      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    }
-
-    @keyframes pulse-gold {
-      0%, 100% { filter: drop-shadow(0 0 40px rgba(212,175,55,0.4)); }
-      50% { filter: drop-shadow(0 0 70px rgba(212,175,55,0.7)); }
-    }
-
-    .branch-btn-wrapper {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      z-index: 4;
-      opacity: 0;
-      animation: fade-in-btn 0.6s ease forwards;
-    }
-
-    @keyframes fade-in-btn {
-      0% { opacity: 0; transform: translate(-50%, -40%); }
-      100% { opacity: 1; transform: translate(-50%, -50%); }
-    }
-
-    .branch-btn {
-      background: rgba(10, 10, 10, 0.9);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 36px;
-      color: #a8a8a8;
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      white-space: nowrap;
-      backdrop-filter: blur(10px);
-    }
-
-    .branch-btn-wrapper:hover .branch-btn {
-      background: rgba(212, 175, 55, 0.12);
-      border-color: var(--border-hover);
-      color: var(--gold-light);
-      box-shadow: 0 0 35px rgba(212,175,55,0.2);
-      transform: scale(1.05);
-    }
-
-    #back-btn {
-      position: fixed;
-      top: 20px;
-      left: 24px;
-      z-index: 10000;
-      background: rgba(10, 10, 10, 0.9);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 22px;
-      color: #a8a8a8;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: none;
-      opacity: 0;
-    }
-
-    #back-btn.visible {
-      display: block;
-      opacity: 1;
-    }
-
-    #back-btn:hover {
-      background: rgba(212, 175, 55, 0.12);
-      border-color: var(--border-hover);
-      color: var(--gold-light);
-    }
-
+    #petal-canvas { position: fixed !important; inset: 0 !important; z-index: 1 !important; pointer-events: none !important; }
+    .header { display: none !important; }
+    #tabs { position: fixed !important; top: -100px !important; left: -100px !important; width: 1px !important; height: 1px !important; opacity: 0 !important; overflow: hidden !important; z-index: -1 !important; }
+    #information-widgets { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; z-index: 10001 !important; background: rgba(5,5,5,0.85) !important; backdrop-filter: blur(20px) !important; border-bottom: 1px solid var(--border) !important; padding: 10px 28px !important; transition: opacity 0.4s ease, transform 0.4s ease; }
+    body.service-active #information-widgets { opacity: 0 !important; transform: translateY(-100%); pointer-events: none !important; }
+    .container { padding-top: 72px !important; position: relative; z-index: 2; }
+    body.service-active .container { padding-top: 0 !important; min-height: 100vh !important; display: flex !important; flex-direction: column !important; justify-content: center !important; }
+    body.service-active .bookmark-group, body.service-active #footer { display: none !important; }
+    .service-card { background: var(--card-bg) !important; border: 1px solid var(--border) !important; border-radius: 16px !important; transition: all 0.3s ease !important; backdrop-filter: blur(8px) !important; }
+    .service-card:hover { transform: translateY(-5px) !important; border-color: var(--border-hover) !important; box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 30px rgba(212,175,55,0.15) !important; }
+    .service-group-name { color: var(--gold-dark) !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.08em !important; }
+    #branch-overlay { position: fixed !important; inset: 0 !important; z-index: 9999 !important; background: radial-gradient(ellipse at 50% 40%, rgba(212,175,55,0.18) 0%, transparent 55%), radial-gradient(ellipse at 15% 85%, rgba(212,175,55,0.1) 0%, transparent 40%), radial-gradient(ellipse at 85% 15%, rgba(212,175,55,0.1) 0%, transparent 40%), var(--bg) !important; display: flex !important; align-items: center !important; justify-content: center !important; transition: transform 0.8s cubic-bezier(0.4,0,0.2,1), opacity 0.5s ease; }
+    #branch-overlay.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+    #branch-content { position: relative; width: min(95vw, 1200px); aspect-ratio: 1 / 1; max-height: 95vh; }
+    #branch-vines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+    .branch-line { fill: none; stroke: var(--gold-dark); stroke-width: 1.1; stroke-linecap: round; opacity: 0.65; transition: all 0.3s ease; stroke-dasharray: 220; stroke-dashoffset: 220; animation: draw-line 1.8s ease forwards; }
+    @keyframes draw-line { to { stroke-dashoffset: 0; } }
+    .branch-tendril { fill: none; stroke: var(--gold-dark); stroke-width: 0.5; stroke-linecap: round; opacity: 0; animation: leaf-appear 1.2s ease forwards; }
+    .vine-leaf { fill: var(--gold-dark); opacity: 0; animation: leaf-appear 1s ease forwards; transition: all 0.3s ease; }
+    @keyframes leaf-appear { to { opacity: 0.45; } }
+    #branch-center { position: absolute; inset: 0; z-index: 2; }
+    #branch-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55%; height: 55%; z-index: 3; animation: logo-entrance 1.2s ease forwards; }
+    #branch-logo svg { width: 100%; height: 100%; filter: drop-shadow(0 0 60px rgba(212,175,55,0.55)); animation: pulse-gold 5s ease-in-out infinite; }
+    @keyframes logo-entrance { 0% { opacity: 0; transform: translate(-50%,-55%) scale(0.85); } 100% { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+    @keyframes pulse-gold { 0%,100% { filter: drop-shadow(0 0 60px rgba(212,175,55,0.55)); } 50% { filter: drop-shadow(0 0 100px rgba(212,175,55,0.9)); } }
+    .branch-btn-wrapper { position: absolute; transform: translate(-50%, -50%); z-index: 4; opacity: 0; animation: fade-in-btn 0.7s ease forwards; }
+    @keyframes fade-in-btn { 0% { opacity: 0; transform: translate(-50%,-45%); } 100% { opacity: 1; transform: translate(-50%,-50%); } }
+    .branch-btn-vine { position: absolute; top: -22px; left: -22px; right: -22px; bottom: -22px; pointer-events: none; overflow: visible; }
+    .branch-btn-vine path { fill: none; stroke: var(--gold-dark); stroke-width: 1.5; opacity: 0.45; transition: all 0.3s ease; }
+    .vine-flower { fill: var(--gold-dark); opacity: 0.3; transition: all 0.3s ease; }
+    .vine-flower-small { fill: var(--gold-light); opacity: 0.2; transition: all 0.3s ease; }
+    .branch-btn-wrapper:hover .branch-btn-vine path { stroke: var(--gold); stroke-width: 2.5; opacity: 0.9; filter: drop-shadow(0 0 12px rgba(212,175,55,0.7)); }
+    .branch-btn-wrapper:hover .vine-flower { fill: var(--gold); opacity: 0.6; }
+    .branch-btn-wrapper:hover .vine-flower-small { fill: var(--gold-light); opacity: 0.45; }
+    .branch-btn { background: rgba(10,10,10,0.93); border: 1px solid var(--border); border-radius: 16px; padding: 22px 44px; color: #b0b0b0; font-size: 1.2rem; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: all 0.3s ease; white-space: nowrap; backdrop-filter: blur(14px); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .branch-btn-wrapper:hover .branch-btn { background: rgba(212,175,55,0.15); border-color: var(--border-hover); color: var(--gold-light); box-shadow: 0 0 45px rgba(212,175,55,0.3), 0 4px 20px rgba(0,0,0,0.4); transform: scale(1.06); }
+    #back-btn { position: fixed; top: 20px; left: 24px; z-index: 10000; background: rgba(10,10,10,0.93); border: 1px solid var(--border); border-radius: 10px; padding: 10px 22px; color: #b0b0b0; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: none; opacity: 0; }
+    #back-btn.visible { display: block; opacity: 1; }
+    #back-btn:hover { background: rgba(212,175,55,0.15); border-color: var(--border-hover); color: var(--gold-light); }
     @media (max-width: 768px) {
-      #branch-content {
-        width: 100%;
-        height: auto;
-        aspect-ratio: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 18px;
-        padding: 40px 20px;
-      }
-
+      #branch-content { width: 100%; height: auto; aspect-ratio: auto; display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 40px 20px; }
       #branch-vines { display: none; }
-
-      #branch-logo {
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-        width: 180px;
-        height: 180px;
-        margin-bottom: 20px;
-        animation: none;
-      }
-
-      .branch-btn-wrapper {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important;
-        width: 80%;
-        animation: fade-in-btn-mobile 0.5s ease forwards;
-      }
-
-      @keyframes fade-in-btn-mobile {
-        0% { opacity: 0; transform: translateY(15px); }
-        100% { opacity: 1; transform: translateY(0); }
-      }
-
+      #branch-logo { position: relative; top: auto; left: auto; transform: none; width: 240px; height: 240px; margin-bottom: 20px; animation: none; }
+      .branch-btn-wrapper { position: relative !important; top: auto !important; left: auto !important; transform: none !important; width: 80%; }
       .container { padding-top: 60px !important; }
     }
 
@@ -404,12 +221,7 @@ data:
       "use strict";
       var initialized = false;
       function log(msg) { console.log("[SweetPea Homepage]", msg); }
-      function waitForHomepage(cb, n) {
-        n = n || 0;
-        if (document.querySelector(".container")) { cb(); }
-        else if (n < 50) { setTimeout(function(){ waitForHomepage(cb, n+1); }, 100); }
-        else { log("ERROR: container never appeared"); }
-      }
+
       function init() {
         if (initialized) return;
         initialized = true;
@@ -417,6 +229,7 @@ data:
         try {
           var header = document.querySelector(".header");
           if (header) header.style.display = "none";
+
           var canvas = document.createElement("canvas");
           canvas.id = "petal-canvas";
           document.body.prepend(canvas);
@@ -424,23 +237,25 @@ data:
           function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
           resizeCanvas();
           window.addEventListener("resize", resizeCanvas);
+
           var petals = [];
-          var count = Math.min(70, Math.max(30, Math.floor((canvas.width * canvas.height) / 50000)));
+          var count = Math.min(120, Math.max(60, Math.floor((canvas.width * canvas.height) / 25000)));
           for (var i = 0; i < count; i++) {
             petals.push({
               x: Math.random() * canvas.width,
               y: Math.random() * canvas.height,
-              size: Math.random() * 6 + 3,
-              speedY: Math.random() * 1.0 + 0.3,
-              speedX: (Math.random() - 0.5) * 0.6,
+              size: Math.random() * 9 + 6,
+              speedY: Math.random() * 1.2 + 0.4,
+              speedX: (Math.random() - 0.5) * 0.7,
               rotation: Math.random() * Math.PI * 2,
               rotationSpeed: (Math.random() - 0.5) * 0.025,
-              opacity: Math.random() * 0.35 + 0.15,
+              opacity: Math.random() * 0.45 + 0.25,
               sway: Math.random() * 0.02 + 0.005,
               swayOffset: Math.random() * Math.PI * 2
             });
           }
           log("Created " + count + " petals");
+
           var frame = 0;
           function animatePetals() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -448,66 +263,101 @@ data:
             for (var i = 0; i < petals.length; i++) {
               var p = petals[i];
               p.y += p.speedY;
-              p.x += p.speedX + Math.sin(frame * p.sway + p.swayOffset) * 0.4;
+              p.x += p.speedX + Math.sin(frame * p.sway + p.swayOffset) * 0.5;
               p.rotation += p.rotationSpeed;
-              if (p.y > canvas.height + 30) { p.y = -30; p.x = Math.random() * canvas.width; }
-              if (p.x < -30) p.x = canvas.width + 30;
-              if (p.x > canvas.width + 30) p.x = -30;
+              if (p.y > canvas.height + 40) { p.y = -40; p.x = Math.random() * canvas.width; }
+              if (p.x < -40) p.x = canvas.width + 40;
+              if (p.x > canvas.width + 40) p.x = -40;
               ctx.save();
               ctx.translate(p.x, p.y);
               ctx.rotate(p.rotation);
               ctx.globalAlpha = p.opacity;
-              ctx.fillStyle = "#d4af37";
+              var grad = ctx.createLinearGradient(-p.size, -p.size, p.size, p.size);
+              grad.addColorStop(0, "#f0c75e");
+              grad.addColorStop(0.5, "#d4af37");
+              grad.addColorStop(1, "#b8941f");
+              ctx.fillStyle = grad;
               ctx.beginPath();
-              ctx.ellipse(0, 0, p.size, p.size * 0.6, 0, 0, Math.PI * 2);
+              ctx.moveTo(0, -p.size);
+              ctx.bezierCurveTo(p.size * 0.7, -p.size * 0.4, p.size * 0.7, p.size * 0.4, 0, p.size);
+              ctx.bezierCurveTo(-p.size * 0.7, p.size * 0.4, -p.size * 0.7, -p.size * 0.4, 0, -p.size);
               ctx.fill();
+              ctx.strokeStyle = "rgba(240,199,94,0.4)";
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
               ctx.restore();
             }
             requestAnimationFrame(animatePetals);
           }
           animatePetals();
-          var logoSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 200 200\">" +
-            "<defs><linearGradient id=\"spGold\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">" +
-            "<stop offset=\"0%\" stop-color=\"#f0c75e\"/><stop offset=\"100%\" stop-color=\"#b8941f\"/>" +
-            "</linearGradient></defs>" +
-            "<path d=\"M100,170 Q100,130 100,100\" stroke=\"#b8941f\" stroke-width=\"3\" fill=\"none\"/>" +
-            "<path d=\"M100,100 C75,65 55,80 70,100 C80,115 100,105 100,100\" fill=\"url(#spGold)\" opacity=\"0.9\"/>" +
-            "<path d=\"M100,100 C125,65 145,80 130,100 C120,115 100,105 100,100\" fill=\"url(#spGold)\" opacity=\"0.9\"/>" +
-            "<path d=\"M100,100 C90,55 110,55 100,100\" fill=\"#f0c75e\" opacity=\"0.85\"/>" +
-            "<circle cx=\"100\" cy=\"100\" r=\"7\" fill=\"#f0c75e\"/></svg>";
+
+          var logoSvg = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 600\" width=\"100%\" height=\"100%\">  <defs>    <!-- Petal and stem gradients (same as v2) -->    <linearGradient id=\"petal-ice\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">      <stop offset=\"0%\" stop-color=\"#EEF2F3\" stop-opacity=\"0.92\"/>      <stop offset=\"40%\" stop-color=\"#C5D5D8\" stop-opacity=\"0.75\"/>      <stop offset=\"100%\" stop-color=\"#8FAFB5\" stop-opacity=\"0.55\"/>    </linearGradient>    <linearGradient id=\"petal-frost\" x1=\"100%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">      <stop offset=\"0%\" stop-color=\"#DDE6E8\" stop-opacity=\"0.88\"/>      <stop offset=\"50%\" stop-color=\"#A8C0C8\" stop-opacity=\"0.7\"/>      <stop offset=\"100%\" stop-color=\"#6B9AA6\" stop-opacity=\"0.5\"/>    </linearGradient>    <linearGradient id=\"keel-glass\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">      <stop offset=\"0%\" stop-color=\"#D4E6F1\" stop-opacity=\"0.8\"/>      <stop offset=\"100%\" stop-color=\"#85929E\" stop-opacity=\"0.5\"/>    </linearGradient>    <linearGradient id=\"stem-nordic\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">      <stop offset=\"0%\" stop-color=\"#A3C9B6\" stop-opacity=\"0.7\"/>      <stop offset=\"100%\" stop-color=\"#5D7A6E\" stop-opacity=\"0.9\"/>    </linearGradient>    <linearGradient id=\"vein\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"0%\">      <stop offset=\"0%\" stop-color=\"#FFFFFF\" stop-opacity=\"0\"/>      <stop offset=\"50%\" stop-color=\"#FFFFFF\" stop-opacity=\"0.35\"/>      <stop offset=\"100%\" stop-color=\"#FFFFFF\" stop-opacity=\"0\"/>    </linearGradient>    <!-- Geometric frame gradient -->    <linearGradient id=\"geo-glass\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\">      <stop offset=\"0%\" stop-color=\"#EEF2F3\" stop-opacity=\"0.25\"/>      <stop offset=\"100%\" stop-color=\"#8FAFB5\" stop-opacity=\"0.15\"/>    </linearGradient>  </defs>  <!-- ==================== ISLAMIC GEOMETRIC FRAME ==================== -->  <g transform=\"translate(300, 300)\" opacity=\"0.7\">    <!-- Outer 8-pointed star -->    <polygon points=\"0,-180 45,-45 180,0 45,45 0,180 -45,45 -180,0 -45,-45\"             fill=\"none\" stroke=\"url(#geo-glass)\" stroke-width=\"1.5\"/>    <!-- Inner 8-pointed star -->    <polygon points=\"0,-140 35,-35 140,0 35,35 0,140 -35,35 -140,0 -35,-35\"             fill=\"none\" stroke=\"url(#geo-glass)\" stroke-width=\"1\"/>    <!-- Interlacing squares -->    <rect x=\"-125\" y=\"-125\" width=\"250\" height=\"250\"          fill=\"none\" stroke=\"url(#geo-glass)\" stroke-width=\"1\" transform=\"rotate(45)\"/>    <rect x=\"-90\" y=\"-90\" width=\"180\" height=\"180\"          fill=\"none\" stroke=\"url(#geo-glass)\" stroke-width=\"0.8\" transform=\"rotate(45)\"/>    <!-- Radial lines -->    <g stroke=\"url(#geo-glass)\" stroke-width=\"0.6\" opacity=\"0.5\">      <line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"-180\"/>      <line x1=\"0\" y1=\"0\" x2=\"127\" y2=\"-127\"/>      <line x1=\"0\" y1=\"0\" x2=\"180\" y2=\"0\"/>      <line x1=\"0\" y1=\"0\" x2=\"127\" y2=\"127\"/>      <line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"180\"/>      <line x1=\"0\" y1=\"0\" x2=\"-127\" y2=\"127\"/>      <line x1=\"0\" y1=\"0\" x2=\"-180\" y2=\"0\"/>      <line x1=\"0\" y1=\"0\" x2=\"-127\" y2=\"-127\"/>    </g>    <!-- Center octagon -->    <polygon points=\"0,-70 50,-50 70,0 50,50 0,70 -50,50 -70,0 -50,-50\"             fill=\"none\" stroke=\"url(#geo-glass)\" stroke-width=\"1.2\"/>    <!-- Corner arabesque arcs -->    <g stroke=\"url(#geo-glass)\" stroke-width=\"1\" fill=\"none\" opacity=\"0.4\">      <path d=\"M -180 -45 Q -120 -120, -45 -180\"/>      <path d=\"M 180 -45 Q 120 -120, 45 -180\"/>      <path d=\"M 180 45 Q 120 120, 45 180\"/>      <path d=\"M -180 45 Q -120 120, -45 180\"/>    </g>  </g>  <!-- ==================== SWEETPEA (Scaled up, centered) ==================== -->  <g transform=\"translate(300, 300) scale(1.35)\">    <!-- Stem, leaf, tendril, petals, highlights (same as v2) -->    <path d=\"M 0 85 Q 8 130, -3 170\" stroke=\"url(#stem-nordic)\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/>    <path d=\"M -3 140 Q -35 130, -50 155 Q -30 160, -3 145\" fill=\"#9CBFAE\" opacity=\"0.5\"/>    <path d=\"M -3 140 Q -35 130, -50 155\" stroke=\"#B8D4C8\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.7\"/>    <path d=\"M 0 85 C 25 95, 45 75, 60 90 S 85 115, 75 135\" stroke=\"#C5D5D8\" stroke-width=\"2\" fill=\"none\" opacity=\"0.6\"/>    <path d=\"M 60 90 Q 68 82, 75 88\" stroke=\"#C5D5D8\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.5\"/>    <!-- Petals -->    <path d=\"M -6 65 C -55 45, -80 -15, -35 -35 C -12 -46, 2 -15, -6 65\" fill=\"url(#petal-ice)\"/>    <path d=\"M -6 65 C -40 45, -60 0, -30 -20\" stroke=\"url(#vein)\" stroke-width=\"2.5\" fill=\"none\" opacity=\"0.6\"/>    <path d=\"M 6 65 C 55 45, 80 -15, 35 -35 C 12 -46, -2 -15, 6 65\" fill=\"url(#petal-frost)\"/>    <path d=\"M 6 65 C 40 45, 60 0, 30 -20\" stroke=\"url(#vein)\" stroke-width=\"2.5\" fill=\"none\" opacity=\"0.6\"/>    <path d=\"M -6 25 C -50 5, -62 -55, -22 -78 C -6 -90, 6 -50, -6 25\" fill=\"url(#petal-frost)\"/>    <path d=\"M -6 25 C -35 5, -45 -35, -20 -55\" stroke=\"url(#vein)\" stroke-width=\"2\" fill=\"none\" opacity=\"0.5\"/>    <path d=\"M 6 25 C 50 5, 62 -55, 22 -78 C 6 -90, -6 -50, 6 25\" fill=\"url(#petal-ice)\"/>    <path d=\"M 6 25 C 35 5, 45 -35, 20 -55\" stroke=\"url(#vein)\" stroke-width=\"2\" fill=\"none\" opacity=\"0.5\"/>    <!-- Keel -->    <path d=\"M 0 45 C -18 35, -24 5, 0 -8 C 24 5, 18 35, 0 45\" fill=\"url(#keel-glass)\"/>    <path d=\"M 0 45 C -12 35, -16 10, 0 0\" stroke=\"url(#vein)\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.5\"/>    <path d=\"M 0 45 C 12 35, 16 10, 0 0\" stroke=\"url(#vein)\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.5\"/>    <path d=\"M 0 -8 L 0 35\" stroke=\"#D4E6F1\" stroke-width=\"1\" fill=\"none\" opacity=\"0.4\"/>    <!-- Highlights -->    <ellipse cx=\"-28\" cy=\"-8\" rx=\"10\" ry=\"5\" fill=\"#FFFFFF\" opacity=\"0.45\" transform=\"rotate(-25)\"/>    <ellipse cx=\"-32\" cy=\"0\" rx=\"4\" ry=\"2\" fill=\"#FFFFFF\" opacity=\"0.3\" transform=\"rotate(-25)\"/>    <ellipse cx=\"28\" cy=\"-8\" rx=\"10\" ry=\"5\" fill=\"#FFFFFF\" opacity=\"0.4\" transform=\"rotate(25)\"/>    <ellipse cx=\"32\" cy=\"0\" rx=\"4\" ry=\"2\" fill=\"#FFFFFF\" opacity=\"0.25\" transform=\"rotate(25)\"/>    <ellipse cx=\"-18\" cy=\"-55\" rx=\"6\" ry=\"12\" fill=\"#FFFFFF\" opacity=\"0.35\"/>    <path d=\"M -22 -60 Q -18 -68, -14 -60\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.4\"/>    <ellipse cx=\"18\" cy=\"-55\" rx=\"6\" ry=\"12\" fill=\"#FFFFFF\" opacity=\"0.3\"/>    <path d=\"M 14 -60 Q 18 -68, 22 -60\" stroke=\"#FFFFFF\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.35\"/>    <ellipse cx=\"0\" cy=\"18\" rx=\"5\" ry=\"8\" fill=\"#FFFFFF\" opacity=\"0.5\"/>    <circle cx=\"0\" cy=\"8\" r=\"2.5\" fill=\"#FFFFFF\" opacity=\"0.7\"/>    <path d=\"M -20 -70 Q 0 -85, 20 -70\" stroke=\"#FFFFFF\" stroke-width=\"2\" fill=\"none\" opacity=\"0.5\" stroke-linecap=\"round\"/>    <circle cx=\"0\" cy=\"18\" r=\"4\" fill=\"#E8F6F3\" opacity=\"0.9\"/>  </g></svg>";
+
+          function vineBorderSVG() {
+            return "<svg class=\"branch-btn-vine\" viewBox=\"0 0 200 100\" preserveAspectRatio=\"none\">" +
+              "<path d=\"M10,50 Q30,15 50,50 T90,50 T130,50 T170,50\" />" +
+              "<path d=\"M10,50 Q30,85 50,50 T90,50 T130,50 T170,50\" />" +
+              "<circle class=\"vine-flower\" cx=\"25\" cy=\"32\" r=\"3.5\" />" +
+              "<circle class=\"vine-flower-small\" cx=\"55\" cy=\"68\" r=\"2.5\" />" +
+              "<circle class=\"vine-flower\" cx=\"85\" cy=\"38\" r=\"3\" />" +
+              "<circle class=\"vine-flower-small\" cx=\"115\" cy=\"62\" r=\"2.5\" />" +
+              "<circle class=\"vine-flower\" cx=\"145\" cy=\"35\" r=\"3.5\" />" +
+              "<circle class=\"vine-flower-small\" cx=\"170\" cy=\"55\" r=\"2\" />" +
+              "</svg>";
+          }
+
+          function makeLeaf(cx, cy, rot, scale) {
+            var s = scale || 0.8;
+            return "<path class=\"vine-leaf\" d=\"M0,0 C4,-5 10,-5 12,0 C10,5 4,5 0,0\" transform=\"translate(" + cx + "," + cy + ") rotate(" + rot + ") scale(" + s + ")\" />";
+          }
+
           var overlay = document.createElement("div");
           overlay.id = "branch-overlay";
           overlay.innerHTML =
             "<div id=\"branch-content\">" +
               "<svg id=\"branch-vines\" viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" xmlns=\"http://www.w3.org/2000/svg\">" +
-                "<path class=\"branch-line\" data-line-index=\"0\" style=\"animation-delay:0.3s\" d=\"M50,50 Q60,38 75,25\" />" +
-                "<path class=\"branch-line\" data-line-index=\"1\" style=\"animation-delay:0.5s\" d=\"M50,50 Q38,50 25,50\" />" +
-                "<path class=\"branch-line\" data-line-index=\"2\" style=\"animation-delay:0.7s\" d=\"M50,50 Q38,38 25,25\" />" +
-                "<path class=\"branch-line\" data-line-index=\"3\" style=\"animation-delay:0.9s\" d=\"M50,50 Q38,62 25,75\" />" +
-                "<path class=\"branch-line\" data-line-index=\"4\" style=\"animation-delay:1.1s\" d=\"M50,50 Q62,62 75,75\" />" +
+                "<path class=\"branch-line\" data-line-index=\"0\" style=\"animation-delay:0.3s\" d=\"M50,50 C55,42 62,34 75,25\" />" +
+                "<path class=\"branch-line\" data-line-index=\"1\" style=\"animation-delay:0.5s\" d=\"M50,50 C45,50 35,50 25,50\" />" +
+                "<path class=\"branch-line\" data-line-index=\"2\" style=\"animation-delay:0.7s\" d=\"M50,50 C45,42 35,34 25,25\" />" +
+                "<path class=\"branch-line\" data-line-index=\"3\" style=\"animation-delay:0.9s\" d=\"M50,50 C45,58 35,66 25,75\" />" +
+                "<path class=\"branch-line\" data-line-index=\"4\" style=\"animation-delay:1.1s\" d=\"M50,50 C55,58 65,66 75,75\" />" +
+                "<path class=\"branch-tendril\" style=\"animation-delay:2.0s\" d=\"M62,34 Q58,28 56,32\" />" +
+                "<path class=\"branch-tendril\" style=\"animation-delay:2.2s\" d=\"M35,50 Q28,54 26,50\" />" +
+                "<path class=\"branch-tendril\" style=\"animation-delay:2.4s\" d=\"M35,35 Q28,30 26,34\" />" +
+                "<path class=\"branch-tendril\" style=\"animation-delay:2.6s\" d=\"M35,65 Q28,70 26,66\" />" +
+                "<path class=\"branch-tendril\" style=\"animation-delay:2.8s\" d=\"M65,65 Q72,70 74,66\" />" +
+                makeLeaf(58, 38, 45, 1) + makeLeaf(68, 30, -20, 0.9) +
+                makeLeaf(38, 50, 90, 1) + makeLeaf(30, 50, -60, 0.9) +
+                makeLeaf(38, 38, 20, 0.8) + makeLeaf(30, 32, -30, 0.8) +
+                makeLeaf(38, 62, -20, 0.8) + makeLeaf(30, 68, 40, 0.8) +
+                makeLeaf(62, 62, 30, 0.8) + makeLeaf(68, 68, -45, 0.9) +
+                makeLeaf(55, 40, 60, 0.6) + makeLeaf(42, 45, -45, 0.6) +
+                makeLeaf(55, 60, -60, 0.6) + makeLeaf(42, 55, 45, 0.6) +
               "</svg>" +
               "<div id=\"branch-center\">" +
                 "<div id=\"branch-logo\">" + logoSvg + "</div>" +
-                "<div class=\"branch-btn-wrapper\" data-tab-index=\"0\" style=\"top:25%;left:75%;animation-delay:1.3s\"><button class=\"branch-btn\">Public</button></div>" +
-                "<div class=\"branch-btn-wrapper\" data-tab-index=\"1\" style=\"top:50%;left:25%;animation-delay:1.45s\"><button class=\"branch-btn\">Media</button></div>" +
-                "<div class=\"branch-btn-wrapper\" data-tab-index=\"2\" style=\"top:25%;left:25%;animation-delay:1.6s\"><button class=\"branch-btn\">Private</button></div>" +
-                "<div class=\"branch-btn-wrapper\" data-tab-index=\"3\" style=\"top:75%;left:25%;animation-delay:1.75s\"><button class=\"branch-btn\">System</button></div>" +
-                "<div class=\"branch-btn-wrapper\" data-tab-index=\"4\" style=\"top:75%;left:75%;animation-delay:1.9s\"><button class=\"branch-btn\">Coming Soon</button></div>" +
+                "<div class=\"branch-btn-wrapper\" data-tab-index=\"0\" style=\"top:22%;left:78%;animation-delay:1.3s\">" + vineBorderSVG() + "<button class=\"branch-btn\">Public</button></div>" +
+                "<div class=\"branch-btn-wrapper\" data-tab-index=\"1\" style=\"top:50%;left:22%;animation-delay:1.45s\">" + vineBorderSVG() + "<button class=\"branch-btn\">Media</button></div>" +
+                "<div class=\"branch-btn-wrapper\" data-tab-index=\"2\" style=\"top:22%;left:22%;animation-delay:1.6s\">" + vineBorderSVG() + "<button class=\"branch-btn\">Private</button></div>" +
+                "<div class=\"branch-btn-wrapper\" data-tab-index=\"3\" style=\"top:78%;left:22%;animation-delay:1.75s\">" + vineBorderSVG() + "<button class=\"branch-btn\">System</button></div>" +
+                "<div class=\"branch-btn-wrapper\" data-tab-index=\"4\" style=\"top:78%;left:78%;animation-delay:1.9s\">" + vineBorderSVG() + "<button class=\"branch-btn\">Coming Soon</button></div>" +
               "</div>" +
             "</div>";
           document.body.appendChild(overlay);
           log("Overlay appended");
+
           var backBtn = document.createElement("button");
           backBtn.id = "back-btn";
           backBtn.innerHTML = "\u2190 Back to Home";
           document.body.appendChild(backBtn);
+
           var wrappers = overlay.querySelectorAll(".branch-btn-wrapper");
           wrappers.forEach(function(wrapper, idx) {
             var btn = wrapper.querySelector(".branch-btn");
             if (!btn) return;
             wrapper.addEventListener("mouseenter", function() {
               var line = document.querySelector("#branch-vines .branch-line[data-line-index=\"" + idx + "\"]");
-              if (line) { line.style.stroke = "#d4af37"; line.style.opacity = "0.9"; line.style.filter = "drop-shadow(0 0 8px rgba(212,175,55,0.6))"; line.style.strokeWidth = "0.9"; }
+              if (line) { line.style.stroke = "#d4af37"; line.style.opacity = "0.95"; line.style.filter = "drop-shadow(0 0 12px rgba(212,175,55,0.8))"; line.style.strokeWidth = "1.4"; }
             });
             wrapper.addEventListener("mouseleave", function() {
               var line = document.querySelector("#branch-vines .branch-line[data-line-index=\"" + idx + "\"]");
@@ -524,6 +374,7 @@ data:
               window.scrollTo(0, 0);
             });
           });
+
           backBtn.addEventListener("click", function() {
             backBtn.classList.remove("visible");
             overlay.classList.remove("hidden");
@@ -531,12 +382,20 @@ data:
             var tabButtons = document.querySelectorAll("#tabs ul li button");
             if (tabButtons[0]) tabButtons[0].click();
           });
+
           log("Initialization complete");
-        } catch (err) { console.error("SWEETPEA CUSTOM JS ERROR:", err); }
+        } catch (err) {
+          console.error("SWEETPEA CUSTOM JS ERROR:", err);
+        }
       }
-      if (document.readyState === "complete") { waitForHomepage(init); }
-      else { window.addEventListener("load", function() { waitForHomepage(init); }); }
+
+      if (document.readyState === "complete") {
+        init();
+      } else {
+        window.addEventListener("load", init);
+      }
     })();
+
 
   services.yaml: |
     - Public Services:
@@ -868,4 +727,7 @@ data:
             description: Media Transcoder — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/tdarr.svg
             server: ""
+
+
+
 
