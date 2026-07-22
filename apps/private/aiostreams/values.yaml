@@ -3,7 +3,7 @@ controllers:
     containers:
       main:
         image:
-          repository: viren070/aiostreams
+          repository: ghcr.io/viren070/aiostreams
           tag: latest
           pullPolicy: IfNotPresent
         env:
