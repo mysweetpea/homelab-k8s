@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: authentik-proxy-outpost-token
+  namespace: private
+spec:
+  encryptedData:
+    token: AgAVnvqpfOFHmdT0BjXtCsYOlTm8Pn5uCLPHAj3fVJZPm1NurxRVjwHBOk/FMrprGBwPignyHKTRxq/8IxNiJc0CybnTs87K+Mh4lmfSUnZf/QraDrOQCj/4t497F0X+dUAbMST0xTCeONrJriHeotINzdO2bkDJjal9gawwYJJL9WYwrZyq9iKwC/4qLPGZcwDofqma9sZHPJHK6uzb26nN6UbktD0657q1EVP+Iq1wFNEQuQyLN9/bgf2aRxDaS/W1ACFd6FPqNSFdPn4Sd0SInS31Ec0dnXpwzXC+Sal/QLoNp8tbW3jFbGCGUtZlEqX6T44WNTgmZp1avQlkd+0piRXSiv7+MINOfJTkY8xcLUECHJ9aaCX1FzAprR2O/nhxQxOQJqDzZaddicACwGLmkmv+FLwaJ248dqe1uDg4PjVBT5kdxt0Zmwh49SWpMslcq1oB9e39VDNP1QnPA8M1jHahQx9uI9Nz+I1mZn3JukeOFVANSrGo3b3OpeUYuf8KEe0p39dyIBsIozzHamiNfCYPg6katXqz7Z3uMXdaGkJ+TFxFvN0oVGbWtsQJExV7Kr7gkRrXq1DRSfEWqIiKRbngo/KUnHfAfMUcKkDdwhr0IinQdk9QG5EpFNNreTelp9Wlps9Wj0nvCi2ZT6OqNXfoa6H0kIWcrlbQya6iUinZEi9muOA8db7oVrHZMZz7MfpSCkyXsjOGv28DtLKCmTA4kda6e1b1NaQgqBPlw4w1nBhHnEIcV35LxuWLShcCn2/1QxznqYOzgJg=
+  template:
+    metadata:
+      name: authentik-proxy-outpost-token
+      namespace: private
+    type: Opaque

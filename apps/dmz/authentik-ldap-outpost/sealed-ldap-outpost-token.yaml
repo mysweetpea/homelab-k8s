@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: authentik-ldap-outpost-token
+  namespace: dmz
+spec:
+  encryptedData:
+    token: AgB2p6zRY0Ios2+DZDiSK83NYrEKnhPBawWuLvhMH3eiMTqnibUdPRxgiz9RFC58UtHthl6clyoJbZX4AAC7g5sVB44DjHduSQ4Js1OM2ekWn+sHhWKrVDbmVXRpzF6XEsuFTAAGJj//sPjA6adu4o+JqjOC5f1v1L2UMU7caoh5g5FFQS3KmP34Ansb7+vdvbyrVdugPVf63ducgE0PudF1mZyFshsdZ8sArOuxdJZd2aGlWq5uhGHHe3IM+SQjMHcDSpfghnKIBdOLHNAdZeuCclQy+xKEZZNY1uMzy3LBUbZf2oCCZKfFKEJxid6ki4mkPYjrfgSqR+ESMVsphUfLuSuQR4woAjQD/N6qPHbBT/oQd8KvN69/BMeAKJ1Aqv2HKvgM+myJsWoaNo632Nu4PgnBSFs0H3mrNszFodsL9uhviaT/HPhGXF4fIkuh0+2piMUsGkpq7gpXLoh/sIEqKVOO/F88/HOvo8d/P7IBIPsijkElZDd+7PbkTlSEKB5Fqo8M0mO9/nerbqVjbYy2IWnryY6/aCYNWZ+wcaiEVFJt8xN8IYYcRd8O5jGEKA4+pz4L/8KatGAWGDS5I6/nl1C+t4z9eHsbq9A0/H5QEn+C5ZdFia/JEPkSLKvvS1qWUPXt2O/YYdel+CJDxj0axfV+tWXvKZwW5HCnXp44UT4IT6BBmCJJezGTY1S1p0RamAgSNaxJF3ZbC6oim/jvVunwz4d/KBVTz4uEW/LTPXvLXpaWISCcGXI3P0FHP78EEbvAzlbIz1pH8OQ=
+  template:
+    metadata:
+      name: authentik-ldap-outpost-token
+      namespace: dmz
+    type: Opaque
