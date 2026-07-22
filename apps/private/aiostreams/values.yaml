@@ -7,11 +7,16 @@ controllers:
           tag: latest
           pullPolicy: IfNotPresent
         env:
-        - name: ENCRYPTION_KEY
+        - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: aiostreams-secrets
-              key: encryption-key
+              key: SECRET_KEY
+        - name: BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: aiostreams-secrets
+              key: BASE_URL
         probes:
           liveness:
             enabled: true
