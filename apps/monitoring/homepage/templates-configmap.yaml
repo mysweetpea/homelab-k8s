@@ -351,18 +351,18 @@ data:
     .branch-line {
       fill: none;
       stroke: var(--gold-dark);
-      stroke-width: 0.5;
+      stroke-width: 0.7;
       stroke-linecap: round;
       stroke-dasharray: 300;
       stroke-dashoffset: 300;
       animation: draw-line 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-      opacity: 0.5;
+      opacity: 0.55;
       transition: all 0.3s ease;
     }
 
     .branch-line.active {
       stroke: var(--gold);
-      stroke-width: 0.9;
+      stroke-width: 1.1;
       opacity: 1;
       filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
     }
@@ -696,36 +696,47 @@ data:
           return '<path class="vine-leaf" d="M0,0 C4,-6 10,-6 12,0 C10,6 4,6 0,0" transform="translate(' + cx + ',' + cy + ') rotate(' + rot + ') scale(0.8)" />';
         }
 
+        // Button positions mapped to 1920x1080 SVG viewBox
+        // Public: top:30%, left:75%  -> 1440,324
+        // Media:  top:50%, left:25%  -> 480,540
+        // Private: top:30%, left:28% -> 538,324
+        // System: top:70%, left:32%  -> 614,756
+        // Coming Soon: top:70%, left:72% -> 1382,756
+
         overlay.innerHTML =
           '<div id="branch-content">' +
             '<svg id="branch-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">' +
-              '<path class="branch-line" style="animation-delay:0.2s" d="M960,540 C1050,540 1100,420 1200,320" />' +
-              '<path class="branch-line" style="animation-delay:0.4s" d="M960,540 C1080,540 1150,620 1280,760" />' +
-              '<path class="branch-line" style="animation-delay:0.6s" d="M960,540 C880,540 820,540 720,540" />' +
-              '<path class="branch-line" style="animation-delay:0.8s" d="M960,540 C860,540 780,420 680,320" />' +
-              '<path class="branch-line" style="animation-delay:1.0s" d="M960,540 C860,540 780,660 680,760" />' +
-              '<path class="branch-tendril" style="animation-delay:2.2s" d="M1100,420 Q1100,380 1060,360" />' +
-              '<path class="branch-tendril" style="animation-delay:2.4s" d="M1150,620 Q1180,650 1220,640" />' +
-              '<path class="branch-tendril" style="animation-delay:2.6s" d="M820,540 Q780,580 740,560" />' +
-              '<path class="branch-tendril" style="animation-delay:2.8s" d="M780,420 Q740,400 720,430" />' +
-              '<path class="branch-tendril" style="animation-delay:3.0s" d="M780,660 Q740,700 720,680" />' +
-              makeLeaf(1120, 380, 45) +
-              makeLeaf(1180, 360, -20) +
-              makeLeaf(1220, 720, 30) +
-              makeLeaf(1160, 780, -45) +
-              makeLeaf(760, 540, 90) +
-              makeLeaf(720, 520, -60) +
-              makeLeaf(700, 360, 20) +
-              makeLeaf(680, 340, -30) +
-              makeLeaf(700, 720, -20) +
-              makeLeaf(680, 760, 40) +
+              // Main vines from center logo to each button
+              '<path class="branch-line" style="animation-delay:0.2s" d="M960,540 C1080,540 1200,420 1440,324" />' +
+              '<path class="branch-line" style="animation-delay:0.4s" d="M960,540 C840,540 720,540 480,540" />' +
+              '<path class="branch-line" style="animation-delay:0.6s" d="M960,540 C840,540 720,420 538,324" />' +
+              '<path class="branch-line" style="animation-delay:0.8s" d="M960,540 C840,540 720,660 614,756" />' +
+              '<path class="branch-line" style="animation-delay:1.0s" d="M960,540 C1080,540 1200,660 1382,756" />' +
+              // Subtle tendrils
+              '<path class="branch-tendril" style="animation-delay:2.2s" d="M1260,390 Q1300,360 1320,380" />' +
+              '<path class="branch-tendril" style="animation-delay:2.4s" d="M600,540 Q560,580 540,560" />' +
+              '<path class="branch-tendril" style="animation-delay:2.6s" d="M600,420 Q560,400 540,430" />' +
+              '<path class="branch-tendril" style="animation-delay:2.8s" d="M660,700 Q620,740 600,720" />' +
+              '<path class="branch-tendril" style="animation-delay:3.0s" d="M1260,690 Q1300,720 1320,700" />' +
+              // Leaves along main vines
+              makeLeaf(1200, 420, 45) +
+              makeLeaf(1320, 360, -20) +
+              makeLeaf(660, 540, 90) +
+              makeLeaf(560, 540, -60) +
+              makeLeaf(620, 420, 20) +
+              makeLeaf(560, 360, -30) +
+              makeLeaf(620, 660, -20) +
+              makeLeaf(560, 720, 40) +
+              makeLeaf(1200, 660, 30) +
+              makeLeaf(1320, 720, -45) +
             '</svg>' +
             '<div id="branch-logo"><img src="/logo.svg" alt="SweetPea" /></div>' +
+            // Tab indices must match Homepage tab order: Public(0), Media(1), Private(2), System(3), Coming Soon(4)
             '<div class="branch-btn-wrapper" style="top:30%;left:75%;animation-delay:1.4s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="0">Public</button></div>' +
-            '<div class="branch-btn-wrapper" style="top:70%;left:72%;animation-delay:1.55s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="1">Coming Soon</button></div>' +
-            '<div class="branch-btn-wrapper" style="top:50%;left:25%;animation-delay:1.7s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="2">Media</button></div>' +
-            '<div class="branch-btn-wrapper" style="top:30%;left:28%;animation-delay:1.85s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="3">Private</button></div>' +
-            '<div class="branch-btn-wrapper" style="top:70%;left:32%;animation-delay:2.0s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="4">System</button></div>' +
+            '<div class="branch-btn-wrapper" style="top:50%;left:25%;animation-delay:1.55s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="1">Media</button></div>' +
+            '<div class="branch-btn-wrapper" style="top:30%;left:28%;animation-delay:1.7s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="2">Private</button></div>' +
+            '<div class="branch-btn-wrapper" style="top:70%;left:32%;animation-delay:1.85s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="3">System</button></div>' +
+            '<div class="branch-btn-wrapper" style="top:70%;left:72%;animation-delay:2.0s">' + vineBorderSVG() + '<button class="branch-btn" data-tab-index="4">Coming Soon</button></div>' +
           '</div>';
         document.body.appendChild(overlay);
 
