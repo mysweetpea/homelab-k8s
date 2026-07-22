@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  auth.server: |-
+    auth.mysweetpea.cc:53 {
+        errors
+        cache 30
+        hosts {
+            10.43.38.255 auth.mysweetpea.cc
+        }
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-07-15T19:02:19Z"
+  name: coredns-custom
+  namespace: kube-system
+  resourceVersion: "15068998"
+  uid: ddf5a7a3-cd2f-473d-a163-8951f305a2c0
