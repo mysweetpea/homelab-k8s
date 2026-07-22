@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: authentik.image.tag
-    value: 2026.5.5
+    value: 2026.5.6
     forcestring: true
   - name: image.name
     value: ghcr.io/goauthentik/server
