@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: default
+  namespace: argocd
+spec:
+  syncWindows:
+    - kind: allow
+      schedule: "0 0 * * *"    # Midnight daily
+      duration: "1h"            # Allow syncs for 1 hour (00:00–01:00)
+      applications:
+        - "*"
+      namespaces:
+        - "*"
+      clusters:
+        - "*"
+      manualSync: true          # Allow manual syncs outside the window
