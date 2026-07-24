@@ -4,5 +4,5 @@ helm:
     value: docker.io/nextcloud
     forcestring: true
   - name: image.tag
-    value: 34.0.1
+    value: 34.0.2
     forcestring: true
