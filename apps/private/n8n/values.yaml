@@ -11,7 +11,7 @@ controllers:
           DB_TYPE: postgresdb
           N8N_SECURE_COOKIE: "false"
           N8N_HOST: "n8n.mysweetpea.cc"
-          WEBHOOK_URL: "https://subscribe.mysweetpea.cc/webhook/"
+          WEBHOOK_URL: "https://subscribe.mysweetpea.cc"
         envFrom:
           - secretRef:
               name: n8n-db-creds
