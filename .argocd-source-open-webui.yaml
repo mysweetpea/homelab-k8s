@@ -1,7 +1,7 @@
 helm:
   parameters:
   - name: controllers.main.containers.main.image.tag
-    value: v0.10.2
+    value: v0.11.0
     forcestring: true
   - name: image.name
     value: ghcr.io/open-webui/open-webui
