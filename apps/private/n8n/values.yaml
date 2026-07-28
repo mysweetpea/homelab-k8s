@@ -11,13 +11,13 @@ controllers:
           DB_TYPE: postgresdb
           N8N_SECURE_COOKIE: "false"
           N8N_HOST: "n8n.mysweetpea.cc"
-          WEBHOOK_URL: "https://subscribe.mysweetpea.cc"
+          N8N_WEBHOOK_URL: "https://subscribe.mysweetpea.cc"
         envFrom:
           - secretRef:
               name: n8n-db-creds
         image:
           repository: n8nio/n8n
-          tag: "2.32.5"
+          tag: "2.31.7"
     type: deployment
 persistence:
   data:
