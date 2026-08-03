@@ -5,6 +5,13 @@ metadata:
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: aiostreams=ghcr.io/viren070/aiostreams
+    argocd-image-updater.argoproj.io/aiostreams.update-strategy: semver
+    argocd-image-updater.argoproj.io/aiostreams.allow-tags: "regexp:^v?\\d+\\.\\d+\\.\\d+$"
+    argocd-image-updater.argoproj.io/aiostreams.helm.image-spec: controllers.main.containers.main.image
+    argocd-image-updater.argoproj.io/write-back-method: git
+    argocd-image-updater.argoproj.io/write-back-target: helmvalues
 spec:
   project: default
   destination:
