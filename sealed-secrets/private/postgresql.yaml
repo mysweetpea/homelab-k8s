@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: postgresql
+  namespace: private
+spec:
+  encryptedData:
+    postgres-password: AgCjPEd7vW7Uje1jgUCNn7Vrga4D7sb89nuISiHaD9TZ1ZXSUn9Z0JvY7YLoSlSHZ017n9zVyPNQ6Dm64ejA4AC0+DilbJJxKM996DHj9Opw7/ey5leZE0Z3CYx7TO7tp8oYQIWbAptzh4H1DRt/LJc6+m/S1gogugaqY/6hLkM9MYui4WUZAaa5J+BqInIbVNamyxKnwnjRNK1rybF8GpW0QMCb9PceVSoWTD1wf5DcyxNJ6cdJIZvl0Hcog/FM1sdW74aj3PC2Pf3//62BPFgjZIKGlXw9BquZNrKntggic4R4/w4Sn91tbitijHzMeDn1hNIl674dnFbFO2MEe1vdRvTTZysaFwDHMWErdZ2J7ZeGlXJkXSlmjW0SFCk6SWslDU18Cb8jXxEWR/OtC8rjyovfk5UpyGrUzmxTc6rwRXZFuZM+W+gtOyn+5/hT8k/Iay1E54Z1MwQ8NFhR7qqX3+5QsjojRVuRoFNjGBMOgMLg91odlWadENX2Bt+Zdr6wT0o2G02eNj7KPVQyt/H59c5eg/CEF+tDnLjlpCWQYu2IgO6mfH1If3wQmfs/V+Vp58KboLhNm7mB3CuIMh1Ge9hjCcN806Yi5gizBsIxb2M0JUThREAN3JaNWmqqDnDdutGn8uevXnahVp9aSj5fsl8akSizeNRvSR9jY0JFJlumWt4Y4Wul0aZP/xcwYRkA0XBKJ2Eghl4z10K+xKj8qI6O9Q==
+  template:
+    metadata:
+      name: postgresql
+      namespace: private
+    type: Opaque

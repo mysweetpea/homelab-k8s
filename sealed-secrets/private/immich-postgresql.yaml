@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: immich-postgresql
+  namespace: private
+spec:
+  encryptedData:
+    postgres-password: AgBtcsBnGe1FwqHOAmWM+7Oprw3Z2joITaph/PPnTtvkQBv+iczb67ybl6Cbjv74oj7+At71ZoGolEhnLqWdOYT82jn5CIQFG+EFOtgmQ20i6HSC8EatDN+L/pam4sXOveTaPNFrORoccl+rNJ1tnC7EJQIgW/KYjdlQ+SpbQx+vgX+c0bYux03+gynxGBOMqH0Givwy0SuGMPDVQrngsU20/nrzLg0X+IqKnXJUs595U07ZoizRX4ttoo9ZDr9/ymvLqi7eGS3tnhoqfIX6Nc8phKqHjkslqup22+xw/EDV08MKVv/P4y6v5trM2w9aY8sHTn8TqrqPJlGloIbOok9SyvRpe1BJZp+KB91ZgFyVUl1mih/KlnD1TcpO45yQlYdBcrNFdiKQa04DSXajLdFKBxTfkPjRnnjb6SvdwIoQlyeqo0dV8ryOx2YlB6ED1VCqKpSxiVCSVhT6we11rpOwo5qyuIavI2rxdejA28HEfL5StZJJzvoeKIiIdh3IO/WmNewrBybxk3bKhTgo5gJtt1w4LkJCV7We7dDal0x0j6MA/mX1nSfBYwPgmte80N2snBYaipzFK3+sL+PnOuQ7WPjaQ5/OdiT+7gBGqfBl/p6cJ2ygOQkFsFpk8QfnZL3mMZnm9zGbFdIGiCKtZY6oFVwE8wjDUdK/1GfnhpV2PSKUNGSjOelfs3jrjmYqCtdkn6gRCIxzwek4lH4YcLMvsACMIA==
+  template:
+    metadata:
+      name: immich-postgresql
+      namespace: private
+    type: Opaque

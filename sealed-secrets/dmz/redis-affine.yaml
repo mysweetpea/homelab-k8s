@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: redis-affine
+  namespace: dmz
+spec:
+  encryptedData:
+    redis-password: AgCnKHMzoGPxultdiKUMArYEwZRGGQkISasXGrcyGgnK5neqaMvokM/ss55xD4lmSNEX4VB2IevMqvUU1MYrc3g0QpPtQuQCK0wNyXsWfNQ8HPKH0REeRqdRWbrFfjHGcoxK1UU9DYKlOBZqRvmX6KQ/U2cu460xXdowiHRp7Dc2FbiSnCJyKDBE4+iRzXIKirwBfEYZMH7d61N/mClZSCF1275Uu8Q6p5tSX9F77l57cM9G9yWMKpRARLxRiFnuCXcRLo/nkjAEpjdp8tx4f/w3jElSBJwIsfvmS+3xWSzKgWXSTVc5WqxTKvs2UfqFChOGw4a66fghWXb06CvBawbCHM+0zn5o3+D4Ghhhgp1XON7OxZ26lGPxrLbHA+PN+mKl72pO95hEWxl9Y25Py7gaGFNr5AP/rYZ0rs3bbkomqtnTrOapM24hUTbvixb7D+Jx9rWVGaH7FKFStSKKZ4kqsm8Fz6dJXoohXRC/ceq7cI7G0u6+Y6NgjI5unSqJP6cXTLx6bgQpN1U1ZAzE8Tslr8H5KCBUxk4bbZaOsjCt4D7Z7en+LVV49otD0ers8R7tPScve2lsbMdDcxgTaB387ABabHMj0FvPJUgptqUkxyo8Cl7lHNBax2v8oPhnH0g4Gk3WlAAdth9RfgZudSlCEGxBJr+hraN2UwNRWy4uxslCefbS/bFpApGJpErHRA61pLCLlcTcsMgIfQ5TER5mfJ41bJy4s5PDeHH5h0XQmltClosd2z7sSSjBRw==
+  template:
+    metadata:
+      name: redis-affine
+      namespace: dmz
+    type: Opaque

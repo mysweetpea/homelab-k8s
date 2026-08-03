@@ -1,0 +1,22 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: matrix-synapse
+  namespace: dmz
+spec:
+  encryptedData:
+    config.yaml: AgB77IJKApAHSxMiful5VIUpob8w5da/ANQHsBuM3zLnh3GBLNQfwY8ZTvq52UIjILCefkYxTF5TzwOFAttghHRvnXGbQIy2jedNsYe1O60Da5G0KeUJ5HkRM+gJOdTAUp2Xg0ITs3ux3lZdeSfIu+8SA0e8+LOSXoVlKTFyZ4ok73IXzmuy8eS5wx9rdwZzxFztWR4UWY/lKqfCCvvM1tm+O79JskZ6t8E28/+7KHOuAu1QkOYGkmUeHr93so17reg2zaElY9PQ2/yONOqc+guETOBOaUV5SfITFVCsUpPw3yqadHix+mjVPWwWjbbiqeypvTMZPxdxOw/FAY9AZlgwHLUmbS1XwM5uUlErD1ffNl2VzCGL3RFAIxmDKP2isUUOKyd15O9xAyk0eBY+XyHu3UaRqu0gWY/7f9l1NDNtMjjztKOgyGbZ14tvmbocC5IyA4nBaTuayQie8nqiGn+dCLdS3OnTzp5FaqrR/RnXQYBcjr+zay9HEI8EHmrNq5HI1iooIuhJNd5QmRNLpwPXFmkgvjtsr7f4oYmDpnldCBQbqb1C+gfg7gA1ItM4MdQu5ferEzeEzUkAfD1i2pL3QEBkbD1DEfHIOgbJ/DiPV4gLtPho6naGZHG1WSXBM13ZtUaeiQolL4pRa4vN3GrmdOcDxWzNoW5pisrh/G+c0PQqyo1PM6qqWcw7h1iOFeGcZNNYoVuWWXnQOKjJffWcgvpbcXpl+yyPXoeqSGSKBcPqG9Qbt1d/GyFF1n2LRhqH1Fpw5oLNH/+Fi1FIK+wbQDE1/tP7OMOczjGTUgPMBTL8+QY4rWlIb99SRHj/kwu5VUocAbn136cmqLQ7Y7W7aNan6wQ8A985M0M/sqsywf3EXNI2msUgVR2Orsn1+MFlzxz9Bib6tf6ls9puoPkm5Z+isY4GZZ7xdIYjx8jRk1JmOYl7RmIu7vJKRkJZT2PYowE3/Ucq1IA02fHLiHLxgyLSQ0JKhFTA829NxnS0iL1tZmPeBYw5qJTgoQJZdA10TCG2imMFSQgHiNMzEHrDKSOTVGEwihUYiHH+0O1YQmET0rZsyuLefid7XpRjrH1O0KtaN1JXZuV985loqwuCPRcRZ+KJJzv47X26sG8NwDeVOVtcakDZqsYmtFphE7g5CXycuU83U0+GH8H3xKvkSrvwGHrU1DNg0oSkP0wpKTIqAvap5kwNTBAvFIQPgdITA4IjpHiunu5oAhYKLOYmpfb4RXDCe+j4+ibyfm98ABrkjTIdLmWMUG8eQC6SxGRd43XC6r4oPHatKWWimriB1VIMtuy2zsSFDHttXCb5gR1iAs3tJzAWKOrBs7RzVFg=
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/tracking-id: matrix-synapse:/Secret:dmz/matrix-synapse
+      labels:
+        app.kubernetes.io/instance: matrix-synapse
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: matrix-synapse
+        app.kubernetes.io/version: 1.155.0
+        helm.sh/chart: matrix-synapse-3.12.30
+      name: matrix-synapse
+      namespace: dmz
+    type: Opaque

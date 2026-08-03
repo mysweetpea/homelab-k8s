@@ -1,0 +1,22 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: matrix-synapse-redis
+  namespace: dmz
+spec:
+  encryptedData:
+    redis-password: AgABI+Rwe1xGFAP+H87mhFnhbriSvkZ3DdmbjviSrqTUV92iNe6vx6oojOk/V4sOLbmzPMfh/9reqZTDgxBpnF9TYqDV5Ql2+VPLAxJlSFAwj+tX4rX7hbLxMYswVFnxN3RQrXLuKcxa9jINNXbcZCKbtinVwwafoysMkycPXixKNSg+jF1OkbP5nNNINbETWXemDW8TneLuckqr/sLAICUv+RmOc0i9TN3FyEQKwu6U0bxl9NZ/8SlSY2GGC1kA+W9nGRWUt5NOSP4RZe1NdDKZUv2OT66Q0S4WrtpBVZoZua0CYAkrY+MKoxHpalZcf2W4a4vD8uU2xDmd2R8Ye94BIoZwSqv8w3+fUQ8FJ9AvCcNBBZWRZ79HxhBLbf5Qs0pztd7JPEcdlUT3RKxxPUYo4w9iiyzAMZEznSULP5/n5gQS2guJun8sIgopmRDBbKQa8dUyyCHjAyC1srRC+mIbvUAkm43cpppxbXvH5jul756pki5jGYzFZrcmxlIeqwTk66MLbvZiY+WbV75Shb82hPwzbVtJMeAYRPfXsj72C1WBleXgWyOheXdAySQOAVYUr97kOpCUb48KXW5BHox+CevNqir1R2Y+s2AbFCULtT0mwLH5bnCXpe/YKoKxQ59QCgNAS0iwGhgVJeaVpbYtA3+RS6MhpI0Ye2vwtbIAW03jYKOeDStQxX4Ijq7i4Y5jRIEQ3Qacf/nEJNB/khFoqTU=
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/tracking-id: matrix-synapse:/Secret:dmz/matrix-synapse-redis
+      labels:
+        app.kubernetes.io/instance: matrix-synapse
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/version: 7.0.12
+        helm.sh/chart: redis-17.17.1
+      name: matrix-synapse-redis
+      namespace: dmz
+    type: Opaque

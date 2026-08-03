@@ -1,0 +1,23 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: matrix-synapse-signingkey
+  namespace: dmz
+spec:
+  encryptedData:
+    signing.key: AgCDG+WfJHT9sMFqhDD+aBrro0oRejFWWMVg8M4I8sYF3msgZ66R51lqEztySN4OW2hGhUz0SFuAGJ2Z2MFM6vuDJeUDHZokjwNSpx2VxV4a5JIUggvWJLJEOXeYuSEctmSVVjWD0SO+GYkFp0VLCeN5uv4PAsfgRenILVdv91FtmoJuH2fGp6Y3YKn49FmtuwLL6lJrBhG7F+X+dwR92elfuK0jR61/J2BF283MlnH6lEz0GlpKCGpJ5b/Qoi51jtJfx37eqs/f50rs9SM3gWJc16fjd3x+gIGiHqJMOzgJrlxjYY5bYblsSPuA7uPpNojU7ko7XsEsl9sZzZvVhZUOO+aQtg3RcdkuZ+BuhQJ6XIb9cialVZ+Q6vfrOLiqiL04GvGinaWygGIHgPuMOXkT1x5o0mmz1J5unsY15KHylufnRhtS0hyXZA5PDzxjryYfEC1yslmgrECr+Irp7a5USwH+jDmyRCokDrEGb+eL/NWQb8boCHSTVQqf0fXZcSbJXidtVhHkWDQAgGZKtATBFuHi4sKnOFBa9SvIJ6fCPL928Bqkk7CURU7PyqUJhfxqy4FNv1h6rnVx8tNgUnQleTOSyRturgcgrcEMChIwt/NhEeenLbgSjoZIyNYhuS4JChNtsWpfvBpQBA7UxC5/cbeF1O77FA/PDRObBDEIPHDNhpTo3EdzITUi6VXklsbiOxRc72Po0YlDR3sIsMn5OQtHCaPasEz3wWxzbym6ECvyCazuJvsydYp8q6AUOoo5sw19OtXK+3sc
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/tracking-id: matrix-synapse:/Secret:dmz/matrix-synapse-signingkey
+      labels:
+        app.kubernetes.io/component: signingkey-job
+        app.kubernetes.io/instance: matrix-synapse
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: matrix-synapse
+        app.kubernetes.io/version: 1.155.0
+        helm.sh/chart: matrix-synapse-3.12.30
+      name: matrix-synapse-signingkey
+      namespace: dmz
+    type: Opaque

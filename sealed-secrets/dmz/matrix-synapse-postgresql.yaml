@@ -1,0 +1,23 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: matrix-synapse-postgresql
+  namespace: dmz
+spec:
+  encryptedData:
+    password: AgBGDY8uA2ekX/ubJdAglW9dtLDgjF9Pyaosg9mhucPXJDNgVXotuLz9ViE3soWOsKyriPrbkhj+JFjlXO8gw1jBfsxpGAXJf7sGj4qXjO35tHdX0iEQ7q6B2TlQHldtAZHco8CBOg5TVhYAE4Oo7dh+vC9IeptIxuIef2c1aE5fBzYzWa7PadRY5wsNXp2bs7CaFwgbNT8rk8z+ASkrWw5GlT+LCyDeZylk8oFq0mvqOuBYpMiKqu/ZbQmmL+hPWfDnTINjTY3kU4tgEcLKKYaixYBYwW/gKDT/D6HOE/H2mpzJw2e57x6WhPtVHT3sOsAKIz4cmKLLXV5NghN5x/+Rywad4k5pHlrQPEoTpnuEDbbHI0QEF2qturkkBRXPIOtkIdJnN8DiroYyevzqC8FOgCkUexbPcHsr3yYXRdZf4JkJcbqlZclrBpzLv9kMF+vwc0vHrBrl56fcOvQvnVIenYQppHaRH00buYog/YZbanYbQsJRVoZlpzs5+FvSkUPFbBoMp6YvtpWh+DtPduzyFrXT/xMwsvlV0SrkHgAg4meUEyCLt+KsowvCt6wXdoP8WUxmjmYjivXYHMH2s55TEjdTGU5yuA5LL9dm647ZHP7TCBMDjteW+llT+9wCP5/sbvCsRldSN8+v/FSDja3Hl3pJkf5bFqBJXOTowp5F/sj194+Fn4X32suavNzC0i3x7KJeFrSp
+    postgres-password: AgAaw0Yjk2ljFzRr/zF36GCo0WNn3gB+cmAZn2X0DvWWhOo8SnczPsXlbFInw2M4XYjDq505e0BmK8ClK8FygwYrrFyPz3kePCSjVKegCF8Fy1b/RsNq+16lQIVlxHsrAzYuX3A181hwKu100WMC1ztzD5XUi3ZXy9N848wPeIwyz6uNGH45T++hGK5ireJK89KOdXjhdvyekYiKpRygVYpb475BYpfulGfdhL2V3BujpClbG6/LeG6+xn/jy/rwWeHcQnh6tKQ29Jfnpo73hSgKMaNqevPGMK4ZFY6AERRolsYLIxGEQdvaofJSprwJepd9gluFyF+WC9Df2j+7GMqwBh/XhsnDlHZA1V6psPsu12AdDd2ZKMoukDHf3LY9AW2YhxPFCyHYyVz0kY3w7Pv0gvqmDKYysDvBlfWAXnSFJukR8jGlYTGPRfD5wvSS6W6+DJIcrfTu2mVUE1YuiTf0l4sN8h1qmlNNK+N3sTgt+AGlIsjFfIJinC3zN/PnF8g/kCahTc5fdklxOMNd40Mg/CP6Rys/+Pe7rf/KMnbr0UI1+vXoQU0gNZoiG8gwmG5d/WM78VZbXk0Xg+KifjrFle37FBj4Mii6Y5Nt+J2JB8IC+3NPLouydkemOVg0Q/LkJ1RV2ZHvxI5svgVKsX1XspBtKQeiR8qYoBZ7h+8vKoHmvKh/fCaXSaYRgajuEmS2kMBq1cmdVHsM
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/tracking-id: matrix-synapse:/Secret:dmz/matrix-synapse-postgresql
+      labels:
+        app.kubernetes.io/instance: matrix-synapse
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/version: 15.4.0
+        helm.sh/chart: postgresql-12.12.10
+      name: matrix-synapse-postgresql
+      namespace: dmz
+    type: Opaque
