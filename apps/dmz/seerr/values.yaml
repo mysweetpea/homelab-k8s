@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/seerr-team/seerr
-          tag: latest
+          tag: v3.3.0
         securityContext:
           runAsGroup: 1000
           runAsUser: 1000

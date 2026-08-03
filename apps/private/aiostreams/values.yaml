@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/viren070/aiostreams
-          tag: latest
+          tag: v1.9.2
           pullPolicy: IfNotPresent
         env:
         - name: SECRET_KEY

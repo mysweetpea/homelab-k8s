@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/hotio/prowlarr
-          tag: latest
+          tag: release-faf934d
     type: deployment
 persistence:
   config:

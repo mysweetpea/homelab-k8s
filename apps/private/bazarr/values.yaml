@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/hotio/bazarr
-          tag: latest
+          tag: release-f723c6b
     type: deployment
 persistence:
   config:

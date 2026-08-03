@@ -5,7 +5,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/hotio/qbittorrent
-          tag: latest
+          tag: release-ff687b6
         env:
           # Set a permanent admin password on first boot
           # The hotio image reads this on startup if the config doesn't exist yet

@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/containers/kubernetes-mcp-server
-          tag: latest
+          tag: v0.0.66
     type: deployment
 service:
   main:

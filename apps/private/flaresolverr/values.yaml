@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/flaresolverr/flaresolverr
-          tag: latest
+          tag: v3.5.0
     type: deployment
 service:
   main:
