@@ -64,7 +64,7 @@ service:
 persistence:
   data:
     type: persistentVolumeClaim
-    accessMode: ReadWriteOnce
+    accessMode: ReadWriteMany
     size: 5Gi
     storageClass: longhorn
     globalMounts:
