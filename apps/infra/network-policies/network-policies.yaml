@@ -1,26 +1,3 @@
-# =====================
-# Namespaces
-# =====================
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: dmz
-  labels:
-    name: dmz
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: private
-  labels:
-    name: private
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: monitoring
-  labels:
-    name: monitoring
 ---
 # =====================
 # DMZ Namespace Policies

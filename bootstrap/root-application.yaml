@@ -17,7 +17,7 @@ spec:
       include: "{application.yaml,network-policies.yaml}"
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
