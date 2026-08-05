@@ -9,7 +9,7 @@ metadata:
     argocd.argoproj.io/sync-wave: '2'
     argocd-image-updater.argoproj.io/image-list: n8n=n8nio/n8n
     argocd-image-updater.argoproj.io/n8n.update-strategy: semver
-    argocd-image-updater.argoproj.io/n8n.allow-tags: "regexp:^2\\.31\\."
+    argocd-image-updater.argoproj.io/n8n.allow-tags: "regexp:^2\\.\\d+\\.\\d+$"
     argocd-image-updater.argoproj.io/n8n.helm.image-spec: controllers.main.containers.main.image
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/write-back-target: helmvalues

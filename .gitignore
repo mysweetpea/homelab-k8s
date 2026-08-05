@@ -26,3 +26,4 @@ batch-migrate.py
 batch-patch-apps.sh
 sanitize-flagged-apps.py
 *-secrets.yaml
+__pycache__/

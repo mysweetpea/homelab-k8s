@@ -1,7 +1,7 @@
 authentik:
   image:
     repository: ghcr.io/goauthentik/server
-    tag: "2026.5.5"
+    tag: "2026.5.6"
   secret_key: "ysoC/gBZLhn8aQeJE+Drch32mNPgQuDxEygwYqecPz+D9MKRRh7UtPGTZ/5YUVrMG9E="
   error_reporting:
     enabled: false
@@ -31,6 +31,33 @@ authentik:
       limits:
         memory: "512Mi"
         cpu: "500m"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Git-backed Blueprints (Session 31)
+#
+# ⚠️  DO NOT UNCOMMENT the two blocks below until the blueprints actually exist.
+#     If `blueprints.configMaps` references a ConfigMap that isn't present, the
+#     authentik server/worker pods will fail to mount it and crash — taking SSO
+#     down. The ConfigMap is generated from exported blueprints.
+#
+# Workflow:
+#   1. Export each object from the Authentik UI (the `{ }` icon).
+#   2. Run:  python3 apps/dmz/authentik/blueprints/sanitize-blueprints.py <exported>.yaml
+#   3. Run:  python3 apps/dmz/authentik/blueprints/build-configmap.py
+#      -> paste the printed `additionalObjects:` block into this file.
+#   4. Create the `authentik-blueprint-env` Secret with the AUTHENTIK_BP_* vars
+#      the sanitizer reported.
+#   5. Uncomment the two blocks below, then sync the authentik Application.
+#
+# blueprints:
+#   configMaps:
+#     - authentik-blueprints
+#
+# global:
+#   envFrom:
+#     - secretRef:
+#         name: authentik-blueprint-env
+# ─────────────────────────────────────────────────────────────────────────────
 
 postgresql:
   enabled: true
