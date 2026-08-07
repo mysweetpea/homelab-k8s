@@ -5,6 +5,5 @@ volume:
   storageClassName: longhorn
   existingClaim: uptime-kuma-pvc
 service:
-  type: LoadBalancer
-  loadBalancerIP: 192.168.20.217
+  type: ClusterIP
   port: 3001

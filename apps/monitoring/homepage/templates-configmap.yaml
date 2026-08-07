@@ -675,28 +675,13 @@ data:
     - Monitoring:
         - Uptime Kuma:
             id: uptime-kuma
-            href: http://192.168.20.217:3001
+            href: https://status.mysweetpea.cc
             description: Uptime Monitor
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/uptime-kuma.svg
             widget:
               type: uptimekuma
               url: http://uptime-kuma.monitoring.svc.cluster.local:3001
               slug: ${UPTIME_KUMA_SLUG}
-        - Netdata:
-            id: netdata
-            href: http://192.168.20.229:19999
-            description: System Metrics
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
-        - ArgoCD:
-            id: argocd
-            href: http://192.168.20.220
-            description: GitOps Deployments
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/argocd.svg
-            widget:
-              type: argocd
-              url: http://argocd-server.argocd.svc.cluster.local
-              key: ${ARGOCD_API_TOKEN}
-    - Coming Soon:
         - Grafana:
             id: grafana
             href: ""

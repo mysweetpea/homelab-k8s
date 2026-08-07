@@ -1,0 +1,19 @@
+---
+# KoalaSync — sync.mysweetpea.cc (behind Authentik forward auth)
+# (recreated Session 33 — was lost in Session 29/30 recovery)
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: koalasync
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`sync.mysweetpea.cc`)
+      kind: Rule
+      middlewares:
+        - name: authentik-forward-auth
+      services:
+        - name: koalasync
+          port: 3000

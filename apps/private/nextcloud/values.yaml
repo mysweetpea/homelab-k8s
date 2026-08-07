@@ -10,6 +10,7 @@ nextcloud:
     passwordKey: password
   trustedDomains:
     - nextcloud.mysweetpea.duckdns.org
+    - cloud.mysweetpea.cc
     - 192.168.20.215
     - nextcloud.private.svc.cluster.local
 persistence:
@@ -19,9 +20,7 @@ postgresql:
   enabled: false
 service:
   port: 8080
-  type: LoadBalancer
-  loadBalancerIP: 192.168.20.215
-  allocateLoadBalancerNodePorts: false
+  type: ClusterIP
 
 externalDatabase:
   enabled: true
