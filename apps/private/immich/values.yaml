@@ -10,7 +10,7 @@ controllers:
     containers:
       main:
         image:
-          tag: v2.7.5
+          tag: v3.1.0
         env:
           # Database connection (immich-postgresql in private namespace)
           DB_HOSTNAME: immich-postgresql.private.svc.cluster.local

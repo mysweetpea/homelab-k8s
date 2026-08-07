@@ -1,0 +1,187 @@
+version: 1
+entries:
+  # ── Vaultwarden (OIDC) ──────────────────────────────────────────────
+  - id: provider-vaultwarden
+    model: authentik_providers_oauth2.oauth2provider
+    attrs:
+      name: vaultwarden
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: IomC2F9mfPulTpE19LTm22AxdwyWwRkfDaKpLpMr
+      client_secret: !Env AUTHENTIK_BP_VAULTWARDEN_CLIENT_SECRET
+      redirect_uris: '["https://vault.mysweetpea.cc/identity/connect/oidc-signin"]'
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      access_code_validity: minutes=5
+      access_token_validity: minutes=10
+      include_claims_in_id_token: true
+      token_mode: per_provider
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+      supported_scopes:
+        - email
+        - profile
+        - offline_access
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'openid']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'email']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'profile']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'offline_access']]
+
+  # ── AFFiNE (OIDC) ───────────────────────────────────────────────────
+  - id: provider-affine
+    model: authentik_providers_oauth2.oauth2provider
+    attrs:
+      name: affine
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: wnWQaSxzyuafhDDzklANZlrFkUP0pb32GX5Tsurb
+      client_secret: !Env AUTHENTIK_BP_AFFINE_CLIENT_SECRET
+      redirect_uris: '["https://notes.mysweetpea.cc/oauth/callback"]'
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      access_code_validity: minutes=5
+      access_token_validity: minutes=10
+      include_claims_in_id_token: true
+      token_mode: per_provider
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+      supported_scopes:
+        - openid
+        - email
+        - profile
+        - offline_access
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'openid']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'email']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'profile']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'offline_access']]
+
+  # ── Matrix Synapse (OIDC) ───────────────────────────────────────────
+  - id: provider-matrix-synapse
+    model: authentik_providers_oauth2.oauth2provider
+    attrs:
+      name: matrix-synapse
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: OOCZ9OYQ4NknTxzzT2MzZBzEXDBs1bYrgvootaaw
+      client_secret: !Env AUTHENTIK_BP_MATRIX_SYNAPSE_CLIENT_SECRET
+      redirect_uris: '["https://matrix.mysweetpea.cc/_synapse/client/oidc/callback"]'
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      access_code_validity: minutes=5
+      access_token_validity: minutes=10
+      include_claims_in_id_token: true
+      token_mode: per_provider
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+      supported_scopes:
+        - openid
+        - email
+        - profile
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'openid']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'email']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'profile']]
+
+  # ── Open WebUI (OIDC) ───────────────────────────────────────────────
+  - id: provider-open-webui
+    model: authentik_providers_oauth2.oauth2provider
+    attrs:
+      name: open-webui
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: !Env AUTHENTIK_BP_OPEN_WEBUI_CLIENT_ID
+      client_secret: !Env AUTHENTIK_BP_OPEN_WEBUI_CLIENT_SECRET
+      redirect_uris: '["https://chat.mysweetpea.cc/oauth/oidc/callback"]'
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      access_code_validity: minutes=5
+      access_token_validity: minutes=10
+      include_claims_in_id_token: true
+      token_mode: per_provider
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+      supported_scopes:
+        - openid
+        - email
+        - profile
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'openid']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'email']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'profile']]
+
+  # ── Nextcloud (OIDC) ────────────────────────────────────────────────
+  - id: provider-nextcloud
+    model: authentik_providers_oauth2.oauth2provider
+    attrs:
+      name: nextcloud
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: !Env AUTHENTIK_BP_NEXTCLOUD_CLIENT_ID
+      client_secret: !Env AUTHENTIK_BP_NEXTCLOUD_CLIENT_SECRET
+      redirect_uris: '["https://cloud.mysweetpea.cc/apps/user_oidc/callback"]'
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      access_code_validity: minutes=5
+      access_token_validity: minutes=10
+      include_claims_in_id_token: true
+      token_mode: per_provider
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+      supported_scopes:
+        - openid
+        - email
+        - profile
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'openid']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'email']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'profile']]
+
+  # ── Immich (OIDC) ───────────────────────────────────────────────────
+  - id: provider-immich
+    model: authentik_providers_oauth2.oauth2provider
+    attrs:
+      name: immich
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: !Env AUTHENTIK_BP_IMMICH_CLIENT_ID
+      client_secret: !Env AUTHENTIK_BP_IMMICH_CLIENT_SECRET
+      redirect_uris: '["https://photos.mysweetpea.cc/auth/login", "https://photos.mysweetpea.cc/user-settings", "app.immich:///oauth-callback"]'
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+      access_code_validity: minutes=5
+      access_token_validity: minutes=10
+      include_claims_in_id_token: true
+      token_mode: per_provider
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+      supported_scopes:
+        - openid
+        - email
+        - profile
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'openid']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'email']]
+        - !Find [authentik_providers_oauth2.scopemapping, [name, authentik default OAuth Mapping: OpenID 'profile']]
+
+  # ── Jellyfin (LDAP) ─────────────────────────────────────────────────
+  - id: provider-jellyfin
+    model: authentik_providers_ldap.ldapprovider
+    attrs:
+      name: jellyfin
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      base_dn: dc=mysweetpea,dc=cc
+      search_group: ""
+      search_mode: CACHED_QUERY
+      bind_mode: CACHED_BIND
+      mfa_support: false
+      tls_server_name: authentik-ldap-outpost.dmz.svc.cluster.local
+      certificate: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+
+  # ── KoalaSync (Proxy / forward auth) ────────────────────────────────
+  - id: provider-koalasync
+    model: authentik_providers_proxy.proxyprovider
+    attrs:
+      name: koalasync
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      external_host: https://sync.mysweetpea.cc
+      mode: forward_single
+      cookie_domain: mysweetpea.cc
+      skip_path_regex: ""
+      basic_auth_enabled: false
+      intercept_header_auth: false

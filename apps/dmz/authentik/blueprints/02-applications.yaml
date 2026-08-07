@@ -1,0 +1,74 @@
+version: 1
+entries:
+  # ── Applications ────────────────────────────────────────────────────
+  - id: app-vaultwarden
+    model: authentik_core.application
+    attrs:
+      name: vaultwarden
+      slug: vaultwarden
+      launch_url: https://vault.mysweetpea.cc
+      meta_launch_url: https://vault.mysweetpea.cc
+      provider: !Find [authentik_providers_oauth2.oauth2provider, [name, vaultwarden]]
+
+  - id: app-affine
+    model: authentik_core.application
+    attrs:
+      name: affine
+      slug: affine
+      launch_url: https://notes.mysweetpea.cc
+      meta_launch_url: https://notes.mysweetpea.cc
+      provider: !Find [authentik_providers_oauth2.oauth2provider, [name, affine]]
+
+  - id: app-matrix-synapse
+    model: authentik_core.application
+    attrs:
+      name: matrix-synapse
+      slug: matrix-synapse
+      launch_url: https://matrix.mysweetpea.cc
+      meta_launch_url: https://matrix.mysweetpea.cc
+      provider: !Find [authentik_providers_oauth2.oauth2provider, [name, matrix-synapse]]
+
+  - id: app-jellyfin
+    model: authentik_core.application
+    attrs:
+      name: jellyfin
+      slug: jellyfin
+      launch_url: https://media.mysweetpea.cc
+      meta_launch_url: https://media.mysweetpea.cc
+      provider: !Find [authentik_providers_ldap.ldapprovider, [name, jellyfin]]
+
+  - id: app-koalasync
+    model: authentik_core.application
+    attrs:
+      name: koalasync
+      slug: koalasync
+      launch_url: https://sync.mysweetpea.cc
+      meta_launch_url: https://sync.mysweetpea.cc
+      provider: !Find [authentik_providers_proxy.proxyprovider, [name, koalasync]]
+
+  - id: app-open-webui
+    model: authentik_core.application
+    attrs:
+      name: open-webui
+      slug: open-webui
+      launch_url: https://chat.mysweetpea.cc
+      meta_launch_url: https://chat.mysweetpea.cc
+      provider: !Find [authentik_providers_oauth2.oauth2provider, [name, open-webui]]
+
+  - id: app-nextcloud
+    model: authentik_core.application
+    attrs:
+      name: nextcloud
+      slug: nextcloud
+      launch_url: https://cloud.mysweetpea.cc
+      meta_launch_url: https://cloud.mysweetpea.cc
+      provider: !Find [authentik_providers_oauth2.oauth2provider, [name, nextcloud]]
+
+  - id: app-immich
+    model: authentik_core.application
+    attrs:
+      name: immich
+      slug: immich
+      launch_url: https://photos.mysweetpea.cc
+      meta_launch_url: https://photos.mysweetpea.cc
+      provider: !Find [authentik_providers_oauth2.oauth2provider, [name, immich]]

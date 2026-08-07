@@ -1,0 +1,104 @@
+version: 1
+entries:
+  # ── Group Bindings (policy engine mode: ANY) ────────────────────────
+  # seedling + sweetpea for most; sweetpea-only for Jellyfin.
+
+  - id: binding-vaultwarden
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, vaultwarden]]
+      group: !Find [authentik_core.group, [name, seedling]]
+      order: 0
+  - id: binding-vaultwarden-sweetpea
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, vaultwarden]]
+      group: !Find [authentik_core.group, [name, sweetpea]]
+      order: 1
+
+  - id: binding-affine
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, affine]]
+      group: !Find [authentik_core.group, [name, seedling]]
+      order: 0
+  - id: binding-affine-sweetpea
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, affine]]
+      group: !Find [authentik_core.group, [name, sweetpea]]
+      order: 1
+
+  - id: binding-matrix-synapse
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, matrix-synapse]]
+      group: !Find [authentik_core.group, [name, seedling]]
+      order: 0
+  - id: binding-matrix-synapse-sweetpea
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, matrix-synapse]]
+      group: !Find [authentik_core.group, [name, sweetpea]]
+      order: 1
+
+  # Jellyfin — sweetpea only
+  - id: binding-jellyfin
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, jellyfin]]
+      group: !Find [authentik_core.group, [name, sweetpea]]
+      order: 0
+
+  - id: binding-koalasync
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, koalasync]]
+      group: !Find [authentik_core.group, [name, seedling]]
+      order: 0
+  - id: binding-koalasync-sweetpea
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, koalasync]]
+      group: !Find [authentik_core.group, [name, sweetpea]]
+      order: 1
+
+  # New apps — seedling + sweetpea
+  - id: binding-open-webui
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, open-webui]]
+      group: !Find [authentik_core.group, [name, seedling]]
+      order: 0
+  - id: binding-open-webui-sweetpea
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, open-webui]]
+      group: !Find [authentik_core.group, [name, sweetpea]]
+      order: 1
+
+  - id: binding-nextcloud
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, nextcloud]]
+      group: !Find [authentik_core.group, [name, seedling]]
+      order: 0
+  - id: binding-nextcloud-sweetpea
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, nextcloud]]
+      group: !Find [authentik_core.group, [name, sweetpea]]
+      order: 1
+
+  - id: binding-immich
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, immich]]
+      group: !Find [authentik_core.group, [name, seedling]]
+      order: 0
+  - id: binding-immich-sweetpea
+    model: authentik_policies_bindings.policybinding
+    attrs:
+      target: !Find [authentik_core.application, [slug, immich]]
+      group: !Find [authentik_core.group, [name, sweetpea]]
+      order: 1

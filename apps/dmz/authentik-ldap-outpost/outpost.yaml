@@ -20,7 +20,7 @@ spec:
         kubernetes.io/hostname: k3s-master
       containers:
         - name: ldap
-          image: ghcr.io/goauthentik/ldap:2026.5.5
+          image: ghcr.io/goauthentik/ldap:2026.5.6
           env:
             - name: AUTHENTIK_HOST
               value: "http://authentik-server.dmz.svc.cluster.local:80"

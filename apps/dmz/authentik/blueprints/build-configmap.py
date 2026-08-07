@@ -32,8 +32,10 @@ HERE = Path(__file__).parent
 CONFIGMAP_NAME = "authentik-blueprints"
 NAMESPACE = "dmz"
 
-# Only include sanitized blueprints (never raw exported files with secrets)
-BLUEPRINT_GLOB = "*.sanitized.yaml"
+# Include authored blueprint files (00-groups.yaml, 01-providers.yaml, etc.).
+# These are already sanitized (secrets use !Env tags). Excludes this script and
+# any *.sanitized.yaml artifacts produced by sanitize-blueprints.py.
+BLUEPRINT_GLOB = "*.yaml"
 
 
 def main() -> None:
@@ -51,8 +53,8 @@ def main() -> None:
     print("    data:")
     for f in files:
         # Authentik only discovers keys ending in .yaml.
-        # Filename is <name>.yaml.sanitized.yaml -> key becomes <name>.yaml
-        key = f.name.replace(".sanitized.yaml", "")
+        # Filename is <name>.yaml -> key stays <name>.yaml
+        key = f.name
         content = f.read_text()
         # Indent every line by 8 spaces (under `data:` -> `  <key>: |` -> content)
         indented = "\n".join("        " + line for line in content.splitlines())

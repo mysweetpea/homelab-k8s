@@ -14,3 +14,67 @@ spec:
       services:
         - name: n8n
           port: 5678
+---
+# Open WebUI — chat.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: open-webui
+  namespace: private
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`chat.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: open-webui
+          port: 8080
+---
+# Nextcloud — cloud.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nextcloud
+  namespace: private
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`cloud.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: nextcloud
+          port: 8080
+---
+# Immich — photos.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich
+  namespace: private
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`photos.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: immich-lb
+          port: 2283
+---
+# Gotify — gotify.mysweetpea.cc
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gotify
+  namespace: private
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`gotify.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: gotify
+          port: 80

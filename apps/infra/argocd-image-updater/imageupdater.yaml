@@ -5,9 +5,9 @@ metadata:
   namespace: argocd
 spec:
   writeBackConfig:
-    method: git
+    method: git:argocd/argocd-image-updater-git-ssh
     gitConfig:
-      repository: https://github.com/mysweetpea/homelab-k8s.git
+      repository: git@github.com:mysweetpea/homelab-k8s.git
       branch: main
   applicationRefs:
     # ── Existing (4 apps) ──
