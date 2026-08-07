@@ -237,6 +237,10 @@ spec:
       protocol: TCP
     - port: 443
       protocol: TCP
+    - port: 465
+      protocol: TCP
+    - port: 587
+      protocol: TCP
     to:
     - ipBlock:
         cidr: 0.0.0.0/0
