@@ -1,4 +1,8 @@
-persistence:
+volume:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 5Gi
+  storageClassName: longhorn
   existingClaim: uptime-kuma-pvc
 service:
   type: LoadBalancer
