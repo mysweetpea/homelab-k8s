@@ -1,0 +1,23 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik-proxy-outpost
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    path: apps/private/authentik-proxy-outpost
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: private
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
