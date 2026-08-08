@@ -28,7 +28,7 @@ extraObjects:
       namespace: argocd
     spec:
       writeBackConfig:
-        method: git:argocd/argocd-image-updater-git-ssh
+        method: git:secret:argocd/argocd-image-updater-git-ssh
         gitConfig:
           repository: git@github.com:mysweetpea/homelab-k8s.git
           branch: main
