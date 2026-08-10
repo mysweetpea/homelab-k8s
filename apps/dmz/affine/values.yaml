@@ -68,9 +68,15 @@ controllers:
         - name: OAUTH_OIDC_ISSUER
           value: "https://auth.mysweetpea.cc/application/o/affine"
         - name: OAUTH_OIDC_CLIENT_ID
-          value: "wnWQaSxzyuafhDDzklANZlrFkUP0pb32GX5Tsurb"
+          valueFrom:
+            secretKeyRef:
+              name: affine-secrets
+              key: oidc-client-id
         - name: OAUTH_OIDC_CLIENT_SECRET
-          value: "WJQt32b30KZcTVDefNKgv6M8B5jMj963WnBfBVtnWMcpbQ9hpMRgJJKyfVjDyJii7FcZf5OjiXW3PzniarIcUXsHbpOfekX49reeGC8WhzLCEB9Ok5Lq7tZfpxWH21DD"
+          valueFrom:
+            secretKeyRef:
+              name: affine-secrets
+              key: oidc-client-secret
         - name: OAUTH_OIDC_SCOPE
           value: "openid email profile offline_access"
         - name: OAUTH_OIDC_CLAIM_MAP_USERNAME
