@@ -35,8 +35,8 @@ kubectl -n dmz get pod -l app.kubernetes.io/name=authentik \
 **Provider** (Applications → Providers → Create → OAuth2/OIDC Provider):
 - **Name:** `vaultwarden`
 - **Client Type:** Confidential
-- **Client ID:** `IomC2F9mfPulTpE19LTm22AxdwyWwRkfDaKpLpMr`
-- **Client Secret:** `Mc44IJHyo7k77S5qGCOPDlIgsAvX5Lyz1HlEQblbedPjw0ZnRgzMjDd4KrheLNOoxWEYtC7fuH1dNUh5E6YoGkfFDqBbmqaKI3FWOW3wetmyTyfFQ6XBvi9ianpTUfeb`
+- **Client ID:** `<from credentials note>`
+- **Client Secret:** `<from credentials note>`
 - **Redirect URIs:** `https://vault.mysweetpea.cc/identity/connect/oidc-signin`
 - **Signing Key:** (create a new RSA key, e.g. `vaultwarden-signing-key`)
 - **Access Code Validity:** 5 minutes (or longer — must be > 5 min for Vaultwarden)
@@ -56,8 +56,8 @@ kubectl -n dmz get pod -l app.kubernetes.io/name=authentik \
 **Provider:**
 - **Name:** `affine`
 - **Client Type:** Confidential
-- **Client ID:** `wnWQaSxzyuafhDDzklANZlrFkUP0pb32GX5Tsurb`
-- **Client Secret:** `WJQt32b30KZcTVDefNKgv6M8B5jMj963WnBfBVtnWMcpbQ9hpMRgJJKyfVjDyJii7FcZf5OjiXW3PzniarIcUXsHbpOfekX49reeGC8WhzLCEB9Ok5Lq7tZfpxWH21DD`
+- **Client ID:** `<from credentials note>`
+- **Client Secret:** `<from credentials note>`
 - **Redirect URIs:** `https://notes.mysweetpea.cc/oauth/callback`
 - **Signing Key:** new RSA key `affine-signing-key`
 - **Scopes:** `openid`, `email`, `profile`
@@ -77,8 +77,8 @@ kubectl -n dmz get pod -l app.kubernetes.io/name=authentik \
 **Provider:**
 - **Name:** `matrix-synapse`
 - **Client Type:** Confidential
-- **Client ID:** `OOCZ9OYQ4NknTxzzT2MzZBzEXDBs1bYrgvootaaw`
-- **Client Secret:** `NsJiUBmCydpNU1fi4MIWUtYKysb4JJnsRxsPWMOPEkF2zRS9Vc8dMbhovkoP6FqVFjCgYODvrPtPwwy4L128s9cZ95o5pzkgVV5TAVrcbKRvqLNrelgRMZz4JhA5A2KM`
+- **Client ID:** `<from credentials note>`
+- **Client Secret:** `<from credentials note>`
 - **Redirect URIs:** `https://matrix.mysweetpea.cc/_synapse/client/oidc/callback`
 - **Signing Key:** new RSA key `matrix-signing-key`
 - **Scopes:** `openid`, `email`, `profile`
@@ -96,7 +96,7 @@ kubectl -n dmz get pod -l app.kubernetes.io/name=authentik \
 - **Server URI:** `ldap://authentik-ldap-outpost.dmz.svc.cluster.local:3389`
 - **Base DN:** `dc=mysweetpea,dc=cc`
 - **Bind DN:** `cn=ldap-service-account,ou=users,dc=mysweetpea,dc=cc`
-- **Bind Password:** `Z9pimL4Ew0clepLpVgsFoKYjse3A4KfymgmAso7nSERBxHo3B9bFsUSWUmd7`
+- **Bind Password:** `<from credentials note>`
 - **Search Group:** *(leave empty — no `all_users` group)*
 - **Search Mode:** `Cached querying`
 - **Bind Mode:** `Cached binding`
@@ -146,14 +146,14 @@ kubectl -n dmz get pod -l app.kubernetes.io/name=authentik \
 **LDAP Outpost** (Applications → Outposts → Create):
 - **Name:** `authentik-ldap-outpost`
 - **Type:** LDAP
-- **Token:** `5chdo9EyaF6YleTYfXT0zXIAYLEBb21oGjfHFpN4acfPRWcWyQ3uoWo3nzOQ`
+- **Token:** `<from credentials note>`
 - **Applications:** Jellyfin
 - **Protocol settings:** Base DN `dc=mysweetpea,dc=cc`, bind DN `cn=ldap-service-account,ou=users,dc=mysweetpea,dc=cc`
 
 **Proxy Outpost** (Applications → Outposts → Create):
 - **Name:** `authentik-proxy-outpost`
 - **Type:** Proxy
-- **Token:** `nNWN5AWM1mEQBINRSbvg7zYScCycRuxsoCsMtn5qhqFQjUBnGzpfK3XIaF68`
+- **Token:** `<from credentials note>`
 - **Applications:** KoalaSync
 
 > The outpost **Deployments already exist in the cluster** (pinned to k3s-master,
