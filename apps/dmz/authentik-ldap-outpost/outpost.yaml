@@ -23,7 +23,7 @@ spec:
           image: ghcr.io/goauthentik/ldap:2026.5.6
           env:
             - name: AUTHENTIK_HOST
-              value: "http://authentik-server.dmz.svc.cluster.local:9000"
+              value: "http://authentik-server.dmz.svc.cluster.local:80"
             - name: AUTHENTIK_TOKEN
               valueFrom:
                 secretKeyRef:
