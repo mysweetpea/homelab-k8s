@@ -13,6 +13,7 @@ spec:
     - match: Host(`sync.mysweetpea.cc`)
       kind: Rule
       middlewares:
+        - name: authentik-https-headers
         - name: authentik-forward-auth
       services:
         - name: koalasync
