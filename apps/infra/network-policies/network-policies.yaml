@@ -311,6 +311,30 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  name: allow-authentik-server-ingress
+  namespace: dmz
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: authentik
+      app.kubernetes.io/component: server
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: private
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dmz
+    ports:
+    - port: 9000
+      protocol: TCP
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: redis-affine
   namespace: private
 spec:
