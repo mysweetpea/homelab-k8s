@@ -23,14 +23,22 @@ spec:
           postgresql:
             enabled: true
             auth:
-              password: synapse
               username: synapse
               database: synapse
+              # Real password comes from the `matrix-synapse-db` Secret (dmz),
+              # key `password`. Placeholder only satisfies the chart's required gate.
+              password: "managed-by-secret"
+              existingSecret: matrix-synapse-db
+              secretKeys:
+                userPasswordKey: password
           redis:
             enabled: true
             auth:
               enabled: true
-              password: synapse-redis-2026
+              # Real password comes from the `matrix-synapse-db` Secret (dmz),
+              # key `redis-password`.
+              existingSecret: matrix-synapse-db
+              existingSecretPasswordKey: redis-password
           # Pin to k3s-master to fix cross-node CNI issue with Traefik
           nodeSelector:
             kubernetes.io/hostname: k3s-master
