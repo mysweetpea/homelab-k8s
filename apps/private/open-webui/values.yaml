@@ -9,6 +9,10 @@ controllers:
         env:
           OLLAMA_BASE_URL: http://ollama.dmz.svc.cluster.local:11434
           WEBUI_PORT: "8080"
+        # OIDC via Authentik — client ID/secret injected from secret (not in git)
+        envFrom:
+          - secretRef:
+              name: open-webui-oidc
         probes:
           liveness:
             enabled: true
