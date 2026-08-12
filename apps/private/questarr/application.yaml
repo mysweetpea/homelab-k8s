@@ -6,7 +6,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd-image-updater.argoproj.io/image-list: questarr=ghcr.io/hotio/questarr
+    argocd-image-updater.argoproj.io/image-list: questarr=ghcr.io/doezer/questarr
     argocd-image-updater.argoproj.io/questarr.update-strategy: semver
     argocd-image-updater.argoproj.io/questarr.helm.image-spec: controllers.main.containers.main.image
     argocd-image-updater.argoproj.io/write-back-method: git
