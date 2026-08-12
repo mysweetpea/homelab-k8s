@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/doezer/questarr
-          tag: "1.4.2"
+          tag: "v1.4.2"
     type: deployment
 
 persistence:
