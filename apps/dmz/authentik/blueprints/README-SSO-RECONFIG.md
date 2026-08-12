@@ -169,11 +169,11 @@ kubectl -n dmz get pod -l app.kubernetes.io/name=authentik \
 > IngressRoutes already exist in git (`apps/private/ingress-routes/ingress-routes.yaml`).
 > Cloudflare DNS records (CNAME → tunnel) must exist for chat/cloud/photos.
 
-### 4.1 open-webui (OIDC) → chat.mysweetpea.cc
+### 4.1 open-webui (OIDC) → ai.mysweetpea.cc
 **Provider:**
 - **Name:** `open-webui`
 - **Client Type:** Confidential
-- **Redirect URIs:** `https://chat.mysweetpea.cc/oauth/oidc/callback`
+- **Redirect URIs:** `https://ai.mysweetpea.cc/oauth/oidc/callback`
 - **Signing Key:** new RSA key `open-webui-signing-key`
 - **Scopes:** `openid`, `email`, `profile`
 - **Sub Mode:** Hashed User ID
@@ -182,14 +182,14 @@ kubectl -n dmz get pod -l app.kubernetes.io/name=authentik \
 - **Name:** `Open WebUI`
 - **Slug:** `open-webui`
 - **Provider:** `open-webui`
-- **Launch URL:** `https://chat.mysweetpea.cc`
+- **Launch URL:** `https://ai.mysweetpea.cc`
 
 **Open WebUI env vars** (in `apps/private/open-webui/values.yaml` — use these, NOT `OAUTH_OIDC_*`):
 ```yaml
 OPENID_PROVIDER_URL: https://auth.mysweetpea.cc/application/o/open-webui/.well-known/openid-configuration
 OAUTH_CLIENT_ID: <generated client id>
 OAUTH_CLIENT_SECRET: <generated client secret>
-OPENID_REDIRECT_URI: https://chat.mysweetpea.cc/oauth/oidc/callback
+OPENID_REDIRECT_URI: https://ai.mysweetpea.cc/oauth/oidc/callback
 OAUTH_SCOPES: "openid email profile"
 ENABLE_OAUTH_SIGNUP: "true"
 ```
