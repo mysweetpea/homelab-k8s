@@ -27,3 +27,6 @@ batch-patch-apps.sh
 sanitize-flagged-apps.py
 *-secrets.yaml
 __pycache__/
+
+# Raw Authentik exports (contain plaintext secrets) — NEVER commit
+apps/dmz/authentik/blueprints/exports-raw/
