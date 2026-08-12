@@ -439,3 +439,25 @@ spec:
       protocol: TCP
   policyTypes:
   - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-jellyfin-ldap-outpost-egress
+  namespace: dmz
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: jellyfin
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: authentik-ldap-outpost
+    ports:
+    - port: 3389
+      protocol: TCP
+    - port: 6636
+      protocol: TCP
+  policyTypes:
+  - Egress
