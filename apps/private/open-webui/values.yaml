@@ -13,23 +13,10 @@ controllers:
         envFrom:
           - secretRef:
               name: open-webui-oidc
-        probes:
-          liveness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /
-                port: 8080
-              initialDelaySeconds: 30
-          readiness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /
-                port: 8080
-              initialDelaySeconds: 10
+        # ⚠️ Probes REMOVED (Session 39): v0.11.0 bug — probe traffic deadlocks the
+        # event loop ~60s after startup (liveness fails → kubelet SIGKILLs, exit 137).
+        # Verified with 6 test pods: no probes = stable 4min+; probes = death at ~110s.
+        # Monitored externally by Uptime Kuma (monitor #9).
 
 service:
   main:
