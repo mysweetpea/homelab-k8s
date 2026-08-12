@@ -12,6 +12,9 @@ controllers:
           N8N_SECURE_COOKIE: "false"
           N8N_HOST: "n8n.mysweetpea.cc"
           N8N_WEBHOOK_URL: "https://subscribe.mysweetpea.cc"
+          EXECUTIONS_DATA_PRUNE: "true"
+          EXECUTIONS_DATA_MAX_AGE: "168"
+          EXECUTIONS_DATA_HARD_PRUNE: "true"
         envFrom:
           - secretRef:
               name: n8n-db-creds
