@@ -1,0 +1,229 @@
+{
+  "name": "Donation Request",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "donation-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e51b347c-889a-404a-90f8-6fa96a6ddc40",
+      "name": "Webhook",
+      "webhookId": "dr-001"
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json.body || {};\nlet err = null;\nif (!d.name || d.name.length < 2) err = 'Name is required (min 2 characters)';\nelse if (!d.email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(d.email)) err = 'Valid email is required';\nelse if (!d.username || !/^[a-zA-Z0-9_]{3,}$/.test(d.username)) err = 'Username must be 3+ alphanumeric/underscore chars';\nelse if (!d.crypto_type) err = 'Cryptocurrency type is required';\nreturn [{json: {...d, validation_error: err}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "d06ccc69-361b-40a0-a929-dff528987050",
+      "name": "Validate Input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.validation_error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "cf8ff372-3fcf-497c-bdc3-daadeac9ac97",
+      "name": "Input Valid?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: false, msg: $json.validation_error}) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        208
+      ],
+      "id": "78fb4fa4-027b-4f74-a395-84cb5ab48847",
+      "name": "Error Response"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO donors (name, email, username, crypto_type, transaction_hash, status, tier, donation_amount) VALUES ($1, $2, $3, $4, $5, 'pending', 'seedling', 5.00) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ $json.name }}, {{ $json.email }}, {{ $json.username }}, {{ $json.crypto_type }}, {{ $json.tx_hash || '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "fc0500c9-dbaf-4398-b134-5e8bb1daaaf1",
+      "name": "Insert Donor",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "PostgresSQL Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "={{ 'New donation request from ' + $json.name + ' (@' + $json.username + ')\\nCrypto: ' + $json.crypto_type + '\\nTX: ' + ($json.tx_hash || 'not provided') + '\\nEmail: ' + $json.email }}",
+        "additionalFields": {
+          "priority": 5,
+          "title": "Donation Request"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gotify",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "0f873ac9-f43b-46ee-ac63-44265a0647e1",
+      "name": "Gotify Notify",
+      "credentials": {
+        "gotifyApi": {
+          "id": "rEX2d2uzpCBEdrn4",
+          "name": "Gotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: true, msg: 'Donation request received. We will verify and email you an invite code.'}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "59af6f78-191d-41b6-b3ba-93993fdd0f9d",
+      "name": "Success Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Input Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Valid?": {
+      "main": [
+        [
+          {
+            "node": "Insert Donor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Donor": {
+      "main": [
+        [
+          {
+            "node": "Gotify Notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gotify Notify": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "gLkoZII7mE0R3CBY",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "d326136d-0302-479e-aa47-7d6a93bbc6fc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "ZokXpRL6Krh707cD",
+  "tags": []
+}

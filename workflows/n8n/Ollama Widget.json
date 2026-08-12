@@ -1,0 +1,110 @@
+{
+  "name": "Ollama Widget",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "ollama-models",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cfbb110e-726d-4181-8acb-9103647d1a03",
+      "name": "Webhook",
+      "webhookId": "c41e2bdb-a190-49b1-95f1-d591eabe014f"
+    },
+    {
+      "parameters": {
+        "url": "http://ollama.dmz.svc.cluster.local:11434/api/tags",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "a914ac59-10b9-4510-93ee-56e234d86c1d",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $(\"HTTP Request\").all()[0].json;\nconst models = response.models || [];\nconst names = models.map(m => m.name).join(\", \") || \"None\";\n\nreturn {\n  json: {\n    model_count: models.length,\n    model_names: names\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "b211b1e4-ccf9-4841-82e6-a1d748ccc59b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "0600a3bd-2388-4c42-b54f-3d06d67f3dbe",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e8064651-9440-4c21-bd68-d03e6efe67fe",
+  "meta": {
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "0bYYGNiSk6ClHlza",
+  "tags": []
+}

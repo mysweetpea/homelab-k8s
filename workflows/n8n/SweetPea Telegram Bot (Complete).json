@@ -1,0 +1,4357 @@
+{
+  "name": "Delete Incident Command Branch",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst updates = response.result || [];\nconst ADMIN_ID = 6485376162;\nconst results = [];\nlet maxOffset = $('Get Offset').item.json.last_offset || 0;\n\nfor (const update of updates) {\n  if (update.update_id !== undefined && update.update_id >= maxOffset) {\n    maxOffset = update.update_id + 1;\n  }\n  \n  const msg = update.message;\n  if (!msg || !msg.text) continue;\n  \n  const text = msg.text.trim();\n  const chatId = msg.chat?.id;\n  const fromId = msg.from?.id;\n  \n  if (fromId !== ADMIN_ID) continue;\n  \n  const parts = text.split(/\\s+/);\n  const cmd = parts[0].replace('/', '').toLowerCase();\n  const VALID = ['start','help','invite','status','resend','suspend','unsuspend','list','allsubs','count','allcodes','available','usedcodes','search','dbstatus','delsub','delcode','pending','verify','reject','incident','resolve','delinc'];\n  \n  results.push({\n    json: {\n      command: VALID.includes(cmd) ? cmd : 'unknown',\n      args: parts.slice(1),\n      chatId: chatId,\n      fromId: fromId,\n      rawText: text,\n      nextOffset: maxOffset\n    }\n  });\n}\n\n// Always return at least one item with the offset, even if no commands\nif (results.length === 0) {\n  results.push({ json: { command: '__noop__', nextOffset: maxOffset } });\n}\n\nreturn results;"
+      },
+      "id": "2105eb90-1823-496f-8cf1-0423044304da",
+      "name": "Parse Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1760,
+        2320
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.command }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "start",
+              "outputKey": "0"
+            },
+            {
+              "value2": "help",
+              "outputKey": "0"
+            },
+            {
+              "value2": "invite",
+              "outputKey": "1"
+            },
+            {
+              "value2": "status",
+              "outputKey": "2"
+            },
+            {
+              "value2": "resend",
+              "outputKey": "3"
+            },
+            {
+              "value2": "suspend",
+              "outputKey": "4"
+            },
+            {
+              "value2": "unsuspend",
+              "outputKey": "5"
+            },
+            {
+              "value2": "list",
+              "outputKey": "6"
+            },
+            {
+              "value2": "allsubs",
+              "outputKey": "7"
+            },
+            {
+              "value2": "count",
+              "outputKey": "8"
+            },
+            {
+              "value2": "allcodes",
+              "outputKey": "9"
+            },
+            {
+              "value2": "available",
+              "outputKey": "10"
+            },
+            {
+              "value2": "usedcodes",
+              "outputKey": "11"
+            },
+            {
+              "value2": "search",
+              "outputKey": "12"
+            },
+            {
+              "value2": "dbstatus",
+              "outputKey": "13"
+            },
+            {
+              "value2": "delsub",
+              "outputKey": "14"
+            },
+            {
+              "value2": "delcode",
+              "outputKey": "15"
+            },
+            {
+              "value2": "pending",
+              "outputKey": "16"
+            },
+            {
+              "value2": "verify",
+              "outputKey": "17"
+            },
+            {
+              "value2": "reject",
+              "outputKey": "18"
+            },
+            {
+              "value2": "unknown",
+              "outputKey": "19"
+            },
+            {
+              "value2": "incident",
+              "outputKey": "20"
+            },
+            {
+              "value2": "resolve",
+              "outputKey": "21"
+            },
+            {
+              "value2": "delinc",
+              "outputKey": "22"
+            }
+          ]
+        }
+      },
+      "id": "05c2fb3a-4308-4ffb-9e00-02f83613a731",
+      "name": "Route Command",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [
+        -1072,
+        1920
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "🤖 *SweetPea Admin Bot*\n═══════════════════════\n\n🔐 `/invite sweetpea` — Sweet Pea tier code (family/friends)\n🌱 `/invite seedling` — Seedling tier code (manual override)\n\n📋 `/pending` — Donors awaiting verification\n✅ `/verify <id>` — Approve donor → generate code → email\n❌ `/reject <id>` — Reject donor → email rejection\n\n📊 `/status <username>` — Donor details\n📧 `/resend <username>` — Reset password & resend\n🚫 `/suspend <username>` — Disable access\n🟢 `/unsuspend <username>` — Re-enable access\n\n📜 `/list` — Active donors\n👥 `/allsubs` — All donors\n🔢 `/count` — Database dashboard\n\n🔑 `/allcodes` — Every code\n🟢 `/available` — Unused codes\n🔴 `/usedcodes` — Redeemed codes\n🔍 `/search <query>` — Find donor\n\n🗑 `/delsub <user>` — Remove donor\n🗑 `/delcode <code>` — Remove code\n🗄 `/dbstatus` — Database health\n\n🚨 `/incident <title>, <desc>` — Post an incident\n✅ `/resolve <id>` — Resolve an incident\n\n❓ `/help` — This menu",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "6c1180cd-9e76-49d2-a28d-81fbc4f91e8c",
+      "name": "Reply Help",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "tg-tg-help",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-inv",
+              "leftValue": "={{ $json.args.length === 1 && ['sweetpea','seedling'].includes($json.args[0].toLowerCase()) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5c3e5cf2-a2e2-4adb-aa8f-e52af3af0791",
+      "name": "Invite Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        16,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst tier = item.json.args[0].toLowerCase();\nconst prefix = tier === 'sweetpea' ? 'FAM-' : 'PEA-';\nconst chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\nlet code = prefix;\nfor (let i = 0; i < 8; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));\nitem.json.code = code;\nitem.json.tier = tier;\nreturn [item];"
+      },
+      "id": "98bfa71c-addc-4868-97f1-e4f471fe7663",
+      "name": "Generate Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH inserted AS (INSERT INTO invite_codes (code, tier) VALUES ('{{ $json.code }}', '{{ $json.tier }}') ON CONFLICT (code) DO NOTHING RETURNING code, tier, 'new' AS status) SELECT * FROM inserted UNION ALL SELECT NULL, NULL, 'duplicate' WHERE NOT EXISTS (SELECT 1 FROM inserted)",
+        "options": {}
+      },
+      "id": "c81c6f55-d487-485c-9b53-6af3329ad80c",
+      "name": "Save to DB",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        96
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-sav",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "new",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5d2a6721-594b-4be1-9ca6-94c5fd649fd9",
+      "name": "Saved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        640,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ \"🔐 INVITE CODE CREATED\\n══════════════════════════\\n\\n🏷 Tier:    \" + ($json.tier === \"sweetpea\" ? \"🌸 Sweet Pea\" : \"🌱 Seedling\") + \"\\n🎟 Code:    `\" + $json.code + \"`\\n\\n_Send this to your subscriber._\" }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "b2079be2-365a-4963-88b6-0d96626c1dcf",
+      "name": "Reply Invite OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        864,
+        48
+      ],
+      "webhookId": "tg-tg-invit",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ Usage: `/invite sweetpea` or `/invite seedling`",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "9cbad9c5-8c5c-4d98-b493-48ff53b2204f",
+      "name": "Reply Invite Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        256,
+        224
+      ],
+      "webhookId": "tg-tg-invit",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=🎟 *Code Collision*\n──────────────────────────\n\nThat code already exists.\nPlease try again.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "22654f2f-c409-4595-9d58-47baaed9b1e1",
+      "name": "Reply Invite Dup",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        880,
+        208
+      ],
+      "webhookId": "tg-tg-invit",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-sta",
+              "leftValue": "={{ $json.args.length === 1 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "eae74987-84a0-424e-b87b-5c7321df3b0b",
+      "name": "Status Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        0,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT username, name, email, status, tier, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "options": {}
+      },
+      "id": "7b734081-1c24-4d46-b4e7-228fa27225d2",
+      "name": "Find Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        256,
+        736
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-sta",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a9f22419-4833-4d5e-bd56-d0e531fe2ae3",
+      "name": "Status Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        512,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json;\nconst tierName = row.tier === 'sweetpea' ? '🌸 Sweet Pea' : '🌱 Seedling';\nconst statusEmoji = row.status === 'active' ? '🟢' : (row.status === 'suspended' ? '🔴' : '🟡');\nconst text = `👤 *DONOR PROFILE*\\n══════════════════════════\\n\\n🏷 Name:      ${row.name}\\n🆔 Username:  @${row.username}\\n📧 Email:     ${row.email}\\n📊 Status:    ${statusEmoji} ${row.status.toUpperCase()}\\n🎟 Tier:      ${tierName}`;\nreturn [{ json: { text } }];"
+      },
+      "id": "62fcc32c-0f7f-45cd-82e0-ca8d324a7a73",
+      "name": "Format Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "fd6ba9e0-2c9f-4b24-9355-e1e42802ea00",
+      "name": "Reply Status",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        704
+      ],
+      "webhookId": "tg-tg-statu",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=📊 *Status Lookup*\n──────────────────────────\n\nUsage: `/status <username>`",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "c9c76bce-3a8c-448c-8fcf-4f2e2507c6df",
+      "name": "Reply Status Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        240,
+        912
+      ],
+      "webhookId": "tg-tg-statu",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Not Found*\n──────────────────────────\n\nThat donor does not exist.\nTry `/search` to locate them.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "077be5d1-0743-4694-914f-721553fcd57d",
+      "name": "Reply Status NF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        704,
+        832
+      ],
+      "webhookId": "tg-tg-statu",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-res",
+              "leftValue": "={{ $json.args.length === 1 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8105027e-f564-4b23-b480-eb86e85a5a60",
+      "name": "Resend Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1072
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "options": {}
+      },
+      "id": "92b9a1f8-a496-4cbf-8a50-e02f65901329",
+      "name": "Find Resend",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        1072
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-res",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c299c519-1ee1-4f41-8e1b-b2a12e27852e",
+      "name": "Resend Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        1072
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';\nlet pwd = '';\nfor (let i = 0; i < 16; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));\nitem.json.temp_password = pwd;\nreturn [item];"
+      },
+      "id": "44aa7614-7057-4533-b4aa-15596647b413",
+      "name": "Generate Password",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://authentik-server.dmz.svc.cluster.local/api/v3/core/users/{{ $json.authentik_user_id }}/set_password/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"password\": \"{{ $json.temp_password }}\"}",
+        "options": {}
+      },
+      "id": "480e4108-b126-436d-a999-8bc37da4525e",
+      "name": "Set Password",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        848,
+        992
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4vKcSYP2gEJseKsB",
+          "name": "Authentik API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mysweetpea.cc",
+        "toEmail": "={{ $json.email }}",
+        "subject": "MySweetPea - Updated Login Credentials",
+        "emailFormat": "html",
+        "html": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Updated Login Credentials</title>\n</head>\n<body style=\"margin:0;padding:0;background:#0A1214;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0A1214;min-height:100vh;\">\n    <tr>\n      <td align=\"center\" style=\"padding:40px 20px;\">\n        <table width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0F1A1C;border:1px solid rgba(94,184,168,0.15);border-radius:16px;overflow:hidden;max-width:560px;\">\n          <tr>\n            <td style=\"background:linear-gradient(135deg,#0F1A1C,#0A1214);padding:40px 32px 24px;text-align:center;border-bottom:1px solid rgba(94,184,168,0.08);\">\n              <div style=\"font-size:28px;font-weight:700;color:#5EB8A8;letter-spacing:-0.5px;\">MySweetPea</div>\n              <div style=\"font-size:13px;color:#7A9B95;margin-top:4px;\">Self-hosted with care</div>\n            </td>\n          </tr>\n          <tr>\n            <td style=\"padding:32px;\">\n              <h1 style=\"margin:0 0 16px;font-size:20px;font-weight:600;color:#F0F8F6;\">Your credentials have been reset 🔑</h1>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">Hi {{ $json.name }},</p>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">An administrator has reset your MySweetPea login credentials. Use the new password below to log in to the Authentik SSO Portal.</p>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0A1214;border:1px solid rgba(94,184,168,0.12);border-radius:10px;margin-bottom:24px;\">\n                <tr>\n                  <td style=\"padding:20px 24px;\">\n                    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                      <tr><td style=\"font-size:13px;color:#4A6B65;padding-bottom:12px;border-bottom:1px solid rgba(94,184,168,0.06);\">SSO PORTAL</td></tr>\n                      <tr><td style=\"padding:12px 0;font-size:15px;color:#F0F8F6;\"><a href=\"https://auth.mysweetpea.cc\" style=\"color:#5EB8A8;text-decoration:none;font-weight:600;\">https://auth.mysweetpea.cc</a></td></tr>\n                      <tr><td style=\"font-size:13px;color:#4A6B65;padding-top:8px;padding-bottom:4px;\">USERNAME</td></tr>\n                      <tr><td style=\"padding:4px 0;font-size:15px;color:#F0F8F6;font-family:monospace;\">{{ $json.username }}</td></tr>\n                      <tr><td style=\"font-size:13px;color:#4A6B65;padding-top:8px;padding-bottom:4px;\">NEW TEMPORARY PASSWORD</td></tr>\n                      <tr><td style=\"padding:4px 0;font-size:15px;color:#5ED39E;font-family:monospace;font-weight:600;\">{{ $('Generate Password').item.json.temp_password }}</td></tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                <tr><td align=\"center\" style=\"padding:8px 0 24px;\"><a href=\"https://auth.mysweetpea.cc\" style=\"display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#5EB8A8,#3E8E86);color:#0A1214;font-size:15px;font-weight:600;text-decoration:none;border-radius:10px;\">Log In to Authentik</a></td></tr>\n              </table>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:rgba(232,94,94,0.06);border:1px solid rgba(232,94,94,0.15);border-radius:8px;margin-bottom:24px;\">\n                <tr><td style=\"padding:14px 18px;font-size:13px;color:#E85E5E;line-height:1.6;\">⚠️ Please log in and change your password immediately under User Settings.</td></tr>\n              </table>\n              <p style=\"margin:0;font-size:13px;color:#4A6B65;line-height:1.6;\">If you didn't request this reset, contact support@mysweetpea.cc.</p>\n            </td>\n          </tr>\n          <tr><td style=\"padding:24px 32px;border-top:1px solid rgba(94,184,168,0.06);text-align:center;\"><p style=\"margin:0;font-size:12px;color:#4A6B65;\">© 2026 MySweetPea. Self-hosted with care.</p></td></tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "65de0f3f-6bcd-4718-bf1e-9e6acfb83860",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        992
+      ],
+      "webhookId": "em-em-resen",
+      "credentials": {
+        "smtp": {
+          "id": "WSuKgfMAW4A3KDug",
+          "name": "Resend"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ \"📧 CREDENTIALS RESET══════════════════════════\\n\\n👤 Recipient: \" + $(\"Find Resend\").item.json.name + \" (@\" + $(\"Find Resend\").item.json.username + \")\\n📨 Email:     \" + $(\"Find Resend\").item.json.email + \"\\n🔑 Temp Pass: `\" + $(\"Generate Password\").item.json.temp_password + \"`\\n\\n_User has been notified._\" }}",
+        "additionalFields": {}
+      },
+      "id": "f8f328a8-1545-4d66-8811-fb59c5612223",
+      "name": "Reply Resend OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        992
+      ],
+      "webhookId": "tg-tg-resen",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Not Found*\n──────────────────────────\n\nThat donor does not exist.",
+        "additionalFields": {}
+      },
+      "id": "2a12a107-e975-4952-9510-cf9a47cc0c62",
+      "name": "Reply Resend NF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        768,
+        1168
+      ],
+      "webhookId": "tg-tg-resen",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=📧 *Resend Command*\n──────────────────────────\n\nUsage: `/resend <username>`",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "bf2bb5bb-4711-4008-8df4-44f980a3619a",
+      "name": "Reply Resend Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        240,
+        1232
+      ],
+      "webhookId": "tg-tg-resen",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-sus",
+              "leftValue": "={{ $json.args.length === 1 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f0f4b6c3-b70b-4d6a-9470-f709966c4ff8",
+      "name": "Suspend Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1392
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "options": {}
+      },
+      "id": "f5c0cc85-6cbc-42ef-9eb7-0418e57d0e2f",
+      "name": "Find Suspend",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        1392
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-sus",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6c870cd7-0a6c-4a15-8363-729cf287a244",
+      "name": "Suspend Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        1392
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://authentik-server.dmz.svc.cluster.local/api/v3/core/users/{{ $json.authentik_user_id }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"is_active\": false}",
+        "options": {}
+      },
+      "id": "f55a25ac-2f65-4594-b0a7-ca86b35095f7",
+      "name": "Disable User",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        640,
+        1344
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4vKcSYP2gEJseKsB",
+          "name": "Authentik API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE donors SET status = 'suspended' WHERE id = {{ $('Find Suspend').item.json.id }};",
+        "options": {}
+      },
+      "id": "8e2157b7-6ad5-49b6-9f99-8f252373ecfd",
+      "name": "Mark Suspended",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        1344
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=🔒 {{ $('Find Suspend').item.json.name }} ({{ $('Find Suspend').item.json.username }}) suspended.",
+        "additionalFields": {}
+      },
+      "id": "d4d2a1e0-208b-4090-84b0-984fa8986ddd",
+      "name": "Reply Suspend OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        1312
+      ],
+      "webhookId": "tg-tg-suspe",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Not Found*\n──────────────────────────\n\nThat donor does not exist.",
+        "additionalFields": {}
+      },
+      "id": "069dd230-08e9-4e75-b648-b3acf0d448aa",
+      "name": "Reply Suspend NF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1472
+      ],
+      "webhookId": "tg-tg-suspe",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=🚫 *Suspend Command*\n──────────────────────────\n\nUsage: `/suspend <username>`",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "fb5a20ad-58e2-4020-b87d-c36f7acf479c",
+      "name": "Reply Suspend Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        240,
+        1552
+      ],
+      "webhookId": "tg-tg-suspe",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-uns",
+              "leftValue": "={{ $json.args.length === 1 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "08148234-f737-42df-9987-17a11dad5d41",
+      "name": "Unsuspend Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1712
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "options": {}
+      },
+      "id": "af7dc66c-552c-4b19-bd91-e39eab7943fe",
+      "name": "Find Unsuspend",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        1712
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-uns",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b4cfd7b4-e290-4f05-983f-230b461de8d2",
+      "name": "Unsuspend Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        1712
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://authentik-server.dmz.svc.cluster.local/api/v3/core/users/{{ $json.authentik_user_id }}/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"is_active\": true}",
+        "options": {}
+      },
+      "id": "26a6ec99-8b72-4081-b3f5-0b0159757843",
+      "name": "Enable User",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        640,
+        1664
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4vKcSYP2gEJseKsB",
+          "name": "Authentik API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE donors SET status = 'active' WHERE id = {{ $('Find Unsuspend').item.json.id }};",
+        "options": {}
+      },
+      "id": "5a89a35a-2566-48d1-8dea-b20599718d66",
+      "name": "Mark Active",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        1664
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=🟢 {{ $('Find Unsuspend').item.json.name }} ({{ $('Find Unsuspend').item.json.username }}) re-enabled.",
+        "additionalFields": {}
+      },
+      "id": "25068272-c839-4810-bccf-a43de3d20090",
+      "name": "Reply Unsuspend OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        1632
+      ],
+      "webhookId": "tg-tg-unsus",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Not Found*\n──────────────────────────\n\nThat donor does not exist.",
+        "additionalFields": {}
+      },
+      "id": "f5f8ce6d-da42-477e-8e45-b0084b966fc1",
+      "name": "Reply Unsuspend NF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1792
+      ],
+      "webhookId": "tg-tg-unsus",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=🟢 *Unsuspend Command*\n──────────────────────────\n\nUsage: `/unsuspend <username>`",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "7597eada-da94-4afb-9171-7105f60e1936",
+      "name": "Reply Unsuspend Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        240,
+        1872
+      ],
+      "webhookId": "tg-tg-unsus",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT username, name, email, tier, true as is_real FROM donors WHERE status = 'active' ORDER BY created_at) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "f771e146-1460-401a-8363-dfd5cec91cf7",
+      "name": "List Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        2016
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO ACTIVE DONORS*\\n──────────────────────────\\n\\nThere are no active donors.' } }];\nlet text = `📊 *ACTIVE DONORS*\\n══════════════════════════\\n\\n🟢 ${rows.length} donor${rows.length !== 1 ? 's' : ''}\\n\\n`;\nrows.forEach((r) => {\n  const tier = r.tier === 'sweetpea' ? '🌸' : '🌱';\n  text += `• *${r.name}* (@${r.username}) ${tier}\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "9d288daa-075c-492b-af7c-569e6b6d753f",
+      "name": "Format List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "2512548c-b23e-41f9-96b0-16903a6f874c",
+      "name": "Reply List",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        672,
+        2000
+      ],
+      "webhookId": "tg-tg-list",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT username, name, email, status, tier, created_at, true as is_real FROM donors ORDER BY created_at DESC) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "2136d69b-0748-4730-baa8-008ff5b685e2",
+      "name": "AllSubs Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        2192
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO DONORS FOUND*\\n──────────────────────────' } }];\nlet text = `👥 *ALL DONORS*\\n══════════════════════════\\n\\n📋 ${rows.length} total\\n\\n`;\nrows.forEach((r) => {\n  const tier = r.tier === 'sweetpea' ? '🌸 Sweet Pea' : '🌱 Seedling';\n  const statusEmoji = r.status === 'active' ? '🟢' : '🔴';\n  text += `• *${r.name}* (@${r.username})\\n  ├─ ${statusEmoji} ${r.status}\\n  └─ ${tier}\\n\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "be4718cc-86cb-49ea-b853-9f7a2e742091",
+      "name": "Format AllSubs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2192
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "9a600fc8-2a86-4a8c-96cb-75a19f0c3d72",
+      "name": "Reply AllSubs",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        2192
+      ],
+      "webhookId": "tg-tg-allsu",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT (SELECT COUNT(*) FROM donors) as total_donors, (SELECT COUNT(*) FROM invite_codes) as total_codes, (SELECT COUNT(*) FROM donors WHERE status = 'active') as active_donors, (SELECT COUNT(*) FROM donors WHERE status = 'suspended') as suspended_donors, (SELECT COUNT(*) FROM donors WHERE status = 'pending') as pending_donors, (SELECT COUNT(*) FROM invite_codes WHERE used = false) as available_codes, (SELECT COUNT(*) FROM invite_codes WHERE used = true) as used_codes",
+        "options": {}
+      },
+      "id": "1fc9e028-a750-4925-bf68-b6401d492c8e",
+      "name": "Count Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        2448
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $input.first().json;\nconst text = `📊 *DATABASE DASHBOARD*\\n══════════════════════════\\n\\n👥 *Donors*\\n   ├─ Total:      ${r.total_donors}\\n   ├─ 🟢 Active:   ${r.active_donors}\\n   ├─ 🔴 Suspended: ${r.suspended_donors}\\n   └─ ⏳ Pending:   ${r.pending_donors}\\n\\n🔑 *Invite Codes*\\n   ├─ Total:      ${r.total_codes}\\n   ├─ 🟢 Available: ${r.available_codes}\\n   └─ 🔴 Used:      ${r.used_codes}`;\nreturn [{ json: { text } }];"
+      },
+      "id": "3eeebb08-359d-4e6a-9d65-07198e223ddd",
+      "name": "Format Count",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2448
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "2a32b228-5b98-4e2a-94c7-640aa242175e",
+      "name": "Reply Count",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        2448
+      ],
+      "webhookId": "tg-tg-count",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT code, tier, used, used_by, used_at, created_at, true as is_real FROM invite_codes ORDER BY created_at DESC) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "c0d846ad-e3cd-463a-a82c-e9ad78f06814",
+      "name": "AllCodes Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        2688
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO CODES FOUND*\\n──────────────────────────' } }];\nlet text = `🔑 *ALL INVITE CODES*\\n══════════════════════════\\n\\n📋 ${rows.length} total\\n\\n`;\nrows.forEach((r) => {\n  const tier = r.tier === 'sweetpea' ? '🌸 Sweet Pea' : '🌱 Seedling';\n  const status = r.used ? `🔴 Used by *${r.used_by || 'unknown'}*` : '🟢 Available';\n  text += `• \\`${r.code}\\`\\n  ├─ ${tier}\\n  └─ ${status}\\n\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "ee0390c1-b4a9-458d-baea-e31f292918a9",
+      "name": "Format AllCodes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2688
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "52631f67-fb6a-4ce4-ade2-e1a985beb364",
+      "name": "Reply AllCodes",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        2688
+      ],
+      "webhookId": "tg-tg-allco",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT code, tier, created_at, true as is_real FROM invite_codes WHERE used = false ORDER BY created_at DESC) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "8374ca9a-60bf-4491-b4ce-2dcd3b474429",
+      "name": "Available Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        2928
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO AVAILABLE CODES*\\n──────────────────────────\\n\\nGenerate one with /invite' } }];\nlet text = `🟢 *AVAILABLE CODES*\\n══════════════════════════\\n\\n🎟 ${rows.length} ready to use\\n\\n`;\nrows.forEach((r) => {\n  const tier = r.tier === 'sweetpea' ? '🌸 Sweet Pea' : '🌱 Seedling';\n  text += `• \\`${r.code}\\`\\n  └─ ${tier}\\n\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "61417c81-1f73-42da-bdbb-890771f50e43",
+      "name": "Format Available",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2928
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "be3b46e8-d0b4-40de-8e46-0a42c5ea2be3",
+      "name": "Reply Available",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        2928
+      ],
+      "webhookId": "tg-tg-avail",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT code, tier, used_by, used_at, true as is_real FROM invite_codes WHERE used = true ORDER BY used_at DESC) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "7130090c-e423-40ed-967a-59586a594c03",
+      "name": "UsedCodes Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        3168
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO USED CODES*\\n──────────────────────────\\n\\nNo codes have been redeemed yet.' } }];\nlet text = `🔴 *REDEEMED CODES*\\n══════════════════════════\\n\\n📋 ${rows.length} total\\n\\n`;\nrows.forEach((r) => {\n  const tier = r.tier === 'sweetpea' ? '🌸 Sweet Pea' : '🌱 Seedling';\n  const date = r.used_at ? new Date(r.used_at).toLocaleDateString() : 'unknown';\n  text += `• \\`${r.code}\\`\\n  ├─ ${tier}\\n  ├─ 👤 By: *${r.used_by || '?'}*\\n  └─ 📅 Redeemed: ${date}\\n\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "298f31bb-fc80-4051-ba29-b440512223f0",
+      "name": "Format UsedCodes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        3168
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "8f12cf31-c6b2-4cfa-ac87-892473fdcb10",
+      "name": "Reply UsedCodes",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        3168
+      ],
+      "webhookId": "tg-tg-usedc",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-sea",
+              "leftValue": "={{ $json.args.length === 1 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "641f9ada-30f4-4ac5-b0cf-443526e23ff0",
+      "name": "Search Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        96,
+        3504
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT username, name, email, status, tier, true as is_real FROM donors WHERE username ILIKE '%{{ $json.args[0] }}%' OR name ILIKE '%{{ $json.args[0] }}%' OR email ILIKE '%{{ $json.args[0] }}%' ORDER BY username) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "db11762f-40f0-4a63-849c-90450f493be3",
+      "name": "Search Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        3424
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '🔍 *NO RESULTS*\\n──────────────────────────\\n\\nTry a different search term.' } }];\nlet text = `🔍 *SEARCH RESULTS*\\n══════════════════════════\\n\\n📋 ${rows.length} match${rows.length !== 1 ? 'es' : ''}\\n\\n`;\nrows.forEach((r) => {\n  const statusEmoji = r.status === 'active' ? '🟢' : '🔴';\n  const tier = r.tier === 'sweetpea' ? '🌸' : '🌱';\n  text += `• *${r.name}* (@${r.username}) ${tier}\\n  ├─ 📧 ${r.email}\\n  └─ ${statusEmoji} ${r.status}\\n\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "01fcd0bd-0bf4-46f8-a7f4-202620602c0b",
+      "name": "Format Search",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        3408
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "4d7419f3-1d67-4e4b-b969-b0831415d237",
+      "name": "Reply Search",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        912,
+        3360
+      ],
+      "webhookId": "tg-tg-searc",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "🔍 *Search Command*\\n──────────────────────────\\n\\nUsage: `/search <query>`",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "ee24535e-03f3-46ab-b4ca-beef29c3291f",
+      "name": "Reply Search Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        432,
+        3616
+      ],
+      "webhookId": "tg-tg-searc",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT current_database() as db_name, (SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public') as table_count, pg_size_pretty(pg_database_size(current_database())) as db_size",
+        "options": {}
+      },
+      "id": "f45ac2c9-14d6-4d06-8786-2c32a2d6c897",
+      "name": "DBStatus Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        16,
+        3728
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const r = $input.first().json;\nconst text = `🗄️ *DATABASE STATUS*\\n══════════════════════════\\n\\n✅ *Connected*\\n\\n🏷 Name:   ${r.db_name}\\n📊 Tables: ${r.table_count}\\n💾 Size:   ${r.db_size}`;\nreturn [{ json: { text } }];"
+      },
+      "id": "ebf73ca8-8ef9-4c35-960f-7e75c436c628",
+      "name": "Format DBStatus",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        3792
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "411906a5-11c8-4643-bd83-290134bcc4f3",
+      "name": "Reply DBStatus",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        912,
+        3616
+      ],
+      "webhookId": "tg-tg-dbsta",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-del",
+              "leftValue": "={{ $json.args.length === 1 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "bdb7a07b-f145-4f19-8d76-544c4ac5aa9b",
+      "name": "DelSub Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        0,
+        3920
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, username, name, email, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "options": {}
+      },
+      "id": "f24cf1f4-28fc-4f3e-b50a-0142ce96deb9",
+      "name": "Find DelSub",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        3968
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-del",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3877ee44-d723-43cb-afde-5c74f61638e3",
+      "name": "DelSub Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        3952
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH deleted AS (DELETE FROM donors WHERE username = '{{ $json.username }}' RETURNING username, name) SELECT username, name, true as deleted FROM deleted UNION ALL SELECT NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM deleted)",
+        "options": {}
+      },
+      "id": "85d4ceb8-8999-41db-ba60-969538a7537e",
+      "name": "Delete Donor",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        640,
+        3856
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ \"🗑️ *DONOR DELETED*\\n══════════════════════════\\n\\n👤 Name:     \" + $json.name + \"\\n🆔 Username: @\" + $json.username + \"\\n\\n_Removed from database._\" }}",
+        "additionalFields": {}
+      },
+      "id": "f221fb7d-8439-4a3d-a514-7537c75dff73",
+      "name": "Reply DelSub OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        960,
+        3808
+      ],
+      "webhookId": "tg-tg-delsu",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Not Found*\n──────────────────────────\n\nThat donor does not exist.",
+        "additionalFields": {}
+      },
+      "id": "cf87407f-c0ec-477e-baf0-5d1f343b1ccf",
+      "name": "Reply DelSub NF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        960,
+        4000
+      ],
+      "webhookId": "tg-tg-delsu",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT username, name, email, status, tier, created_at, true as is_real FROM donors ORDER BY created_at DESC) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "5459250e-8eb0-4606-9f26-8e13749b93e9",
+      "name": "DelSub List Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        4160
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO DONORS*\\n──────────────────────────\\n\\nNothing to delete.' } }];\nlet text = `🗑️ *DELETE DONOR*\\n══════════════════════════\\n\\nTap a command below:\\n\\n`;\nrows.forEach((r) => { text += `• /delsub \\`${r.username}\\` · *${r.name}*\\n`; });\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "ca5ba286-dd0c-4344-8325-6bb5e59875de",
+      "name": "Format DelSub List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        4208
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "6c275da4-9c82-4814-87e7-743de02ac5ae",
+      "name": "Reply DelSub List",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        656,
+        4096
+      ],
+      "webhookId": "tg-tg-delsu",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-del",
+              "leftValue": "={{ $json.args.length === 1 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "afd29cde-6098-406e-940c-f76e56b43026",
+      "name": "DelCode Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        4224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT code, true as found FROM invite_codes WHERE code = '{{ $json.args[0] }}' UNION ALL SELECT NULL, false WHERE NOT EXISTS (SELECT 1 FROM invite_codes WHERE code = '{{ $json.args[0] }}')",
+        "options": {}
+      },
+      "id": "88a6f7e3-fe46-44b4-bc5d-9217b7b1f4a8",
+      "name": "Find DelCode",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        4400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-del",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8c402d42-7d7a-4647-9528-cb5426cf91aa",
+      "name": "DelCode Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        368,
+        4448
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH unlinked AS (UPDATE donors SET invite_code_id = NULL WHERE invite_code_id = (SELECT id FROM invite_codes WHERE code = '{{ $json.code }}')), deleted AS (DELETE FROM invite_codes WHERE code = '{{ $json.code }}' RETURNING code) SELECT code, true as deleted FROM deleted UNION ALL SELECT NULL, false WHERE NOT EXISTS (SELECT 1 FROM deleted)",
+        "options": {}
+      },
+      "id": "ea5c6fb9-3c2e-412d-a39c-5692616e94d4",
+      "name": "Delete Invite Code",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        656,
+        4256
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ \"🗑️ *CODE DELETED*\\n══════════════════════════\\n\\n🎟 Code: `\" + $json.code + \"`\\n\\n_Removed from database._\" }}",
+        "additionalFields": {}
+      },
+      "id": "65ff4a8e-431e-42cc-8f23-36c3c48c1cd5",
+      "name": "Reply DelCode OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        4240
+      ],
+      "webhookId": "tg-tg-delco",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "⚠️ Invite code not found.",
+        "additionalFields": {}
+      },
+      "id": "66d258b8-35aa-4742-b7e6-57017a95ba33",
+      "name": "Reply DelCode NF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        672,
+        4416
+      ],
+      "webhookId": "tg-tg-delco",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT code, tier, used, used_by, used_at, created_at, true as is_real FROM invite_codes ORDER BY created_at DESC) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "83cf3a32-b5c3-4c20-9d9b-5719b5d4656e",
+      "name": "DelCode List Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        4592
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO CODES*\\n──────────────────────────\\n\\nNothing to delete.' } }];\nlet text = `🗑️ *DELETE INVITE CODE*\\n══════════════════════════\\n\\nTap a command below:\\n\\n`;\nrows.forEach((r) => {\n  const tier = r.tier === 'sweetpea' ? '🌸' : '🌱';\n  const status = r.used ? '🔴 Used' : '🟢 Available';\n  text += `• /delcode \\`${r.code}\\` · ${tier} · ${status}\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "c9388111-6f7d-4e5a-ad5d-05379efed6d3",
+      "name": "Format DelCode List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        4624
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "11c28067-49c8-476c-8589-7db78e8fa230",
+      "name": "Reply DelCode List",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        672,
+        4592
+      ],
+      "webhookId": "tg-tg-delco",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH data AS (SELECT id, name, email, username, crypto_type, transaction_hash, donation_amount, created_at, true as is_real FROM donors WHERE status = 'pending' ORDER BY created_at DESC) SELECT * FROM data UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM data)",
+        "options": {}
+      },
+      "id": "a7bddd42-dd43-4278-9ad3-e2f93e62c409",
+      "name": "Pending Query",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        4768
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '✅ *NO PENDING DONORS*\\n──────────────────────────\\n\\nNo donors awaiting verification.' } }];\nlet text = `📋 *PENDING DONORS*\\n══════════════════════════\\n\\n⏳ ${rows.length} awaiting verification\\n\\n`;\nrows.forEach((r) => {\n  const date = new Date(r.created_at).toLocaleDateString();\n  text += `• ID: ${r.id} — *${r.name}* (@${r.username})\\n  ├─ 📧 ${r.email}\\n  ├─ 💰 $${r.donation_amount} (${r.crypto_type || 'N/A'})\\n  ├─ 🔗 TX: ${r.transaction_hash ? r.transaction_hash.substring(0,20) + '...' : 'not provided'}\\n  └─ 📅 ${date}\\n\\n`;\n});\ntext += '_Use `/verify <id>` to approve or `/reject <id>` to reject._';\nreturn [{ json: { text: text.trim() } }];"
+      },
+      "id": "fd8faab8-7331-4215-acbc-fbb73835afd8",
+      "name": "Format Pending",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        4768
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "16bb57d9-6fd9-430f-a92d-be4405956f26",
+      "name": "Reply Pending",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        4768
+      ],
+      "webhookId": "tg-tg-pendi",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-ver",
+              "leftValue": "={{ $json.args.length === 1 && /^\\d+$/.test($json.args[0]) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2380c6ca-6e18-4303-b6bd-cf18411a4d29",
+      "name": "Verify Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        5120
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, name, email, username, crypto_type, tier, true as found FROM donors WHERE id = {{ $json.args[0] }} AND status = 'pending' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE id = {{ $json.args[0] }} AND status = 'pending')",
+        "options": {}
+      },
+      "id": "4d5cea19-b561-443d-936f-12af491436fd",
+      "name": "Find Donor",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        5120
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-ver",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "69d21714-195f-4dfb-a00b-cda2d2442bfe",
+      "name": "Verify Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        5120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\nlet code = 'PEA-';\nfor (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));\nitem.json.invite_code = code;\nreturn [item];"
+      },
+      "id": "8e537adc-b2aa-42ef-9bd8-e1881845f13f",
+      "name": "Generate Verify Code",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        5056
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO invite_codes (code, tier) VALUES ('{{ $json.invite_code }}', '{{ $json.tier }}') RETURNING id;",
+        "options": {}
+      },
+      "id": "0c32bc16-4e45-4293-82b7-da93f6c4dcca",
+      "name": "Insert Verify Code",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        848,
+        5056
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE donors SET status = 'verified', invite_code = '{{ $('Generate Verify Code').item.json.invite_code }}', invite_code_id = {{ $('Insert Verify Code').item.json.id }} WHERE id = {{ $('Find Donor').item.json.id }};",
+        "options": {}
+      },
+      "id": "38e55c7a-f020-4119-975c-a766cb9881e9",
+      "name": "Update Verified Donor",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1056,
+        5056
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mysweetpea.cc",
+        "toEmail": "={{ $('Find Donor').item.json.email }}",
+        "subject": "Your MySweetPea Invite Code",
+        "emailFormat": "html",
+        "html": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Your MySweetPea Invite Code</title>\n</head>\n<body style=\"margin:0;padding:0;background:#0A1214;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0A1214;min-height:100vh;\">\n    <tr>\n      <td align=\"center\" style=\"padding:40px 20px;\">\n        <table width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0F1A1C;border:1px solid rgba(94,184,168,0.15);border-radius:16px;overflow:hidden;max-width:560px;\">\n          <tr>\n            <td style=\"background:linear-gradient(135deg,#0F1A1C,#0A1214);padding:40px 32px 24px;text-align:center;border-bottom:1px solid rgba(94,184,168,0.08);\">\n              <div style=\"font-size:28px;font-weight:700;color:#5EB8A8;letter-spacing:-0.5px;\">MySweetPea</div>\n              <div style=\"font-size:13px;color:#7A9B95;margin-top:4px;\">Self-hosted with care</div>\n            </td>\n          </tr>\n          <tr>\n            <td style=\"padding:32px;\">\n              <h1 style=\"margin:0 0 16px;font-size:20px;font-weight:600;color:#F0F8F6;\">Your donation has been verified! ✅</h1>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">Hi {{ $('Find Donor').item.json.name }},</p>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">Thank you for supporting MySweetPea! Your donation has been verified and your invite code is ready. Use it to create your account and access all services.</p>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0A1214;border:1px solid rgba(94,184,168,0.12);border-radius:10px;margin-bottom:24px;\">\n                <tr>\n                  <td style=\"padding:24px;text-align:center;\">\n                    <div style=\"font-size:13px;color:#4A6B65;margin-bottom:8px;\">YOUR INVITE CODE</div>\n                    <div style=\"font-size:28px;font-weight:700;color:#5EB8A8;font-family:monospace;letter-spacing:2px;\">{{ $('Generate Verify Code').item.json.invite_code }}</div>\n                  </td>\n                </tr>\n              </table>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:rgba(94,184,168,0.06);border:1px solid rgba(94,184,168,0.12);border-radius:8px;margin-bottom:24px;\">\n                <tr>\n                  <td style=\"padding:18px 20px;\">\n                    <p style=\"margin:0 0 8px;font-size:14px;color:#F0F8F6;font-weight:600;\">How to create your account:</p>\n                    <p style=\"margin:0 0 6px;font-size:13px;color:#7A9B95;line-height:1.6;\">1. Go to the MySweetPea access page</p>\n                    <p style=\"margin:0 0 6px;font-size:13px;color:#7A9B95;line-height:1.6;\">2. Click the \"I Have a Code\" tab</p>\n                    <p style=\"margin:0 0 6px;font-size:13px;color:#7A9B95;line-height:1.6;\">3. Enter your invite code and details</p>\n                    <p style=\"margin:0;font-size:13px;color:#7A9B95;line-height:1.6;\">4. Your account will be created instantly</p>\n                  </td>\n                </tr>\n              </table>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                <tr><td align=\"center\" style=\"padding:8px 0 24px;\"><a href=\"https://mysweetpea.cc/form.html\" style=\"display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#5EB8A8,#3E8E86);color:#0A1214;font-size:15px;font-weight:600;text-decoration:none;border-radius:10px;\">Create Your Account</a></td></tr>\n              </table>\n              <p style=\"margin:0;font-size:13px;color:#4A6B65;line-height:1.6;\">Welcome to the community! 🌸<br>If you have any questions, contact support@mysweetpea.cc.</p>\n            </td>\n          </tr>\n          <tr><td style=\"padding:24px 32px;border-top:1px solid rgba(94,184,168,0.06);text-align:center;\"><p style=\"margin:0;font-size:12px;color:#4A6B65;\">© 2026 MySweetPea. Self-hosted with care.</p></td></tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "7733a546-c01e-4c07-ac34-6d9eefa04eba",
+      "name": "Send Verify Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        5056
+      ],
+      "webhookId": "em-em-verif",
+      "credentials": {
+        "smtp": {
+          "id": "WSuKgfMAW4A3KDug",
+          "name": "Resend"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "={{ 'Approved: ' + $('Find Donor').item.json.name + ' (@' + $('Find Donor').item.json.username + ')\\nCode: ' + $('Generate Verify Code').item.json.invite_code }}",
+        "additionalFields": {
+          "priority": 4,
+          "title": "Donor Approved"
+        },
+        "options": {}
+      },
+      "id": "056c8ecb-b68f-40d2-a709-e4cc30b29ae7",
+      "name": "Gotify Verify OK",
+      "type": "n8n-nodes-base.gotify",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        4912
+      ],
+      "credentials": {
+        "gotifyApi": {
+          "id": "rEX2d2uzpCBEdrn4",
+          "name": "Gotify"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ \"✅ DONOR APPROVED\\n══════════════════════════\\n\\n👤 Name:    \" + $(\"Find Donor\").item.json.name + \" (@\" + $(\"Find Donor\").item.json.username + \")\\n🎟 Code:    `\" + $(\"Generate Verify Code\").item.json.invite_code + \"`\\n📨 Email:   Sent to \" + $(\"Find Donor\").item.json.email }}",
+        "additionalFields": {}
+      },
+      "id": "99c11868-fd57-4eee-b943-746c8c9de89f",
+      "name": "Reply Verify OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        4912
+      ],
+      "webhookId": "tg-tg-verif",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Verify Command*\n──────────────────────────\n\nUsage: `/verify <id>`\n\nUse `/pending` to see donor IDs.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "85b2e772-6b75-47e9-a845-1e333751d834",
+      "name": "Reply Verify Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        240,
+        4960
+      ],
+      "webhookId": "tg-tg-verif",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Not Found*\n──────────────────────────\n\nNo pending donor with that ID.\nUse `/pending` to see the list.",
+        "additionalFields": {}
+      },
+      "id": "a2f0c838-b150-42de-825b-f8c42e9ff937",
+      "name": "Reply Verify NF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        640,
+        5200
+      ],
+      "webhookId": "tg-tg-verif",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-rej",
+              "leftValue": "={{ $json.args.length === 1 && /^\\d+$/.test($json.args[0]) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "091a001e-adb8-4b59-abf7-69d0651e1851",
+      "name": "Reject Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        5552
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, name, email, username, true as found FROM donors WHERE id = {{ $json.args[0] }} AND status = 'pending' UNION ALL SELECT NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE id = {{ $json.args[0] }} AND status = 'pending')",
+        "options": {}
+      },
+      "id": "a5a62b99-d4de-45ff-970b-8fb987e7728d",
+      "name": "Find Reject Donor",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        128,
+        5504
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-rej",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "55efcb9f-984a-4897-9891-7c37c7d529d4",
+      "name": "Reject Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        320,
+        5552
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE donors SET status = 'rejected' WHERE id = {{ $('Find Reject Donor').item.json.id }};",
+        "options": {}
+      },
+      "id": "22d76f76-bae8-4567-99cb-c4d5b76f5091",
+      "name": "Reject Update",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        512,
+        5552
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mysweetpea.cc",
+        "toEmail": "={{ $json.email }}",
+        "subject": "MySweetPea Donation Verification",
+        "emailFormat": "html",
+        "html": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Donation Verification</title>\n</head>\n<body style=\"margin:0;padding:0;background:#0A1214;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0A1214;min-height:100vh;\">\n    <tr>\n      <td align=\"center\" style=\"padding:40px 20px;\">\n        <table width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0F1A1C;border:1px solid rgba(94,184,168,0.15);border-radius:16px;overflow:hidden;max-width:560px;\">\n          <tr>\n            <td style=\"background:linear-gradient(135deg,#0F1A1C,#0A1214);padding:40px 32px 24px;text-align:center;border-bottom:1px solid rgba(94,184,168,0.08);\">\n              <div style=\"font-size:28px;font-weight:700;color:#5EB8A8;letter-spacing:-0.5px;\">MySweetPea</div>\n              <div style=\"font-size:13px;color:#7A9B95;margin-top:4px;\">Self-hosted with care</div>\n            </td>\n          </tr>\n          <tr>\n            <td style=\"padding:32px;\">\n              <h1 style=\"margin:0 0 16px;font-size:20px;font-weight:600;color:#F0F8F6;\">Donation verification issue ❌</h1>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">Hi {{ $json.name }},</p>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">We were unable to verify your donation. This could be because:</p>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:rgba(232,94,94,0.06);border:1px solid rgba(232,94,94,0.15);border-radius:8px;margin-bottom:24px;\">\n                <tr>\n                  <td style=\"padding:18px 20px;\">\n                    <p style=\"margin:0 0 8px;font-size:14px;color:#E85E5E;line-height:1.6;\">• The transaction hash was not found on the blockchain</p>\n                    <p style=\"margin:0 0 8px;font-size:14px;color:#E85E5E;line-height:1.6;\">• The donation amount was less than the $5 minimum</p>\n                    <p style=\"margin:0;font-size:14px;color:#E85E5E;line-height:1.6;\">• The transaction was sent to the wrong address</p>\n                  </td>\n                </tr>\n              </table>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">If you believe this is an error, please contact us with your transaction details and we'll review it again.</p>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                <tr><td align=\"center\" style=\"padding:8px 0 24px;\"><a href=\"mailto:support@mysweetpea.cc\" style=\"display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#5EB8A8,#3E8E86);color:#0A1214;font-size:15px;font-weight:600;text-decoration:none;border-radius:10px;\">Contact Support</a></td></tr>\n              </table>\n              <p style=\"margin:0;font-size:13px;color:#4A6B65;line-height:1.6;\">Email: support@mysweetpea.cc</p>\n            </td>\n          </tr>\n          <tr><td style=\"padding:24px 32px;border-top:1px solid rgba(94,184,168,0.06);text-align:center;\"><p style=\"margin:0;font-size:12px;color:#4A6B65;\">© 2026 MySweetPea. Self-hosted with care.</p></td></tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "aaafd4bc-d636-424a-b791-d9c1ecb84b1c",
+      "name": "Reject Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        720,
+        5552
+      ],
+      "webhookId": "em-em-rejec",
+      "credentials": {
+        "smtp": {
+          "id": "WSuKgfMAW4A3KDug",
+          "name": "Resend"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=❌ {{ $('Find Reject Donor').item.json.name }} ({{ $('Find Reject Donor').item.json.username }}) rejected. Email sent.",
+        "additionalFields": {}
+      },
+      "id": "a7588a06-d35c-4a49-8ada-89d0abfdcb2f",
+      "name": "Reply Reject OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        928,
+        5552
+      ],
+      "webhookId": "tg-tg-rejec",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Reject Command*\n──────────────────────────\n\nUsage: `/reject <id>`\n\nUse `/pending` to see donor IDs.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "67a5e9c9-bed4-4a16-bc72-152a04f63f68",
+      "name": "Reply Reject Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        128,
+        5712
+      ],
+      "webhookId": "tg-tg-rejec",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=⚠️ *Not Found*\n──────────────────────────\n\nNo pending donor with that ID.\nUse `/pending` to see the list.",
+        "additionalFields": {}
+      },
+      "id": "4794279d-f286-415c-a499-17181b2e196d",
+      "name": "Reply Reject NF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        496,
+        5792
+      ],
+      "webhookId": "tg-tg-rejec",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "=❓ *Unknown Command*\n──────────────────────────\n\nI didn't understand that.\nTry `/help` for the command list.",
+        "additionalFields": {}
+      },
+      "id": "5f469d84-eb2d-4748-b035-309d2861d956",
+      "name": "Reply Unknown",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        4640
+      ],
+      "webhookId": "tg-tg-unkno",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2432,
+        2320
+      ],
+      "id": "9a02ba1c-ef40-4081-a723-5793024a9b41",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.telegram.org/bot={{ $credentials.telegramApi.accessToken }}/getUpdates",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "offset",
+              "value": "={{ $json.last_offset }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1984,
+        2320
+      ],
+      "id": "ddc06226-591d-417e-9f02-66bc2e68ece6",
+      "name": "Get Updates",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE telegram_offset SET last_offset = {{ $json.nextOffset }} WHERE id = 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1376,
+        2176
+      ],
+      "id": "952462d3-1009-404a-8769-1be0340887dc",
+      "name": "Save Offset",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "99b8993a-cc19-4a21-bc03-6be87c1a9c61",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "__noop__",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1360,
+        2384
+      ],
+      "id": "d026a71e-eb29-43d4-b13a-447c1e2de5d2",
+      "name": "Has Command?"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT last_offset FROM telegram_offset WHERE id = 1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2224,
+        2320
+      ],
+      "id": "b8bc14ae-c769-47f9-be78-d6951c520ab2",
+      "name": "Get Offset",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c-if-rej",
+              "leftValue": "={{ $json.args.length === 1 && /^\\d+$/.test($json.args[0]) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "72d6b7f0-5a4a-4e40-a9f1-6ed905ada41e",
+      "name": "Resolve Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -464,
+        6496
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "==⚠️ *Resolve Command*\n──────────────────────────\n\nUsage: `/resolve <id>`\n\nUse `/incident` to see active incidents and their IDs.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "b5c1e909-817a-4336-9d65-e75698f52726",
+      "name": "Reply Resolve Bad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        6880
+      ],
+      "webhookId": "tg-tg-rejec",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const args = $json.args || [];\nconst rest = (args.join(' ') || '').trim();\nif (!rest) {\n  return [{ json: { listMode: true } }];\n}\nconst comma = rest.indexOf(',');\nconst title = (comma > -1 ? rest.slice(0, comma) : rest).trim();\nconst description = comma > -1 ? rest.slice(comma + 1).trim() : '';\nif (title.length < 3) {\n  return [{ json: { reply: 'Title must be at least 3 characters.' } }];\n}\nreturn [{ json: { title, description, listMode: false } }];"
+      },
+      "id": "e104c594-5ae4-4b1c-919d-0766176f704c",
+      "name": "Parse Incident",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        6096
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO incidents (title, description, status) VALUES ('{{ $json.title }}', '{{ $json.description }}', 'active') RETURNING id, title;",
+        "options": {}
+      },
+      "id": "430dcf38-545a-4de8-a4fb-f973f70620f1",
+      "name": "Insert Incident",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        6256
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ 'Incident posted: ' + $json.title }}",
+        "additionalFields": {}
+      },
+      "id": "962609c8-db9b-4505-b0ef-ba1d0e220319",
+      "name": "Reply Incident Posted",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        448,
+        6272
+      ],
+      "webhookId": "8e5c2490-a61b-457c-8159-6a22e1d7ea00",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const args = $json.args || [];\nconst id = (args[0] || '').trim();\nif (!id || !/^\\d+$/.test(id)) {\n  return [{ json: { reply: 'Usage: /resolve <incident_id>' } }];\n}\nreturn [{ json: { incident_id: parseInt(id, 10), reply: null } }];"
+      },
+      "id": "528c0d0c-229d-4c4d-b54b-0091c40a9812",
+      "name": "Parse Resolve",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        6544
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE incidents SET status = 'resolved' WHERE id = {{ $json.incident_id }} RETURNING id, title, status;",
+        "options": {}
+      },
+      "id": "5d6343f9-4483-40f2-afa7-e3f87a2ee699",
+      "name": "Resolve Incident",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        6544
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\nconst first = rows[0] && rows[0].json;\nif (!first || !first.title) {\n  return [{ json: { reply: 'No incident found with that ID.' } }];\n}\nreturn [{ json: { reply: 'Incident resolved: ' + first.title } }];"
+      },
+      "id": "bc25e5a9-1d84-4a4b-a8cc-03067e50bec2",
+      "name": "Check Resolved",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        6544
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.reply }}",
+        "additionalFields": {}
+      },
+      "id": "9382e143-a024-4634-852e-b9c257748841",
+      "name": "Reply Resolve Result",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        608,
+        6544
+      ],
+      "webhookId": "5fcd736c-705d-4b12-91f8-b7a5a4f1de71",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "de5d2150-bc3d-4004-bda5-1c9caa2d7bc4",
+              "leftValue": "={{ $json.listMode }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        6096
+      ],
+      "id": "59b369ef-6a64-4972-a56c-6e06ea568dd7",
+      "name": "List Mode?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json);\nif (rows.length === 0) return [{ json: { reply: 'No incidents found.' } }];\nlet text = '🚨 *INCIDENTS*\\n══════════════════════════\\n\\n';\nrows.forEach(r => {\n  const s = r.status === 'resolved' ? '✅ Resolved' : '🔴 Active';\n  text += `• ID ${r.id}: *${r.title}* — ${s}\\n`;\n});\nreturn [{ json: { reply: text.trim() } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        6000
+      ],
+      "id": "8e7ec491-7307-409b-a27d-2321075f36e7",
+      "name": "Format Incidents List"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, title, status FROM incidents ORDER BY created_at DESC LIMIT 20;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        144,
+        6000
+      ],
+      "id": "0eb9b0ce-03ac-4376-8ccf-9e27f1c107c2",
+      "name": "List Incidents",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.reply }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "c186e5f9-6592-4791-9ab9-ee59dc6e81d5",
+      "name": "Reply Incidents List",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        608,
+        6000
+      ],
+      "webhookId": "tg-tg-rejec",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse: /delinc <id>\n// Parse Command already strips the command word into args (e.g. ['5'])\nconst args = $json.args || [];\nconst id = (args[0] || '').trim();\nif (!id || !/^\\d+$/.test(id)) {\n  return [{ json: { reply: 'Usage: /delinc <incident_id>' } }];\n}\nreturn [{ json: { incident_id: parseInt(id, 10), reply: null } }];"
+      },
+      "id": "291fb615-10e4-40c7-a1a6-47df29f7067b",
+      "name": "Parse Delete Incident",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        7232
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH deleted AS (DELETE FROM incidents WHERE id = {{ $json.incident_id }} RETURNING id, title) SELECT id, title, true as deleted FROM deleted UNION ALL SELECT NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM deleted)",
+        "options": {}
+      },
+      "id": "78db3e47-dbb9-4ca7-93ec-a00d0655f6b1",
+      "name": "Delete Incident",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        -336,
+        7232
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\nconst first = rows[0] && rows[0].json;\nif (!first || !first.deleted) {\n  return [{ json: { reply: 'No incident found with that ID.' } }];\n}\nreturn [{ json: { reply: 'Incident deleted: ' + first.title } }];"
+      },
+      "id": "75a49f1b-673d-4c15-a925-f139083d9cb2",
+      "name": "Check Deleted",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        7232
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Command').item.json.chatId }}",
+        "text": "={{ $json.reply }}",
+        "additionalFields": {}
+      },
+      "id": "0cca675d-fc4a-403a-b39e-4b8c281e1084",
+      "name": "Reply Delete Result",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        112,
+        7232
+      ],
+      "webhookId": "ae89523d-ab58-4d82-b7bb-6a2b555e092f",
+      "credentials": {
+        "telegramApi": {
+          "id": "FUUsFBCeIMGrp3Pz",
+          "name": "Telegram"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Parse Command": {
+      "main": [
+        [
+          {
+            "node": "Save Offset",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Has Command?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Command": {
+      "main": [
+        [
+          {
+            "node": "Reply Help",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Help",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invite Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Status Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resend Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Suspend Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unsuspend Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "List Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AllSubs Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Count Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AllCodes Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Available Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "UsedCodes Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DBStatus Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DelSub Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DelCode Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pending Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verify Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Unknown",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parse Incident",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resolve Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parse Delete Incident",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invite Valid?": {
+      "main": [
+        [
+          {
+            "node": "Generate Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Invite Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Code": {
+      "main": [
+        [
+          {
+            "node": "Save to DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to DB": {
+      "main": [
+        [
+          {
+            "node": "Saved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Saved?": {
+      "main": [
+        [
+          {
+            "node": "Reply Invite OK",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Invite Dup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status Valid?": {
+      "main": [
+        [
+          {
+            "node": "Find Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Status Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Status": {
+      "main": [
+        [
+          {
+            "node": "Status Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status Found?": {
+      "main": [
+        [
+          {
+            "node": "Format Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Status NF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Status": {
+      "main": [
+        [
+          {
+            "node": "Reply Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resend Valid?": {
+      "main": [
+        [
+          {
+            "node": "Find Resend",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Resend Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Resend": {
+      "main": [
+        [
+          {
+            "node": "Resend Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resend Found?": {
+      "main": [
+        [
+          {
+            "node": "Generate Password",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Resend NF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Password": {
+      "main": [
+        [
+          {
+            "node": "Set Password",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Password": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "Reply Resend OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suspend Valid?": {
+      "main": [
+        [
+          {
+            "node": "Find Suspend",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Suspend Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Suspend": {
+      "main": [
+        [
+          {
+            "node": "Suspend Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suspend Found?": {
+      "main": [
+        [
+          {
+            "node": "Disable User",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Suspend NF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disable User": {
+      "main": [
+        [
+          {
+            "node": "Mark Suspended",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Suspended": {
+      "main": [
+        [
+          {
+            "node": "Reply Suspend OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unsuspend Valid?": {
+      "main": [
+        [
+          {
+            "node": "Find Unsuspend",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Unsuspend Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Unsuspend": {
+      "main": [
+        [
+          {
+            "node": "Unsuspend Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unsuspend Found?": {
+      "main": [
+        [
+          {
+            "node": "Enable User",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Unsuspend NF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enable User": {
+      "main": [
+        [
+          {
+            "node": "Mark Active",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Active": {
+      "main": [
+        [
+          {
+            "node": "Reply Unsuspend OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Query": {
+      "main": [
+        [
+          {
+            "node": "Format List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format List": {
+      "main": [
+        [
+          {
+            "node": "Reply List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AllSubs Query": {
+      "main": [
+        [
+          {
+            "node": "Format AllSubs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format AllSubs": {
+      "main": [
+        [
+          {
+            "node": "Reply AllSubs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Count Query": {
+      "main": [
+        [
+          {
+            "node": "Format Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Count": {
+      "main": [
+        [
+          {
+            "node": "Reply Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AllCodes Query": {
+      "main": [
+        [
+          {
+            "node": "Format AllCodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format AllCodes": {
+      "main": [
+        [
+          {
+            "node": "Reply AllCodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Available Query": {
+      "main": [
+        [
+          {
+            "node": "Format Available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Available": {
+      "main": [
+        [
+          {
+            "node": "Reply Available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UsedCodes Query": {
+      "main": [
+        [
+          {
+            "node": "Format UsedCodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format UsedCodes": {
+      "main": [
+        [
+          {
+            "node": "Reply UsedCodes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Valid?": {
+      "main": [
+        [
+          {
+            "node": "Search Query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Search Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Query": {
+      "main": [
+        [
+          {
+            "node": "Format Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Search": {
+      "main": [
+        [
+          {
+            "node": "Reply Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DBStatus Query": {
+      "main": [
+        [
+          {
+            "node": "Format DBStatus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format DBStatus": {
+      "main": [
+        [
+          {
+            "node": "Reply DBStatus",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DelSub Valid?": {
+      "main": [
+        [
+          {
+            "node": "Find DelSub",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DelSub List Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find DelSub": {
+      "main": [
+        [
+          {
+            "node": "DelSub Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DelSub Found?": {
+      "main": [
+        [
+          {
+            "node": "Delete Donor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply DelSub NF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Donor": {
+      "main": [
+        [
+          {
+            "node": "Reply DelSub OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DelSub List Query": {
+      "main": [
+        [
+          {
+            "node": "Format DelSub List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format DelSub List": {
+      "main": [
+        [
+          {
+            "node": "Reply DelSub List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DelCode Valid?": {
+      "main": [
+        [
+          {
+            "node": "Find DelCode",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DelCode List Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find DelCode": {
+      "main": [
+        [
+          {
+            "node": "DelCode Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DelCode Found?": {
+      "main": [
+        [
+          {
+            "node": "Delete Invite Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply DelCode NF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Invite Code": {
+      "main": [
+        [
+          {
+            "node": "Reply DelCode OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DelCode List Query": {
+      "main": [
+        [
+          {
+            "node": "Format DelCode List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format DelCode List": {
+      "main": [
+        [
+          {
+            "node": "Reply DelCode List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pending Query": {
+      "main": [
+        [
+          {
+            "node": "Format Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Pending": {
+      "main": [
+        [
+          {
+            "node": "Reply Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Valid?": {
+      "main": [
+        [
+          {
+            "node": "Find Donor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Verify Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Donor": {
+      "main": [
+        [
+          {
+            "node": "Verify Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Found?": {
+      "main": [
+        [
+          {
+            "node": "Generate Verify Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Verify NF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Verify Code": {
+      "main": [
+        [
+          {
+            "node": "Insert Verify Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Verify Code": {
+      "main": [
+        [
+          {
+            "node": "Update Verified Donor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Verified Donor": {
+      "main": [
+        [
+          {
+            "node": "Send Verify Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Verify Email": {
+      "main": [
+        [
+          {
+            "node": "Gotify Verify OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gotify Verify OK": {
+      "main": [
+        [
+          {
+            "node": "Reply Verify OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reject Valid?": {
+      "main": [
+        [
+          {
+            "node": "Find Reject Donor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Reject Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Reject Donor": {
+      "main": [
+        [
+          {
+            "node": "Reject Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reject Found?": {
+      "main": [
+        [
+          {
+            "node": "Reject Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Reject NF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reject Update": {
+      "main": [
+        [
+          {
+            "node": "Reject Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reject Email": {
+      "main": [
+        [
+          {
+            "node": "Reply Reject OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Offset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Updates": {
+      "main": [
+        [
+          {
+            "node": "Parse Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Command?": {
+      "main": [
+        [
+          {
+            "node": "Route Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Offset": {
+      "main": [
+        [
+          {
+            "node": "Get Updates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Valid?": {
+      "main": [
+        [
+          {
+            "node": "Parse Resolve",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply Resolve Bad",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Incident": {
+      "main": [
+        [
+          {
+            "node": "List Mode?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Incident": {
+      "main": [
+        [
+          {
+            "node": "Reply Incident Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Resolve": {
+      "main": [
+        [
+          {
+            "node": "Resolve Incident",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Incident": {
+      "main": [
+        [
+          {
+            "node": "Check Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Resolved": {
+      "main": [
+        [
+          {
+            "node": "Reply Resolve Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Mode?": {
+      "main": [
+        [
+          {
+            "node": "List Incidents",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insert Incident",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Incidents": {
+      "main": [
+        [
+          {
+            "node": "Format Incidents List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Incidents List": {
+      "main": [
+        [
+          {
+            "node": "Reply Incidents List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Delete Incident": {
+      "main": [
+        [
+          {
+            "node": "Delete Incident",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Incident": {
+      "main": [
+        [
+          {
+            "node": "Check Deleted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Deleted": {
+      "main": [
+        [
+          {
+            "node": "Reply Delete Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c8b2d35d-09ea-495d-9709-9d9542342533",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "niFf5zvpYKalFsmZ",
+  "tags": []
+}

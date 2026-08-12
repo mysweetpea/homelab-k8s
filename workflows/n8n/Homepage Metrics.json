@@ -1,0 +1,140 @@
+{
+  "name": "Homepage Metrics",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "homepage-metrics",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3a52af9d-72d2-46ac-a724-3621a1afe6b3",
+      "name": "Webhook",
+      "webhookId": "8f9e655c-a268-4b46-9939-6dd674ed96de"
+    },
+    {
+      "parameters": {
+        "jsCode": "const workflows = $(\"Get many workflows\").all();\nconst executions = $(\"Get many executions\").all();\n\nconst now = Date.now();\nconst cutoff = now - 24 * 60 * 60 * 1000;\n\nlet exec24h = 0;\nlet failed24h = 0;\n\nfor (const item of executions) {\n  const e = item.json;\n  const ts = new Date(e.startedAt || e.createdAt || e.stoppedAt).getTime();\n  if (ts > cutoff) {\n    exec24h++;\n    if (e.status === 'error') failed24h++;\n  }\n}\n\n// CRITICAL: Code node v2 requires returning an ARRAY of items\nreturn [{\n  json: {\n    workflows: workflows.length,\n    executions_24h: exec24h,\n    failed_24h: failed24h\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        0
+      ],
+      "id": "b366e59a-154f-49c7-b0b7-65e29ccab950",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        800,
+        0
+      ],
+      "id": "3e578169-a19a-468f-a587-ccf73269a418",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "67d217ad-a444-44b1-9bbe-4936da113eaa",
+      "name": "Get many workflows"
+    },
+    {
+      "parameters": {
+        "resource": "execution",
+        "limit": 250,
+        "filters": {},
+        "options": {
+          "activeWorkflows": false
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "140cd8dd-4f2b-4d1c-849c-1ca5b22a61ea",
+      "name": "Get many executions"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get many workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many workflows": {
+      "main": [
+        [
+          {
+            "node": "Get many executions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many executions": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "22f1e4fc-c171-44ab-b458-22256c6422cd",
+  "meta": {
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "HZDtzSQoqbDYyMKZ",
+  "tags": []
+}

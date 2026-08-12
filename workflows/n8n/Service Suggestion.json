@@ -1,0 +1,195 @@
+{
+  "name": "Service Suggestion",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "suggest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "36cdd35e-bb0d-4b1a-85b6-97971eab230f",
+      "name": "Webhook",
+      "webhookId": "sg-001"
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json.body || {};\nlet err = null;\nif (!d.service_name || d.service_name.length < 2) err = 'Service name is required (min 2 characters)';\nelse if (!d.category) err = 'Category is required';\nelse if (!d.reason || d.reason.length < 10) err = 'Please provide a reason (min 10 characters)';\nreturn [{json: {...d, validation_error: err}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "9c69432c-5893-4f7d-a682-b12e469677e3",
+      "name": "Validate Input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.validation_error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "7abeaea6-89df-432c-809d-c893612d6f1a",
+      "name": "Input Valid?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: false, msg: $json.validation_error}) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        208
+      ],
+      "id": "bbd8a84c-4c0b-446a-b3a0-3417ac52c355",
+      "name": "Error Response"
+    },
+    {
+      "parameters": {
+        "message": "={{ 'New service suggestion!\\n\\nService: ' + $json.service_name + '\\nCategory: ' + $json.category + '\\nURL: ' + ($json.project_url || 'not provided') + '\\nReason: ' + $json.reason + '\\nFrom: ' + ($json.your_name || 'anonymous') + (($json.your_email) ? ' (' + $json.your_email + ')' : '') }}",
+        "additionalFields": {
+          "priority": 4,
+          "title": "Service Suggestion"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gotify",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "432d44fe-94d2-4b9c-aa86-708a35a405d2",
+      "name": "Gotify Notify",
+      "credentials": {
+        "gotifyApi": {
+          "id": "rEX2d2uzpCBEdrn4",
+          "name": "Gotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: true, msg: 'Thank you! Your suggestion has been submitted.'}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "a05a73ef-1bdc-4b13-b224-4657fe598e90",
+      "name": "Success Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Input Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Valid?": {
+      "main": [
+        [
+          {
+            "node": "Gotify Notify",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gotify Notify": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "gLkoZII7mE0R3CBY",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "f151331d-d2ed-44e0-a5d6-abe8b8dd9d02",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "h4yIAQ2nH8V4Sayb",
+  "tags": []
+}

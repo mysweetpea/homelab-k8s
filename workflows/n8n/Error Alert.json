@@ -1,0 +1,92 @@
+{
+  "name": "Error Alert",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2373a146-9dc6-475b-94a8-628609f8d583",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.workflow.name }} failed: {{ $json.execution.error.message }}",
+        "additionalFields": {
+          "priority": 8,
+          "title": "Workflow Error"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gotify",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "54d33f7b-7518-4792-9fdb-11093a03a610",
+      "name": "Gotify Alert",
+      "credentials": {
+        "gotifyApi": {
+          "id": "8J75pRelt9rNzZCJ",
+          "name": "Gotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const error = $input.first().json;\nif (error.error?.message?.includes('firstEvent') || error.error?.includes('firstEvent')) {\n  // Skip this error — known bug #34669\n  return [];\n}\nreturn [error];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e575a18c-499d-405c-93a9-dc75aafc5d6d",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Gotify Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "07b5976d-cec4-470f-836e-9d61a77b4ba9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "gLkoZII7mE0R3CBY",
+  "tags": []
+}

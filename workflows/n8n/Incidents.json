@@ -1,0 +1,119 @@
+{
+  "name": "Incidents Webhook (GET)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "incidents",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "ddecaa9c-6c80-4d48-9542-636027d1fdd6",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "incidents-001"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, title, description, status, created_at FROM incidents ORDER BY created_at DESC LIMIT 50;",
+        "options": {}
+      },
+      "id": "bb1ec247-70b4-47f3-8678-0f7bdb2303c6",
+      "name": "Get Incidents",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\nreturn rows.map(r => ({\n  json: {\n    date: new Date(r.json.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),\n    title: r.json.title,\n    description: r.json.description || '',\n    status: r.json.status\n  }\n}));"
+      },
+      "id": "bac74c0a-9b29-463b-a151-d995942c5a20",
+      "name": "Format for Status Page",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($input.all().map(i => i.json)) }}",
+        "options": {}
+      },
+      "id": "05002709-ee8b-4c76-8f13-7d6aa2e35c8c",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Incidents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Incidents": {
+      "main": [
+        [
+          {
+            "node": "Format for Status Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format for Status Page": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "63cfd1e1-3df0-409c-8c93-51d1e9af9b34",
+  "meta": {
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "aiAN68hSG2glXq75",
+  "tags": []
+}

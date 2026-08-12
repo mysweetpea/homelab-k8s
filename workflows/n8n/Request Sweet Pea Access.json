@@ -1,0 +1,229 @@
+{
+  "name": "Request Sweet Pea Access",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sweetpea-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b958de95-9eff-4dc1-8047-02afa863f3ab",
+      "name": "Webhook",
+      "webhookId": "f4f4225f-3c04-454f-8334-32b6d8b9c8f0"
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json.body || {};\nlet err = null;\nif (!d.name || d.name.trim().length < 2) err = 'Name is required (min 2 characters)';\nelse if (!d.email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(d.email.trim())) err = 'Valid email is required';\nelse if (!d.services || d.services.trim().length < 2) err = 'Please list the services you want';\n// Form does not send a username - generate a unique placeholder from the email\nconst base = (d.email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 20) || 'user';\nd.username = base + '_' + Math.random().toString(36).slice(2, 6);\nreturn [{json: {...d, validation_error: err}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b958de95-9eff-4dc1-8047-02afa863f3ab-validate",
+      "name": "Validate Input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.validation_error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "b958de95-9eff-4dc1-8047-02afa863f3ab-valid",
+      "name": "Input Valid?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: false, msg: $json.validation_error}) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        208
+      ],
+      "id": "b958de95-9eff-4dc1-8047-02afa863f3ab-err",
+      "name": "Error Response"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO donors (name, email, username, services, message, status, tier, donation_amount) VALUES ($1, $2, $3, $4, $5, 'pending', 'sweetpea', 0.00) RETURNING id;",
+        "options": {
+          "queryReplacement": "={{ $json.name }}, {{ $json.email }}, {{ $json.username }}, {{ $json.services }}, {{ $json.message || '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "b958de95-9eff-4dc1-8047-02afa863f3ab-insert",
+      "name": "Insert Request",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "PostgresSQL Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "={{ 'New Sweet Pea request from ' + $json.name + '\\nEmail: ' + $json.email + '\\nServices: ' + $json.services + ($json.message ? '\\nMessage: ' + $json.message : '') }}",
+        "additionalFields": {
+          "priority": 5,
+          "title": "Sweet Pea Request"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gotify",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "b958de95-9eff-4dc1-8047-02afa863f3ab-gotify",
+      "name": "Gotify Notify",
+      "credentials": {
+        "gotifyApi": {
+          "id": "rEX2d2uzpCBEdrn4",
+          "name": "Gotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: true, msg: 'Sweet Pea request received. We will review and email you.'}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "b958de95-9eff-4dc1-8047-02afa863f3ab-success",
+      "name": "Success Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Input Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Valid?": {
+      "main": [
+        [
+          {
+            "node": "Insert Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Request": {
+      "main": [
+        [
+          {
+            "node": "Gotify Notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gotify Notify": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "gLkoZII7mE0R3CBY",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "3a7cc89a-6736-4c88-a5c9-9a515de1da85",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "2nei1yFMfJ7QrPfs",
+  "tags": []
+}

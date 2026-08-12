@@ -1,0 +1,542 @@
+{
+  "name": "Invite Code Redemption",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "redeem-code",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "892bf4e2-fbd3-4a18-a88a-feda44bb5738",
+      "name": "Webhook",
+      "webhookId": "rc-001"
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json.body || {};\n\nconst inviteCode = String(d.invite_code || '').trim();\n\nlet err = null;\n\nif (!/^(PEA|FAM)-[A-Z0-9]{8}$/.test(inviteCode)) {\n  err = 'Invalid invite code format. Use PEA-7KJXU2YK or FAM-9YG7JQ5T.';\n} else if (!d.name || d.name.trim().length < 2) {\n  err = 'Name is required (minimum 2 characters).';\n} else if (!d.email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(d.email.trim())) {\n  err = 'A valid email address is required.';\n} else if (!d.username || !/^[a-zA-Z0-9_]{3,}$/.test(d.username.trim())) {\n  err = 'Username must be at least 3 characters and use only letters, numbers, or underscores.';\n}\n\nreturn [{\n  json: {\n    ...d,\n    invite_code: inviteCode,\n    validation_error: err,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f855e12a-4600-4dd0-af41-1bc7c47881db",
+      "name": "Validate Input"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.validation_error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "5f2a8d4b-6f52-45e1-9251-e3b7e124df30",
+      "name": "Input Valid?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: false, msg: $json.validation_error}) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        208
+      ],
+      "id": "30064be6-9d17-4507-af27-c9dc13b380b6",
+      "name": "Error Response"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, code, tier, used,\n  CASE WHEN used = false THEN true ELSE false END as valid,\n  CASE WHEN used = true THEN 'Invite code already redeemed.' ELSE 'Invite code is valid.' END as msg\nFROM invite_codes WHERE code = $1\nUNION ALL\nSELECT NULL::int, NULL::text, NULL::text, false, false, 'Invite code not found.'\nWHERE NOT EXISTS (SELECT 1 FROM invite_codes WHERE code = $2);",
+        "options": {
+          "queryReplacement": "={{ $json.invite_code }}, {{ $json.invite_code }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "828fd196-4fc8-4461-80ac-4c5032ff9214",
+      "name": "Check Code",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "PostgresSQL Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "90a00b34-33ce-43a8-abd8-7a5248d78d29",
+      "name": "Code Valid?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: false, msg: $json.msg || 'Invite code not found or already used'}) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1328,
+        208
+      ],
+      "id": "6bcb9aa6-2f74-43e5-9edc-7e02ae46e8d3",
+      "name": "Code Error"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://authentik-server.dmz.svc.cluster.local/api/v3/core/users/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"username\": \"{{ $('Validate Input').item.json.username }}\",\n  \"name\": \"{{ $('Validate Input').item.json.name }}\",\n  \"email\": \"{{ $('Validate Input').item.json.email }}\",\n  \"type\": \"internal\",\n  \"is_active\": true,\n  \"path\": \"users\",\n  \"groups\": [\"{{ $json.tier === 'sweetpea' ? '038c4ae4-6188-4928-9555-cd29aa6d43e9' : 'e78a189b-6b60-43e4-8fb1-8fd1672d9eaf' }}\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "134ba14a-e43c-4ac0-bb6c-ad873bd20aec",
+      "name": "Create Authentik User",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4vKcSYP2gEJseKsB",
+          "name": "Authentik API Token"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';\nlet pwd = '';\nfor (let i = 0; i < 16; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));\nitem.json.temp_password = pwd;\nreturn [item];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        0
+      ],
+      "id": "7977fa57-09ca-4fc6-a8f0-62536bdffe03",
+      "name": "Generate Temp Password"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://authentik-server.dmz.svc.cluster.local/api/v3/core/users/{{ $json.pk }}/set_password/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"password\": \"{{ $json.temp_password }}\"}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "3bb7625a-e6f4-4fc9-8a6b-b0cfe7e6c32e",
+      "name": "Set Password",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4vKcSYP2gEJseKsB",
+          "name": "Authentik API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE invite_codes SET used = true, used_by = $1, used_at = NOW() WHERE id = $2;",
+        "options": {
+          "queryReplacement": "={{ $('Validate Input').item.json.username }}, {{ $('Check Code').item.json.id }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        1984,
+        0
+      ],
+      "id": "6681ea1d-1255-4cf0-a86c-bcd6b186641c",
+      "name": "Mark Code Used",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "PostgresSQL Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE donors SET authentik_user_id = $1, username = $2, status = 'active', temp_password_set_at = NOW() WHERE invite_code = $3;",
+        "options": {
+          "queryReplacement": "={{ $('Create Authentik User').item.json.pk }}, {{ $('Validate Input').item.json.username }}, {{ $('Validate Input').item.json.invite_code }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        2208,
+        0
+      ],
+      "id": "d2ab3b2c-3abd-4ab7-a4c5-fec78e79c1f4",
+      "name": "Update Donor",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "PostgresSQL Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "support@mysweetpea.cc",
+        "toEmail": "={{ $('Validate Input').item.json.email }}",
+        "subject": "Welcome to MySweetPea Services",
+        "emailFormat": "html",
+        "html": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Welcome to MySweetPea</title>\n</head>\n<body style=\"margin:0;padding:0;background:#0A1214;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0A1214;min-height:100vh;\">\n    <tr>\n      <td align=\"center\" style=\"padding:40px 20px;\">\n        <table width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0F1A1C;border:1px solid rgba(94,184,168,0.15);border-radius:16px;overflow:hidden;max-width:560px;\">\n          <tr>\n            <td style=\"background:linear-gradient(135deg,#0F1A1C,#0A1214);padding:40px 32px 24px;text-align:center;border-bottom:1px solid rgba(94,184,168,0.08);\">\n              <div style=\"font-size:28px;font-weight:700;color:#5EB8A8;letter-spacing:-0.5px;\">MySweetPea</div>\n              <div style=\"font-size:13px;color:#7A9B95;margin-top:4px;\">Self-hosted with care</div>\n            </td>\n          </tr>\n          <tr>\n            <td style=\"padding:32px;\">\n              <h1 style=\"margin:0 0 16px;font-size:20px;font-weight:600;color:#F0F8F6;\">Your account has been created! 🌸</h1>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">Hi {{ $('Validate Input').item.json.name }},</p>\n              <p style=\"margin:0 0 24px;font-size:15px;line-height:1.7;color:#7A9B95;\">Your MySweetPea account has been created successfully. All services use Single Sign-On (SSO) through Authentik. Use the credentials below to log in.</p>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0A1214;border:1px solid rgba(94,184,168,0.12);border-radius:10px;margin-bottom:24px;\">\n                <tr>\n                  <td style=\"padding:20px 24px;\">\n                    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                      <tr><td style=\"font-size:13px;color:#4A6B65;padding-bottom:12px;border-bottom:1px solid rgba(94,184,168,0.06);\">SSO PORTAL</td></tr>\n                      <tr><td style=\"padding:12px 0;font-size:15px;color:#F0F8F6;\"><a href=\"https://auth.mysweetpea.cc\" style=\"color:#5EB8A8;text-decoration:none;font-weight:600;\">https://auth.mysweetpea.cc</a></td></tr>\n                      <tr><td style=\"font-size:13px;color:#4A6B65;padding-top:8px;padding-bottom:4px;\">USERNAME</td></tr>\n                      <tr><td style=\"padding:4px 0;font-size:15px;color:#F0F8F6;font-family:monospace;\">{{ $('Validate Input').item.json.username }}</td></tr>\n                      <tr><td style=\"font-size:13px;color:#4A6B65;padding-top:8px;padding-bottom:4px;\">TEMPORARY PASSWORD</td></tr>\n                      <tr><td style=\"padding:4px 0;font-size:15px;color:#5ED39E;font-family:monospace;font-weight:600;\">{{ $('Generate Temp Password').item.json.temp_password }}</td></tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                <tr><td align=\"center\" style=\"padding:8px 0 24px;\"><a href=\"https://auth.mysweetpea.cc\" style=\"display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#5EB8A8,#3E8E86);color:#0A1214;font-size:15px;font-weight:600;text-decoration:none;border-radius:10px;\">Log In to Authentik</a></td></tr>\n              </table>\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:rgba(232,94,94,0.06);border:1px solid rgba(232,94,94,0.15);border-radius:8px;margin-bottom:24px;\">\n                <tr><td style=\"padding:14px 18px;font-size:13px;color:#E85E5E;line-height:1.6;\">⚠️ Please log in and change your password immediately under User Settings.</td></tr>\n              </table>\n              <p style=\"margin:0;font-size:13px;color:#4A6B65;line-height:1.6;\">If you have any questions, reply to this email or contact support@mysweetpea.cc.</p>\n            </td>\n          </tr>\n          <tr><td style=\"padding:24px 32px;border-top:1px solid rgba(94,184,168,0.06);text-align:center;\"><p style=\"margin:0;font-size:12px;color:#4A6B65;\">© 2026 MySweetPea. Self-hosted with care.</p></td></tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        2432,
+        0
+      ],
+      "id": "26891235-2d13-4369-b87e-bcb0e6edc2c7",
+      "name": "Welcome Email",
+      "webhookId": "def9f55d-b1b1-48ab-bb0b-28907da2781f",
+      "credentials": {
+        "smtp": {
+          "id": "WSuKgfMAW4A3KDug",
+          "name": "Resend SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "={{ 'New user created: ' + $('Validate Input').item.json.name + ' (@' + $('Validate Input').item.json.username + ')' }}",
+        "additionalFields": {
+          "priority": 5,
+          "title": "New User"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gotify",
+      "typeVersion": 1,
+      "position": [
+        2640,
+        0
+      ],
+      "id": "78747f3d-c55f-4f04-a194-b6aa4dc0353a",
+      "name": "Gotify Notify",
+      "credentials": {
+        "gotifyApi": {
+          "id": "rEX2d2uzpCBEdrn4",
+          "name": "Gotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: true, msg: 'Account created successfully! Check your email for login instructions.'}) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2864,
+        0
+      ],
+      "id": "da7f4b6e-6e39-4ca4-89e8-a92cdc01fc18",
+      "name": "Success Response"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ok: false, msg: 'Account creation failed. Please try again or contact support.'}) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        208
+      ],
+      "id": "96908f4f-f860-42bd-b08a-317e06a301df",
+      "name": "Creation Failed"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Input Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Valid?": {
+      "main": [
+        [
+          {
+            "node": "Check Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Code": {
+      "main": [
+        [
+          {
+            "node": "Code Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Valid?": {
+      "main": [
+        [
+          {
+            "node": "Create Authentik User",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Authentik User": {
+      "main": [
+        [
+          {
+            "node": "Generate Temp Password",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Creation Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Temp Password": {
+      "main": [
+        [
+          {
+            "node": "Set Password",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Password": {
+      "main": [
+        [
+          {
+            "node": "Mark Code Used",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Code Used": {
+      "main": [
+        [
+          {
+            "node": "Update Donor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Donor": {
+      "main": [
+        [
+          {
+            "node": "Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Gotify Notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gotify Notify": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "gLkoZII7mE0R3CBY",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "83d0dc51-39e5-4565-80b5-e7f92b331f8d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "3jbowv6ymuoY0cHJ",
+  "tags": []
+}

@@ -1,0 +1,158 @@
+{
+  "name": "Invite Code Server Check",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "check-code",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0ddb1293-12e8-44e2-970b-9d8ca122b88b",
+      "name": "Webhook",
+      "webhookId": "9402c74b-67d0-44f9-b2a1-8f93b8fa3cae"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "code",
+              "value": "={{ $json.body.invite_code }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f04f605a-0f36-48d8-83b9-72b7f564f998",
+      "name": "Extract Code"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  CASE \n    WHEN NOT EXISTS (SELECT 1 FROM invite_codes WHERE code = $1) \n      THEN 'invalid'\n    WHEN EXISTS (SELECT 1 FROM invite_codes WHERE code = $1 AND used = true) \n      THEN 'used'\n    ELSE 'valid'\n  END as status;",
+        "options": {
+          "queryReplacement": "={{ $json.code }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "6b3bbf5d-5333-4415-ae22-0485af6b01c5",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "PostgresSQL Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const status = $input.first().json.status;\nreturn [{\n  json: {\n    ok: status === 'valid',\n    msg: status === 'invalid' ? 'Invite code does not exist.' :\n         status === 'used' ? 'Invite code already redeemed.' : undefined\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "44fa760d-e527-4467-988f-0b4264788d8e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "8282a437-e306-4ec4-8a01-b3c42194f29b",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Code": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "gLkoZII7mE0R3CBY",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "74f6aad9-ba39-4443-bae2-373778763101",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fbcbb570d3c4d02836cf7b18fe1c11743532a362cdeb07b67a4d9dc4b22c3cf9"
+  },
+  "nodeGroups": [],
+  "id": "ZcRDX1rJaxXasyVU",
+  "tags": []
+}
