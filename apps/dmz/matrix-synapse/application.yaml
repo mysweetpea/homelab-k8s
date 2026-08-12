@@ -93,7 +93,7 @@ spec:
                     key: jwt-secret
             extraCommands:
               - |
-                sed -i -e "s/@@OIDC_CLIENT_ID@@/${OIDC_CLIENT_ID:-}/" -e "s/@@OIDC_CLIENT_SECRET@@/${OIDC_CLIENT_SECRET:-}/" -e "s/@@JWT_SECRET@@/${JWT_SECRET:-}/" /synapse/config/conf.d/secrets.yaml
+                sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
     - repoURL: https://github.com/mysweetpea/homelab-k8s.git
       path: apps/dmz/matrix-synapse
       targetRevision: HEAD

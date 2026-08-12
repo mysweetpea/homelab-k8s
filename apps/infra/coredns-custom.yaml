@@ -1,17 +1,13 @@
-apiVersion: v1
-data:
-  auth.server: |-
-    auth.mysweetpea.cc:53 {
-        errors
-        cache 30
-        hosts {
-            10.43.38.255 auth.mysweetpea.cc
-        }
-    }
-kind: ConfigMap
-metadata:
-  creationTimestamp: "2026-07-15T19:02:19Z"
-  name: coredns-custom
-  namespace: kube-system
-  resourceVersion: "15068998"
-  uid: ddf5a7a3-cd2f-473d-a163-8951f305a2c0
+# CoreDNS custom overrides
+#
+# HISTORY: This file previously pinned auth.mysweetpea.cc -> 10.43.38.255
+# (a ClusterIP) as a workaround while the VPS relay was down (Session 36).
+# That ClusterIP is now DEAD (authentik-server was recreated during the
+# power-outage recovery; its ClusterIP is now 10.43.188.212) and the
+# in-cluster path is unreachable due to the known cross-node CNI issue.
+#
+# REMOVED (Session 38): the VPS relay is durably fixed (Session 37,
+# netbird-dnat-fix), and pods reach the public issuer via Cloudflare ->
+# VPS relay -> Traefik -> authentik (verified HTTP 200 from the Synapse
+# pod). Public DNS is the correct resolution path. Do NOT re-add a
+# ClusterIP override here unless the relay breaks again.
