@@ -11,3 +11,9 @@
 # VPS relay -> Traefik -> authentik (verified HTTP 200 from the Synapse
 # pod). Public DNS is the correct resolution path. Do NOT re-add a
 # ClusterIP override here unless the relay breaks again.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data: {}
