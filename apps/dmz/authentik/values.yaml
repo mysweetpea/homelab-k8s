@@ -2,14 +2,16 @@ authentik:
   image:
     repository: ghcr.io/goauthentik/server
     tag: "2026.5.6"
-  secret_key: "ysoC/gBZLhn8aQeJE+Drch32mNPgQuDxEygwYqecPz+D9MKRRh7UtPGTZ/5YUVrMG9E="
+  # Secrets (secret_key, postgresql password) live in the sealed `authentik`
+  # secret (sealed-secrets/dmz/authentik.yaml) — NOT in this file.
+  existingSecret:
+    secretName: authentik
   error_reporting:
     enabled: false
   postgresql:
     host: "authentik-postgresql.dmz.svc.cluster.local"
     name: "authentik"
     user: "authentik"
-    password: "authentik2026!"
     port: 5432
   server:
     ingress:
@@ -58,7 +60,6 @@ postgresql:
   enabled: true
   auth:
     username: authentik
-    password: "authentik2026!"
     database: authentik
     existingSecret: authentik-postgresql
   primary:

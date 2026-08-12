@@ -16,7 +16,7 @@ controllers:
           DB_HOSTNAME: immich-postgresql.private.svc.cluster.local
           DB_PORT: "5432"
           DB_USERNAME: immich
-          DB_PASSWORD: HomelabPostgres2026!
+          # DB_PASSWORD from sealed secret immich-db (sealed-secrets/private/immich-db.yaml)
           DB_DATABASE_NAME: immich
           DB_VECTOR_EXTENSION: vectorchord
           # Redis (bundled Valkey — no password needed)
@@ -24,6 +24,9 @@ controllers:
           IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
           # Security: enable CSP (recommended in v2.7.0 release notes)
           IMMICH_HELMET_FILE: "false"
+        envFrom:
+          - secretRef:
+              name: immich-db
 
 # Immich-specific configuration
 immich:

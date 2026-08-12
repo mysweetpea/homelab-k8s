@@ -6,11 +6,11 @@ controllers:
         image:
           repository: ghcr.io/hotio/qbittorrent
           tag: release-ff687b6
-        env:
-          # Set a permanent admin password on first boot
-          # The hotio image reads this on startup if the config doesn't exist yet
-          QBITTORRENT__WebUI__Password: "Homelab2026!"
-          QBITTORRENT__WebUI__Username: "admin"
+        # WebUI credentials from sealed secret qbittorrent-webui
+        # (sealed-secrets/private/qbittorrent-webui.yaml)
+        envFrom:
+          - secretRef:
+              name: qbittorrent-webui
     type: deployment
 persistence:
   config:

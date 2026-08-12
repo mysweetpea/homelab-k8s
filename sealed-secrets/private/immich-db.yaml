@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: immich-db
+  namespace: private
+spec:
+  encryptedData:
+    DB_PASSWORD: AgCtIzPHILlk4dfk15/0TC33DRs/RBl0vgrMqX122IQyrhlC9q7Z+kGZJIvuKcxRqYr0d6HFHCkBoMb6jm1w9gTz0xQx5V/RTfZ747rtZ4WrrVawNdugoHm/p92Aps7jQvtbfma+j4z+5xaM7oZqciNTCB1ygR4dSNpMfRD8QFFLgFt/FaJwoOApiqkKoOTfPaExGIWYFen6eYQva+IeyfAPfoxq1b1yFn6B3eZrxYapsEeIq1EmwL74SdUWHb6RuotLSnodBQ/50XLQk3CHXQgJfUku9KcXaclZJaf6FdAWclYc7oJZ4b7Skv2tz2lyolkWH5i4PeVCxTTvwtoxsTnpKfvyMNnet7sGt/twqS/z19w8ns8+ZzDIbvNFsn+qbe1mB+SBcgF50EsduNhatCOyDIl+LJJQlv2coxWnS8GPQ/X3ioHYm7ssBzvp35PaW+YHm74tg94uodv2rDDa5LPJF/W6kJJhNqkjWNydaq60ckYaWEy0UjHGswaUNXyZjIImCXptIutZcP+/WyDaDzjY/gs5kpk0MDNrjjNObEtQOpnhx3oz8Z2FOQ8yBa/X56E12qAYovMTfpOrtjxC1CB9WpZhd3tqFoDvv0NZNDBg7v0WaLjQTJH3ywz2ijfKXSNQXLSB00aehAmvlFFC3kcq3ZTMMZVAYWycwtTpLot435RbgGMLWL8/Agsq0Y5eP16ZK4Wdg6iKXwl8aaj68I85ZHlc9Q==
+  template:
+    metadata:
+      name: immich-db
+      namespace: private
+    type: Opaque
