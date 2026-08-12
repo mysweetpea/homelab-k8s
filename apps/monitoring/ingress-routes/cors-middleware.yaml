@@ -1,0 +1,23 @@
+---
+# CORS middleware for Uptime Kuma public status API (status.mysweetpea.cc)
+# The status page heartbeat API is public data consumed by the website
+# (mysweetpea.cc/status.html) via browser fetch — needs CORS headers.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: uptime-kuma-cors
+  namespace: monitoring
+spec:
+  headers:
+    accessControlAllowOriginList:
+      - "https://mysweetpea.cc"
+      - "https://www.mysweetpea.cc"
+    accessControlAllowMethods:
+      - GET
+      - OPTIONS
+    accessControlAllowHeaders:
+      - Origin
+      - Content-Type
+      - Accept
+    accessControlMaxAge: 3600
+    accessControlAllowCredentials: false
