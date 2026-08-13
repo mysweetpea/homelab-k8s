@@ -155,6 +155,7 @@ additionalObjects:
             parents: []
             roles: []
             users:
+            - 4
             - 7
           conditions: []
           identifiers:
