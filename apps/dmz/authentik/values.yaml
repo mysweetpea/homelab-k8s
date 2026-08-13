@@ -26,7 +26,6 @@ authentik:
         memory: "1Gi"
         cpu: "1000m"
   worker:
-    replicas: 2
     resources:
       requests:
         memory: "256Mi"
@@ -36,6 +35,12 @@ authentik:
         cpu: "500m"
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Worker: 2 replicas — blueprint apply deadlocks with 1 (apply_blueprint blocks
+# all threads waiting for blueprints_find_dict result, which never gets
+# processed; a second worker process breaks the deadlock).
+worker:
+  replicas: 2
+
 # Git-backed Blueprints (Session 40, Aug 12 2026)
 #
 # Full instance export via `manage.py export_blueprint` (2026.5.6 — the UI
