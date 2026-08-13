@@ -74,24 +74,6 @@ entries:
   state: present
 - attrs:
     attributes: {}
-    email: root@example.com
-    groups:
-    - 4b1b7ac4-9eec-4144-8729-a3a65198db95
-    is_active: true
-    last_login: '2026-08-10T23:35:25.794990Z'
-    name: authentik Default Admin
-    path: users
-    roles: []
-    type: internal
-    username: sweetpea
-  conditions: []
-  identifiers:
-    pk: 4
-  model: authentik_core.user
-  permissions: []
-  state: present
-- attrs:
-    attributes: {}
     email: ldap-service-account@mysweetpea.cc
     groups:
     - 3c7c79ff-3a62-419f-b89f-e7a82363ae51
@@ -110,14 +92,32 @@ entries:
   permissions: []
   state: present
 - attrs:
+    attributes: {}
+    email: root@example.com
+    groups:
+    - 4b1b7ac4-9eec-4144-8729-a3a65198db95
+    is_active: true
+    last_login: '2026-08-13T02:45:09.361907Z'
+    name: authentik Default Admin
+    path: users
+    roles: []
+    type: internal
+    username: sweetpea
+  conditions: []
+  identifiers:
+    pk: 4
+  model: authentik_core.user
+  permissions: []
+  state: present
+- attrs:
     backchannel_providers: []
     group: ''
     meta_description: ''
     meta_hide: false
-    meta_icon: ''
-    meta_launch_url: ''
+    meta_icon: https://mysweetpea.cc/assets/icons/vaultwarden.svg
+    meta_launch_url: https://vault.mysweetpea.cc
     meta_publisher: ''
-    name: vaultwarden
+    name: Vaultwarden
     open_in_new_tab: false
     policy_engine_mode: any
     provider: 12
@@ -133,29 +133,10 @@ entries:
     group: ''
     meta_description: ''
     meta_hide: false
-    meta_icon: ''
-    meta_launch_url: ''
+    meta_icon: https://mysweetpea.cc/assets/icons/matrix.svg
+    meta_launch_url: https://chat.mysweetpea.cc
     meta_publisher: ''
-    name: affine
-    open_in_new_tab: false
-    policy_engine_mode: any
-    provider: 14
-    slug: affine
-  conditions: []
-  identifiers:
-    pk: 374e2a61-349e-4c11-8e6e-73e025b0db57
-  model: authentik_core.application
-  permissions: []
-  state: present
-- attrs:
-    backchannel_providers: []
-    group: ''
-    meta_description: ''
-    meta_hide: false
-    meta_icon: ''
-    meta_launch_url: ''
-    meta_publisher: ''
-    name: matrix synapse
+    name: Matrix
     open_in_new_tab: false
     policy_engine_mode: any
     provider: 16
@@ -171,17 +152,17 @@ entries:
     group: ''
     meta_description: ''
     meta_hide: false
-    meta_icon: ''
-    meta_launch_url: ''
+    meta_icon: https://mysweetpea.cc/assets/icons/affine.svg
+    meta_launch_url: https://notes.mysweetpea.cc
     meta_publisher: ''
-    name: jellyfin
+    name: AFFiNE
     open_in_new_tab: false
     policy_engine_mode: any
-    provider: 18
-    slug: jellyfin
+    provider: 14
+    slug: affine
   conditions: []
   identifiers:
-    pk: d838b56c-06c2-4214-975b-a5815d72e2ce
+    pk: 374e2a61-349e-4c11-8e6e-73e025b0db57
   model: authentik_core.application
   permissions: []
   state: present
@@ -190,10 +171,10 @@ entries:
     group: ''
     meta_description: ''
     meta_hide: false
-    meta_icon: ''
-    meta_launch_url: ''
+    meta_icon: https://mysweetpea.cc/assets/icons/koalasync.svg
+    meta_launch_url: https://sync.mysweetpea.cc
     meta_publisher: ''
-    name: koalasync
+    name: KoalaSync
     open_in_new_tab: false
     policy_engine_mode: any
     provider: 20
@@ -209,17 +190,17 @@ entries:
     group: ''
     meta_description: ''
     meta_hide: false
-    meta_icon: ''
-    meta_launch_url: ''
+    meta_icon: https://mysweetpea.cc/assets/icons/jellyfin.svg
+    meta_launch_url: https://media.mysweetpea.cc
     meta_publisher: ''
-    name: Open webui
+    name: Jellyfin
     open_in_new_tab: false
     policy_engine_mode: any
-    provider: 22
-    slug: open-webui
+    provider: 18
+    slug: jellyfin
   conditions: []
   identifiers:
-    pk: f006d70d-a6f8-4a5b-8fda-37415f3e23e7
+    pk: d838b56c-06c2-4214-975b-a5815d72e2ce
   model: authentik_core.application
   permissions: []
   state: present
@@ -228,10 +209,10 @@ entries:
     group: ''
     meta_description: ''
     meta_hide: false
-    meta_icon: ''
-    meta_launch_url: ''
+    meta_icon: https://mysweetpea.cc/assets/icons/nextcloud.svg
+    meta_launch_url: https://cloud.mysweetpea.cc
     meta_publisher: ''
-    name: nextcloud
+    name: Nextcloud
     open_in_new_tab: false
     policy_engine_mode: any
     provider: 24
@@ -247,10 +228,10 @@ entries:
     group: ''
     meta_description: ''
     meta_hide: false
-    meta_icon: ''
-    meta_launch_url: ''
+    meta_icon: https://mysweetpea.cc/assets/icons/immich.svg
+    meta_launch_url: https://photos.mysweetpea.cc
     meta_publisher: ''
-    name: immich
+    name: Immich
     open_in_new_tab: false
     policy_engine_mode: any
     provider: 26
@@ -262,6 +243,47 @@ entries:
   permissions: []
   state: present
 - attrs:
+    backchannel_providers: []
+    group: ''
+    meta_description: ''
+    meta_hide: false
+    meta_icon: https://mysweetpea.cc/assets/icons/openwebui.svg
+    meta_launch_url: https://ai.mysweetpea.cc
+    meta_publisher: ''
+    name: Open WebUI
+    open_in_new_tab: false
+    policy_engine_mode: any
+    provider: 22
+    slug: open-webui
+  conditions: []
+  identifiers:
+    pk: f006d70d-a6f8-4a5b-8fda-37415f3e23e7
+  model: authentik_core.application
+  permissions: []
+  state: present
+- attrs:
+    description: ''
+    expires: null
+    expiring: false
+    identifier: branding-setup-2026
+    intent: api
+    managed: null
+    user: 4
+  conditions: []
+  identifiers:
+    pk: 750f4846-d91b-4c6f-ac37-dae101335c26
+  model: authentik_core.token
+  permissions: []
+  state: present
+- attrs:
+    name: authentik Internal JWT Certificate
+  conditions: []
+  identifiers:
+    pk: 8ccade34-6923-4c9e-b14e-c6c070968acb
+  model: authentik_crypto.certificatekeypair
+  permissions: []
+  state: present
+- attrs:
     name: authentik Self-signed Certificate
   conditions: []
   identifiers:
@@ -270,7 +292,7 @@ entries:
   permissions: []
   state: present
 - attrs:
-    email_subject_prefix: 'authentik Notification: '
+    email_subject_prefix: 'authentik Notification:'
     email_template: email/event_notification.html
     mode: email
     name: default-email-transport
@@ -286,7 +308,7 @@ entries:
   permissions: []
   state: present
 - attrs:
-    email_subject_prefix: 'authentik Notification: '
+    email_subject_prefix: 'authentik Notification:'
     email_template: email/event_notification.html
     mode: local
     name: default-local-transport
@@ -358,19 +380,36 @@ entries:
   permissions: []
   state: present
 - attrs:
-    authentication: require_authenticated
+    authentication: none
     background: ''
     compatibility_mode: false
     denied_action: message_continue
-    designation: stage_configuration
+    designation: invalidation
     layout: stacked
-    name: default-authenticator-static-setup
+    name: Logout
     policy_engine_mode: any
-    slug: default-authenticator-static-setup
-    title: Setup Static OTP Tokens
+    slug: default-invalidation-flow
+    title: Signed out
   conditions: []
   identifiers:
-    pk: 489ed621-11d2-46db-8dfa-47ac2390c982
+    pk: 6d8adc4a-7df1-440b-9f6d-45e555af68c5
+  model: authentik_flows.flow
+  permissions: []
+  state: present
+- attrs:
+    authentication: none
+    background: https://mysweetpea.cc/mysweetpea-auth-bg.svg
+    compatibility_mode: false
+    denied_action: message_continue
+    designation: authentication
+    layout: stacked
+    name: Welcome to authentik!
+    policy_engine_mode: any
+    slug: default-authentication-flow
+    title: Welcome to MySweetPea
+  conditions: []
+  identifiers:
+    pk: a3f19429-2b0b-4409-a1c5-0399200b4ef1
   model: authentik_flows.flow
   permissions: []
   state: present
@@ -384,10 +423,27 @@ entries:
     name: Welcome to authentik!
     policy_engine_mode: any
     slug: default-source-authentication
-    title: Welcome to authentik!
+    title: Welcome to MySweetPea
   conditions: []
   identifiers:
     pk: 73a3052d-4d74-457f-8059-c883e57cb869
+  model: authentik_flows.flow
+  permissions: []
+  state: present
+- attrs:
+    authentication: require_authenticated
+    background: ''
+    compatibility_mode: false
+    denied_action: message_continue
+    designation: stage_configuration
+    layout: stacked
+    name: default-authenticator-static-setup
+    policy_engine_mode: any
+    slug: default-authenticator-static-setup
+    title: Setup Static OTP Tokens
+  conditions: []
+  identifiers:
+    pk: 489ed621-11d2-46db-8dfa-47ac2390c982
   model: authentik_flows.flow
   permissions: []
   state: present
@@ -477,23 +533,6 @@ entries:
   permissions: []
   state: present
 - attrs:
-    authentication: none
-    background: ''
-    compatibility_mode: false
-    denied_action: message_continue
-    designation: invalidation
-    layout: stacked
-    name: Logout
-    policy_engine_mode: any
-    slug: default-invalidation-flow
-    title: Default Invalidation Flow
-  conditions: []
-  identifiers:
-    pk: 6d8adc4a-7df1-440b-9f6d-45e555af68c5
-  model: authentik_flows.flow
-  permissions: []
-  state: present
-- attrs:
     authentication: require_authenticated
     background: ''
     compatibility_mode: false
@@ -541,23 +580,6 @@ entries:
   conditions: []
   identifiers:
     pk: 68879de4-5e05-4276-aa2b-00b1a3d25d4a
-  model: authentik_flows.flow
-  permissions: []
-  state: present
-- attrs:
-    authentication: none
-    background: ''
-    compatibility_mode: false
-    denied_action: message_continue
-    designation: authentication
-    layout: stacked
-    name: Welcome to authentik!
-    policy_engine_mode: any
-    slug: default-authentication-flow
-    title: Welcome to authentik!
-  conditions: []
-  identifiers:
-    pk: a3f19429-2b0b-4409-a1c5-0399200b4ef1
   model: authentik_flows.flow
   permissions: []
   state: present
@@ -1169,12 +1191,76 @@ entries:
     length_min: 8
     name: default-password-change-password-policy
     password_field: password
-    symbol_charset: '!\"#$%&''()*+,-./:;<=>?@[\]^_`{|}~ '
+    symbol_charset: '!\"#$%&''()*+,-./:;<=>?@[\]^_`{|}~'
     zxcvbn_score_threshold: 2
   conditions: []
   identifiers:
     pk: a894ae55-2701-4a7a-a66c-678cde3966b6
   model: authentik_policies_password.passwordpolicy
+  permissions: []
+  state: present
+- attrs:
+    enabled: true
+    failure_result: false
+    group: 919a95fc-b081-434d-9459-3d659858c933
+    negate: false
+    order: 1
+    policy: null
+    target: 5120c0ba-53b8-42a8-b0b8-386ecaa70b69
+    timeout: 30
+    user: null
+  conditions: []
+  identifiers:
+    pk: 4fcf0945-4ad6-455e-a17a-eabadae0e2a6
+  model: authentik_policies.policybinding
+  permissions: []
+  state: present
+- attrs:
+    enabled: true
+    failure_result: false
+    group: 3c7c79ff-3a62-419f-b89f-e7a82363ae51
+    negate: false
+    order: 0
+    policy: null
+    target: f006d70d-a6f8-4a5b-8fda-37415f3e23e7
+    timeout: 30
+    user: null
+  conditions: []
+  identifiers:
+    pk: 93caaf44-3b2a-4e93-8a22-a279bab2dc83
+  model: authentik_policies.policybinding
+  permissions: []
+  state: present
+- attrs:
+    enabled: true
+    failure_result: false
+    group: 3c7c79ff-3a62-419f-b89f-e7a82363ae51
+    negate: false
+    order: 0
+    policy: null
+    target: 482a7b99-39fc-4dbc-b943-6b1878fc8c41
+    timeout: 30
+    user: null
+  conditions: []
+  identifiers:
+    pk: fb0f83f0-e2e4-473b-b522-d4104fefd4f9
+  model: authentik_policies.policybinding
+  permissions: []
+  state: present
+- attrs:
+    enabled: true
+    failure_result: false
+    group: 3c7c79ff-3a62-419f-b89f-e7a82363ae51
+    negate: false
+    order: 0
+    policy: null
+    target: eef07706-d237-425a-9178-29e881008d95
+    timeout: 30
+    user: null
+  conditions: []
+  identifiers:
+    pk: 5aa6b984-b045-4d1e-89cf-55eeecd573ca
+  model: authentik_policies.policybinding
   permissions: []
   state: present
 - attrs:
@@ -1498,70 +1584,6 @@ entries:
   permissions: []
   state: present
 - attrs:
-    enabled: true
-    failure_result: false
-    group: 919a95fc-b081-434d-9459-3d659858c933
-    negate: false
-    order: 1
-    policy: null
-    target: 5120c0ba-53b8-42a8-b0b8-386ecaa70b69
-    timeout: 30
-    user: null
-  conditions: []
-  identifiers:
-    pk: 4fcf0945-4ad6-455e-a17a-eabadae0e2a6
-  model: authentik_policies.policybinding
-  permissions: []
-  state: present
-- attrs:
-    enabled: true
-    failure_result: false
-    group: 3c7c79ff-3a62-419f-b89f-e7a82363ae51
-    negate: false
-    order: 0
-    policy: null
-    target: f006d70d-a6f8-4a5b-8fda-37415f3e23e7
-    timeout: 30
-    user: null
-  conditions: []
-  identifiers:
-    pk: 93caaf44-3b2a-4e93-8a22-a279bab2dc83
-  model: authentik_policies.policybinding
-  permissions: []
-  state: present
-- attrs:
-    enabled: true
-    failure_result: false
-    group: 3c7c79ff-3a62-419f-b89f-e7a82363ae51
-    negate: false
-    order: 0
-    policy: null
-    target: 482a7b99-39fc-4dbc-b943-6b1878fc8c41
-    timeout: 30
-    user: null
-  conditions: []
-  identifiers:
-    pk: fb0f83f0-e2e4-473b-b522-d4104fefd4f9
-  model: authentik_policies.policybinding
-  permissions: []
-  state: present
-- attrs:
-    enabled: true
-    failure_result: false
-    group: 3c7c79ff-3a62-419f-b89f-e7a82363ae51
-    negate: false
-    order: 0
-    policy: null
-    target: eef07706-d237-425a-9178-29e881008d95
-    timeout: 30
-    user: null
-  conditions: []
-  identifiers:
-    pk: 5aa6b984-b045-4d1e-89cf-55eeecd573ca
-  model: authentik_policies.policybinding
-  permissions: []
-  state: present
-- attrs:
     authentication_flow: a3f19429-2b0b-4409-a1c5-0399200b4ef1
     authorization_flow: a3f19429-2b0b-4409-a1c5-0399200b4ef1
     base_dn: dc=mysweetpea,dc=cc
@@ -1579,6 +1601,52 @@ entries:
   identifiers:
     pk: 18
   model: authentik_providers_ldap.ldapprovider
+  permissions: []
+  state: present
+- attrs:
+    access_code_validity: minutes=5
+    access_token_validity: minutes=5
+    authentication_flow: null
+    authorization_flow: bbe7a23d-68e3-4537-b845-0a858666e2d4
+    client_id: FmxfSIcs2A5dPUQxfeaYhFfbdwytpjFMS1YHtWGh
+    client_secret: !Env AUTHENTIK_BP_NEXTCLOUD_CLIENT_SECRET
+    client_type: confidential
+    encryption_key: null
+    grant_types:
+    - authorization_code
+    - implicit
+    - hybrid
+    - refresh_token
+    - client_credentials
+    - password
+    - urn:ietf:params:oauth:grant-type:device_code
+    include_claims_in_id_token: true
+    invalidation_flow: e033845d-6f3a-4d9f-95d3-d0b77f7d7e6a
+    issuer_mode: per_provider
+    jwt_federation_providers: []
+    jwt_federation_sources: []
+    logout_method: backchannel
+    logout_uri: ''
+    name: Provider for nextcloud
+    property_mappings:
+    - 48532f9e-e0fb-47e8-8af1-39de46e39f00
+    - 53b93219-a977-47bf-ac91-d7b6f239b245
+    - 8842b9fd-3ac7-441c-a33e-97875503a786
+    redirect_uris:
+    - matching_mode: strict
+      redirect_uri_type: authorization
+      url: https://cloud.mysweetpea.cc/apps/user_oidc/code
+    - matching_mode: strict
+      redirect_uri_type: authorization
+      url: https://cloud.mysweetpea.cc/apps/user_oidc/callback
+    refresh_token_threshold: hours=1
+    refresh_token_validity: days=30
+    signing_key: 452149c2-c5d0-479f-b551-7f9f4500a1d6
+    sub_mode: hashed_user_id
+  conditions: []
+  identifiers:
+    pk: 24
+  model: authentik_providers_oauth2.oauth2provider
   permissions: []
   state: present
 - attrs:
@@ -1715,8 +1783,8 @@ entries:
     access_token_validity: minutes=5
     authentication_flow: null
     authorization_flow: bbe7a23d-68e3-4537-b845-0a858666e2d4
-    client_id: FmxfSIcs2A5dPUQxfeaYhFfbdwytpjFMS1YHtWGh
-    client_secret: !Env AUTHENTIK_BP_NEXTCLOUD_CLIENT_SECRET
+    client_id: 54tyLzMXZcuocUdTDWYR8YxU0T0fAguTVTF14kOp
+    client_secret: !Env AUTHENTIK_BP_OPEN_WEBUI_CLIENT_SECRET
     client_type: confidential
     encryption_key: null
     grant_types:
@@ -1734,7 +1802,7 @@ entries:
     jwt_federation_sources: []
     logout_method: backchannel
     logout_uri: ''
-    name: Provider for nextcloud
+    name: Provider for Open webui
     property_mappings:
     - 48532f9e-e0fb-47e8-8af1-39de46e39f00
     - 53b93219-a977-47bf-ac91-d7b6f239b245
@@ -1742,66 +1810,14 @@ entries:
     redirect_uris:
     - matching_mode: strict
       redirect_uri_type: authorization
-      url: https://cloud.mysweetpea.cc/apps/user_oidc/code
-    - matching_mode: strict
-      redirect_uri_type: authorization
-      url: https://cloud.mysweetpea.cc/apps/user_oidc/callback
+      url: https://ai.mysweetpea.cc/oauth/oidc/callback
     refresh_token_threshold: hours=1
     refresh_token_validity: days=30
     signing_key: 452149c2-c5d0-479f-b551-7f9f4500a1d6
     sub_mode: hashed_user_id
   conditions: []
   identifiers:
-    pk: 24
-  model: authentik_providers_oauth2.oauth2provider
-  permissions: []
-  state: present
-- attrs:
-    access_code_validity: minutes=5
-    access_token_validity: minutes=5
-    authentication_flow: null
-    authorization_flow: bbe7a23d-68e3-4537-b845-0a858666e2d4
-    client_id: btMjOfSZ7uyBIz4SA5ZyLJdmzarWhMt6ZESFTGgT
-    client_secret: !Env AUTHENTIK_BP_IMMICH_CLIENT_SECRET
-    client_type: confidential
-    encryption_key: null
-    grant_types:
-    - authorization_code
-    - implicit
-    - hybrid
-    - refresh_token
-    - client_credentials
-    - password
-    - urn:ietf:params:oauth:grant-type:device_code
-    include_claims_in_id_token: true
-    invalidation_flow: e033845d-6f3a-4d9f-95d3-d0b77f7d7e6a
-    issuer_mode: per_provider
-    jwt_federation_providers: []
-    jwt_federation_sources: []
-    logout_method: backchannel
-    logout_uri: ''
-    name: Provider for immich
-    property_mappings:
-    - 48532f9e-e0fb-47e8-8af1-39de46e39f00
-    - 53b93219-a977-47bf-ac91-d7b6f239b245
-    - 8842b9fd-3ac7-441c-a33e-97875503a786
-    redirect_uris:
-    - matching_mode: strict
-      redirect_uri_type: authorization
-      url: https://photos.mysweetpea.cc/auth/login
-    - matching_mode: strict
-      redirect_uri_type: authorization
-      url: https://photos.mysweetpea.cc/user-settings
-    - matching_mode: strict
-      redirect_uri_type: authorization
-      url: app.immich:///oauth-callback
-    refresh_token_threshold: hours=1
-    refresh_token_validity: days=30
-    signing_key: 452149c2-c5d0-479f-b551-7f9f4500a1d6
-    sub_mode: hashed_user_id
-  conditions: []
-  identifiers:
-    pk: 26
+    pk: 22
   model: authentik_providers_oauth2.oauth2provider
   permissions: []
   state: present
@@ -1854,8 +1870,8 @@ entries:
     access_token_validity: minutes=5
     authentication_flow: null
     authorization_flow: bbe7a23d-68e3-4537-b845-0a858666e2d4
-    client_id: 54tyLzMXZcuocUdTDWYR8YxU0T0fAguTVTF14kOp
-    client_secret: !Env AUTHENTIK_BP_OPEN_WEBUI_CLIENT_SECRET
+    client_id: btMjOfSZ7uyBIz4SA5ZyLJdmzarWhMt6ZESFTGgT
+    client_secret: !Env AUTHENTIK_BP_IMMICH_CLIENT_SECRET
     client_type: confidential
     encryption_key: null
     grant_types:
@@ -1873,7 +1889,7 @@ entries:
     jwt_federation_sources: []
     logout_method: backchannel
     logout_uri: ''
-    name: Provider for Open webui
+    name: Provider for immich
     property_mappings:
     - 48532f9e-e0fb-47e8-8af1-39de46e39f00
     - 53b93219-a977-47bf-ac91-d7b6f239b245
@@ -1881,14 +1897,20 @@ entries:
     redirect_uris:
     - matching_mode: strict
       redirect_uri_type: authorization
-      url: https://ai.mysweetpea.cc/oauth/oidc/callback
+      url: https://photos.mysweetpea.cc/auth/login
+    - matching_mode: strict
+      redirect_uri_type: authorization
+      url: https://photos.mysweetpea.cc/user-settings
+    - matching_mode: strict
+      redirect_uri_type: authorization
+      url: app.immich:///oauth-callback
     refresh_token_threshold: hours=1
     refresh_token_validity: days=30
     signing_key: 452149c2-c5d0-479f-b551-7f9f4500a1d6
     sub_mode: hashed_user_id
   conditions: []
   identifiers:
-    pk: 22
+    pk: 26
   model: authentik_providers_oauth2.oauth2provider
   permissions: []
   state: present
@@ -2422,14 +2444,22 @@ entries:
   state: present
 - attrs:
     attributes: {}
-    branding_custom_css: ''
-    branding_default_flow_background: /static/dist/assets/images/flow_background.jpg
-    branding_favicon: /static/dist/assets/icons/icon.png
-    branding_logo: /static/dist/assets/icons/icon_left_brand.svg
-    branding_title: authentik
+    branding_custom_css: "\n/* MySweetPea brand theme — sage green primary, dark background\
+      \ */\n:root {\n  --pf-global--primary-color--100: #5EB8A8;\n  --pf-global--primary-color--200:\
+      \ #7AC9BB;\n  --pf-global--primary-color--300: #4AA393;\n  --pf-global--link-color:\
+      \ #5EB8A8;\n  --pf-global--link-color--hover: #7AC9BB;\n  --pf-global--active-color--100:\
+      \ #5EB8A8;\n  --pf-global--active-color--200: #7AC9BB;\n  --ak-global--background-color:\
+      \ #0C1316;\n}\n.pf-c-button.pf-m-primary {\n  background-color: #5EB8A8;\n \
+      \ color: #0C1316;\n  font-weight: 600;\n}\n.pf-c-button.pf-m-primary:hover {\n\
+      \  background-color: #7AC9BB;\n}\n.pf-c-button.pf-m-primary:focus {\n  background-color:\
+      \ #4AA393;\n}\na {\n  color: #5EB8A8;\n}\na:hover {\n  color: #7AC9BB;\n}\n"
+    branding_default_flow_background: https://mysweetpea.cc/mysweetpea-auth-bg.svg
+    branding_favicon: https://mysweetpea.cc/logo-favicon.svg
+    branding_logo: https://mysweetpea.cc/logo.svg
+    branding_title: MySweetPea
     client_certificates: []
     default: true
-    default_application: null
+    default_application: 913c7e45-bc94-401f-b220-d215edb6c986
     domain: authentik-default
     flow_authentication: a3f19429-2b0b-4409-a1c5-0399200b4ef1
     flow_device_code: null
@@ -2445,8 +2475,344 @@ entries:
   model: authentik_brands.brand
   permissions: []
   state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Static MFA setup flow
+    path: default/flow-default-authenticator-static-setup.yaml
+  conditions: []
+  identifiers:
+    pk: 59089705-8273-4dc3-9d6b-82802056ac65
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Provider invalidation flow
+    path: default/flow-default-provider-invalidation.yaml
+  conditions: []
+  identifiers:
+    pk: 528632f8-fef3-4412-92b7-e785d3a9765b
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Source enrollment flow
+    path: default/flow-default-source-enrollment.yaml
+  conditions: []
+  identifiers:
+    pk: 4533a4af-13f7-47cf-aaf4-34c54ecc3f93
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Events Transport & Rules
+    path: default/events-default.yaml
+  conditions: []
+  identifiers:
+    pk: 4f1e523a-26f3-436a-b278-76964545406b
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Source pre-authentication flow
+    path: default/flow-default-source-pre-authentication.yaml
+  conditions: []
+  identifiers:
+    pk: ae2096d4-b093-4c4d-87f6-5df476cc24c2
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Password change flow
+    path: default/flow-password-change.yaml
+  conditions: []
+  identifiers:
+    pk: 78b5da2f-9c2a-4a91-b4d5-911fab0e6744
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - OAuth2 Provider - Scopes
+    path: system/providers-oauth2.yaml
+  conditions: []
+  identifiers:
+    pk: 24205bbf-8b16-407e-bc71-07cc9986d956
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Authentication flow
+    path: default/flow-default-authentication-flow.yaml
+  conditions: []
+  identifiers:
+    pk: f772dd3d-5790-41c0-be96-d75a9b25f8b9
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - Kerberos Source - Mappings
+    path: system/sources-kerberos.yaml
+  conditions: []
+  identifiers:
+    pk: e73696f6-7369-453a-84bf-191f93e3b574
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - TOTP MFA setup flow
+    path: default/flow-default-authenticator-totp-setup.yaml
+  conditions: []
+  identifiers:
+    pk: 6586e1cb-3d0f-492b-bd81-ed056bba083a
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Invalidation flow
+    path: default/flow-default-invalidation-flow.yaml
+  conditions: []
+  identifiers:
+    pk: d9d8e39e-733b-4c5b-a493-3e18a3a93ee0
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Brand
+    path: default/default-brand.yaml
+  conditions: []
+  identifiers:
+    pk: a315616d-fc84-4625-a282-da98e2247632
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - Proxy Provider - Scopes
+    path: system/providers-proxy.yaml
+  conditions: []
+  identifiers:
+    pk: ae3bc770-c656-4e3f-b440-a5c5d79605a4
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Provider authorization flow (implicit consent)
+    path: default/flow-default-provider-authorization-implicit-consent.yaml
+  conditions: []
+  identifiers:
+    pk: c973949b-1f46-47b3-a83a-9158fcf33fa8
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Source authentication flow
+    path: default/flow-default-source-authentication.yaml
+  conditions: []
+  identifiers:
+    pk: aab0b28b-b20c-4243-ac00-77330a6b9921
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - SCIM Provider - Mappings
+    path: system/providers-scim.yaml
+  conditions: []
+  identifiers:
+    pk: 39a82959-e93d-4f8c-a3e7-6fd66c602c09
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - LDAP Source - Mappings
+    path: system/sources-ldap.yaml
+  conditions: []
+  identifiers:
+    pk: 6ba94b8d-9b08-40a7-bd2b-8c6bdddb9b93
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - WebAuthn MFA setup flow
+    path: default/flow-default-authenticator-webauthn-setup.yaml
+  conditions: []
+  identifiers:
+    pk: eae7db77-e69a-47b5-80f5-b8be8010f0e0
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: authentik Bootstrap
+    path: system/bootstrap.yaml
+  conditions: []
+  identifiers:
+    pk: 1cabcdbf-b6d3-4dc5-b800-5de774de7adb
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - RAC Provider - Mappings
+    path: system/providers-rac.yaml
+  conditions: []
+  identifiers:
+    pk: 41b094c9-2402-4ffc-aa7c-7705946e74c6
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - Microsoft Entra Provider - Mappings
+    path: system/providers-microsoft-entra.yaml
+  conditions: []
+  identifiers:
+    pk: b5efd472-524f-4fdb-b682-2f968c25db63
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - RBAC - Read-only
+    path: default/rbac-role-read-only.yaml
+  conditions: []
+  identifiers:
+    pk: 538c2569-cf3d-45cf-bb13-6f80d6b280c8
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Provider authorization flow (explicit consent)
+    path: default/flow-default-provider-authorization-explicit-consent.yaml
+  conditions: []
+  identifiers:
+    pk: 0e6de9bd-d524-4f28-a756-5e60f65c440f
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - SAML Provider - Mappings
+    path: system/providers-saml.yaml
+  conditions: []
+  identifiers:
+    pk: 41a56a8d-75da-4c37-844e-f64390073933
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - User settings flow
+    path: default/flow-default-user-settings-flow.yaml
+  conditions: []
+  identifiers:
+    pk: 2cab39cf-e854-4003-9135-b40b8fb6fed7
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: Default - Out-of-box-experience flow
+    path: default/flow-oobe.yaml
+  conditions: []
+  identifiers:
+    pk: 364e8c72-96b8-4a01-9bbe-0749dc15e967
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: System - Google Workspace Provider - Mappings
+    path: system/providers-google-workspace.yaml
+  conditions: []
+  identifiers:
+    pk: 408b2217-54fb-4947-a377-bad2b2d5f15c
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
+- attrs:
+    content: ''
+    context: {}
+    enabled: true
+    name: authentik Export - 2026-08-12 20:14:53.268713+00:00
+    path: mounted/cm-authentik-blueprints/ak-full-export.yaml
+  conditions: []
+  identifiers:
+    pk: c45e51c1-7437-4dec-b557-924e63b7a0eb
+  model: authentik_blueprints.blueprintinstance
+  permissions: []
+  state: present
 metadata:
   labels:
     blueprints.goauthentik.io/generated: 'true'
-  name: authentik Export - 2026-08-12 20:14:53.268713+00:00
+  name: authentik Export - 2026-08-13 19:39:47.569285+00:00
 version: 1
