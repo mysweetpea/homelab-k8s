@@ -94,7 +94,7 @@ entries:
   state: present
 - attrs:
     attributes: {}
-    email: root@example.com
+    email: admin@mysweetpea.cc
     groups:
     - 4b1b7ac4-9eec-4144-8729-a3a65198db95
     - 3c7c79ff-3a62-419f-b89f-e7a82363ae51

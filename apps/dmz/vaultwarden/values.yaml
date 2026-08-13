@@ -7,6 +7,8 @@ image:
 vaultwarden:
   domain: "https://vault.mysweetpea.cc"
   allowSignups: false
+  # SSO-only: invitations create accounts outside Authentik
+  allowInvitation: false
   sso:
     enabled: true
     authority: "https://auth.mysweetpea.cc/application/o/vaultwarden/"
