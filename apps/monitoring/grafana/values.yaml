@@ -1,0 +1,66 @@
+# Grafana — dashboards + log exploration (Loki datasource)
+# SSO via Authentik (generic OAuth), admin via sealed secret
+admin:
+  existingSecret: grafana-admin
+  userKey: admin-user
+  passwordKey: admin-password
+
+envFromSecrets:
+  - name: grafana-oauth
+
+grafana.ini:
+  server:
+    root_url: https://logs.mysweetpea.cc
+    serve_from_sub_path: false
+  auth:
+    disable_login_form: true
+    disable_signout_menu: false
+  auth.generic_oauth:
+    enabled: true
+    name: Authentik
+    allow_sign_up: true
+    client_id: ${GF_AUTH_GENERIC_OAUTH_CLIENT_ID}
+    client_secret: ${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
+    scopes: openid email profile
+    auth_url: https://auth.mysweetpea.cc/application/o/authorize/
+    token_url: https://auth.mysweetpea.cc/application/o/token/
+    api_url: https://auth.mysweetpea.cc/application/o/userinfo/
+    allowed_domains: mysweetpea.cc
+    role_attribute_path: contains(groups[*], 'sweetpea') && 'Admin' || 'Viewer'
+  auth.basic:
+    enabled: false
+  users:
+    allow_sign_up: true
+    auto_assign_org_role: Viewer
+  log:
+    mode: console
+    level: info
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki.monitoring.svc.cluster.local:3100
+        isDefault: true
+        jsonData:
+          maxLines: 1000
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 5Gi
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
+
+service:
+  type: ClusterIP
+  port: 80

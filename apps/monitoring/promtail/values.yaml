@@ -1,0 +1,68 @@
+# Promtail — log shipper (DaemonSet, one per node)
+config:
+  clients:
+    - url: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push
+  snippets:
+    # Kubernetes pod logs (all namespaces)
+    kubernetes-pods: |
+      job_name: kubernetes-pods
+      kubernetes_sd_configs:
+        - role: pod
+      relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_node_name]
+          target_label: __host__
+        - action: replace
+          source_labels: [__meta_kubernetes_namespace]
+          target_label: namespace
+        - action: replace
+          source_labels: [__meta_kubernetes_pod_name]
+          target_label: pod
+        - action: replace
+          source_labels: [__meta_kubernetes_pod_container_name]
+          target_label: container
+        - action: replace
+          source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+          target_label: app
+        - action: replace
+          source_labels: [__meta_kubernetes_pod_label_app]
+          target_label: app
+        - action: keep
+          regex: (private|dmz|monitoring|argocd|kube-system|longhorn-system)
+          source_labels: [__meta_kubernetes_namespace]
+    # Systemd journal on the nodes
+    journal: |
+      job_name: journal
+      journal:
+        path: /var/log/journal
+        max_age: 12h
+      relabel_configs:
+        - source_labels: ['__journal__hostname']
+          target_label: host
+        - source_labels: ['__journal__systemd_unit']
+          target_label: unit
+        - source_labels: ['__journal_priority_keyword']
+          target_label: level
+
+daemonset:
+  enabled: true
+  tolerations:
+    - operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - k3s-master
+                  - k3s-worker-a
+                  - k3s-worker-b
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
