@@ -2210,7 +2210,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const item = $input.first();\nconst chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\nlet code = 'PEA-';\nfor (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));\nitem.json.invite_code = code;\nreturn [item];"
+        "jsCode": "const item = $input.first();\nconst chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\nlet code = 'PEA-';\nfor (let i = 0; i < 8; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));\nitem.json.invite_code = code;\nreturn [item];"
       },
       "id": "8e537adc-b2aa-42ef-9bd8-e1881845f13f",
       "name": "Generate Verify Code",
