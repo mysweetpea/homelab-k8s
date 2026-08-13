@@ -52,6 +52,13 @@ for e in entries:
     if str(attrs.get("path", "")).startswith("migrations/"):
         dropped.append((attrs.get("path"), attrs.get("name")))
         continue
+    if model == "authentik_blueprints.blueprintinstance":
+        # BlueprintInstance entries reference other blueprint paths; validating
+        # them calls get_blueprints() -> blueprints_find_dict.send().get_result()
+        # which DEADLOCKS the worker (task waits on itself). They're
+        # system-managed and auto-created on fresh install — strip them.
+        dropped.append((attrs.get("path"), attrs.get("name")))
+        continue
     kept.append(e)
 
 doc["entries"] = kept
