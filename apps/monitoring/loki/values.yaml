@@ -9,7 +9,7 @@ loki:
     type: filesystem
   schemaConfig:
     configs:
-      - from: "2026-08-13"
+      - from: "2026-08-01"
         store: tsdb
         object_store: filesystem
         schema: v13
