@@ -518,7 +518,7 @@ entries:
   permissions: []
   state: present
 - attrs:
-    authentication: none
+    authentication: require_superuser
     background: ''
     compatibility_mode: false
     denied_action: message_continue
