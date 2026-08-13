@@ -18,7 +18,6 @@ loki:
           period: 24h
   ingester:
     chunk_retain_period: 1m
-    max_transfer_retries: 0
     lifecycler:
       ring:
         kvstore:
