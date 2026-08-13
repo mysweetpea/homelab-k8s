@@ -33,6 +33,14 @@ loki:
   deploymentMode: SingleBinary
   singleBinary:
     replicas: 1
+  # Zero out the SimpleScalable targets (chart defaults them to 1 even in
+  # SingleBinary mode, which trips the "no object storage" validation)
+  backend:
+    replicas: 0
+  read:
+    replicas: 0
+  write:
+    replicas: 0
   persistence:
     enabled: true
     storageClass: longhorn
