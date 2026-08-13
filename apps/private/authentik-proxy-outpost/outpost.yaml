@@ -24,6 +24,8 @@ spec:
           env:
             - name: AUTHENTIK_HOST
               value: "http://authentik-server.dmz.svc.cluster.local:80"
+            - name: AUTHENTIK_HOST_BROWSER
+              value: "https://auth.mysweetpea.cc/"
             - name: AUTHENTIK_TOKEN
               valueFrom:
                 secretKeyRef:
