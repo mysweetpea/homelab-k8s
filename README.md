@@ -174,4 +174,3 @@ Local automated backups run on `k3s-master` via cron:
 Questions: support@mysweetpea.cc
 Website: https://github.com/mysweetpea/portfolio
 This repo: https://github.com/mysweetpea/homelab-k8s
-# test
