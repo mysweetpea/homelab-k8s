@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/hotio/radarr
-          tag: release-c6d55ab
+          tag: release-6.3.0.10514
     type: deployment
 persistence:
   config:
