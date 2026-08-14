@@ -1,11 +1,10 @@
----
 controllers:
   main:
     containers:
       main:
         image:
           repository: ghcr.io/shik3i/koalasync
-          tag: v2.5.4
+          tag: v3.1.0
         env:
           PORT: "3000"
           MIN_VERSION: "1.0.0"
@@ -13,8 +12,8 @@ controllers:
           MAX_PEERS_PER_ROOM: "50"
           DEBUG_LOGGING: "0"
         envFrom:
-          - secretRef:
-              name: koalasync-secrets
+        - secretRef:
+            name: koalasync-secrets
         probes:
           liveness:
             enabled: true
