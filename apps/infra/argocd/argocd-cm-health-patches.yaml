@@ -1,0 +1,73 @@
+# ArgoCD custom health checks — MANUAL APPLY (argocd-cm is Helm-managed, not
+# an ArgoCD app; these patches are lost on `helm upgrade` unless re-applied).
+#
+# Apply with:
+#   kubectl patch cm argocd-cm -n argocd --type=merge -p "$(cat this-file)"
+# then restart: kubectl rollout restart sts/argocd-application-controller -n argocd
+#
+# WHY (Session 41, Aug 14 2026): root-homelab stuck Progressing since Aug 7.
+# Root cause: the custom Service health check treated HEADLESS services
+# (clusterIP: None) as Progressing — every app with a headless service
+# (qdrant-headless, loki-headless, *-hl, etc.) never became Healthy, blocking
+# the root app's sync. Also: the Ingress check required an external LB IP,
+# which Traefik never populates for LAN-only hosts (netdata.k8s.local).
+data:
+  resource.customizations.health.Service: |-
+    hs = {}
+    if obj.spec ~= nil then
+      if obj.spec.type == "LoadBalancer" then
+        if obj.status ~= nil and obj.status.loadBalancer ~= nil then
+          local ingresses = obj.status.loadBalancer.ingress
+          if ingresses ~= nil then
+            for i, ing in ipairs(ingresses) do
+              if (ing.ip ~= nil and ing.ip ~= "") or (ing.hostname ~= nil and ing.hostname ~= "") then
+                hs.status = "Healthy"
+                hs.message = "LoadBalancer IP assigned"
+                return hs
+              end
+            end
+          end
+        end
+      end
+      if obj.spec.clusterIP ~= nil and obj.spec.clusterIP ~= "" and obj.spec.clusterIP ~= "None" then
+        hs.status = "Healthy"
+        hs.message = "ClusterIP assigned"
+        return hs
+      end
+      -- Headless services (clusterIP: None) are healthy by definition
+      if obj.spec.clusterIP == "None" then
+        hs.status = "Healthy"
+        hs.message = "Headless service"
+        return hs
+      end
+    end
+    hs.status = "Progressing"
+    hs.message = "Waiting for service"
+    return hs
+  resource.customizations.health.networking.k8s.io_Ingress: |-
+    hs = {}
+    if obj.spec ~= nil and obj.spec.rules ~= nil and #obj.spec.rules > 0 then
+      -- Ingress has host rules configured — treat as Healthy even without an
+      -- external LB IP (Traefik doesn't populate status.loadBalancer for
+      -- k8s.local / LAN-only hosts)
+      hs.status = "Healthy"
+      hs.message = "Ingress configured"
+      return hs
+    end
+    if obj.status ~= nil then
+      if obj.status.loadBalancer ~= nil then
+        local ingresses = obj.status.loadBalancer.ingress
+        if ingresses ~= nil then
+          for i, ing in ipairs(ingresses) do
+            if (ing.ip ~= nil and ing.ip ~= "") or (ing.hostname ~= nil and ing.hostname ~= "") then
+              hs.status = "Healthy"
+              hs.message = "Ingress is ready"
+              return hs
+            end
+          end
+        end
+      end
+    end
+    hs.status = "Progressing"
+    hs.message = "Waiting for ingress"
+    return hs
