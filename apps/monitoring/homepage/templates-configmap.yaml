@@ -21,35 +21,41 @@ data:
     quicklaunch:
       searchDescriptions: true
       hideInternetSearch: false
-      showSearchSuggestions: true
-      provider: duckduckgo
+      showSearchSuggestions: false
+      provider: custom
+      searchUrl: http://192.168.20.230:8080/search?q={query}
     layout:
       Info Widgets:
         tab: 🏠 Home
         header: false
         style: row
         columns: 4
-      Public Services:
-        tab: 🏠 Home
-        icon: mdi-home-circle-outline
-        style: row
-        columns: 4
-      Media:
+      Streaming:
         tab: 🎬 Media
         icon: mdi-movie-open-outline
         style: row
-        columns: 2
+        columns: 4
       Arr Stack:
         tab: 🎬 Media
         icon: mdi-download-multiple-outline
         style: row
         columns: 4
-      Private:
+      Personal:
         tab: 🔒 Private
-        icon: mdi-lock-outline
+        icon: mdi-account-heart-outline
         style: row
         columns: 4
-      Infrastructure:
+      Chat:
+        tab: 🔒 Private
+        icon: mdi-chat-outline
+        style: row
+        columns: 2
+      Tools:
+        tab: 🔒 Private
+        icon: mdi-wrench-outline
+        style: row
+        columns: 2
+      Core Services:
         tab: ⚙️ System
         icon: mdi-server-outline
         style: row
@@ -106,7 +112,8 @@ data:
         expanded: true
         disk: /
     - search:
-        provider: duckduckgo
+        provider: custom
+        url: http://192.168.20.230:8080/search?q={query}
         target: _blank
         focus: false
 
@@ -127,6 +134,12 @@ data:
       background-image: none !important;
       color: var(--text) !important;
     }
+    ::selection { background: rgba(212, 175, 55, 0.35); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.22); border-radius: 5px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.4); }
+
     /* Ambient gold glow */
     body::after {
       content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -186,7 +199,7 @@ data:
       margin: 6px 0 0 !important;
     }
 
-    /* ---------- TABS (visible, pill bar) ---------- */
+    /* ---------- TABS ---------- */
     #tabs {
       position: sticky !important;
       top: 10px !important;
@@ -285,7 +298,7 @@ data:
       font-weight: 700 !important;
       text-transform: uppercase !important;
       letter-spacing: 0.09em !important;
-      font-size: 0.78rem !important;
+      font-size: 0.8rem !important;
       margin-bottom: 12px !important;
       display: flex !important;
       align-items: center !important;
@@ -302,6 +315,17 @@ data:
       backdrop-filter: blur(10px) !important;
       transition: all 0.25s ease !important;
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25) !important;
+      animation: card-in 0.5s ease backwards;
+    }
+    .service-card:nth-child(2) { animation-delay: 0.04s; }
+    .service-card:nth-child(3) { animation-delay: 0.08s; }
+    .service-card:nth-child(4) { animation-delay: 0.12s; }
+    .service-card:nth-child(5) { animation-delay: 0.16s; }
+    .service-card:nth-child(6) { animation-delay: 0.2s; }
+    .service-card:nth-child(7) { animation-delay: 0.24s; }
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .service-card:hover {
       transform: translateY(-4px) !important;
@@ -311,6 +335,9 @@ data:
     }
     .service-card .name { color: var(--text) !important; font-weight: 600 !important; }
     .service-card .description { color: var(--muted) !important; font-size: 0.82rem !important; }
+
+    /* ---------- STATUS DOTS ---------- */
+    .status-dot { box-shadow: 0 0 8px currentColor !important; }
 
     /* ---------- BOOKMARKS ---------- */
     .bookmark-group { margin: 18px 0 !important; }
@@ -341,12 +368,6 @@ data:
       color: var(--muted) !important;
       font-size: 0.8rem !important;
       text-align: center !important;
-    }
-
-    /* ---------- REMOVE LEGACY BRANCH OVERLAY ---------- */
-    #branch-overlay, #branch-content, #branch-vines, #branch-center, #branch-logo,
-    .branch-btn-wrapper, .branch-btn, .branch-btn-vine, #back-btn, .vine-leaf, .branch-line, .branch-tendril {
-      display: none !important;
     }
 
     /* ---------- RESPONSIVE ---------- */
@@ -454,7 +475,7 @@ data:
     })();
 
   services.yaml: |
-    - Public Services:
+    - Streaming:
         - Jellyfin:
             id: jellyfin
             href: https://media.mysweetpea.cc
@@ -473,80 +494,18 @@ data:
               type: seerr
               url: http://seerr.dmz.svc.cluster.local:5055
               key: ${SEERR_API_KEY}
-        - KoalaSync:
-            id: koalasync
-            href: https://sync.mysweetpea.cc
-            description: Sync Watch Parties
-            icon: mdi-sync
-        - AFFiNE:
-            id: affine
-            href: https://notes.mysweetpea.cc
-            description: Docs & Knowledge Base
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
-        - Authentik:
-            id: authentik
-            href: https://auth.mysweetpea.cc
-            description: SSO & Identity
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/authentik.svg
-            widget:
-              type: authentik
-              url: http://authentik-server.dmz.svc.cluster.local:80
-              version: 2
-              key: ${AUTHENTIK_API_TOKEN}
-        - Vaultwarden:
-            id: vaultwarden
-            href: https://vault.mysweetpea.cc
-            description: Passwords & Secrets
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
-        - Element:
-            id: element
-            href: https://chat.mysweetpea.cc
-            description: Matrix Chat Client
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
-        - Matrix Synapse:
-            id: matrix
-            href: https://matrix.mysweetpea.cc
-            description: Chat Server
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
-        - n8n:
-            id: n8n
-            href: https://n8n.mysweetpea.cc
-            description: Automate Everything
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
-            widget:
-              type: customapi
-              url: http://n8n.private.svc.cluster.local:5678/api/v1/workflows
-              method: GET
-              headers:
-                X-N8N-API-KEY: ${N8N_API_KEY}
-              mappings:
-                - field: count
-                  label: Workflows
-                  format: number
-    - Media:
-        - Jellyfin:
-            id: jellyfin2
-            href: https://media.mysweetpea.cc
-            description: Media Server
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
-            widget:
-              type: jellyfin
-              url: http://jellyfin.private.svc.cluster.local:8096
-              key: ${JELLYFIN_API_KEY}
-        - Seerr:
-            id: seerr2
-            href: https://request.mysweetpea.cc
-            description: Media Requests
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
-            widget:
-              type: seerr
-              url: http://seerr.dmz.svc.cluster.local:5055
-              key: ${SEERR_API_KEY}
         - AIOStreams:
             id: aiostreams
             href: http://192.168.20.222:3000
             description: Stream Anything
             icon: mdi-all-inclusive-box
+            siteMonitor: true
+        - NzbDAV:
+            id: nzbdav
+            href: http://192.168.20.212:8080
+            description: Usenet Downloads
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
+            siteMonitor: true
     - Arr Stack:
         - Radarr:
             id: radarr
@@ -599,17 +558,20 @@ data:
             href: http://192.168.20.214:8191
             description: Cloudflare Bypass
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
+            siteMonitor: true
         - Questarr:
             id: questarr
             href: http://192.168.20.227:5000
             description: Game Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
-        - NzbDAV:
-            id: nzbdav
-            href: http://192.168.20.212:8080
-            description: Usenet Downloads
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
-    - Private:
+            siteMonitor: true
+    - Personal:
+        - Vaultwarden:
+            id: vaultwarden
+            href: https://vault.mysweetpea.cc
+            description: Passwords & Secrets
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
+            siteMonitor: true
         - Nextcloud:
             id: nextcloud
             href: https://cloud.mysweetpea.cc
@@ -630,8 +592,14 @@ data:
               url: http://immich-server.private.svc.cluster.local:2283
               key: ${IMMICH_API_KEY}
               version: 2
+        - AFFiNE:
+            id: affine
+            href: https://notes.mysweetpea.cc
+            description: Docs & Knowledge Base
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
+            siteMonitor: true
         - n8n:
-            id: n8n2
+            id: n8n
             href: https://n8n.mysweetpea.cc
             description: Workflow Automation
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
@@ -655,34 +623,40 @@ data:
               url: http://gotify.private.svc.cluster.local:80
               username: ${GOTIFY_ADMIN_USER}
               password: ${GOTIFY_ADMIN_PASS}
-        - AFFiNE:
-            id: affine2
-            href: https://notes.mysweetpea.cc
-            description: Knowledge Base
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
+        - KoalaSync:
+            id: koalasync
+            href: https://sync.mysweetpea.cc
+            description: Sync Watch Parties
+            icon: mdi-sync
+            siteMonitor: true
+    - Chat:
+        - Element:
+            id: element
+            href: https://chat.mysweetpea.cc
+            description: Matrix Chat Client
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
+            siteMonitor: true
+        - Matrix Synapse:
+            id: matrix
+            href: https://matrix.mysweetpea.cc
+            description: Chat Server
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
+            siteMonitor: true
+    - Tools:
         - OpenClaw:
             id: openclaw
             href: http://192.168.20.217:8080
             description: AI Agent Gateway
             icon: mdi-robot-outline
+            siteMonitor: true
         - RustDesk:
             id: rustdesk
             href: http://192.168.20.216:21115
             description: Remote Desktop
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/rustdesk.svg
-    - Infrastructure:
-        - Traefik:
-            id: traefik
-            href: http://192.168.20.210:8080
-            description: Reverse Proxy
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/traefik.svg
-        - ArgoCD:
-            id: argocd
-            href: http://192.168.20.220
-            description: GitOps Console
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/argocd.svg
+    - Core Services:
         - Authentik:
-            id: authentik2
+            id: authentik
             href: https://auth.mysweetpea.cc
             description: SSO & Identity
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/authentik.svg
@@ -691,26 +665,26 @@ data:
               url: http://authentik-server.dmz.svc.cluster.local:80
               version: 2
               key: ${AUTHENTIK_API_TOKEN}
-        - Vaultwarden:
-            id: vaultwarden2
-            href: https://vault.mysweetpea.cc
-            description: Password Manager
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
-        - Matrix Synapse:
-            id: matrix2
-            href: https://matrix.mysweetpea.cc
-            description: Chat Server
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
-        - Element:
-            id: element2
-            href: https://chat.mysweetpea.cc
-            description: Matrix Client
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
+        - Traefik:
+            id: traefik
+            href: http://192.168.20.210:8080
+            description: Reverse Proxy
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/traefik.svg
+            widget:
+              type: traefik
+              url: http://192.168.20.210:8080
+        - ArgoCD:
+            id: argocd
+            href: http://192.168.20.220
+            description: GitOps Console
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/argocd.svg
+            siteMonitor: true
         - Open WebUI:
             id: open-webui
             href: https://ai.mysweetpea.cc
             description: AI Chat Interface
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
+            siteMonitor: true
         - Ollama:
             id: ollama
             href: http://192.168.20.228:11434
@@ -729,6 +703,7 @@ data:
             href: http://192.168.20.230:8080
             description: Private Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
+            siteMonitor: true
     - Monitoring:
         - Uptime Kuma:
             id: uptime-kuma
@@ -744,11 +719,13 @@ data:
             href: http://192.168.20.226:3000
             description: Dashboards, Logs & Metrics
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/grafana.svg
+            siteMonitor: true
         - Netdata:
             id: netdata
             href: http://192.168.20.229:19999
             description: Real-time Node Monitoring
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
+            siteMonitor: true
     - Coming Soon:
         - Prometheus:
             id: prometheus
