@@ -36,7 +36,7 @@ controllers:
     containers:
       main:
         env:
-          HOMEPAGE_ALLOWED_HOSTS: "192.168.20.211:3000,homepage.mysweetpea.cc"
+          HOMEPAGE_ALLOWED_HOSTS: "192.168.20.213:3000,homepage.mysweetpea.cc"
         envFrom:
         - secretRef:
             name: homepage-secrets

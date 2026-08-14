@@ -70,6 +70,9 @@ data:
 
   bookmarks.yaml: |
     - Quick Links:
+        - Homepage:
+            - abbr: HP
+              href: http://192.168.20.213:3000
         - GitHub:
             - abbr: GH
               href: https://github.com/mysweetpea
@@ -81,7 +84,7 @@ data:
               href: http://192.168.20.210:8080
         - Uptime Kuma:
             - abbr: UK
-              href: http://192.168.20.217:3001
+              href: https://status.mysweetpea.cc
     - Resources:
         - Kubernetes Docs:
             - abbr: K8
@@ -402,7 +405,7 @@ data:
         - Jellyfin:
             id: jellyfin
             href: https://media.mysweetpea.cc
-            description: Media Server
+            description: Movies, TV & Music
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
             widget:
               type: jellyfin
@@ -411,7 +414,7 @@ data:
         - Seerr:
             id: seerr
             href: https://request.mysweetpea.cc
-            description: Media Requests
+            description: Request Movies & Shows
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/overseerr.svg
             widget:
               type: seerr
@@ -420,12 +423,12 @@ data:
         - KoalaSync:
             id: koalasync
             href: https://sync.mysweetpea.cc
-            description: Synchronized Video Playback
+            description: Sync Watch Parties
             icon: mdi-sync
         - AFFiNE:
             id: affine
             href: https://notes.mysweetpea.cc
-            description: Knowledge Base
+            description: Docs & Knowledge Base
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
         - Authentik:
             id: authentik
@@ -440,7 +443,7 @@ data:
         - Vaultwarden:
             id: vaultwarden
             href: https://vault.mysweetpea.cc
-            description: Password Manager
+            description: Passwords & Secrets
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
         - Element:
             id: element
@@ -455,7 +458,7 @@ data:
         - n8n:
             id: n8n
             href: https://n8n.mysweetpea.cc
-            description: Workflow Automation
+            description: Automate Everything
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/n8n.svg
             widget:
               type: customapi
@@ -470,7 +473,7 @@ data:
     - Media:
         - Jellyfin:
             id: jellyfin2
-            href: http://jellyfin.private.svc.cluster.local:8096
+            href: https://media.mysweetpea.cc
             description: Media Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
             widget:
@@ -489,13 +492,13 @@ data:
         - AIOStreams:
             id: aiostreams
             href: http://192.168.20.222:3000
-            description: Stream Aggregator
+            description: Stream Anything
             icon: mdi-all-inclusive-box
     - Arr Stack:
         - Radarr:
             id: radarr
             href: http://192.168.20.218:7878
-            description: Movies
+            description: Movie Manager
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/radarr.svg
             widget:
               type: radarr
@@ -504,7 +507,7 @@ data:
         - Sonarr:
             id: sonarr
             href: http://192.168.20.219:8989
-            description: TV & Anime
+            description: TV & Anime Manager
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sonarr.svg
             widget:
               type: sonarr
@@ -513,7 +516,7 @@ data:
         - Bazarr:
             id: bazarr
             href: http://192.168.20.223:6767
-            description: Subtitles
+            description: Subtitle Manager
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/bazarr.svg
             widget:
               type: bazarr
@@ -522,7 +525,7 @@ data:
         - Prowlarr:
             id: prowlarr
             href: http://192.168.20.224:9696
-            description: Indexers
+            description: Indexer Manager
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prowlarr.svg
             widget:
               type: prowlarr
@@ -531,7 +534,7 @@ data:
         - qBittorrent:
             id: qbittorrent
             href: http://192.168.20.225:8080
-            description: Torrents
+            description: Download Client
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qbittorrent.svg
             widget:
               type: qbittorrent
@@ -545,18 +548,18 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
         - Questarr:
             id: questarr
-            href: http://questarr.private.svc.cluster.local:5000
-            description: Game Manager
+            href: http://192.168.20.227:5000
+            description: Game Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
         - NzbDAV:
             id: nzbdav
             href: http://192.168.20.212:8080
-            description: Usenet Stream
+            description: Usenet Downloads
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
     - Private:
         - Nextcloud:
             id: nextcloud
-            href: http://192.168.20.215:8080
+            href: https://cloud.mysweetpea.cc
             description: Files & Sync
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/nextcloud.svg
             widget:
@@ -566,7 +569,7 @@ data:
               password: ${NEXTCLOUD_ADMIN_PASS}
         - Immich:
             id: immich
-            href: http://192.168.20.221:2283
+            href: https://photos.mysweetpea.cc
             description: Photos & Memories
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/immich.svg
             widget:
@@ -592,7 +595,7 @@ data:
         - Gotify:
             id: gotify
             href: https://gotify.mysweetpea.cc
-            description: Notifications
+            description: Push Notifications
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/gotify.svg
             widget:
               type: gotify
@@ -603,11 +606,11 @@ data:
             href: https://notes.mysweetpea.cc
             description: Knowledge Base
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
-        - Qdrant:
-            id: qdrant
-            href: http://qdrant.private.svc.cluster.local:6333
-            description: Vector Database
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qdrant.svg
+        - OpenClaw:
+            id: openclaw
+            href: http://192.168.20.217:8080
+            description: AI Agent Gateway
+            icon: mdi-robot-outline
         - RustDesk:
             id: rustdesk
             href: http://192.168.20.216:21115
@@ -617,8 +620,13 @@ data:
         - Traefik:
             id: traefik
             href: http://192.168.20.210:8080
-            description: Ingress Controller
+            description: Reverse Proxy
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/traefik.svg
+        - ArgoCD:
+            id: argocd
+            href: http://192.168.20.220
+            description: GitOps Console
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/argocd.svg
         - Authentik:
             id: authentik2
             href: https://auth.mysweetpea.cc
@@ -646,13 +654,13 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
         - Open WebUI:
             id: open-webui
-            href: http://192.168.20.226:8080
+            href: https://ai.mysweetpea.cc
             description: AI Chat Interface
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
         - Ollama:
             id: ollama
             href: http://192.168.20.228:11434
-            description: LLM Inference
+            description: Local LLM Inference
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/ollama.svg
             widget:
               type: customapi
@@ -667,16 +675,11 @@ data:
             href: http://192.168.20.230:8080
             description: Private Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
-        - PostgreSQL:
-            id: postgresql
-            href: http://postgresql.private.svc.cluster.local:5432
-            description: Shared Database
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/postgres.svg
     - Monitoring:
         - Uptime Kuma:
             id: uptime-kuma
             href: https://status.mysweetpea.cc
-            description: Uptime Monitor
+            description: Health Checks & Status
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/uptime-kuma.svg
             widget:
               type: uptimekuma
@@ -684,10 +687,15 @@ data:
               slug: ${UPTIME_KUMA_SLUG}
         - Grafana:
             id: grafana
-            href: ""
-            description: Dashboards — Coming Soon
+            href: http://192.168.20.226:3000
+            description: Dashboards, Logs & Metrics
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/grafana.svg
-            server: ""
+        - Netdata:
+            id: netdata
+            href: http://192.168.20.229:19999
+            description: Real-time Node Monitoring
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
+    - Coming Soon:
         - Prometheus:
             id: prometheus
             href: ""
