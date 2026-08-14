@@ -24,7 +24,8 @@ controllers:
               -e "s|\${NEXTCLOUD_ADMIN_PASS}|${NEXTCLOUD_ADMIN_PASS}|g" \
               -e "s|\${IMMICH_API_KEY}|${IMMICH_API_KEY}|g" \
               -e "s|\${N8N_API_KEY}|${N8N_API_KEY}|g" \
-              -e "s|\${GOTIFY_APP_TOKEN}|${GOTIFY_APP_TOKEN}|g" \
+              -e "s|\${GOTIFY_ADMIN_USER}|${GOTIFY_ADMIN_USER}|g" \
+              -e "s|\${GOTIFY_ADMIN_PASS}|${GOTIFY_ADMIN_PASS}|g" \
               -e "s|\${AUTHENTIK_API_TOKEN}|${AUTHENTIK_API_TOKEN}|g" \
               -e "s|\${ARGOCD_API_TOKEN}|${ARGOCD_API_TOKEN}|g" \
               -e "s|\${UPTIME_KUMA_SLUG}|${UPTIME_KUMA_SLUG}|g" \
