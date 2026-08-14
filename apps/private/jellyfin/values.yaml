@@ -7,8 +7,9 @@ controllers:
           tag: 10.11.11
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
-nodeSelector:
-  kubernetes.io/hostname: k3s-worker-b
+defaultPodOptions:
+  nodeSelector:
+    kubernetes.io/hostname: k3s-worker-b
 persistence:
   cache:
     existingClaim: jellyfin-cache-lh
