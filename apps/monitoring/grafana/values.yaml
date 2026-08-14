@@ -1,37 +1,23 @@
 # Grafana — dashboards + log exploration (Loki datasource)
-# SSO via Authentik (generic OAuth), admin via sealed secret
+# LAN-only via MetalLB (user is the only accessor; Netbird VPN for remote).
+# Admin login via sealed secret (no Authentik SSO needed).
 admin:
   existingSecret: grafana-admin
   userKey: admin-user
   passwordKey: admin-password
 
-envFromSecrets:
-  - name: grafana-oauth
-
 grafana.ini:
   server:
-    root_url: https://logs.mysweetpea.cc
+    root_url: http://192.168.20.231:3000
     serve_from_sub_path: false
   auth:
-    disable_login_form: true
+    disable_login_form: false
     disable_signout_menu: false
-  auth.generic_oauth:
-    enabled: true
-    name: Authentik
-    allow_sign_up: true
-    client_id: ${GF_AUTH_GENERIC_OAUTH_CLIENT_ID}
-    client_secret: ${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
-    scopes: openid email profile
-    auth_url: https://auth.mysweetpea.cc/application/o/authorize/
-    token_url: https://auth.mysweetpea.cc/application/o/token/
-    api_url: https://auth.mysweetpea.cc/application/o/userinfo/
-    allowed_domains: mysweetpea.cc
-    role_attribute_path: contains(groups[*], 'sweetpea') && 'Admin' || 'Viewer'
   auth.basic:
-    enabled: false
+    enabled: true
   users:
-    allow_sign_up: true
-    auto_assign_org_role: Viewer
+    allow_sign_up: false
+    auto_assign_org_role: Admin
   log:
     mode: console
     level: info
@@ -62,5 +48,6 @@ resources:
     memory: 128Mi
 
 service:
-  type: ClusterIP
-  port: 80
+  type: LoadBalancer
+  loadBalancerIP: 192.168.20.231
+  port: 3000
