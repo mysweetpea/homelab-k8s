@@ -4,6 +4,8 @@ volume:
   size: 5Gi
   storageClassName: longhorn
   existingClaim: uptime-kuma-pvc
+image:
+  tag: "2.5.0"
 service:
   type: ClusterIP
   port: 3001

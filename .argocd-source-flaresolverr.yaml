@@ -1,8 +1,0 @@
-helm:
-  parameters:
-  - name: controllers.main.containers.main.image.tag
-    value: v3.5.0
-    forcestring: true
-  - name: image.name
-    value: ghcr.io/flaresolverr/flaresolverr
-    forcestring: true
