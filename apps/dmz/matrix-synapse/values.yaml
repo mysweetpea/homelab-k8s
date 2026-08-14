@@ -50,20 +50,20 @@ extraConfig:
 # into the rendered config by extraCommands. NOTHING secret is in git.
 extraSecrets:
   oidc_providers:
-    - idp_id: authentik
-      idp_name: authentik
-      discover: true
-      issuer: "https://auth.mysweetpea.cc/application/o/matrix-synapse/"
-      client_id: "@@OIDC_CLIENT_ID@@"
-      client_secret: "@@OIDC_CLIENT_SECRET@@"
-      scopes:
-        - "openid"
-        - "profile"
-        - "email"
-      user_mapping_provider:
-        config:
-          localpart_template: "{{ user.preferred_username }}"
-          display_name_template: "{{ user.preferred_username|capitalize }}"
+  - idp_id: authentik
+    idp_name: authentik
+    discover: true
+    issuer: "https://auth.mysweetpea.cc/application/o/matrix-synapse/"
+    client_id: "@@OIDC_CLIENT_ID@@"
+    client_secret: "@@OIDC_CLIENT_SECRET@@"
+    scopes:
+    - "openid"
+    - "profile"
+    - "email"
+    user_mapping_provider:
+      config:
+        localpart_template: "{{ user.preferred_username }}"
+        display_name_template: "{{ user.preferred_username|capitalize }}"
   # --- JWT config for backchannel logout ---
   jwt_config:
     enabled: true
@@ -71,21 +71,24 @@ extraSecrets:
     algorithm: "RS256"
 synapse:
   extraEnv:
-    - name: OIDC_CLIENT_ID
-      valueFrom:
-        secretKeyRef:
-          name: matrix-synapse-oidc
-          key: oidc-client-id
-    - name: OIDC_CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: matrix-synapse-oidc
-          key: oidc-client-secret
-    - name: JWT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: matrix-synapse-oidc
-          key: jwt-secret
+  - name: OIDC_CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+        name: matrix-synapse-oidc
+        key: oidc-client-id
+  - name: OIDC_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: matrix-synapse-oidc
+        key: oidc-client-secret
+  - name: JWT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: matrix-synapse-oidc
+        key: jwt-secret
   extraCommands:
-    - |
-      sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
+  - |
+    sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
+image:
+  tag: v1.158.0
+  repository: ghcr.io/element-hq/synapse
