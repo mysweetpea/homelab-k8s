@@ -12,9 +12,9 @@ controllers:
           - secretRef:
               name: qbittorrent-webui
     type: deployment
-    # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
-    nodeSelector:
-      kubernetes.io/hostname: k3s-worker-b
+# Pinned to worker-b: media-storage-lh is RWO (single-node attach)
+nodeSelector:
+  kubernetes.io/hostname: k3s-worker-b
 persistence:
   config:
     enabled: true
