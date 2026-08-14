@@ -406,7 +406,7 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
             widget:
               type: jellyfin
-              url: http://jellyfin.dmz.svc.cluster.local:8096
+              url: http://jellyfin.private.svc.cluster.local:8096
               key: ${JELLYFIN_API_KEY}
         - Seerr:
             id: seerr
@@ -470,12 +470,12 @@ data:
     - Media:
         - Jellyfin:
             id: jellyfin2
-            href: http://jellyfin.dmz.svc.cluster.local:8096
+            href: http://jellyfin.private.svc.cluster.local:8096
             description: Media Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/jellyfin.svg
             widget:
               type: jellyfin
-              url: http://jellyfin.dmz.svc.cluster.local:8096
+              url: http://jellyfin.private.svc.cluster.local:8096
               key: ${JELLYFIN_API_KEY}
         - Seerr:
             id: seerr2

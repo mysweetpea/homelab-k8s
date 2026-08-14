@@ -66,19 +66,3 @@ spec:
       services:
         - name: element-web
           port: 80
----
-# Jellyfin — media.mysweetpea.cc
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: jellyfin
-  namespace: dmz
-spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`media.mysweetpea.duckdns.org`) || Host(`media.mysweetpea.cc`)
-      kind: Rule
-      services:
-        - name: jellyfin
-          port: 8096

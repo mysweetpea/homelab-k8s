@@ -101,7 +101,7 @@ extraObjects:
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds
             gitConfig:
-              writeBackTarget: helmvalues:apps/dmz/jellyfin/values.yaml
+              writeBackTarget: helmvalues:apps/private/jellyfin/values.yaml
           images:
             - alias: jellyfin
               imageName: jellyfin/jellyfin

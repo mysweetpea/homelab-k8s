@@ -467,7 +467,10 @@ spec:
       app: authentik-ldap-outpost
   ingress:
   - from:
-    - podSelector:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: private
+      podSelector:
         matchLabels:
           app.kubernetes.io/name: jellyfin
     ports:
@@ -482,14 +485,17 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-jellyfin-ldap-outpost-egress
-  namespace: dmz
+  namespace: private
 spec:
   podSelector:
     matchLabels:
       app.kubernetes.io/name: jellyfin
   egress:
   - to:
-    - podSelector:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dmz
+      podSelector:
         matchLabels:
           app: authentik-ldap-outpost
     ports:
@@ -522,14 +528,17 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-seerr-jellyfin-ingress
-  namespace: dmz
+  namespace: private
 spec:
   podSelector:
     matchLabels:
       app.kubernetes.io/name: jellyfin
   ingress:
   - from:
-    - podSelector:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dmz
+      podSelector:
         matchLabels:
           app.kubernetes.io/name: seerr
     ports:
