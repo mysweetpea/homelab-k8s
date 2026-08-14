@@ -24,6 +24,12 @@ extraArgs:
 # CRITICAL (Session 41, Aug 14 2026): each app needs BOTH
 #   - images[].manifestTargets.helm.tag = <values.yaml tag path>  (where to write)
 #   - writeBackConfig.gitConfig.writeBackTarget = helmvalues:<values.yaml path> (which file)
+# CRITICAL #2 (Session 43, Aug 14 2026): the CRD DEFAULTS writeBackConfig.method
+# to "argocd" (live-spec-only write-back) at BOTH levels. Per-app method
+# OVERRIDES the top-level spec.writeBackConfig.method in mergeWBCSettings →
+# WITHOUT an explicit per-app `method: git:secret:argocd/ssh-git-creds`, the
+# controller only updates the live spec and NEVER commits to git (the
+# "Committing N parameter update(s)" log followed by no commits in origin/main).
 # The earlier "proven" state had manifestTargets but NO writeBackTarget → the
 # controller wrote .argocd-source-*.yaml overrides, which ArgoCD IGNORES for
 # multi-source apps (sources[] + $values) → commits landed in git but no
@@ -48,6 +54,7 @@ extraObjects:
       applicationRefs:
         - namePattern: n8n
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/n8n/values.yaml
           images:
@@ -61,6 +68,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: immich
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/immich/values.yaml
           images:
@@ -74,6 +82,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: homepage
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/monitoring/homepage/values.yaml
           images:
@@ -87,6 +96,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: jellyfin
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/dmz/jellyfin/values.yaml
           images:
@@ -100,6 +110,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: authentik
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/dmz/authentik/values.yaml
           images:
@@ -113,6 +124,7 @@ extraObjects:
                   tag: authentik.image.tag
         - namePattern: nextcloud
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/nextcloud/values.yaml
           images:
@@ -126,6 +138,7 @@ extraObjects:
                   tag: image.tag
         - namePattern: vaultwarden
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/dmz/vaultwarden/values.yaml
           images:
@@ -139,6 +152,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: open-webui
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/open-webui/values.yaml
           images:
@@ -152,6 +166,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: cloudflared
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/dmz/cloudflared/values.yaml
           images:
@@ -165,6 +180,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: gotify
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/gotify/values.yaml
           images:
@@ -178,6 +194,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: seerr
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/dmz/seerr/values.yaml
           images:
@@ -191,6 +208,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: sonarr
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/sonarr/values.yaml
           images:
@@ -204,6 +222,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: radarr
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/radarr/values.yaml
           images:
@@ -217,6 +236,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: prowlarr
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/prowlarr/values.yaml
           images:
@@ -230,6 +250,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: qdrant
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/qdrant/values.yaml
           images:
@@ -243,6 +264,7 @@ extraObjects:
                   tag: image.tag
         - namePattern: flaresolverr
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/flaresolverr/values.yaml
           images:
@@ -256,6 +278,7 @@ extraObjects:
                   tag: controllers.main.containers.main.image.tag
         - namePattern: rustdesk
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/private/rustdesk/values.yaml
           images:
@@ -277,6 +300,7 @@ extraObjects:
                   tag: controllers.hbbr.containers.main.image.tag
         - namePattern: uptime-kuma
           writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
             gitConfig:
               writeBackTarget: helmvalues:apps/monitoring/uptime-kuma/values.yaml
           images:
