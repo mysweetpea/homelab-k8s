@@ -134,6 +134,15 @@ persistence:
     storageClass: longhorn
     globalMounts:
     - path: /root/.affine/config
+  config-json:
+    enabled: true
+    type: configMap
+    name: affine-config
+    advancedMounts:
+      main:
+        main:
+        - path: /root/.affine/config/config.json
+          subPath: config.json
   uploads:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
