@@ -6,6 +6,9 @@ controllers:
           repository: ghcr.io/hotio/sonarr
           tag: v4-4.0.0.748
     type: deployment
+    # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
+    nodeSelector:
+      kubernetes.io/hostname: k3s-worker-b
 persistence:
   config:
     existingClaim: sonarr-lh

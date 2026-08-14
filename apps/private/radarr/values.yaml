@@ -6,6 +6,9 @@ controllers:
           repository: ghcr.io/hotio/radarr
           tag: release-6.3.0.10514
     type: deployment
+    # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
+    nodeSelector:
+      kubernetes.io/hostname: k3s-worker-b
 persistence:
   config:
     existingClaim: radarr-lh
