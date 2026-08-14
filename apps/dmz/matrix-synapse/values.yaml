@@ -25,9 +25,8 @@ redis:
     # key `redis-password`.
     existingSecret: matrix-synapse-db
     existingSecretPasswordKey: redis-password
-# Pin to k3s-master to fix cross-node CNI issue with Traefik
-nodeSelector:
-  kubernetes.io/hostname: k3s-master
+# Pin to k3s-master to fix cross-node CNI issue with Traefik.
+# NOTE: chart renders nodeSelector from synapse.nodeSelector (top-level is ignored).
 # Signing key already generated (Secret matrix-synapse-signingkey, dmz).
 # Disable the one-shot job: it self-deletes (ttlSecondsAfterFinished: 0)
 # and ArgoCD tracks it as a regular resource → permanent OutOfSync +
@@ -70,6 +69,8 @@ extraSecrets:
     secret: "@@JWT_SECRET@@"
     algorithm: "RS256"
 synapse:
+  nodeSelector:
+    kubernetes.io/hostname: k3s-master
   extraEnv:
   - name: OIDC_CLIENT_ID
     valueFrom:
