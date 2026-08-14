@@ -1,5 +1,6 @@
 image:
-  tag: 34.0.2
+  tag: 34.0.3
+  repository: docker.io/nextcloud
 nextcloud:
   host: nextcloud.mysweetpea.duckdns.org
   username: admin
@@ -9,10 +10,10 @@ nextcloud:
     usernameKey: username
     passwordKey: password
   trustedDomains:
-    - nextcloud.mysweetpea.duckdns.org
-    - cloud.mysweetpea.cc
-    - 192.168.20.215
-    - nextcloud.private.svc.cluster.local
+  - nextcloud.mysweetpea.duckdns.org
+  - cloud.mysweetpea.cc
+  - 192.168.20.215
+  - nextcloud.private.svc.cluster.local
 persistence:
   enabled: true
   existingClaim: nextcloud-nextcloud-lh
@@ -21,7 +22,6 @@ postgresql:
 service:
   port: 8080
   type: ClusterIP
-
 externalDatabase:
   enabled: true
   type: postgresql
@@ -33,7 +33,6 @@ externalDatabase:
     secretName: nextcloud-db-creds
     usernameKey: username
     passwordKey: password
-
 mariadb:
   enabled: false
 livenessProbe:
