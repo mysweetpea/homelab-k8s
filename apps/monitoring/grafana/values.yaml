@@ -8,7 +8,7 @@ admin:
 
 grafana.ini:
   server:
-    root_url: http://192.168.20.231:3000
+    root_url: http://192.168.20.226:3000
     serve_from_sub_path: false
   auth:
     disable_login_form: false
@@ -49,5 +49,5 @@ resources:
 
 service:
   type: LoadBalancer
-  loadBalancerIP: 192.168.20.231
+  loadBalancerIP: 192.168.20.226
   port: 3000
