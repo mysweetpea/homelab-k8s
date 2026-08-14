@@ -5,7 +5,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/hotio/qbittorrent
-          tag: release-ff687b6
+          tag: release-4.6.5
         # WebUI credentials from sealed secret qbittorrent-webui
         # (sealed-secrets/private/qbittorrent-webui.yaml)
         envFrom:

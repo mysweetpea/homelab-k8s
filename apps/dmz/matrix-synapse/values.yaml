@@ -1,2 +1,91 @@
-# Additional Matrix Synapse configuration overrides
-# The main values are in application.yaml helm.values block
+# Matrix Synapse values (moved from application.yaml inline helm.values
+# to a values file so argocd-image-updater can write back image tags).
+serverName: mysweetpea.cc
+publicServerName: matrix.mysweetpea.cc
+wellknown:
+  enabled: true
+ingress:
+  enabled: false
+postgresql:
+  enabled: true
+  auth:
+    username: synapse
+    database: synapse
+    # Real password comes from the `matrix-synapse-db` Secret (dmz),
+    # key `password`. Placeholder only satisfies the chart's required gate.
+    password: "managed-by-secret"
+    existingSecret: matrix-synapse-db
+    secretKeys:
+      userPasswordKey: password
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    # Real password comes from the `matrix-synapse-db` Secret (dmz),
+    # key `redis-password`.
+    existingSecret: matrix-synapse-db
+    existingSecretPasswordKey: redis-password
+# Pin to k3s-master to fix cross-node CNI issue with Traefik
+nodeSelector:
+  kubernetes.io/hostname: k3s-master
+# Signing key already generated (Secret matrix-synapse-signingkey, dmz).
+# Disable the one-shot job: it self-deletes (ttlSecondsAfterFinished: 0)
+# and ArgoCD tracks it as a regular resource → permanent OutOfSync +
+# Progressing (root-homelab stuck since Aug 7 on this).
+signingkey:
+  job:
+    enabled: false
+  existingSecret: matrix-synapse-signingkey
+  existingSecretKey: signing.key
+extraConfig:
+  max_upload_size: 50M
+  public_baseurl: "https://matrix.mysweetpea.cc/"
+  # --- Disable password login ---
+  password_config:
+    enabled: false
+  # --- Disable registration ---
+  enable_registration: false
+# OIDC client id/secret + JWT secret are injected from the
+# `matrix-synapse-oidc` Secret (dmz) via env vars, then substituted
+# into the rendered config by extraCommands. NOTHING secret is in git.
+extraSecrets:
+  oidc_providers:
+    - idp_id: authentik
+      idp_name: authentik
+      discover: true
+      issuer: "https://auth.mysweetpea.cc/application/o/matrix-synapse/"
+      client_id: "@@OIDC_CLIENT_ID@@"
+      client_secret: "@@OIDC_CLIENT_SECRET@@"
+      scopes:
+        - "openid"
+        - "profile"
+        - "email"
+      user_mapping_provider:
+        config:
+          localpart_template: "{{ user.preferred_username }}"
+          display_name_template: "{{ user.preferred_username|capitalize }}"
+  # --- JWT config for backchannel logout ---
+  jwt_config:
+    enabled: true
+    secret: "@@JWT_SECRET@@"
+    algorithm: "RS256"
+synapse:
+  extraEnv:
+    - name: OIDC_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: matrix-synapse-oidc
+          key: oidc-client-id
+    - name: OIDC_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: matrix-synapse-oidc
+          key: oidc-client-secret
+    - name: JWT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: matrix-synapse-oidc
+          key: jwt-secret
+  extraCommands:
+    - |
+      sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" /synapse/config/conf.d/secrets.yaml

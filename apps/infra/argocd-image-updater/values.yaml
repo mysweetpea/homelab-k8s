@@ -346,6 +346,225 @@ extraObjects:
                 helm:
                   name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
+        - namePattern: affine
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/dmz/affine/values.yaml
+          images:
+            - alias: affine
+              imageName: ghcr.io/toeverything/affine
+              commonUpdateSettings:
+                updateStrategy: newest-build
+                allowTags: "regexp:^stable-[a-f0-9]+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+            - alias: affine-migrate
+              imageName: ghcr.io/toeverything/affine
+              commonUpdateSettings:
+                updateStrategy: newest-build
+                allowTags: "regexp:^stable-[a-f0-9]+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.initContainers.migrate.image.repository
+                  tag: controllers.main.initContainers.migrate.image.tag
+        - namePattern: bazarr
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/private/bazarr/values.yaml
+          images:
+            - alias: bazarr
+              imageName: ghcr.io/hotio/bazarr
+              commonUpdateSettings:
+                updateStrategy: newest-build
+                allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: qbittorrent
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/private/qbittorrent/values.yaml
+          images:
+            - alias: qbittorrent
+              imageName: ghcr.io/hotio/qbittorrent
+              commonUpdateSettings:
+                updateStrategy: newest-build
+                allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: element-web
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/dmz/element-web/values.yaml
+          images:
+            - alias: element-web
+              imageName: ghcr.io/element-hq/element-web
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: image.repository
+                  tag: image.tag
+        - namePattern: grafana
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/monitoring/grafana/values.yaml
+          images:
+            - alias: grafana
+              imageName: docker.io/grafana/grafana
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: image.repository
+                  tag: image.tag
+        - namePattern: koalasync
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/dmz/koalasync/values.yaml
+          images:
+            - alias: koalasync
+              imageName: ghcr.io/shik3i/koalasync
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: mcp-server
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/private/mcp-server/values.yaml
+          images:
+            - alias: mcp-server
+              imageName: ghcr.io/containers/kubernetes-mcp-server
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: netdata
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/monitoring/netdata/values.yaml
+          images:
+            - alias: netdata
+              imageName: netdata/netdata
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: image.repository
+                  tag: image.tag
+        - namePattern: nzbdav
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/private/nzbdav/values.yaml
+          images:
+            - alias: nzbdav
+              imageName: ghcr.io/nzbdav-dev/nzbdav
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: ollama
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/dmz/ollama/values.yaml
+          images:
+            - alias: ollama
+              imageName: ollama/ollama
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: openclaw
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/private/openclaw/values.yaml
+          images:
+            - alias: openclaw
+              imageName: ghcr.io/openclaw/openclaw
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^20\\d{2}\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: questarr
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/private/questarr/values.yaml
+          images:
+            - alias: questarr
+              imageName: ghcr.io/doezer/questarr
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: searxng
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/dmz/searxng/values.yaml
+          images:
+            - alias: searxng
+              imageName: searxng/searxng
+              commonUpdateSettings:
+                updateStrategy: newest-build
+                allowTags: "regexp:^20\\d{2}\\.\\d+\\.\\d+.*$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
+        - namePattern: matrix-synapse
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/dmz/matrix-synapse/values.yaml
+          images:
+            - alias: matrix-synapse
+              imageName: ghcr.io/element-hq/synapse
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: image.repository
+                  tag: image.tag
 resources:
   limits:
     cpu: 500m

@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/nzbdav-dev/nzbdav
-          tag: 0.x
+          tag: 0.6.4
         ports:
           - name: http
             containerPort: 8080
