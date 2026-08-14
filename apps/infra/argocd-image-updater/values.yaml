@@ -331,6 +331,21 @@ extraObjects:
                 helm:
                   name: image.repository
                   tag: image.tag
+        - namePattern: aiostreams
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/private/aiostreams/values.yaml
+          images:
+            - alias: aiostreams
+              imageName: ghcr.io/viren070/aiostreams
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
 resources:
   limits:
     cpu: 500m

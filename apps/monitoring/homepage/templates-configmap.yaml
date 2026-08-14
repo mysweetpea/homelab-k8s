@@ -540,7 +540,7 @@ data:
               password: ${QBITTORRENT_PASS}
         - FlareSolverr:
             id: flaresolverr
-            href: http://flaresolverr.private.svc.cluster.local:8191
+            href: http://192.168.20.214:8191
             description: Cloudflare Bypass
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
         - Questarr:
@@ -550,7 +550,7 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
         - NzbDAV:
             id: nzbdav
-            href: http://nzbdav.private.svc.cluster.local:8080
+            href: http://192.168.20.212:8080
             description: Usenet Stream
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
     - Private:
@@ -651,12 +651,12 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
         - Ollama:
             id: ollama
-            href: http://ollama.dmz.svc.cluster.local:11434
+            href: http://192.168.20.228:11434
             description: LLM Inference
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/ollama.svg
             widget:
               type: customapi
-              url: http://ollama.dmz.svc.cluster.local:11434/api/tags
+              url: http://192.168.20.228:11434/api/tags
               method: GET
               mappings:
                 - field: models
@@ -664,7 +664,7 @@ data:
                   format: number
         - SearXNG:
             id: searxng
-            href: http://searxng.dmz.svc.cluster.local:8080
+            href: http://192.168.20.230:8080
             description: Private Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
         - PostgreSQL:
