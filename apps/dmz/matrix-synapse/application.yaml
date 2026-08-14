@@ -42,6 +42,15 @@ spec:
           # Pin to k3s-master to fix cross-node CNI issue with Traefik
           nodeSelector:
             kubernetes.io/hostname: k3s-master
+          # Signing key already generated (Secret matrix-synapse-signingkey, dmz).
+          # Disable the one-shot job: it self-deletes (ttlSecondsAfterFinished: 0)
+          # and ArgoCD tracks it as a regular resource → permanent OutOfSync +
+          # Progressing (root-homelab stuck since Aug 7 on this).
+          signingkey:
+            job:
+              enabled: false
+            existingSecret: matrix-synapse-signingkey
+            existingSecretKey: signing.key
           extraConfig:
             max_upload_size: 50M
             public_baseurl: "https://matrix.mysweetpea.cc/"
