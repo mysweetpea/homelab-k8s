@@ -14,7 +14,7 @@ persistence:
     type: persistentVolumeClaim
     existingClaim: media-storage-lh
     globalMounts:
-      - path: /data
+    - path: /data
 service:
   main:
     controller: main
