@@ -6,6 +6,7 @@ volume:
   existingClaim: uptime-kuma-pvc
 image:
   tag: "2.5.0"
+  name: louislam/uptime-kuma
 service:
   type: ClusterIP
   port: 3001
