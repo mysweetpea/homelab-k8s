@@ -12,7 +12,7 @@ persistence:
   config:
     existingClaim: jellyfin-config-lh
   media:
-    existingClaim: jellyfin-media-lh
+    existingClaim: media-storage-lh
 service:
   main:
     controller: main

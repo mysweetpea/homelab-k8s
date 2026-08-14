@@ -21,6 +21,12 @@ persistence:
     storageClass: longhorn
     globalMounts:
       - path: /config
+  media:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: media-storage-lh
+    globalMounts:
+      - path: /data
 service:
   main:
     controller: main

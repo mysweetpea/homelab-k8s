@@ -9,6 +9,12 @@ controllers:
 persistence:
   config:
     existingClaim: sonarr-lh
+  media:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: media-storage-lh
+    globalMounts:
+      - path: /data
 service:
   main:
     controller: main
