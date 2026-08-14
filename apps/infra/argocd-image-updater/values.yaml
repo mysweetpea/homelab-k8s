@@ -226,8 +226,8 @@ extraObjects:
             - alias: sonarr
               imageName: ghcr.io/hotio/sonarr
               commonUpdateSettings:
-                updateStrategy: semver
-                allowTags: "regexp:^v\\d+.*$"
+                updateStrategy: newest-build
+                allowTags: "regexp:^v4-\\d+\\.\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
                   name: controllers.main.containers.main.image.repository
@@ -241,8 +241,8 @@ extraObjects:
             - alias: radarr
               imageName: ghcr.io/hotio/radarr
               commonUpdateSettings:
-                updateStrategy: semver
-                allowTags: "regexp:^release-\\d+.*$"
+                updateStrategy: newest-build
+                allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
                   name: controllers.main.containers.main.image.repository
@@ -256,8 +256,8 @@ extraObjects:
             - alias: prowlarr
               imageName: ghcr.io/hotio/prowlarr
               commonUpdateSettings:
-                updateStrategy: semver
-                allowTags: "regexp:^release-\\d+.*$"
+                updateStrategy: newest-build
+                allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
                   name: controllers.main.containers.main.image.repository
@@ -301,8 +301,8 @@ extraObjects:
             - alias: rustdesk-hbbs
               imageName: rustdesk/rustdesk-server
               commonUpdateSettings:
-                updateStrategy: latest
-                allowTags: "regexp:^1\\.\\d+\\.\\d+"
+                updateStrategy: newest-build
+                allowTags: "regexp:^1\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
                   name: controllers.hbbs.containers.main.image.repository
@@ -310,8 +310,8 @@ extraObjects:
             - alias: rustdesk-hbbr
               imageName: rustdesk/rustdesk-server
               commonUpdateSettings:
-                updateStrategy: latest
-                allowTags: "regexp:^1\\.\\d+\\.\\d+"
+                updateStrategy: newest-build
+                allowTags: "regexp:^1\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
                   name: controllers.hbbr.containers.main.image.repository
