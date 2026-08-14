@@ -1677,6 +1677,7 @@ entries:
     logout_uri: ''
     name: Provider for vaultwarden
     property_mappings:
+    - 48532f9e-e0fb-47e8-8af1-39de46e39f00
     - 53b93219-a977-47bf-ac91-d7b6f239b245
     - 8842b9fd-3ac7-441c-a33e-97875503a786
     - 209a02b2-4fcd-4ee6-b706-fda7936d3c05
