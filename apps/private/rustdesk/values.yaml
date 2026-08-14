@@ -5,24 +5,24 @@ controllers:
       main:
         image:
           repository: rustdesk/rustdesk-server
-          tag: "latest"
+          tag: "1.1.16-amd64"
           pullPolicy: IfNotPresent
+          name: rustdesk/rustdesk-server
         command:
         - hbbs
         - -r
         - 192.168.20.216:21117
-
   hbbr:
     type: deployment
     containers:
       main:
         image:
           repository: rustdesk/rustdesk-server
-          tag: "latest"
+          tag: "1.1.16-amd64"
           pullPolicy: IfNotPresent
+          name: rustdesk/rustdesk-server
         command:
         - hbbr
-
 service:
   hbbs:
     controller: hbbs
@@ -46,7 +46,6 @@ service:
       websocket:
         port: 21118
         targetPort: 21118
-
   hbbr:
     controller: hbbr
     type: LoadBalancer
@@ -60,7 +59,6 @@ service:
       websocket:
         port: 21119
         targetPort: 21119
-
 persistence:
   data:
     type: persistentVolumeClaim
