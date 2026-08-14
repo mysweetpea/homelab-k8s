@@ -1652,6 +1652,22 @@ entries:
   permissions: []
   state: present
 - attrs:
+    description: OpenID email claim with email_verified=True (homelab SSO-only,
+      all users are verified)
+    expression: |-
+      return {
+          "email": request.user.email,
+          "email_verified": True
+      }
+    name: MySweetPea OpenID email verified
+    scope_name: email
+  conditions: []
+  identifiers:
+    pk: b0029fa5-76aa-427c-86dc-01c9693ac85b
+  model: authentik_providers_oauth2.scopemapping
+  permissions: []
+  state: present
+- attrs:
     access_code_validity: minutes=5
     access_token_validity: minutes=5
     authentication_flow: null
@@ -1678,7 +1694,7 @@ entries:
     name: Provider for vaultwarden
     property_mappings:
     - 48532f9e-e0fb-47e8-8af1-39de46e39f00
-    - 53b93219-a977-47bf-ac91-d7b6f239b245
+    - b0029fa5-76aa-427c-86dc-01c9693ac85b
     - 8842b9fd-3ac7-441c-a33e-97875503a786
     - 209a02b2-4fcd-4ee6-b706-fda7936d3c05
     redirect_uris:
