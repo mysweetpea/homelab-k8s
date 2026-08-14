@@ -15,14 +15,84 @@ config:
 extraArgs:
   - --registries-conf-path
   - /app/config/registries.conf
-# NOTE: No ImageUpdater CR here. The CR wrote .argocd-source-<app>.yaml
-# override files, which ArgoCD IGNORES for multi-source apps (sources[] +
-# $values ref) — commits landed in git but nothing ever applied, and the
-# controller re-committed every 2 min forever.
-# Annotation mode (per-app: write-back-method: git + write-back-target:
-# helmvalues) writes the tag DIRECTLY into apps/*/values.yaml, which the
-# $values ref picks up → ArgoCD syncs → rollout happens. All 29 apps already
-# carry those annotations.
+# ImageUpdater CR — v1.x controller is CR-driven. useAnnotations: true makes
+# it read each app's existing per-app annotations (image-list, update-strategy,
+# allow-tags, write-back-method: git, write-back-target: helmvalues), so tag
+# updates are committed DIRECTLY into apps/*/values.yaml — which the $values
+# ref picks up. (The old CR with manifestTargets wrote .argocd-source-*.yaml
+# overrides that ArgoCD ignores for multi-source apps → infinite re-commit loop.)
+extraObjects:
+  - |
+    apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+    kind: ImageUpdater
+    metadata:
+      name: homelab-image-updater
+      namespace: argocd
+    spec:
+      writeBackConfig:
+        method: git:secret:argocd/argocd-image-updater-git-ssh
+        gitConfig:
+          repository: git@github.com:mysweetpea/homelab-k8s.git
+          branch: main
+      applicationRefs:
+        - namePattern: affine
+          useAnnotations: true
+        - namePattern: aiostreams
+          useAnnotations: true
+        - namePattern: authentik
+          useAnnotations: true
+        - namePattern: bazarr
+          useAnnotations: true
+        - namePattern: cloudflared
+          useAnnotations: true
+        - namePattern: element-web
+          useAnnotations: true
+        - namePattern: flaresolverr
+          useAnnotations: true
+        - namePattern: gotify
+          useAnnotations: true
+        - namePattern: homepage
+          useAnnotations: true
+        - namePattern: jellyfin
+          useAnnotations: true
+        - namePattern: koalasync
+          useAnnotations: true
+        - namePattern: mcp-server
+          useAnnotations: true
+        - namePattern: n8n
+          useAnnotations: true
+        - namePattern: nextcloud
+          useAnnotations: true
+        - namePattern: nzbdav
+          useAnnotations: true
+        - namePattern: ollama
+          useAnnotations: true
+        - namePattern: open-webui
+          useAnnotations: true
+        - namePattern: postgresql
+          useAnnotations: true
+        - namePattern: prowlarr
+          useAnnotations: true
+        - namePattern: qbittorrent
+          useAnnotations: true
+        - namePattern: qdrant
+          useAnnotations: true
+        - namePattern: questarr
+          useAnnotations: true
+        - namePattern: radarr
+          useAnnotations: true
+        - namePattern: rustdesk
+          useAnnotations: true
+        - namePattern: searxng
+          useAnnotations: true
+        - namePattern: seerr
+          useAnnotations: true
+        - namePattern: sonarr
+          useAnnotations: true
+        - namePattern: uptime-kuma
+          useAnnotations: true
+        - namePattern: vaultwarden
+          useAnnotations: true
 resources:
   limits:
     cpu: 500m
