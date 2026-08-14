@@ -12,6 +12,11 @@ config:
       prefix: ghcr.io
       api_url: https://ghcr.io
       credentials: pullsecret:argocd/ghcr-credentials
+  sshConfig:
+    config: |
+      Host github.com
+        IdentityFile /app/ssh-keys/id_rsa
+        UserKnownHostsFile /app/config/ssh/ssh_known_hosts
 extraArgs:
   - --registries-conf-path
   - /app/config/registries.conf
