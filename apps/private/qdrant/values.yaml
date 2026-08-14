@@ -1,2 +1,5 @@
 persistence:
   existingClaim: qdrant-storage-qdrant-0
+image:
+  tag: v1.19.0
+  name: docker.io/qdrant/qdrant
