@@ -1,4 +1,3 @@
----
 controllers:
   main:
     initContainers:
@@ -8,42 +7,42 @@ controllers:
           tag: latest
           pullPolicy: IfNotPresent
         command:
-          - sh
-          - -c
-          - |
-            cp /templates/* /app/config/
-            for f in /app/config/*.yaml; do
-              sed -i \
-                -e "s|\${JELLYFIN_API_KEY}|${JELLYFIN_API_KEY}|g" \
-                -e "s|\${SEERR_API_KEY}|${SEERR_API_KEY}|g" \
-                -e "s|\${RADARR_API_KEY}|${RADARR_API_KEY}|g" \
-                -e "s|\${SONARR_API_KEY}|${SONARR_API_KEY}|g" \
-                -e "s|\${BAZARR_API_KEY}|${BAZARR_API_KEY}|g" \
-                -e "s|\${PROWLARR_API_KEY}|${PROWLARR_API_KEY}|g" \
-                -e "s|\${QBITTORRENT_USER}|${QBITTORRENT_USER}|g" \
-                -e "s|\${QBITTORRENT_PASS}|${QBITTORRENT_PASS}|g" \
-                -e "s|\${NEXTCLOUD_ADMIN_PASS}|${NEXTCLOUD_ADMIN_PASS}|g" \
-                -e "s|\${IMMICH_API_KEY}|${IMMICH_API_KEY}|g" \
-                -e "s|\${N8N_API_KEY}|${N8N_API_KEY}|g" \
-                -e "s|\${GOTIFY_APP_TOKEN}|${GOTIFY_APP_TOKEN}|g" \
-                -e "s|\${AUTHENTIK_API_TOKEN}|${AUTHENTIK_API_TOKEN}|g" \
-                -e "s|\${ARGOCD_API_TOKEN}|${ARGOCD_API_TOKEN}|g" \
-                -e "s|\${UPTIME_KUMA_SLUG}|${UPTIME_KUMA_SLUG}|g" \
-                "$f"
-            done
+        - sh
+        - -c
+        - |
+          cp /templates/* /app/config/
+          for f in /app/config/*.yaml; do
+            sed -i \
+              -e "s|\${JELLYFIN_API_KEY}|${JELLYFIN_API_KEY}|g" \
+              -e "s|\${SEERR_API_KEY}|${SEERR_API_KEY}|g" \
+              -e "s|\${RADARR_API_KEY}|${RADARR_API_KEY}|g" \
+              -e "s|\${SONARR_API_KEY}|${SONARR_API_KEY}|g" \
+              -e "s|\${BAZARR_API_KEY}|${BAZARR_API_KEY}|g" \
+              -e "s|\${PROWLARR_API_KEY}|${PROWLARR_API_KEY}|g" \
+              -e "s|\${QBITTORRENT_USER}|${QBITTORRENT_USER}|g" \
+              -e "s|\${QBITTORRENT_PASS}|${QBITTORRENT_PASS}|g" \
+              -e "s|\${NEXTCLOUD_ADMIN_PASS}|${NEXTCLOUD_ADMIN_PASS}|g" \
+              -e "s|\${IMMICH_API_KEY}|${IMMICH_API_KEY}|g" \
+              -e "s|\${N8N_API_KEY}|${N8N_API_KEY}|g" \
+              -e "s|\${GOTIFY_APP_TOKEN}|${GOTIFY_APP_TOKEN}|g" \
+              -e "s|\${AUTHENTIK_API_TOKEN}|${AUTHENTIK_API_TOKEN}|g" \
+              -e "s|\${ARGOCD_API_TOKEN}|${ARGOCD_API_TOKEN}|g" \
+              -e "s|\${UPTIME_KUMA_SLUG}|${UPTIME_KUMA_SLUG}|g" \
+              "$f"
+          done
         envFrom:
-          - secretRef:
-              name: homepage-secrets
+        - secretRef:
+            name: homepage-secrets
     containers:
       main:
         env:
           HOMEPAGE_ALLOWED_HOSTS: "192.168.20.211:3000,homepage.mysweetpea.cc"
         envFrom:
-          - secretRef:
-              name: homepage-secrets
+        - secretRef:
+            name: homepage-secrets
         image:
           repository: ghcr.io/gethomepage/homepage
-          tag: v1.13.2
+          tag: v2.0.0
     type: deployment
 persistence:
   templates:
@@ -51,12 +50,12 @@ persistence:
     type: configMap
     name: homepage-templates
     globalMounts:
-      - path: /templates
+    - path: /templates
   config:
     enabled: true
     type: emptyDir
     globalMounts:
-      - path: /app/config
+    - path: /app/config
   logo:
     enabled: true
     type: configMap
@@ -64,13 +63,13 @@ persistence:
     advancedMounts:
       main:
         main:
-          - path: /app/public/logo.svg
-            subPath: logo.svg
+        - path: /app/public/logo.svg
+          subPath: logo.svg
   logs:
     enabled: true
     type: emptyDir
     globalMounts:
-      - path: /app/config/logs
+    - path: /app/config/logs
 service:
   main:
     controller: main
