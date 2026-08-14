@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: gotify/server
-          tag: "3.0.0"
+          tag: "2.6.1"
           pullPolicy: IfNotPresent
         env:
           GOTIFY_SERVER_PORT: "80"
