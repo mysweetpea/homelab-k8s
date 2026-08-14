@@ -15,12 +15,12 @@ config:
 extraArgs:
   - --registries-conf-path
   - /app/config/registries.conf
-# ImageUpdater CR — v1.x controller is CR-driven. useAnnotations: true makes
-# it read each app's existing per-app annotations (image-list, update-strategy,
-# allow-tags, write-back-method: git, write-back-target: helmvalues), so tag
-# updates are committed DIRECTLY into apps/*/values.yaml — which the $values
-# ref picks up. (The old CR with manifestTargets wrote .argocd-source-*.yaml
-# overrides that ArgoCD ignores for multi-source apps → infinite re-commit loop.)
+# ImageUpdater CR — v1.x controller is CR-driven. useAnnotations: true reads
+# each app's per-app annotations (image-list, update-strategy, allow-tags).
+# Per-app writeBackConfig.writeBackTarget = helmvalues:<values.yaml path> makes
+# tag updates commit DIRECTLY into the app's values.yaml (which the $values ref
+# picks up → ArgoCD syncs → rollout). Replaces the broken setup that wrote
+# .argocd-source-*.yaml overrides (ignored for multi-source apps).
 extraObjects:
   - |
     apiVersion: argocd-image-updater.argoproj.io/v1alpha1
@@ -29,70 +29,239 @@ extraObjects:
       name: homelab-image-updater
       namespace: argocd
     spec:
-      writeBackConfig:
-        method: git:secret:argocd/argocd-image-updater-git-ssh
-        gitConfig:
-          repository: git@github.com:mysweetpea/homelab-k8s.git
-          branch: main
       applicationRefs:
-        - namePattern: affine
-          useAnnotations: true
-        - namePattern: aiostreams
-          useAnnotations: true
-        - namePattern: authentik
-          useAnnotations: true
-        - namePattern: bazarr
-          useAnnotations: true
-        - namePattern: cloudflared
-          useAnnotations: true
-        - namePattern: element-web
-          useAnnotations: true
-        - namePattern: flaresolverr
-          useAnnotations: true
-        - namePattern: gotify
-          useAnnotations: true
-        - namePattern: homepage
-          useAnnotations: true
-        - namePattern: jellyfin
-          useAnnotations: true
-        - namePattern: koalasync
-          useAnnotations: true
-        - namePattern: mcp-server
-          useAnnotations: true
-        - namePattern: n8n
-          useAnnotations: true
-        - namePattern: nextcloud
-          useAnnotations: true
-        - namePattern: nzbdav
-          useAnnotations: true
-        - namePattern: ollama
-          useAnnotations: true
-        - namePattern: open-webui
-          useAnnotations: true
-        - namePattern: postgresql
-          useAnnotations: true
-        - namePattern: prowlarr
-          useAnnotations: true
-        - namePattern: qbittorrent
-          useAnnotations: true
-        - namePattern: qdrant
-          useAnnotations: true
-        - namePattern: questarr
-          useAnnotations: true
-        - namePattern: radarr
-          useAnnotations: true
-        - namePattern: rustdesk
-          useAnnotations: true
-        - namePattern: searxng
-          useAnnotations: true
-        - namePattern: seerr
-          useAnnotations: true
-        - namePattern: sonarr
-          useAnnotations: true
-        - namePattern: uptime-kuma
-          useAnnotations: true
-        - namePattern: vaultwarden
-          useAnnotations: true
+      - namePattern: affine
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/affine/values.yaml
+      - namePattern: aiostreams
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/aiostreams/values.yaml
+      - namePattern: authentik
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/authentik/values.yaml
+      - namePattern: bazarr
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/bazarr/values.yaml
+      - namePattern: cloudflared
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/cloudflared/values.yaml
+      - namePattern: element-web
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/element-web/values.yaml
+      - namePattern: flaresolverr
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/flaresolverr/values.yaml
+      - namePattern: gotify
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/gotify/values.yaml
+      - namePattern: homepage
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/monitoring/homepage/values.yaml
+      - namePattern: jellyfin
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/jellyfin/values.yaml
+      - namePattern: koalasync
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/koalasync/values.yaml
+      - namePattern: mcp-server
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/mcp-server/values.yaml
+      - namePattern: n8n
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/n8n/values.yaml
+      - namePattern: nextcloud
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/nextcloud/values.yaml
+      - namePattern: nzbdav
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/nzbdav/values.yaml
+      - namePattern: ollama
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/ollama/values.yaml
+      - namePattern: open-webui
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/open-webui/values.yaml
+      - namePattern: postgresql
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/postgresql/values.yaml
+      - namePattern: prowlarr
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/prowlarr/values.yaml
+      - namePattern: qbittorrent
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/qbittorrent/values.yaml
+      - namePattern: qdrant
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/qdrant/values.yaml
+      - namePattern: questarr
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/questarr/values.yaml
+      - namePattern: radarr
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/radarr/values.yaml
+      - namePattern: rustdesk
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/rustdesk/values.yaml
+      - namePattern: searxng
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/searxng/values.yaml
+      - namePattern: seerr
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/seerr/values.yaml
+      - namePattern: sonarr
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/private/sonarr/values.yaml
+      - namePattern: uptime-kuma
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/monitoring/uptime-kuma/values.yaml
+      - namePattern: vaultwarden
+        useAnnotations: true
+        writeBackConfig:
+          method: git:secret:argocd/argocd-image-updater-git-ssh
+          gitConfig:
+            repository: git@github.com:mysweetpea/homelab-k8s.git
+            branch: main
+            writeBackTarget: helmvalues:apps/dmz/vaultwarden/values.yaml
 resources:
   limits:
     cpu: 500m
