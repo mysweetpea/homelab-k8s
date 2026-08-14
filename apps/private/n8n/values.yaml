@@ -20,7 +20,6 @@ controllers:
         image:
           repository: n8nio/n8n
           tag: "2.35.3"
-          name: n8nio/n8n
     type: deployment
 persistence:
   data:

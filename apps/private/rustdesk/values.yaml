@@ -7,7 +7,6 @@ controllers:
           repository: rustdesk/rustdesk-server
           tag: "1.1.16-amd64"
           pullPolicy: IfNotPresent
-          name: rustdesk/rustdesk-server
         command:
         - hbbs
         - -r
@@ -20,7 +19,6 @@ controllers:
           repository: rustdesk/rustdesk-server
           tag: "1.1.16-amd64"
           pullPolicy: IfNotPresent
-          name: rustdesk/rustdesk-server
         command:
         - hbbr
 service:

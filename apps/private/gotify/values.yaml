@@ -6,7 +6,6 @@ controllers:
           repository: gotify/server
           tag: "3.0.0"
           pullPolicy: IfNotPresent
-          name: gotify/server
         env:
           GOTIFY_SERVER_PORT: "80"
           GOTIFY_DEFAULTUSER_NAME: "admin"

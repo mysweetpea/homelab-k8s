@@ -5,7 +5,6 @@ controllers:
         image:
           repository: ghcr.io/hotio/sonarr
           tag: v4
-          name: ghcr.io/hotio/sonarr
     type: deployment
 persistence:
   config:

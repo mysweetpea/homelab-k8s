@@ -65,7 +65,7 @@ extraObjects:
                 allowTags: "regexp:^2\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: immich
           writeBackConfig:
@@ -80,7 +80,7 @@ extraObjects:
                 allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: homepage
           writeBackConfig:
@@ -95,7 +95,7 @@ extraObjects:
                 allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: jellyfin
           writeBackConfig:
@@ -110,7 +110,7 @@ extraObjects:
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: authentik
           writeBackConfig:
@@ -125,7 +125,7 @@ extraObjects:
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: authentik.image.name
+                  name: authentik.image.repository
                   tag: authentik.image.tag
         - namePattern: nextcloud
           writeBackConfig:
@@ -140,7 +140,7 @@ extraObjects:
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: image.name
+                  name: image.repository
                   tag: image.tag
         - namePattern: vaultwarden
           writeBackConfig:
@@ -155,7 +155,7 @@ extraObjects:
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: open-webui
           writeBackConfig:
@@ -170,7 +170,7 @@ extraObjects:
                 allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: cloudflared
           writeBackConfig:
@@ -185,7 +185,7 @@ extraObjects:
                 allowTags: "regexp:^\\d{4}\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: gotify
           writeBackConfig:
@@ -200,7 +200,7 @@ extraObjects:
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: seerr
           writeBackConfig:
@@ -215,7 +215,7 @@ extraObjects:
                 allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: sonarr
           writeBackConfig:
@@ -230,7 +230,7 @@ extraObjects:
                 allowTags: "regexp:^v\\d+.*$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: radarr
           writeBackConfig:
@@ -245,7 +245,7 @@ extraObjects:
                 allowTags: "regexp:^release-\\d+.*$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: prowlarr
           writeBackConfig:
@@ -260,7 +260,7 @@ extraObjects:
                 allowTags: "regexp:^release-\\d+.*$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: qdrant
           writeBackConfig:
@@ -275,7 +275,7 @@ extraObjects:
                 allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: image.name
+                  name: image.repository
                   tag: image.tag
         - namePattern: flaresolverr
           writeBackConfig:
@@ -290,7 +290,7 @@ extraObjects:
                 allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.name
+                  name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
         - namePattern: rustdesk
           writeBackConfig:
@@ -305,7 +305,7 @@ extraObjects:
                 allowTags: "regexp:^1\\.\\d+\\.\\d+"
               manifestTargets:
                 helm:
-                  name: controllers.hbbs.containers.main.image.name
+                  name: controllers.hbbs.containers.main.image.repository
                   tag: controllers.hbbs.containers.main.image.tag
             - alias: rustdesk-hbbr
               imageName: rustdesk/rustdesk-server
@@ -314,7 +314,7 @@ extraObjects:
                 allowTags: "regexp:^1\\.\\d+\\.\\d+"
               manifestTargets:
                 helm:
-                  name: controllers.hbbr.containers.main.image.name
+                  name: controllers.hbbr.containers.main.image.repository
                   tag: controllers.hbbr.containers.main.image.tag
         - namePattern: uptime-kuma
           writeBackConfig:
@@ -329,7 +329,7 @@ extraObjects:
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: image.name
+                  name: image.repository
                   tag: image.tag
 resources:
   limits:

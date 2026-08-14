@@ -20,7 +20,6 @@ controllers:
           repository: cloudflare/cloudflared
           tag: "2026.8.2"
           pullPolicy: IfNotPresent
-          name: cloudflare/cloudflared
         args:
         - tunnel
         - --no-autoupdate
