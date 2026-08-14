@@ -1,0 +1,21 @@
+# Longhorn daily snapshot RecurringJob — applied manually (Longhorn is not
+# ArgoCD-managed; apply with: kubectl apply -f this file)
+# Snapshots all volumes in the "default" group at 03:00, retain 5.
+# NOTE: Longhorn v1.11 volumes have NO recurringJobSelector field — the job's
+# `groups: [default]` matches volumes via the volume's group label
+# (volume.spec.recurringJobSelector was removed; group matching is automatic).
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: daily-snapshot
+  namespace: longhorn-system
+spec:
+  cron: "0 3 * * *"
+  task: snapshot
+  groups:
+    - default
+  retain: 5
+  concurrency: 2
+  labels:
+    app: mysweetpea
+    type: snapshot
