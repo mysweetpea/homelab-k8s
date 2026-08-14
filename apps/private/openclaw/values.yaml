@@ -5,14 +5,13 @@ controllers:
         command:
         - sh
         - -c
-        - mkdir -p /data/.openclaw && cp /config/openclaw.json /data/.openclaw/openclaw.json
-          && export HOME=/data && exec node dist/index.js gateway --allow-unconfigured --bind lan --port 8080
+        - mkdir -p /data/.openclaw && cp /config/openclaw.json /data/.openclaw/openclaw.json && export HOME=/data && exec node dist/index.js gateway --allow-unconfigured --bind lan --port 8080
         env:
           OPENCLAW_GATEWAY_MODE:
             value: local
         image:
           repository: ghcr.io/openclaw/openclaw
-          tag: "2026.6.8"
+          tag: "2026.7.1"
         envFrom:
         - secretRef:
             name: openclaw-secrets
