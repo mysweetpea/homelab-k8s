@@ -1,0 +1,19 @@
+# Traefik Dashboard IngressRoute (k3s-managed Traefik)
+# Manual apply (no ArgoCD app for kube-system):
+#   kubectl apply -f apps/infra/traefik-dashboard.yaml
+# Exposes the Traefik API + dashboard on the :8080 entrypoint (192.168.20.210:8080).
+# Required by the homepage traefik widget (it queries /api/http/routers).
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-dashboard
+  namespace: kube-system
+spec:
+  entryPoints:
+    - traefik
+  routes:
+    - match: PathPrefix(`/api`) || PathPrefix(`/dashboard`)
+      kind: Rule
+      services:
+        - name: api@internal
+          kind: TraefikService
