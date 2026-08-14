@@ -6,7 +6,7 @@ controllers:
         - sh
         - -c
         - mkdir -p /data/.openclaw && cp /config/openclaw.json /data/.openclaw/openclaw.json
-          && export HOME=/data && exec node dist/index.js gateway --allow-unconfigured
+          && export HOME=/data && exec node dist/index.js gateway --allow-unconfigured --bind lan --port 8080
         env:
           OPENCLAW_GATEWAY_MODE:
             value: local
