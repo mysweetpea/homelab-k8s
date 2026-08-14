@@ -4,8 +4,9 @@ controllers:
       main:
         image:
           repository: gotify/server
-          tag: "2.6.1"
+          tag: "3.0.0"
           pullPolicy: IfNotPresent
+          name: gotify/server
         env:
           GOTIFY_SERVER_PORT: "80"
           GOTIFY_DEFAULTUSER_NAME: "admin"
@@ -26,7 +27,6 @@ controllers:
                 path: /health
                 port: 80
               initialDelaySeconds: 10
-
 service:
   main:
     controller: main
@@ -34,7 +34,6 @@ service:
     ports:
       http:
         port: 80
-
 persistence:
   data:
     type: persistentVolumeClaim
