@@ -17,6 +17,8 @@ persistence:
     existingClaim: jellyfin-config-lh
   media:
     existingClaim: media-storage-lh
+    globalMounts:
+      - path: /data
 service:
   main:
     controller: main
