@@ -10,3 +10,6 @@ config:
     "UIFeature.registration": false
   embedded_pages:
     login_for_welcome: true
+image:
+  tag: v1.12.25
+  repository: ghcr.io/element-hq/element-web
