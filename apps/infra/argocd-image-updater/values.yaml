@@ -422,7 +422,7 @@ extraObjects:
               writeBackTarget: helmvalues:apps/monitoring/grafana/values.yaml
           images:
             - alias: grafana
-              imageName: docker.io/grafana/grafana
+              imageName: grafana/grafana
               commonUpdateSettings:
                 updateStrategy: semver
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
