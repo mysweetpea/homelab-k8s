@@ -1,16 +1,15 @@
----
 controllers:
   main:
     containers:
       main:
         image:
           repository: ghcr.io/hotio/qbittorrent
-          tag: release-4.6.5
+          tag: release-5.2.3
         # WebUI credentials from sealed secret qbittorrent-webui
         # (sealed-secrets/private/qbittorrent-webui.yaml)
         envFrom:
-          - secretRef:
-              name: qbittorrent-webui
+        - secretRef:
+            name: qbittorrent-webui
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
@@ -24,13 +23,13 @@ persistence:
     size: 5Gi
     storageClass: longhorn
     globalMounts:
-      - path: /config
+    - path: /config
   media:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: media-storage-lh
     globalMounts:
-      - path: /data
+    - path: /data
 service:
   main:
     controller: main
@@ -41,4 +40,3 @@ service:
     ports:
       http:
         port: 8080
-
