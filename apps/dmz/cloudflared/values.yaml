@@ -18,8 +18,9 @@ controllers:
       main:
         image:
           repository: cloudflare/cloudflared
-          tag: "2026.8.1"
+          tag: "2026.8.2"
           pullPolicy: IfNotPresent
+          name: cloudflare/cloudflared
         args:
         - tunnel
         - --no-autoupdate
@@ -57,12 +58,10 @@ controllers:
             - ALL
           runAsNonRoot: true
           runAsUser: 65532
-
 podDisruptionBudget:
   main:
     enabled: true
     minAvailable: 1
-
 service:
   main:
     controller: main
