@@ -134,7 +134,7 @@ extraObjects:
               writeBackTarget: helmvalues:apps/private/nextcloud/values.yaml
           images:
             - alias: nextcloud
-              imageName: nextcloud/nextcloud
+              imageName: library/nextcloud
               commonUpdateSettings:
                 updateStrategy: semver
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
