@@ -5,7 +5,7 @@ controllers:
       main:
         image:
           repository: rustdesk/rustdesk-server
-          tag: "1.1.16-amd64"
+          tag: "1.1.16"
           pullPolicy: IfNotPresent
         command:
         - hbbs
@@ -17,7 +17,7 @@ controllers:
       main:
         image:
           repository: rustdesk/rustdesk-server
-          tag: "1.1.16-amd64"
+          tag: "1.1.16"
           pullPolicy: IfNotPresent
         command:
         - hbbr
