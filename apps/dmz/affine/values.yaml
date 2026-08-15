@@ -111,7 +111,7 @@ controllers:
         - name: NODE_TLS_REJECT_UNAUTHORIZED
           value: "0"
         - name: NODE_OPTIONS
-          value: "--dns-result-order=ipv4first"
+          value: "--dns-result-order=ipv4first --require /root/.affine/config/affine-ua-patch.js"
         ports:
         - containerPort: 3010
           name: http
