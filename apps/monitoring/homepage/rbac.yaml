@@ -1,0 +1,32 @@
+# Homepage RBAC — ClusterRole + binding for the homepage kubernetes/resources widgets
+# Manual apply (no ArgoCD app):
+#   kubectl apply -f apps/monitoring/homepage/rbac.yaml
+# The kubernetes widget needs nodes + namespaces + pvc + metrics.k8s.io (node metrics);
+# the resources widget needs nodes for CPU/mem totals.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: homepage-reader
+rules:
+- apiGroups: [""]
+  resources: ["services", "pods", "nodes", "namespaces", "persistentvolumes", "persistentvolumeclaims"]
+  verbs: ["get", "list"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get", "list"]
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["nodes", "pods"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: homepage-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: homepage-reader
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: monitoring
