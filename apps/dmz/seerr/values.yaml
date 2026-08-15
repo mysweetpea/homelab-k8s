@@ -5,22 +5,13 @@ controllers:
         image:
           repository: ghcr.io/seerr-team/seerr
           tag: v3.4.1
-        securityContext:
-          runAsGroup: 1000
-          runAsUser: 1000
-    initContainers:
-      patch-libraries:
-        image:
-          repository: node
-          tag: 22-alpine
         command:
           - sh
           - -c
-          - |
-            cp /patch/patch.js /tmp/patch.js && node /tmp/patch.js
-        volumeMounts:
-          - name: patch
-            mountPath: /patch
+          - node /app/config/patch.js && cd /app && node dist/index.js
+        securityContext:
+          runAsGroup: 1000
+          runAsUser: 1000
     pod:
       securityContext:
         fsGroup: 1000
@@ -36,49 +27,6 @@ persistence:
     size: 5Gi
     storageClass: longhorn
     type: persistentVolumeClaim
-  patch:
-    type: configMap
-    name: seerr-patch
-    globalMounts:
-    - path: /patch
-    readOnly: true
-additionalObjects:
-- apiVersion: v1
-  kind: ConfigMap
-  metadata:
-    name: seerr-patch
-    namespace: dmz
-  data:
-    patch.js: |
-      const fs = require('fs');
-      const path = '/app/dist/routes/settings/index.js';
-      let src = fs.readFileSync(path, 'utf8');
-      const old = `    const enabledLibraries = req.query.enable
-          ? req.query.enable.split(',')
-          : [];
-      settings.jellyfin.libraries = settings.jellyfin.libraries.map((library) => ({
-          ...library,
-          enabled: enabledLibraries.includes(library.id),
-      }));
-      await settings.save();`;
-      const neu = `    if (req.query.enable) {
-          const enabledLibraries = req.query.enable.split(',');
-          settings.jellyfin.libraries = settings.jellyfin.libraries.map((library) => ({
-              ...library,
-              enabled: enabledLibraries.includes(library.id),
-          }));
-      }
-      await settings.save();`;
-      if (src.includes(old)) {
-        src = src.replace(old, neu);
-        fs.writeFileSync(path, src);
-        console.log('PATCHED OK');
-      } else if (src.includes('if (req.query.enable) {')) {
-        console.log('ALREADY PATCHED');
-      } else {
-        console.log('PATTERN NOT FOUND');
-        process.exit(1);
-      }
 service:
   main:
     controller: main
