@@ -17,6 +17,16 @@ controllers:
             secretKeyRef:
               name: aiostreams-secrets
               key: BASE_URL
+        - name: AIOSTREAMS_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: aiostreams-secrets
+              key: AIOSTREAMS_AUTH
+        - name: AIOSTREAMS_AUTH_PERMISSIONS
+          valueFrom:
+            secretKeyRef:
+              name: aiostreams-secrets
+              key: AIOSTREAMS_AUTH_PERMISSIONS
         probes:
           liveness:
             enabled: true
