@@ -18,6 +18,9 @@ data:
     useEqualHeights: true
     statusStyle: dot
     hideVersion: true
+    providers:
+      longhorn:
+        url: http://longhorn-frontend.longhorn-system:80
     quicklaunch:
       searchDescriptions: true
       hideInternetSearch: false
@@ -30,6 +33,16 @@ data:
         header: false
         style: row
         columns: 4
+      Core Services:
+        tab: 🏠 Home
+        icon: mdi-server-outline
+        style: row
+        columns: 4
+      Monitoring:
+        tab: 🏠 Home
+        icon: mdi-chart-line
+        style: row
+        columns: 3
       Streaming:
         tab: 🎬 Media
         icon: mdi-movie-open-outline
@@ -55,16 +68,6 @@ data:
         icon: mdi-wrench-outline
         style: row
         columns: 2
-      Core Services:
-        tab: ⚙️ System
-        icon: mdi-server-outline
-        style: row
-        columns: 4
-      Monitoring:
-        tab: ⚙️ System
-        icon: mdi-chart-line
-        style: row
-        columns: 3
       Coming Soon:
         tab: 🚀 Coming Soon
         icon: mdi-rocket-launch-outline
@@ -111,6 +114,25 @@ data:
         memory: true
         expanded: true
         disk: /
+    - kubernetes:
+        cluster: true
+        cpu: true
+        memory: true
+        showLabel: true
+    - longhorn:
+        url: http://longhorn-frontend.longhorn-system:80
+    - glances:
+        url: http://glances.monitoring.svc.cluster.local:61208
+        version: 4
+    - openmeteo:
+        label: SweetPea
+        latitude: 40.7128
+        longitude: -74.006
+    - greeting:
+        text: SweetPea
+        text_size: xl
+    - logo:
+        icon: /logo.svg
     - search:
         provider: custom
         url: http://192.168.20.230:8080/search?q={query}
@@ -122,40 +144,41 @@ data:
       --gold: #d4af37;
       --gold-light: #f0c75e;
       --gold-dark: #b8941f;
-      --border: rgba(212, 175, 55, 0.22);
-      --border-hover: rgba(212, 175, 55, 0.55);
-      --bg: #0a0c0e;
-      --surface: rgba(16, 18, 21, 0.72);
-      --text: #e9e6de;
-      --muted: #9d998e;
     }
-    html, body, #__next, #page_wrapper, #inner_wrapper, .container {
-      background-color: var(--bg) !important;
-      background-image: none !important;
-      color: var(--text) !important;
-    }
-    ::selection { background: rgba(212, 175, 55, 0.35); color: #fff; }
-    ::-webkit-scrollbar { width: 10px; height: 10px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.22); border-radius: 5px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.4); }
 
-    /* Ambient gold glow */
+    /* ========== THEME: gold-accented slate (v2 uses --color-theme-* oklch vars) ========== */
+    html.theme-slate, .theme-slate {
+      --color-theme-300: oklch(87.9% 0.169 91.605) !important; /* hover accents */
+      --color-theme-400: oklch(80% 0.15 85) !important;
+      --color-theme-500: oklch(78% 0.16 85) !important;       /* primary accent -> gold */
+      --color-theme-600: oklch(70% 0.15 80) !important;
+      --color-theme-700: oklch(60% 0.13 75) !important;
+      --color-theme-800: oklch(45% 0.10 70) !important;
+      --color-theme-900: oklch(30% 0.05 60) !important;
+      --color-logo-start: 0.78 0.16 85;
+      --color-logo-stop: 0.6 0.13 75;
+    }
+
+    /* ========== AMBIENT BACKGROUND (glow + grain) ========== */
+    html, body, #__next, #page_wrapper, #inner_wrapper {
+      background-color: #0a0c0e !important;
+      background-image: none !important;
+    }
     body::after {
       content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background:
-        radial-gradient(ellipse at 50% 18%, rgba(212, 175, 55, 0.13) 0%, transparent 55%),
-        radial-gradient(ellipse at 12% 90%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
-        radial-gradient(ellipse at 88% 12%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 15%, rgba(212, 175, 55, 0.13) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 90%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
+        radial-gradient(ellipse at 90% 10%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
         radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.5) 100%);
       animation: bg-shift 32s ease-in-out infinite;
+      pointer-events: none;
     }
     @keyframes bg-shift {
       0%, 100% { transform: scale(1); opacity: 1; }
       33% { transform: scale(1.07); opacity: 0.93; }
       66% { transform: scale(1.03); opacity: 0.97; }
     }
-    /* Subtle film grain */
     body::before {
       content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -169,214 +192,133 @@ data:
       80% { transform: translate(1%,1%); } 90% { transform: translate(-2%,-1%); }
     }
     #petal-canvas { position: fixed !important; inset: 0 !important; z-index: 1 !important; pointer-events: none !important; }
-    .container { position: relative; z-index: 2; padding: 0 22px 40px !important; max-width: 1500px !important; margin: 0 auto !important; }
+    .container { position: relative; z-index: 2; }
 
-    /* ---------- HEADER ---------- */
-    .header {
-      text-align: center !important;
-      padding: 32px 20px 4px !important;
-      border: none !important;
-      background: transparent !important;
+    /* ========== LOGO WIDGET (center of attention) ========== */
+    .information-widget-logo {
+      order: -1 !important;
+      margin: 0 auto !important;
       display: flex !important;
-      flex-direction: column !important;
       align-items: center !important;
+      justify-content: center !important;
     }
-    .header h1 {
-      font-size: 2.1rem !important;
-      font-weight: 800 !important;
-      letter-spacing: -0.02em !important;
-      margin: 0 !important;
+    .information-widget-logo .resolved, .information-widget-logo img, .information-widget-logo svg {
+      width: 72px !important;
+      height: 72px !important;
+      filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.5));
+    }
+    .information-widget-logo .fallback { display: none !important; }
+
+    /* ========== GREETING ========== */
+    .information-widget-greeting {
+      order: -2 !important;
+      font-weight: 700 !important;
       background: linear-gradient(135deg, var(--gold-light), var(--gold) 45%, var(--gold-dark));
       -webkit-background-clip: text !important;
       background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
-      text-shadow: 0 0 40px rgba(212, 175, 55, 0.22);
-    }
-    .header p {
-      color: var(--muted) !important;
-      font-size: 0.95rem !important;
-      letter-spacing: 0.04em !important;
-      margin: 6px 0 0 !important;
     }
 
-    /* ---------- TABS ---------- */
-    #tabs {
-      position: sticky !important;
-      top: 10px !important;
-      z-index: 100 !important;
-      display: flex !important;
-      justify-content: center !important;
-      padding: 8px 12px !important;
-      margin: 14px auto 6px !important;
-      width: fit-content !important;
-      max-width: 100% !important;
-      background: rgba(12, 14, 16, 0.78) !important;
-      border: 1px solid var(--border) !important;
-      border-radius: 999px !important;
-      box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45) !important;
-      backdrop-filter: blur(16px) !important;
-    }
+    /* ========== TABS (pill bar — v2 renders #tabs > ul > li > button) ========== */
+    #tabs { display: flex !important; justify-content: center !important; padding: 4px 0 10px !important; }
     #tabs ul {
       display: flex !important;
       flex-wrap: wrap !important;
       justify-content: center !important;
-      gap: 2px !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      list-style: none !important;
-    }
-    #tabs ul li { margin: 0 !important; }
-    #tabs ul li button {
-      background: transparent !important;
-      border: none !important;
-      color: var(--muted) !important;
-      font-size: 0.88rem !important;
-      font-weight: 600 !important;
-      padding: 9px 20px !important;
+      gap: 4px !important;
+      padding: 5px !important;
+      background: rgba(12, 14, 16, 0.78) !important;
+      border: 1px solid rgba(212, 175, 55, 0.22) !important;
       border-radius: 999px !important;
-      cursor: pointer !important;
+      box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45) !important;
+      backdrop-filter: blur(16px) !important;
+    }
+    #tabs ul li { margin: 0 !important; flex: none !important; width: auto !important; }
+    #tabs ul li button {
+      border-radius: 999px !important;
+      color: #9d998e !important;
+      font-weight: 600 !important;
       transition: all 0.22s ease !important;
-      letter-spacing: 0.02em !important;
       white-space: nowrap !important;
+      padding: 8px 18px !important;
+      margin: 0 !important;
     }
-    #tabs ul li button:hover {
-      color: var(--gold-light) !important;
-      background: rgba(212, 175, 55, 0.09) !important;
-    }
-    #tabs ul li button[aria-selected="true"],
-    #tabs ul li button.active {
+    #tabs ul li button[aria-selected="true"] {
       background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.12)) !important;
       color: var(--gold-light) !important;
       box-shadow: 0 0 16px rgba(212, 175, 55, 0.2), inset 0 0 0 1px rgba(212, 175, 55, 0.3) !important;
     }
-
-    /* ---------- SEARCH ---------- */
-    #quicklaunch, .quicklaunch {
-      margin: 8px auto 12px !important;
-      max-width: 620px !important;
-      width: 100% !important;
-    }
-    #quicklaunch input, .quicklaunch input, input[type="search"] {
-      background: rgba(14, 16, 18, 0.82) !important;
-      border: 1px solid var(--border) !important;
-      border-radius: 999px !important;
-      color: var(--text) !important;
-      padding: 11px 22px !important;
-      font-size: 0.95rem !important;
-      outline: none !important;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
-    }
-    #quicklaunch input:focus, .quicklaunch input:focus, input[type="search"]:focus {
-      border-color: var(--border-hover) !important;
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12), 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+    #tabs ul li button:hover:not([aria-selected="true"]) {
+      color: var(--gold-light) !important;
+      background: rgba(212, 175, 55, 0.09) !important;
     }
 
-    /* ---------- INFO WIDGETS ---------- */
-    #information-widgets {
-      position: relative !important;
-      display: flex !important;
-      flex-wrap: wrap !important;
-      gap: 12px !important;
-      justify-content: center !important;
-      padding: 12px 0 2px !important;
-      background: transparent !important;
-      border: none !important;
-    }
-    #information-widgets .widget, #information-widgets .info-widget {
-      background: var(--surface) !important;
-      border: 1px solid var(--border) !important;
+    /* ========== INFO WIDGETS (glass cards) ========== */
+    #information-widgets { align-items: center !important; }
+    .widget-container {
+      background: rgba(16, 18, 21, 0.72) !important;
+      border: 1px solid rgba(212, 175, 55, 0.22) !important;
       border-radius: 14px !important;
       backdrop-filter: blur(10px) !important;
       box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3) !important;
     }
+    .information-widget-search, .information-widget-form { background: rgba(16, 18, 21, 0.72) !important; }
 
-    /* ---------- SERVICE GROUPS & CARDS ---------- */
-    .service-group { margin: 20px 0 6px !important; }
-    .service-group-name {
-      color: var(--gold-dark) !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.09em !important;
-      font-size: 0.8rem !important;
-      margin-bottom: 12px !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-    }
-    .service-group-name::after {
-      content: ""; flex: 1; height: 1px;
-      background: linear-gradient(to right, rgba(212, 175, 55, 0.35), transparent);
-    }
-    .service-card {
-      background: var(--surface) !important;
-      border: 1px solid var(--border) !important;
+    /* ========== SERVICE CARDS (v2: service-container / service-block) ========== */
+    .service-container {
+      background: rgba(16, 18, 21, 0.72) !important;
+      border: 1px solid rgba(212, 175, 55, 0.22) !important;
       border-radius: 14px !important;
       backdrop-filter: blur(10px) !important;
-      transition: all 0.25s ease !important;
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25) !important;
-      animation: card-in 0.5s ease backwards;
+      transition: all 0.25s ease !important;
     }
-    .service-card:nth-child(2) { animation-delay: 0.04s; }
-    .service-card:nth-child(3) { animation-delay: 0.08s; }
-    .service-card:nth-child(4) { animation-delay: 0.12s; }
-    .service-card:nth-child(5) { animation-delay: 0.16s; }
-    .service-card:nth-child(6) { animation-delay: 0.2s; }
-    .service-card:nth-child(7) { animation-delay: 0.24s; }
-    @keyframes card-in {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .service-card:hover {
+    .service-container:hover {
       transform: translateY(-4px) !important;
-      border-color: var(--border-hover) !important;
+      border-color: rgba(212, 175, 55, 0.55) !important;
       box-shadow: 0 14px 36px rgba(0, 0, 0, 0.5), 0 0 26px rgba(212, 175, 55, 0.14) !important;
       background: rgba(20, 22, 24, 0.85) !important;
     }
-    .service-card .name { color: var(--text) !important; font-weight: 600 !important; }
-    .service-card .description { color: var(--muted) !important; font-size: 0.82rem !important; }
+    .service-block {
+      border-radius: 14px !important;
+      transition: all 0.25s ease !important;
+    }
 
-    /* ---------- STATUS DOTS ---------- */
-    .status-dot { box-shadow: 0 0 8px currentColor !important; }
-
-    /* ---------- BOOKMARKS ---------- */
-    .bookmark-group { margin: 18px 0 !important; }
-    .bookmark-group .bookmark-title {
+    /* ========== GROUP HEADERS (v2: .service-group-name equivalents) ========== */
+    h2, .service-group-name, [class*="group-name"] {
       color: var(--gold-dark) !important;
       font-weight: 700 !important;
       text-transform: uppercase !important;
       letter-spacing: 0.09em !important;
-      font-size: 0.78rem !important;
+      font-size: 0.8rem !important;
     }
-    .bookmark-group .bookmark {
-      background: var(--surface) !important;
-      border: 1px solid var(--border) !important;
+
+    /* ========== BOOKMARKS ========== */
+    .bookmark-group-name { color: var(--gold-dark) !important; font-size: 0.95rem !important; font-weight: 700 !important; }
+    .bookmark a {
+      background: rgba(16, 18, 21, 0.72) !important;
+      border: 1px solid rgba(212, 175, 55, 0.22) !important;
       border-radius: 12px !important;
       transition: all 0.25s ease !important;
     }
-    .bookmark-group .bookmark:hover {
-      border-color: var(--border-hover) !important;
+    .bookmark a:hover {
+      border-color: rgba(212, 175, 55, 0.55) !important;
       transform: translateY(-2px) !important;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
     }
+    .bookmark-icon { background: rgba(212, 175, 55, 0.15) !important; color: var(--gold-light) !important; }
 
-    /* ---------- FOOTER ---------- */
-    #footer, .footer {
-      border-top: 1px solid rgba(212, 175, 55, 0.15) !important;
-      margin-top: 34px !important;
-      padding: 18px 0 8px !important;
-      color: var(--muted) !important;
-      font-size: 0.8rem !important;
-      text-align: center !important;
-    }
+    /* ========== SCROLLBAR + SELECTION ========== */
+    ::selection { background: rgba(212, 175, 55, 0.35) !important; color: #fff !important; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #0a0c0e; }
+    ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.22); border-radius: 5px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.4); }
 
-    /* ---------- RESPONSIVE ---------- */
+    /* ========== RESPONSIVE ========== */
     @media (max-width: 768px) {
-      .header { padding: 22px 14px 2px !important; }
-      .header h1 { font-size: 1.6rem !important; }
-      #tabs { top: 6px !important; border-radius: 20px !important; }
-      #tabs ul li button { padding: 8px 14px !important; font-size: 0.82rem !important; }
-      .container { padding: 0 14px 30px !important; }
+      .information-widget-logo .resolved, .information-widget-logo img, .information-widget-logo svg { width: 52px !important; height: 52px !important; }
+      #tabs ul li button { padding: 7px 12px !important; font-size: 0.8rem !important; }
     }
 
   custom.js: |
@@ -387,21 +329,24 @@ data:
       var initialized = false;
       function log(msg) { console.log("[SweetPea Homepage]", msg); }
 
+      function setGreeting() {
+        try {
+          var now = new Date();
+          var hour = now.getHours();
+          var part = hour < 5 ? "Good night" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+          var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+          var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+          var text = part + ", SweetPea — " + days[now.getDay()] + ", " + months[now.getMonth()] + " " + now.getDate();
+          var el = document.querySelector(".information-widget-greeting span");
+          if (el) el.textContent = text;
+        } catch (e) { /* non-fatal */ }
+      }
+
       function init() {
         if (initialized) return;
         initialized = true;
         log("Starting initialization");
         try {
-          var header = document.querySelector(".header");
-          if (header) header.style.display = "";
-
-          // Clean up any legacy branch overlay artifacts
-          var overlay = document.getElementById("branch-overlay");
-          if (overlay) overlay.remove();
-          var backBtn = document.getElementById("back-btn");
-          if (backBtn) backBtn.remove();
-          document.body.classList.remove("service-active");
-
           // Ambient falling petals (subtle)
           var canvas = document.createElement("canvas");
           canvas.id = "petal-canvas";
@@ -410,25 +355,17 @@ data:
           function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
           resizeCanvas();
           window.addEventListener("resize", resizeCanvas);
-
           var petals = [];
-          var count = Math.min(70, Math.max(35, Math.floor((canvas.width * canvas.height) / 45000)));
+          var count = Math.min(60, Math.max(30, Math.floor((canvas.width * canvas.height) / 50000)));
           for (var i = 0; i < count; i++) {
             petals.push({
-              x: Math.random() * canvas.width,
-              y: Math.random() * canvas.height,
-              size: Math.random() * 7 + 4,
-              speedY: Math.random() * 0.7 + 0.25,
-              speedX: (Math.random() - 0.5) * 0.4,
-              rotation: Math.random() * Math.PI * 2,
-              rotationSpeed: (Math.random() - 0.5) * 0.02,
-              opacity: Math.random() * 0.28 + 0.1,
-              sway: Math.random() * 0.015 + 0.004,
-              swayOffset: Math.random() * Math.PI * 2
+              x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+              size: Math.random() * 7 + 4, speedY: Math.random() * 0.7 + 0.25,
+              speedX: (Math.random() - 0.5) * 0.4, rotation: Math.random() * Math.PI * 2,
+              rotationSpeed: (Math.random() - 0.5) * 0.02, opacity: Math.random() * 0.25 + 0.1,
+              sway: Math.random() * 0.015 + 0.004, swayOffset: Math.random() * Math.PI * 2
             });
           }
-          log("Created " + count + " petals");
-
           var frame = 0;
           function animatePetals() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -460,6 +397,12 @@ data:
             requestAnimationFrame(animatePetals);
           }
           animatePetals();
+          log("Created " + count + " petals");
+
+          // Greeting after render
+          setTimeout(setGreeting, 300);
+          setTimeout(setGreeting, 1500);
+          setInterval(setGreeting, 60000);
 
           log("Initialization complete");
         } catch (err) {
@@ -467,11 +410,8 @@ data:
         }
       }
 
-      if (document.readyState === "complete") {
-        init();
-      } else {
-        window.addEventListener("load", init);
-      }
+      if (document.readyState === "complete") init();
+      else window.addEventListener("load", init);
     })();
 
   services.yaml: |
@@ -499,13 +439,11 @@ data:
             href: http://192.168.20.222:3000
             description: Stream Anything
             icon: mdi-all-inclusive-box
-            siteMonitor: true
         - NzbDAV:
             id: nzbdav
             href: http://192.168.20.212:8080
             description: Usenet Downloads
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
-            siteMonitor: true
     - Arr Stack:
         - Radarr:
             id: radarr
@@ -558,20 +496,17 @@ data:
             href: http://192.168.20.214:8191
             description: Cloudflare Bypass
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
-            siteMonitor: true
         - Questarr:
             id: questarr
             href: http://192.168.20.227:5000
             description: Game Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
-            siteMonitor: true
     - Personal:
         - Vaultwarden:
             id: vaultwarden
             href: https://vault.mysweetpea.cc
             description: Passwords & Secrets
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/vaultwarden.svg
-            siteMonitor: true
         - Nextcloud:
             id: nextcloud
             href: https://cloud.mysweetpea.cc
@@ -597,7 +532,6 @@ data:
             href: https://notes.mysweetpea.cc
             description: Docs & Knowledge Base
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/affine.svg
-            siteMonitor: true
         - n8n:
             id: n8n
             href: https://n8n.mysweetpea.cc
@@ -621,34 +555,29 @@ data:
             widget:
               type: gotify
               url: http://gotify.private.svc.cluster.local:80
-              username: ${GOTIFY_ADMIN_USER}
-              password: ${GOTIFY_ADMIN_PASS}
+              key: ${GOTIFY_CLIENT_TOKEN}
         - KoalaSync:
             id: koalasync
             href: https://sync.mysweetpea.cc
             description: Sync Watch Parties
             icon: mdi-sync
-            siteMonitor: true
     - Chat:
         - Element:
             id: element
             href: https://chat.mysweetpea.cc
             description: Matrix Chat Client
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
-            siteMonitor: true
         - Matrix Synapse:
             id: matrix
             href: https://matrix.mysweetpea.cc
             description: Chat Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
-            siteMonitor: true
     - Tools:
         - OpenClaw:
             id: openclaw
             href: http://192.168.20.217:8080
             description: AI Agent Gateway
             icon: mdi-robot-outline
-            siteMonitor: true
         - RustDesk:
             id: rustdesk
             href: http://192.168.20.216:21115
@@ -678,13 +607,11 @@ data:
             href: http://192.168.20.220
             description: GitOps Console
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/argocd.svg
-            siteMonitor: true
         - Open WebUI:
             id: open-webui
             href: https://ai.mysweetpea.cc
             description: AI Chat Interface
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/open-webui.svg
-            siteMonitor: true
         - Ollama:
             id: ollama
             href: http://192.168.20.228:11434
@@ -703,7 +630,6 @@ data:
             href: http://192.168.20.230:8080
             description: Private Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
-            siteMonitor: true
     - Monitoring:
         - Uptime Kuma:
             id: uptime-kuma
@@ -719,20 +645,27 @@ data:
             href: http://192.168.20.226:3000
             description: Dashboards, Logs & Metrics
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/grafana.svg
-            siteMonitor: true
         - Netdata:
             id: netdata
             href: http://192.168.20.229:19999
             description: Real-time Node Monitoring
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
-            siteMonitor: true
     - Coming Soon:
-        - Prometheus:
-            id: prometheus
-            href: ""
-            description: Metrics — Coming Soon
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prometheus.svg
-            server: ""
+        - Hermes Agent:
+            id: hermes
+            href: https://hermes.mysweetpea.cc
+            description: AI Assistant — Coming Soon
+            icon: mdi-robot-happy-outline
+        - Torrin:
+            id: torrin
+            href: https://torrin.mysweetpea.cc
+            description: Debrid Service — Coming Soon
+            icon: mdi-link-variant
+        - Neko:
+            id: neko
+            href: https://neko.mysweetpea.cc
+            description: Virtual Browser — Coming Soon
+            icon: mdi-cat
         - Syncthing:
             id: syncthing
             href: ""
