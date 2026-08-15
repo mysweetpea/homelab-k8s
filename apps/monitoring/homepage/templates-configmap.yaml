@@ -633,7 +633,7 @@ data:
               mappings:
                 - field: models
                   label: Models
-                  format: number
+                  format: size
         - SearXNG:
             id: searxng
             href: http://192.168.20.230:8080
