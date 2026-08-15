@@ -42,7 +42,7 @@ persistence:
     size: 1Gi
     storageClass: longhorn
     globalMounts:
-    - path: /data
+    - path: /app/data
 service:
   main:
     controller: main
