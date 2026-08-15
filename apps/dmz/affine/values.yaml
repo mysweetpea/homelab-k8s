@@ -132,6 +132,10 @@ controllers:
                 path: /api/ready
                 port: 3010
               initialDelaySeconds: 10
+    hostAliases:
+    - ip: "104.21.44.229"
+      hostnames:
+      - auth.mysweetpea.cc
 service:
   main:
     controller: main
