@@ -115,12 +115,16 @@ data:
         expanded: true
         disk: /
     - kubernetes:
-        cluster: true
-        cpu: true
-        memory: true
-        showLabel: true
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
     - longhorn:
-        url: http://longhorn-frontend.longhorn-system:80
+        expanded: true
+        total: true
+        labels: true
+        nodes: true
     - glances:
         url: http://glances.monitoring.svc.cluster.local:61208
         version: 4
