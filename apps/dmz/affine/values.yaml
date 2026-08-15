@@ -31,6 +31,52 @@ controllers:
               key: redis-password
         - name: AFFINE_INDEXER_ENABLED
           value: "false"
+      config-writer:
+        image:
+          repository: alpine
+          tag: latest
+          pullPolicy: IfNotPresent
+        command:
+        - sh
+        - -c
+        - |
+          cat > /root/.affine/config/config.json <<'EOF'
+          {
+            "auth": {
+              "allowSignup": false
+            },
+            "flags": {
+              "allowGuestDemoWorkspace": false
+            },
+            "oauth": {
+              "providers": {
+                "oidc": {
+                  "clientId": "$OIDC_CLIENT_ID",
+                  "clientSecret": "$OIDC_CLIENT_SECRET",
+                  "issuer": "https://auth.mysweetpea.cc/application/o/affine/",
+                  "allowPrivateNetwork": true,
+                  "args": {
+                    "scope": "openid email profile offline_access",
+                    "claim_id": "preferred_username",
+                    "claim_email": "email",
+                    "claim_name": "name"
+                  }
+                }
+              }
+            }
+          }
+          EOF
+        env:
+        - name: OIDC_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: affine-secrets
+              key: oidc-client-id
+        - name: OIDC_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: affine-secrets
+              key: oidc-client-secret
     containers:
       main:
         image:
@@ -64,26 +110,6 @@ controllers:
           value: "false"
         - name: NODE_TLS_REJECT_UNAUTHORIZED
           value: "0"
-        - name: OAUTH_OIDC_ISSUER
-          value: "https://auth.mysweetpea.cc/application/o/affine"
-        - name: OAUTH_OIDC_CLIENT_ID
-          valueFrom:
-            secretKeyRef:
-              name: affine-secrets
-              key: oidc-client-id
-        - name: OAUTH_OIDC_CLIENT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: affine-secrets
-              key: oidc-client-secret
-        - name: OAUTH_OIDC_SCOPE
-          value: "openid email profile offline_access"
-        - name: OAUTH_OIDC_CLAIM_MAP_USERNAME
-          value: "preferred_username"
-        - name: OAUTH_OIDC_CLAIM_MAP_EMAIL
-          value: "email"
-        - name: OAUTH_OIDC_CLAIM_MAP_NAME
-          value: "name"
         ports:
         - containerPort: 3010
           name: http
@@ -130,15 +156,6 @@ persistence:
     storageClass: longhorn
     globalMounts:
     - path: /root/.affine/config
-  config-json:
-    enabled: true
-    type: configMap
-    name: affine-config
-    advancedMounts:
-      main:
-        main:
-        - path: /root/.affine/config/config.json
-          subPath: config.json
   uploads:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
