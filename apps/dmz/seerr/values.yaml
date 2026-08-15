@@ -27,6 +27,14 @@ persistence:
     size: 5Gi
     storageClass: longhorn
     type: persistentVolumeClaim
+  patch:
+    enabled: true
+    type: configMap
+    name: seerr-patch
+    globalMounts:
+    - path: /app/config/patch.js
+      subPath: patch.js
+      readOnly: true
 service:
   main:
     controller: main
