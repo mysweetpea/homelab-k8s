@@ -219,13 +219,19 @@ data:
     .information-widget-logo .fallback { display: none !important; }
 
     /* ========== GREETING ========== */
+    /* v2 DOM: div.information-widget-greeting > span.text-theme-800 (the text).
+       text-fill-color inherits, so the clip+transparent fill MUST live on the span,
+       not the wrapper — otherwise the greeting is invisible. */
     .information-widget-greeting {
       order: -2 !important;
       font-weight: 700 !important;
-      background: linear-gradient(135deg, var(--gold-light), var(--gold) 45%, var(--gold-dark));
+    }
+    .information-widget-greeting span {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold) 45%, var(--gold-dark)) !important;
       -webkit-background-clip: text !important;
       background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
+      color: var(--gold-light) !important; /* fallback when clip is unsupported */
     }
 
     /* ========== TABS (pill bar — v2 renders #tabs > ul > li > button) ========== */
