@@ -110,6 +110,8 @@ controllers:
           value: "false"
         - name: NODE_TLS_REJECT_UNAUTHORIZED
           value: "0"
+        - name: NODE_OPTIONS
+          value: "--dns-result-order=ipv4first"
         ports:
         - containerPort: 3010
           name: http
