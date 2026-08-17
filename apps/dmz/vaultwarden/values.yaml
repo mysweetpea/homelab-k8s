@@ -1,6 +1,17 @@
 persistence:
   existingClaim: vaultwarden
 
+# MySweetPea login disclaimer: mount patched web-vault index.html
+additionalVolumes:
+  - name: web-index
+    configMap:
+      name: vaultwarden-web-index
+additionalVolumeMounts:
+  - name: web-index
+    mountPath: /web-vault/index.html
+    subPath: index.html
+    readOnly: true
+
 image:
   tag: "1.37.1"
 
