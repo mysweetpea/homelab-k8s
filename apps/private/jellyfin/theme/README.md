@@ -55,3 +55,23 @@ curl -X POST http://localhost:8096/Branding/Splashscreen \
 - **Spoiler Guard** (Jellyfin-Enhanced) blurs unwatched posters — that's intended.
 - The `sweetpea` user and all future LDAP users get Movies + TV Shows libraries
   automatically via the LDAP-Auth plugin `EnabledFolders` setting.
+
+## Gelato (on-demand streaming) — operational notes
+
+- **Catalogs**: `Gelato.xml` must have the 3 catalogs (Popular / Top Rated / New
+  Releases) `Enabled=true` with `MaxItems=100`, and `EnableJavaScriptInjection=true`
+  (stream buttons in web UI). A config reset silently disables them — re-enable
+  and re-run the "Import Catalogs" scheduled task (`345218a7c524815276c66422a3923758`).
+- **TMDb Box Sets scan is DISABLED** (triggers emptied): it wipes manual links to
+  Gelato virtual items (`gelato://stub/...`) because it counts only real files
+  ("only 1 movie" per collection → unlink). Box sets were linked manually via
+  `POST /Collections/{boxsetId}/Items?ids=...` (9 box sets, 10 Spider-Man movies).
+- **Seerr search results disabled** in Jellyfin-Enhanced (`JellyseerrShowSearchResults=false`)
+  — Gelato makes requests unnecessary; Seerr rows on the home screen are
+  request-only by design (they're not library items).
+- **CollectionSections rows render empty** for Gelato items: the plugin's
+  `GetChildren` reads the AncestorIds index, which library scans don't rebuild for
+  virtual items. Rows are registered and will populate when items are real files.
+- **Streaming works**: Gelato resolves debrid streams on demand (5-27 per item),
+  Jellyfin probes + transcodes via FFmpeg. Verified live: Project Runway S01E01
+  played end-to-end.
