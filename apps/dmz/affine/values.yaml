@@ -1,5 +1,14 @@
 controllers:
   main:
+    additionalVolumes:
+    - name: web-index
+      configMap:
+        name: affine-web-index
+    additionalVolumeMounts:
+    - name: web-index
+      mountPath: /app/static/selfhost.html
+      subPath: selfhost.html
+      readOnly: true
     initContainers:
       migrate:
         image:
@@ -170,10 +179,3 @@ persistence:
     storageClass: longhorn
     globalMounts:
     - path: /root/.affine/storage
-  web-index:
-    type: configMap
-    name: affine-web-index
-    globalMounts:
-    - path: /app/static/selfhost.html
-      subPath: selfhost.html
-      readOnly: true
