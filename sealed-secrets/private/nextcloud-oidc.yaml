@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: nextcloud-oidc
+  namespace: private
+spec:
+  encryptedData:
+    client-secret: AgATFqCqBcGbf1LXYUGdX0L3qDcsy6DIs3z50kNqd0prsN1RCZ5PTmXNdb+Rq94h0FBVxcZLmNEsfeZTaigJwABXGNkD6fJKFo6ytT572bQFtf8oeseYbxb4SQf39CZu9TFgQC7bwI2cS6vID6LgIfB/KqkRQj91a7rbhs8hIOEiB422AX3bmFXanxqcQmZ1/+c+glrl6Ex5pav92GtEmZ+qYAVif03sedzpebGSSsBoNt+Yd//pQJoA0a0Oay8UQPmCCMjWtV8dlik/bbehbzCPHoEdgixWW4jga26oZQNrL74J8L8xf4rTXClsIpoBsYqLEtgjjcrCoWYcnYdTaLWAIMon/zYHs0G2Am72Ubm0NSaIOKxr3zj9bUakS1D4OJfD2uPSEtC5FXwx634fCjl4sbgAfvrjgLxlF1796v0Bt7mMo47+8/RbRtmyOwV8h7fAGfQuD76kHiJO2eHLm9EV5d1c5Fk5S8wsEKoStwcifqoCGy7LLmwsoVCp8TcUCNz5NQJVeHpX5k1dQuMR5eZPEadRW4VmdyI+WptM/NP7VR1H1PeHgcZTDdvllM6XYIDQRRzkJwLwJl8yPGJxOmpiQYcg5/h32qo+LWVMMLDr+O9PVboCmR3LtqSHcdVGDVY3xaEtorwCu9+SkGBSQLqeMj3a9PQf40yOhT5AqSKo2r/klkoM0+GwHYGfQAWBmncrnzaqKWWULRKxl4x9a9nZM0CQHSNN4vEmbYxMVFnDH4ckY9hSs4blLor9i5dOOAE+esc9T0ADfINR/gGoghQCq+B3PNA7k9Qtgrv/6iR/2K/rA3Yim2taMg1av2yOCKFyzI56tzpetlolVffcoX+M0Jg9mtjXuqZ0pgq/l/VZGA==
+  template:
+    metadata:
+      name: nextcloud-oidc
+      namespace: private

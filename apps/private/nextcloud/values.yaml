@@ -14,6 +14,45 @@ nextcloud:
   - cloud.mysweetpea.cc
   - 192.168.20.215
   - nextcloud.private.svc.cluster.local
+  # ── Self-healing Authentik OIDC (user_oidc) ──
+  # The provider config lives in the app DB; the before-starting hook
+  # re-upserts it on every pod start so a DB wipe/redeploy can't lose SSO.
+  # Client secret comes from the sealed secret nextcloud-oidc (mounted file).
+  hooks:
+    pre-installation:
+    post-installation:
+    pre-upgrade:
+    post-upgrade:
+    before-starting: |
+      #!/bin/sh
+      # Self-healing Authentik OIDC provider config (idempotent, runs on every pod start)
+      set -eu
+      echo "==> mysweetpea: ensuring user_oidc provider config"
+      php /var/www/html/occ app:enable user_oidc
+      php /var/www/html/occ user_oidc:provider authentik \
+        --clientid="FmxfSIcs2A5dPUQxfeaYhFfbdwytpjFMS1YHtWGh" \
+        --clientsecret-file="/run/secrets/nextcloud-oidc/client-secret" \
+        --discoveryuri="https://auth.mysweetpea.cc/application/o/nextcloud/.well-known/openid-configuration" \
+        --endsessionendpointuri="https://auth.mysweetpea.cc/application/o/nextcloud/end-session/" \
+        --scope="openid email profile" \
+        --unique-uid=1 \
+        --mapping-display-name=name \
+        --mapping-email=email \
+        --mapping-uid=sub
+      # Ensure the SSO user (created on first Authentik login) is in the admin group
+      SSO_UID=$(php /var/www/html/occ user:list --output=json | php -r '$d=json_decode(stream_get_contents(STDIN), true); foreach ($d as $uid => $name) { if ($name === "authentik Default Admin") { echo $uid; break; } }')
+      if [ -n "$SSO_UID" ]; then
+        php /var/www/html/occ group:adduser admin "$SSO_UID" || true
+      fi
+      echo "==> mysweetpea: OIDC provider config OK"
+  extraVolumes:
+    - name: nextcloud-oidc
+      secret:
+        secretName: nextcloud-oidc
+  extraVolumeMounts:
+    - name: nextcloud-oidc
+      mountPath: /run/secrets/nextcloud-oidc
+      readOnly: true
 persistence:
   enabled: true
   existingClaim: nextcloud-nextcloud-lh
