@@ -2585,9 +2585,9 @@ additionalObjects:
             attributes:
               settings:
                 theme:
-                  background: 'background-image: url("https://mysweetpea.cc/logo.svg") center
-                    / 220px 220px no-repeat, url("https://mysweetpea.cc/mysweetpea-auth-bg.svg")
-                    center / cover no-repeat fixed; background-color: #0C1316;'
+                  background: 'background: url("https://mysweetpea.cc/logo.svg") center / 220px
+                    220px no-repeat, url("https://mysweetpea.cc/mysweetpea-auth-bg.svg") center
+                    / cover no-repeat fixed; background-color: #0C1316;'
             branding_custom_css: "/* MySweetPea brand theme — sage green primary, dark background\
               \ */\n:root {\n  --pf-global--primary-color--100: #5EB8A8;\n  --pf-global--primary-color--200:\
               \ #7AC9BB;\n  --pf-global--primary-color--300: #4AA393;\n  --pf-global--link-color:\
