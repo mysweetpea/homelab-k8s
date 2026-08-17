@@ -21,6 +21,13 @@ services, all running on hardware I own and manage.
 
 ![Architecture diagram](docs/architecture.svg)
 
+### Screenshots
+
+| | |
+|---|---|
+| ![Homepage dashboard — cluster health and service widgets](docs/screenshots/homepage-dashboard.png) | ![ArgoCD — 48 applications, all Synced and Healthy](docs/screenshots/argocd-applications.png) |
+| ![Netdata — real-time cluster metrics](docs/screenshots/netdata-overview.png) | ![Uptime Kuma — 19 monitors, all up](docs/screenshots/uptime-kuma-status.png) |
+
 ### At a glance
 
 - **3-node K3s cluster** (v1.36.1+k3s1, Ubuntu 26.04) — one control-plane node
