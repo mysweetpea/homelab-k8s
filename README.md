@@ -1,11 +1,41 @@
 # MySweetPea Homelab — Kubernetes GitOps
 
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.36.1-326CE5?logo=kubernetes&logoColor=white)](https://k3s.io)
+[![GitOps](https://img.shields.io/badge/GitOps-ArgoCD-EF7B4D?logo=argo&logoColor=white)](https://argo-cd.readthedocs.io/)
+[![K3s](https://img.shields.io/badge/K3s-3%20nodes-FFC61C?logo=kubernetes&logoColor=white)](https://k3s.io)
+[![Services](https://img.shields.io/badge/Services-40%2B-8FAFB5)](https://mysweetpea.cc)
+[![SSO](https://img.shields.io/badge/SSO-Authentik-8A2BE2)](https://goauthentik.io)
+[![Storage](https://img.shields.io/badge/Storage-Longhorn-00A98F)](https://longhorn.io)
+[![License](https://img.shields.io/badge/License-Proprietary-9cf)](LICENSE)
+
 A self-hosted, GitOps-managed Kubernetes cluster running **40+ services** for
 the MySweetPea community — privacy-first alternatives to everyday cloud
 services, all running on hardware I own and manage.
 
 **Live site:** https://mysweetpea.cc
 **Website repo:** https://github.com/mysweetpea/portfolio
+
+---
+
+## Architecture
+
+![Architecture diagram](docs/architecture.svg)
+
+### At a glance
+
+- **3-node K3s cluster** (v1.36.1+k3s1, Ubuntu 26.04) — one control-plane node
+  and two workers
+- **Flannel** CNI, **Traefik** ingress, **MetalLB** load balancer (21-IP pool)
+- **Longhorn** distributed storage (RWO + RWX) across all three nodes
+- **Cloudflare Tunnel** for external access — **no inbound ports open**
+- **ArgoCD** GitOps with **Image Updater** — container images auto-update and
+  version bumps are committed back to this repo (48 applications)
+- **Authentik** SSO (OIDC + LDAP + Proxy outposts) — single sign-on across
+  14+ public-facing services
+- **Netbird** mesh VPN for private LAN access, with a cloud VPS acting as relay
+- **3-zone VLAN** segmentation (OpenWrt firewall) plus **29 Kubernetes
+  NetworkPolicies** enforcing default-deny ingress (17 in the DMZ, 12 in the
+  private zone)
 
 ---
 
@@ -38,24 +68,6 @@ matter for any production system:
 [ArgoCD](https://argo-cd.readthedocs.io/) continuously compares the live
 cluster against this repo and reconciles any drift — if someone changes a
 deployment by hand, ArgoCD puts it back to the declared state.
-
----
-
-## Architecture
-
-- **3-node K3s cluster** (v1.36.1+k3s1, Ubuntu 26.04) — one control-plane node
-  and two workers
-- **Flannel** CNI, **Traefik** ingress, **MetalLB** load balancer (21-IP pool)
-- **Longhorn** distributed storage (RWO + RWX) across all three nodes
-- **Cloudflare Tunnel** for external access — **no inbound ports open**
-- **ArgoCD** GitOps with **Image Updater** — container images auto-update and
-  version bumps are committed back to this repo (48 applications)
-- **Authentik** SSO (OIDC + LDAP + Proxy outposts) — single sign-on across
-  14+ public-facing services
-- **Netbird** mesh VPN for private LAN access, with a cloud VPS acting as relay
-- **3-zone VLAN** segmentation (OpenWrt firewall) plus **29 Kubernetes
-  NetworkPolicies** enforcing default-deny ingress (17 in the DMZ, 12 in the
-  private zone)
 
 ---
 
