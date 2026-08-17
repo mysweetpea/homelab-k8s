@@ -106,7 +106,7 @@
     },
     {
       "parameters": {
-        "message": "={{ 'New Sweet Pea request from ' + $json.name + '\\nEmail: ' + $json.email + '\\nServices: ' + $json.services + ($json.message ? '\\nMessage: ' + $json.message : '') }}",
+        "message": "={{ 'New Sweet Pea request from ' + $('Validate Input').item.json.name + '\\nEmail: ' + $('Validate Input').item.json.email + '\\nServices: ' + $('Validate Input').item.json.services + ($('Validate Input').item.json.message ? '\\nMessage: ' + $('Validate Input').item.json.message : '') }}",
         "additionalFields": {
           "priority": 5,
           "title": "Sweet Pea Request"
