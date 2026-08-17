@@ -1,9 +1,9 @@
 # MySweetPea Homelab — Kubernetes GitOps
 
-GitOps-managed K3s cluster running the MySweetPea self-hosted service stack.
-All infrastructure is declared as ArgoCD Applications in this repo; secrets are
-**never committed** (plaintext secrets live only on the cluster / local disk,
-encrypted backups are committed as SealedSecrets).
+GitOps-managed 3-node K3s cluster running **40+ self-hosted services** for the
+MySweetPea community. All infrastructure is declared as ArgoCD Applications in
+this repo; secrets are committed only as **SealedSecrets** (encrypted with the
+cluster's sealed-secrets key) — plaintext credentials never touch Git.
 
 **Live site:** https://mysweetpea.cc
 **Website repo:** https://github.com/mysweetpea/portfolio
@@ -12,16 +12,18 @@ encrypted backups are committed as SealedSecrets).
 
 ## Architecture
 
-- **3-node K3s cluster** (v1.36.1+k3s1)
-  - `k3s-master` (192.168.20.40)
+- **3-node K3s cluster** (v1.36.1+k3s1, Ubuntu 26.04)
+  - `k3s-master` (192.168.20.40) — control plane
   - `worker-a` (192.168.20.43)
   - `worker-b` (192.168.20.41)
-- **Flannel** CNI, **Traefik** Ingress, **MetalLB** LoadBalancer
-- **Longhorn** distributed storage (RWX via NFS)
+- **Flannel** CNI, **Traefik** Ingress, **MetalLB** LoadBalancer (21-IP pool)
+- **Longhorn** distributed storage (RWO + RWX) across all 3 nodes
 - **Cloudflare Tunnel** for external access (no open inbound ports)
-- **ArgoCD** GitOps + **Image Updater** (auto-update with git write-back)
-- **Authentik** SSO (OIDC + LDAP + Proxy outposts)
-- **Netbird** VPN for private LAN access + Oracle VPS relay
+- **ArgoCD** GitOps + **Image Updater** (auto-update with git write-back) — 48 applications
+- **Authentik** SSO (OIDC + LDAP + Proxy outposts) — 14+ public-facing services
+- **Netbird** mesh VPN (host-level) for private LAN access + Oracle VPS relay
+- **3-zone VLAN** segmentation (OpenWrt firewall) + **29 Kubernetes
+  NetworkPolicies** enforcing default-deny ingress (17 dmz / 12 private)
 
 ---
 
@@ -32,13 +34,12 @@ encrypted backups are committed as SealedSecrets).
 │   └── root-application.yaml   # Root ArgoCD app (app-of-apps, prune:false)
 ├── apps/
 │   ├── dmz/                    # Internet-facing services (behind tunnel/SSO)
-│   │   ├── authentik/          # SSO provider
+│   │   ├── authentik/          # SSO provider (OIDC/LDAP/Proxy)
 │   │   ├── authentik-ldap-outpost/
 │   │   ├── authentik-tls-proxy/
 │   │   ├── cloudflared/        # Cloudflare Tunnel
 │   │   ├── element-web/        # Matrix client
 │   │   ├── matrix-synapse/     # Matrix homeserver
-│   │   ├── jellyfin/           # Media server
 │   │   ├── vaultwarden/        # Password manager
 │   │   ├── affine/             # Notes
 │   │   ├── seerr/              # Media requests
@@ -47,31 +48,38 @@ encrypted backups are committed as SealedSecrets).
 │   │   ├── searxng/            # Private search
 │   │   └── ingress-routes/     # Traefik IngressRoutes + Auth middleware
 │   ├── private/                # LAN / internal services
+│   │   ├── jellyfin/           # Media server (Moonfin + 34 plugins)
 │   │   ├── postgresql/         # Shared PostgreSQL (PG18)
 │   │   ├── n8n/                # Automation + webhook backend
 │   │   ├── nextcloud/          # Files
-│   │   ├── immich/             # Photos
+│   │   ├── immich/ + immich-postgresql/  # Photos
 │   │   ├── gotify/             # Notifications
 │   │   ├── open-webui/         # AI chat
 │   │   ├── radarr/ sonarr/ bazarr/ prowlarr/ qbittorrent/  # Media stack
-│   │   ├── aiostreams/         # Streaming
+│   │   ├── aiostreams/         # Streaming (Stremio-style)
 │   │   ├── rustdesk/           # Remote desktop
+│   │   ├── flaresolverr/       # Cloudflare-bypass proxy
 │   │   ├── nzbdav/ openclaw/ mcp-server/ qdrant/ questarr/
+│   │   ├── media-storage/      # Shared 200Gi media PVC
+│   │   ├── redis-affine-master/
 │   │   └── ingress-routes/
 │   ├── monitoring/
 │   │   ├── homepage/           # Dashboard (192.168.20.213)
 │   │   ├── uptime-kuma/        # Status page (status.mysweetpea.cc)
-│   │   ├── netdata/            # Metrics
+│   │   ├── grafana/ + loki/ + promtail/ + netdata/   # Observability
 │   │   └── ingress-routes/
 │   └── infra/
+│       ├── argocd/             # ArgoCD config
 │       ├── argocd-image-updater/
 │       ├── cert-manager/
+│       ├── longhorn/
 │       ├── metallb/
-│       ├── network-policies/   # 16 NetworkPolicies (dmz + private)
+│       ├── network-policies/   # 29 NetworkPolicies (17 dmz + 12 private)
 │       ├── coredns-custom.yaml
+│       ├── traefik-dashboard.yaml
 │       └── argocd-sync-windows.yaml
-└── sealed-secrets/
-    ├── argocd/                 # Encrypted backups (committed)
+└── sealed-secrets/             # Encrypted secrets (28 files)
+    ├── argocd/
     ├── dmz/
     └── private/
 ```
@@ -115,9 +123,10 @@ The `private`, `dmz`, and `monitoring` namespaces carry
 ## Secrets management
 
 - **Plaintext secrets** live only on the cluster (`kubectl` secrets) and in the
-  local `secrets/` directory — **never committed** (see `.gitignore`).
-- **SealedSecrets** (controller v0.38.4) are committed under `sealed-secrets/`
-  as encrypted backups for cluster rebuild.
+  local (gitignored) `secrets/` directory — **never committed**.
+- **SealedSecrets** (controller v0.38.4) are the repo's source of truth: 28
+  encrypted secrets under `sealed-secrets/` (argocd / dmz / private), applied
+  by ArgoCD and decryptable only with the cluster's sealed-secrets key.
 - To seal a new secret:
   ```bash
   kubeseal --format yaml < secret.yaml > sealed-secrets/<ns>/<name>.yaml
@@ -155,17 +164,23 @@ open). Traefik routes by hostname; Authentik SSO protects member services.
 The Oracle VPS (`relay`, 129.213.11.104) acts as a Netbird relay + nginx proxy
 for media streaming.
 
+The network is segmented into **3 VLAN zones** via the OpenWrt router firewall,
+and every cluster namespace is isolated by default-deny NetworkPolicies.
+
 ---
 
 ## Backups
 
-Local automated backups run on `k3s-master` via cron:
+Automated backups run on `k3s-master` via cron:
 
 | Script | Schedule | Purpose |
 |--------|----------|---------|
-| `pg-backup.sh` | daily 02:00 | PostgreSQL dumps → `/root/pg-dumps/` (7-day retention) |
+| `pg-backup.sh` | daily 02:00 | PostgreSQL dumps → `/root/pg-dumps/` (4-day retention) |
 | `config-backup.sh` | daily 03:00 | K8s configs → `/root/config-backup/` (7-day retention) |
-| `rsync-to-pc.sh` | weekly Sun 04:00 | Offsite sync (needs PC_IP/PC_USER/PC_PATH configured) |
+| `restic-backup.sh` | daily 02:30 | restic → VPS (sftp 129.213.11.104) + PC (sftp 192.168.1.143); retention 7d/4w/6m + prune |
+
+`restic-backup.sh` also captures the sealed-secrets key (critical for cluster
+rebuild) and gzips the k3s state.db before upload (127 MB → ~11 MB).
 
 ---
 
