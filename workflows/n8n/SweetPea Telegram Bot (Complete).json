@@ -118,7 +118,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Parse Command').item.json.chatId }}",
-        "text": "🤖 *SweetPea Admin Bot*\n═══════════════════════\n\n🔐 `/invite sweetpea` — Sweet Pea tier code (family/friends)\n🌱 `/invite seedling` — Seedling tier code (manual override)\n\n📋 `/pending` — Donors awaiting verification\n✅ `/verify <id>` — Approve donor → generate code → email\n❌ `/reject <id>` — Reject donor → email rejection\n\n📊 `/status <username>` — Donor details\n📧 `/resend <username>` — Reset password & resend\n🚫 `/suspend <username>` — Disable access\n🟢 `/unsuspend <username>` — Re-enable access\n\n📜 `/list` — Active donors\n👥 `/allsubs` — All donors\n🔢 `/count` — Database dashboard\n\n🔑 `/allcodes` — Every code\n🟢 `/available` — Unused codes\n🔴 `/usedcodes` — Redeemed codes\n🔍 `/search <query>` — Find donor\n\n🗑 `/delsub <user>` — Remove donor\n🗑 `/delcode <code>` — Remove code\n🗄 `/dbstatus` — Database health\n\n🚨 `/incident <title>, <desc>` — Post an incident\n✅ `/resolve <id>` — Resolve an incident\n\n❓ `/help` — This menu",
+        "text": "🤖 *SweetPea Admin Bot*\n══════════════════════════\n\n🔑 `/invite sweetpea` — Sweet Pea tier code (family/friends)\n🌱 `/invite seedling` — Seedling tier code (manual override)\n\n📋 `/pending` — Donors awaiting verification\n✅ `/verify <id>` — Approve donor → generate code → email\n❌ `/reject <id>` — Reject donor → email rejection\n\n📊 `/status <username or email>` — Donor details\n📧 `/resend <username or email>` — Reset password & resend\n🚫 `/suspend <username or email>` — Disable access\n🟢 `/unsuspend <username or email>` — Re-enable access\n\n📜 `/list` — Active donors\n👥 `/allsubs` — All donors\n🔢 `/count` — Database dashboard\n\n🔑 `/allcodes` — Every code\n🟢 `/available` — Unused codes\n🔴 `/usedcodes` — Redeemed codes\n🔍 `/search <query>` — Find donor by name, username, or email\n\n🗑️ `/delsub <username or email>` — Remove donor\n🗑️ `/delcode <code>` — Remove code\n🖥️ `/dbstatus` — Database health\n\n🚨 `/incident <title>, <desc>` — Post an incident\n✅ `/resolve <id>` — Resolve an incident\n\n❓ `/help` — This menu\n\n_Tip: for donor commands you can use either the username or the email address._",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -347,7 +347,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT username, name, email, status, tier, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "query": "SELECT username, name, email, status, tier, true as found FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}')",
         "options": {}
       },
       "id": "7b734081-1c24-4d46-b4e7-228fa27225d2",
@@ -436,7 +436,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Parse Command').item.json.chatId }}",
-        "text": "=📊 *Status Lookup*\n──────────────────────────\n\nUsage: `/status <username>`",
+        "text": "=📊 *Status Lookup*\n──────────────────────────\n\nUsage: `/status <username or email>`",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -517,7 +517,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}')",
         "options": {}
       },
       "id": "92b9a1f8-a496-4cbf-8a50-e02f65901329",
@@ -688,7 +688,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Parse Command').item.json.chatId }}",
-        "text": "=📧 *Resend Command*\n──────────────────────────\n\nUsage: `/resend <username>`",
+        "text": "=📧 *Resend Command*\n──────────────────────────\n\nUsage: `/resend <username or email>`",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -745,7 +745,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}')",
         "options": {}
       },
       "id": "f5c0cc85-6cbc-42ef-9eb7-0418e57d0e2f",
@@ -899,7 +899,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Parse Command').item.json.chatId }}",
-        "text": "=🚫 *Suspend Command*\n──────────────────────────\n\nUsage: `/suspend <username>`",
+        "text": "=🚫 *Suspend Command*\n──────────────────────────\n\nUsage: `/suspend <username or email>`",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -956,7 +956,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "query": "SELECT id, authentik_user_id, username, name, email, true as found FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}')",
         "options": {}
       },
       "id": "af7dc66c-552c-4b19-bd91-e39eab7943fe",
@@ -1110,7 +1110,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Parse Command').item.json.chatId }}",
-        "text": "=🟢 *Unsuspend Command*\n──────────────────────────\n\nUsage: `/unsuspend <username>`",
+        "text": "=🟢 *Unsuspend Command*\n──────────────────────────\n\nUsage: `/unsuspend <username or email>`",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -1559,7 +1559,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Parse Command').item.json.chatId }}",
-        "text": "🔍 *Search Command*\\n──────────────────────────\\n\\nUsage: `/search <query>`",
+        "text": "=🔍 *Search Command*\n──────────────────────────\n\nUsage: `/search <query>`\n\n_Search by name, username, or email._",
         "additionalFields": {
           "parse_mode": "Markdown"
         }
@@ -1672,7 +1672,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT id, username, name, email, true as found FROM donors WHERE username = '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username = '{{ $json.args[0] }}')",
+        "query": "SELECT id, username, name, email, true as found FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}' UNION ALL SELECT NULL, NULL, NULL, NULL, false WHERE NOT EXISTS (SELECT 1 FROM donors WHERE username ILIKE '{{ $json.args[0] }}' OR email ILIKE '{{ $json.args[0] }}')",
         "options": {}
       },
       "id": "f24cf1f4-28fc-4f3e-b50a-0142ce96deb9",
@@ -1811,7 +1811,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO DONORS*\\n──────────────────────────\\n\\nNothing to delete.' } }];\nlet text = `🗑️ *DELETE DONOR*\\n══════════════════════════\\n\\nTap a command below:\\n\\n`;\nrows.forEach((r) => { text += `• /delsub \\`${r.username}\\` · *${r.name}*\\n`; });\nreturn [{ json: { text: text.trim() } }];"
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO DONORS*\\n──────────────────────────\\n\\nNothing to delete.' } }];\nlet text = `🗑️ *DELETE DONOR*\\n══════════════════════════\\n\\nUsage: /delsub <username or email>\\n\\nOr tap a command below:\\n\\n`;\nrows.forEach((r) => { const id = r.username || r.email; text += `• /delsub \\`${id}\\` · *${r.name}*\\n`; });\nreturn [{ json: { text: text.trim() } }];"
       },
       "id": "ca5ba286-dd0c-4344-8325-6bb5e59875de",
       "name": "Format DelSub List",
@@ -2019,7 +2019,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO CODES*\\n──────────────────────────\\n\\nNothing to delete.' } }];\nlet text = `🗑️ *DELETE INVITE CODE*\\n══════════════════════════\\n\\nTap a command below:\\n\\n`;\nrows.forEach((r) => {\n  const tier = r.tier === 'sweetpea' ? '🌸' : '🌱';\n  const status = r.used ? '🔴 Used' : '🟢 Available';\n  text += `• /delcode \\`${r.code}\\` · ${tier} · ${status}\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
+        "jsCode": "const rows = $input.all().map(i => i.json).filter(r => r.is_real);\nif (rows.length === 0) return [{ json: { text: '📭 *NO CODES*\\n──────────────────────────\\n\\nNothing to delete.' } }];\nlet text = `🗑️ *DELETE INVITE CODE*\\n══════════════════════════\\n\\nUsage: /delcode <code>\\n\\nOr tap a command below:\\n\\n`;\nrows.forEach((r) => {\n  const tier = r.tier === 'sweetpea' ? '🌸' : '🌱';\n  const status = r.used ? '🔴 Used' : '🟢 Available';\n  text += `• /delcode \\`${r.code}\\` · ${tier} · ${status}\\n`;\n});\nreturn [{ json: { text: text.trim() } }];"
       },
       "id": "c9388111-6f7d-4e5a-ad5d-05379efed6d3",
       "name": "Format DelCode List",
