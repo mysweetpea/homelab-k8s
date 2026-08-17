@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  img { display: block; width: 600px; height: 600px; }
+</style>
+</head>
+<body>
+  <img id="logo" src="mysweetpea-logo-dark.svg">
+  <script>
+    // Wait for SVG load, then signal
+    const img = document.getElementById('logo');
+    img.onload = () => { document.title = 'LOADED'; };
+  </script>
+</body>
+</html>

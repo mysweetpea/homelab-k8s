@@ -1,0 +1,271 @@
+/* ============================================================
+   MySweetPea Nordic — Jellyfin premium theme overlay
+   Built on ElegantFin v26.06.06 (lscambo13) — variable overrides
+   + brand identity layer. Palette matches Moonfin 'mysweetpea_nordic'
+   and the portfolio site: bg #0C1316, surface #1B2B31,
+   gold #D9A86C, teal #5EB8A8, text #F2F6F4.
+   ============================================================ */
+
+:root {
+  /* ---- Brand palette ---- */
+  --msp-bg: #0C1316;
+  --msp-bg-soft: #101A1E;
+  --msp-surface: #1B2B31;
+  --msp-surface-2: #22363D;
+  --msp-gold: #D9A86C;
+  --msp-gold-soft: rgba(217, 168, 108, 0.18);
+  --msp-gold-glow: rgba(217, 168, 108, 0.35);
+  --msp-teal: #5EB8A8;
+  --msp-text: #F2F6F4;
+  --msp-text-dim: #9FB2B8;
+  --msp-border: rgba(94, 184, 168, 0.16);
+
+  /* ---- ElegantFin variable overrides ---- */
+  --activeColor: var(--msp-gold);
+  --activeColorAlpha: rgba(217, 168, 108, 0.9);
+  --uiAccentColor: var(--msp-gold);
+  --highlightOutlineColor: var(--msp-gold);
+  --btnSubmitColor: #B8863F;
+  --btnSubmitBorderColor: var(--msp-gold);
+  --btnMiniPlayColor: var(--msp-teal);
+  --btnMiniPlayBorderColor: #3E8A7C;
+  --checkboxCheckedBgColor: var(--msp-gold);
+  --darkerGradientPoint: var(--msp-bg);
+  --darkerGradientPointAlpha: rgba(12, 19, 22, 0.88);
+  --lighterGradientPoint: var(--msp-surface);
+  --lighterGradientPointAlpha: rgba(27, 43, 49, 0.85);
+  --gradientPointAlpha: rgba(27, 43, 49, 0.35);
+  --textColor: var(--msp-text);
+  --dimTextColor: var(--msp-text-dim);
+  --borderColor: #3A4F56;
+  --darkerBorderColor: #24363C;
+  --lighterBorderColor: rgba(242, 246, 244, 0.18);
+  --drawerColor: rgba(16, 26, 30, 0.92);
+  --headerColor: rgba(16, 26, 30, 0.85);
+  --headerColorGradient: linear-gradient(180deg, rgba(12, 19, 22, 0.96) 30%, 55%, transparent 90%);
+  --headerColorGradientAlt: linear-gradient(180deg, #0C1316, 70%, transparent);
+  --selectorBackgroundColor: #22363D;
+  --selectorBackgroundColorAlpha: rgba(34, 54, 61, 0.5);
+  --tableBodyColor: #16242A;
+  --cardBackgroundGradient: linear-gradient(0deg, var(--darkerGradientPoint), 25%, var(--lighterGradientPoint));
+  --backgroundGradient: linear-gradient(0deg, var(--darkerGradientPoint) 35%, var(--lighterGradientPoint));
+  --elegantFinFooterText: "MySweetPea";
+  --shadow: 0 0.15em 0.4em rgba(0, 0, 0, 0.45);
+}
+
+/* ---- Typography: keep Inter, add Fraunces for display ---- */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap");
+
+h1, h2, h3, .pageTitle, .sectionTitle, .headerTitle, .detailPageTitle {
+  font-family: "Fraunces", "Inter", serif;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Gold selection ---- */
+::selection {
+  background: var(--msp-gold-soft);
+  color: var(--msp-text);
+}
+
+/* ---- Custom scrollbar ---- */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--msp-bg);
+}
+*::-webkit-scrollbar-thumb {
+  background: #2C4148;
+  border-radius: 6px;
+  border: 2px solid var(--msp-bg);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--msp-gold);
+}
+
+/* ---- Sidebar / drawer ---- */
+.mainDrawer {
+  background: linear-gradient(180deg, var(--msp-bg-soft), var(--msp-bg)) !important;
+  border-right: 1px solid var(--msp-border);
+}
+.mainDrawer .navMenuLink:hover {
+  background: var(--msp-gold-soft) !important;
+  color: var(--msp-gold) !important;
+}
+.mainDrawer .navMenuLink-selected {
+  background: var(--msp-gold-soft) !important;
+  color: var(--msp-gold) !important;
+  border-left: 3px solid var(--msp-gold);
+}
+
+/* ---- Header ---- */
+.skinHeader {
+  background: var(--headerColorGradient) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--msp-border);
+}
+
+/* ---- Cards: premium hover ---- */
+.cardScalable {
+  border-radius: 0.9em !important;
+  box-shadow: 0 0.2em 0.8em rgba(0, 0, 0, 0.5) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+.card-hoverable:hover .cardScalable {
+  box-shadow: 0 0.4em 1.4em rgba(217, 168, 108, 0.18), 0 0.2em 0.8em rgba(0, 0, 0, 0.6) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.card-hoverable:hover .cardImageContainer {
+  transform: scale(1.04) !important;
+}
+.cardOverlayFab-primary {
+  background: var(--msp-gold) !important;
+  color: #0C1316 !important;
+  box-shadow: 0 0.2em 1em var(--msp-gold-glow) !important;
+}
+
+/* ---- Buttons ---- */
+.emby-button.raised, .button-submit, .raised {
+  background: linear-gradient(135deg, var(--msp-gold), #C89A5A) !important;
+  color: #0C1316 !important;
+  border: none !important;
+  box-shadow: 0 0.2em 0.8em var(--msp-gold-glow) !important;
+  font-weight: 600;
+}
+.emby-button.raised:hover, .button-submit:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0.3em 1.2em var(--msp-gold-glow) !important;
+}
+
+/* ---- Focus rings ---- */
+.emby-button.show-focus:focus,
+.paper-icon-button-light.show-focus:focus {
+  background-color: var(--msp-gold) !important;
+  color: #0C1316 !important;
+}
+
+/* ---- Progress bars / sliders ---- */
+.paper-slider .paper-slider-knob,
+.paper-slider .paper-slider-pin {
+  background: var(--msp-gold) !important;
+}
+.paper-slider .paper-slider-active {
+  background: var(--msp-gold) !important;
+}
+
+/* ---- Item detail page ---- */
+.detailPagePrimaryContainer {
+  background: linear-gradient(180deg, rgba(12, 19, 22, 0.4), var(--msp-bg) 70%) !important;
+}
+.detailButton {
+  border: 1px solid var(--msp-border) !important;
+  border-radius: 0.6em !important;
+  background: rgba(27, 43, 49, 0.6) !important;
+  backdrop-filter: blur(6px);
+}
+.detailButton:hover {
+  border-color: var(--msp-gold) !important;
+  color: var(--msp-gold) !important;
+}
+
+/* ---- Login page ---- */
+#loginPage {
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(217, 168, 108, 0.12), transparent 60%),
+    radial-gradient(ellipse at 50% -20%, rgba(94, 184, 168, 0.10), transparent 55%),
+    linear-gradient(180deg, #0C1316, #101A1E) !important;
+}
+#loginPage .sectionTitle,
+#loginPage h1 {
+  color: var(--msp-text) !important;
+  font-family: "Fraunces", serif;
+}
+#loginPage .emby-input,
+#loginPage .emby-textarea {
+  background: rgba(27, 43, 49, 0.7) !important;
+  border: 1px solid var(--msp-border) !important;
+  border-radius: 0.6em !important;
+  color: var(--msp-text) !important;
+}
+#loginPage .emby-input:focus {
+  border-color: var(--msp-gold) !important;
+  box-shadow: 0 0 0 3px var(--msp-gold-soft);
+}
+#loginPage .loginDisclaimer {
+  color: var(--msp-text-dim) !important;
+  font-size: 0.9em;
+}
+
+/* ---- Now playing / OSD ---- */
+.osdHeader {
+  background: linear-gradient(180deg, rgba(12, 19, 22, 0.9), transparent) !important;
+}
+.osdVolumeSlider .paper-slider-active {
+  background: var(--msp-gold) !important;
+}
+
+/* ---- Dashboard ---- */
+.dashboardFooter {
+  color: var(--msp-text-dim) !important;
+}
+.dashboardFooter:after {
+  color: var(--msp-gold) !important;
+}
+
+/* ---- Tables ---- */
+.tableClass tbody tr:hover {
+  background: rgba(217, 168, 108, 0.06) !important;
+}
+
+/* ---- Dialogs ---- */
+.dialog {
+  background: linear-gradient(180deg, var(--msp-surface), var(--msp-bg-soft)) !important;
+  border: 1px solid var(--msp-border) !important;
+  border-radius: 1em !important;
+  box-shadow: 0 1em 3em rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ---- Tabs ---- */
+.emby-tabs .emby-tab-button-active {
+  color: var(--msp-gold) !important;
+  border-bottom: 2px solid var(--msp-gold) !important;
+}
+
+/* ---- Search ---- */
+.searchResults .card-hoverable:hover .cardScalable {
+  box-shadow: 0 0.4em 1.4em rgba(217, 168, 108, 0.22) !important;
+}
+
+/* ---- Media info badges ---- */
+.mediaInfoItem {
+  background: rgba(27, 43, 49, 0.8) !important;
+  border: 1px solid var(--msp-border) !important;
+  border-radius: 0.5em !important;
+  color: var(--msp-text) !important;
+}
+
+/* ---- Star ratings ---- */
+.starRating .starIcon {
+  color: var(--msp-gold) !important;
+}
+
+/* ---- Chapter / trickplay scrubber ---- */
+.chapterThumbContainer {
+  border: 2px solid var(--msp-gold) !important;
+  border-radius: 0.5em !important;
+  box-shadow: 0 0 1em var(--msp-gold-glow) !important;
+}
+
+/* ---- Toast / notifications ---- */
+.toast {
+  background: var(--msp-surface) !important;
+  border: 1px solid var(--msp-border) !important;
+  border-radius: 0.8em !important;
+  color: var(--msp-text) !important;
+}
+
+/* ---- TV layout: keep it clean ---- */
+.layout-tv .cardScalable {
+  border-radius: 0.8em !important;
+}
