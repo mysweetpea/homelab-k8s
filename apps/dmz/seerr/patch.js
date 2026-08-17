@@ -60,3 +60,50 @@ if (bsrc.includes(bold)) {
   console.log('PATCH 2 (buildUrl baseUrl) PATTERN NOT FOUND');
   process.exit(1);
 }
+
+// === Patch 3: login disclaimer on the sign-in page ===
+// Injects a disclaimer paragraph into the login card (both client + SSR
+// chunks so React hydration stays consistent). Chunk filenames are hashed
+// and change on image updates, so discover them dynamically.
+const DISCLAIMER_TEXT =
+  'Sign in with your MySweetPea account (Authentik SSO). Use the same username and password as Vaultwarden, AFFiNE, and the other services.';
+
+function patchLoginChunk(filePath) {
+  let src = fs.readFileSync(filePath, 'utf8');
+  if (src.includes('Authentik SSO')) {
+    console.log('PATCH 3 (login disclaimer) ALREADY APPLIED: ' + filePath);
+    return true;
+  }
+  // Only touch chunks that are the actual login page (has the i18n key)
+  if (!src.includes('signinheader')) return false;
+  const anchor = 'px-10 py-8",children:[';
+  const idx = src.indexOf(anchor);
+  if (idx === -1) return false;
+  const after = src.slice(idx + anchor.length, idx + anchor.length + 60);
+  const m = after.match(/\(0,([a-zA-Z_$][\w$]*)\.jsx\)\(/);
+  if (!m) return false;
+  const h = m[1];
+  const disclaimer = `(0,${h}.jsx)("p",{className:"mb-4 text-center text-sm text-gray-400",children:"${DISCLAIMER_TEXT}"}),`;
+  src = src.slice(0, idx + anchor.length) + disclaimer + src.slice(idx + anchor.length);
+  fs.writeFileSync(filePath, src);
+  console.log('PATCH 3 (login disclaimer) OK: ' + filePath);
+  return true;
+}
+
+let patchedAny = false;
+const clientChunksDir = '/app/.next/static/chunks/';
+if (fs.existsSync(clientChunksDir)) {
+  for (const f of fs.readdirSync(clientChunksDir)) {
+    if (f.endsWith('.js') && patchLoginChunk(clientChunksDir + f)) patchedAny = true;
+  }
+}
+const ssrChunksDir = '/app/.next/server/chunks/ssr/';
+if (fs.existsSync(ssrChunksDir)) {
+  for (const f of fs.readdirSync(ssrChunksDir)) {
+    if (f.endsWith('.js') && patchLoginChunk(ssrChunksDir + f)) patchedAny = true;
+  }
+}
+if (!patchedAny) {
+  console.log('PATCH 3 (login disclaimer) PATTERN NOT FOUND');
+  process.exit(1);
+}
