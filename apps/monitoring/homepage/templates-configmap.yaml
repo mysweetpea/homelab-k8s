@@ -698,4 +698,82 @@ data:
             href: ""
             description: Media Transcoder — Coming Soon
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/tdarr.svg
+            server: ""
+        - Obsidian:
+            id: obsidian
+            href: ""
+            description: Knowledge Base — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@main/svg/obsidian.svg
+            server: ""
+        - Minecraft:
+            id: minecraft
+            href: ""
+            description: Game Server — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@main/svg/minecraft.svg
+            server: ""
+        - Valheim:
+            id: valheim
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-axe
+            server: ""
+        - Palworld:
+            id: palworld
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-paw
+            server: ""
+        - Terraria:
+            id: terraria
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-pickaxe
+            server: ""
+        - Rust:
+            id: rust
+            href: ""
+            description: Game Server — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@main/svg/rust.svg
+            server: ""
+        - ARK:
+            id: ark
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-dinosaur
+            server: ""
+        - CS2:
+            id: cs2
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-crosshairs
+            server: ""
+        - Factorio:
+            id: factorio
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-factory
+            server: ""
+        - Satisfactory:
+            id: satisfactory
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-conveyor-belt
+            server: ""
+        - Project Zomboid:
+            id: project-zomboid
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-skull
+            server: ""
+        - 7 Days to Die:
+            id: 7dtd
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-skull-crossbones
+            server: ""
+        - Garry's Mod:
+            id: gmod
+            href: ""
+            description: Game Server — Coming Soon
+            icon: mdi-toy-brick-outline
             server: "" 
