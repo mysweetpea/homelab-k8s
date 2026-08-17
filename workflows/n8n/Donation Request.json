@@ -106,7 +106,7 @@
     },
     {
       "parameters": {
-        "message": "={{ 'New donation request from ' + $json.name + ' (@' + $json.username + ')\\nCrypto: ' + $json.crypto_type + '\\nTX: ' + ($json.tx_hash || 'not provided') + '\\nEmail: ' + $json.email }}",
+        "message": "={{ 'New donation request from ' + $('Validate Input').item.json.name + ' (@' + $('Validate Input').item.json.username + ')\\nCrypto: ' + $('Validate Input').item.json.crypto_type + '\\nTX: ' + ($('Validate Input').item.json.tx_hash || 'not provided') + '\\nEmail: ' + $('Validate Input').item.json.email }}",
         "additionalFields": {
           "priority": 5,
           "title": "Donation Request"

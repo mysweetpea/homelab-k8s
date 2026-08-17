@@ -171,7 +171,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"username\": \"{{ $('Validate Input').item.json.username }}\",\n  \"name\": \"{{ $('Validate Input').item.json.name }}\",\n  \"email\": \"{{ $('Validate Input').item.json.email }}\",\n  \"type\": \"internal\",\n  \"is_active\": true,\n  \"path\": \"users\",\n  \"groups\": [\"{{ $json.tier === 'sweetpea' ? '038c4ae4-6188-4928-9555-cd29aa6d43e9' : 'e78a189b-6b60-43e4-8fb1-8fd1672d9eaf' }}\"]\n}",
+        "jsonBody": "={\n  \"username\": \"{{ $('Validate Input').item.json.username }}\",\n  \"name\": \"{{ $('Validate Input').item.json.name }}\",\n  \"email\": \"{{ $('Validate Input').item.json.email }}\",\n  \"type\": \"internal\",\n  \"is_active\": true,\n  \"path\": \"users\",\n  \"groups\": [\"{{ $json.tier === 'sweetpea' ? '3c7c79ff-3a62-419f-b89f-e7a82363ae51' : '919a95fc-b081-434d-9459-3d659858c933' }}\"]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
