@@ -1,5 +1,5 @@
 {
-  "name": "Delete Incident Command Branch",
+  "name": "SweetPea Telegram Bot (Complete)",
   "nodes": [
     {
       "parameters": {
@@ -1583,7 +1583,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT current_database() as db_name, (SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public') as table_count, pg_size_pretty(pg_database_size(current_database())) as db_size",
+        "query": "SELECT current_database() as db_name, (SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public') as table_count, pg_size_pretty(pg_database_size(current_database())) as db_size, (SELECT count(*) FROM donors) as donors, (SELECT count(*) FROM subscribers) as subscribers, (SELECT count(*) FROM invite_codes) as invite_codes, (SELECT count(*) FROM incidents) as incidents, (SELECT count(*) FROM telegram_offset) as telegram_offset",
         "options": {}
       },
       "id": "f45ac2c9-14d6-4d06-8786-2c32a2d6c897",
@@ -1603,7 +1603,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const r = $input.first().json;\nconst text = `🗄️ *DATABASE STATUS*\\n══════════════════════════\\n\\n✅ *Connected*\\n\\n🏷 Name:   ${r.db_name}\\n📊 Tables: ${r.table_count}\\n💾 Size:   ${r.db_size}`;\nreturn [{ json: { text } }];"
+        "jsCode": "const r = $input.first().json;\nconst text = `🗄️ *DATABASE STATUS*\n══════════════════════════\n\n✅ *Connected*\n\n🏷 Name:   ${r.db_name}\n📊 Tables: ${r.table_count}\n💾 Size:   ${r.db_size}\n\n📋 *Table Rows*\n   ├─ 👥 Donors:        ${r.donors}\n   ├─ 📝 Subscribers:   ${r.subscribers}\n   ├─ 🎟 Invite Codes:  ${r.invite_codes}\n   ├─ 🚨 Incidents:     ${r.incidents}\n   └─ 📡 Telegram:      ${r.telegram_offset}`;\nreturn [{ json: { text } }];"
       },
       "id": "ebf73ca8-8ef9-4c35-960f-7e75c436c628",
       "name": "Format DBStatus",
