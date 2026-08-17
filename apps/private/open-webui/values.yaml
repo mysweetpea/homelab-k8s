@@ -1,14 +1,5 @@
 controllers:
   main:
-    additionalVolumes:
-    - name: web-index
-      configMap:
-        name: open-webui-web-index
-    additionalVolumeMounts:
-    - name: web-index
-      mountPath: /app/build/index.html
-      subPath: index.html
-      readOnly: true
     containers:
       main:
         image:
@@ -45,3 +36,10 @@ persistence:
     storageClass: longhorn
     globalMounts:
     - path: /app/backend/data
+  web-index:
+    type: configMap
+    name: open-webui-web-index
+    globalMounts:
+    - path: /app/build/index.html
+      subPath: index.html
+      readOnly: true
