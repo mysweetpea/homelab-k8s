@@ -170,3 +170,10 @@ persistence:
     storageClass: longhorn
     globalMounts:
     - path: /root/.affine/storage
+  web-index:
+    type: configMap
+    name: affine-web-index
+    globalMounts:
+    - path: /app/static/index.html
+      subPath: index.html
+      readOnly: true
