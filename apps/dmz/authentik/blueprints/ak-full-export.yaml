@@ -1738,7 +1738,7 @@ entries:
     name: Provider for affine
     property_mappings:
     - 48532f9e-e0fb-47e8-8af1-39de46e39f00
-    - 53b93219-a977-47bf-ac91-d7b6f239b245
+    - b0029fa5-76aa-427c-86dc-01c9693ac85b
     - 8842b9fd-3ac7-441c-a33e-97875503a786
     redirect_uris:
     - matching_mode: strict
