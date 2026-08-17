@@ -170,6 +170,58 @@ h1, h2, h3, .pageTitle, .sectionTitle, .headerTitle, .detailPageTitle {
   color: var(--msp-gold) !important;
 }
 
+/* ---- Brand watermark (logo in the background) ----
+   Uses the branded splashscreen (logo on dark gradient) as a fixed,
+   low-opacity watermark behind all content. */
+body {
+  background-image:
+    radial-gradient(ellipse at 50% 120%, rgba(217, 168, 108, 0.10), transparent 60%),
+    radial-gradient(ellipse at 50% -20%, rgba(94, 184, 168, 0.08), transparent 55%),
+    linear-gradient(180deg, #0C1316, #101A1E) !important;
+  background-attachment: fixed;
+}
+.backgroundContainer, .backdropContainer {
+  background-color: transparent !important;
+}
+/* Watermark layer: subtle logo, right-bottom, never blocks content */
+body::after {
+  content: "";
+  position: fixed;
+  right: -6vw;
+  bottom: -8vh;
+  width: 34vw;
+  height: 34vw;
+  max-width: 560px;
+  max-height: 560px;
+  background-image: url("/Branding/Splashscreen");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+  filter: saturate(0.8);
+}
+/* Slightly stronger on the login page (no content behind it) */
+#loginPage::after {
+  content: "";
+  position: fixed;
+  right: -4vw;
+  bottom: -6vh;
+  width: 30vw;
+  height: 30vw;
+  max-width: 480px;
+  max-height: 480px;
+  background-image: url("/Branding/Splashscreen");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.10;
+  pointer-events: none;
+  z-index: 0;
+  filter: saturate(0.8);
+}
+
 /* ---- Login page ---- */
 #loginPage {
   background:
