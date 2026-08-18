@@ -47,6 +47,18 @@ curl -X POST http://localhost:8096/Branding/Splashscreen \
 3. Upload splashscreen (base64)
 4. Hard-refresh browser (Ctrl+F5) — the web UI caches aggressively
 
+## Efficiency tuning (Aug 18 2026)
+
+Gelato on-demand streaming causes latency when Jellyfin "grabs" remote content. Applied:
+
+- **Gelato.xml**: `FFmpegAnalyzeDuration` 5M→**1M**, `FFmpegProbeSize` 40M→**8M** (probe remote debrid streams faster)
+- **Disabled scheduled tasks** (0 triggers) that hammer 14,630 virtual items:
+  Detect and Analyze Media Segments, Download missing subtitles, Extract Chapter Images,
+  Extract Subtitles, Generate Trickplay Images, Media Segment Scan
+- **Library auto-refresh off**: `AutomaticRefreshIntervalDays=0` in
+  `/config/root/default/{Movies,TV Shows}/options.xml` (was 1 = daily re-fetch of all Gelato metadata)
+- Gelato README also suggests lowering AIOStreams addon timeouts to ~5s (not yet done — container is exec-less)
+
 ## Notes
 
 - **ElegantFin updates**: re-vendor from
