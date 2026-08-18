@@ -3,7 +3,7 @@
    Built on ElegantFin v26.06.06 (lscambo13) — variable overrides
    + brand identity layer. Palette matches Moonfin 'mysweetpea_nordic'
    and the portfolio site: bg #0C1316, surface #1B2B31,
-   gold #D9A86C, teal #5EB8A8, text #F2F6F4.
+   teal #5EB8A8 (accent), text #F2F6F4.
    ============================================================ */
 
 :root {
@@ -12,24 +12,23 @@
   --msp-bg-soft: #101A1E;
   --msp-surface: #1B2B31;
   --msp-surface-2: #22363D;
-  --msp-gold: #D9A86C;
-  --msp-gold-soft: rgba(217, 168, 108, 0.18);
-  --msp-gold-glow: rgba(217, 168, 108, 0.35);
   --msp-teal: #5EB8A8;
+  --msp-teal-soft: rgba(94, 184, 168, 0.18);
+  --msp-teal-glow: rgba(94, 184, 168, 0.35);
   --msp-text: #F2F6F4;
   --msp-text-dim: #9FB2B8;
   --msp-border: rgba(94, 184, 168, 0.16);
 
   /* ---- ElegantFin variable overrides ---- */
-  --activeColor: var(--msp-gold);
-  --activeColorAlpha: rgba(217, 168, 108, 0.9);
-  --uiAccentColor: var(--msp-gold);
-  --highlightOutlineColor: var(--msp-gold);
-  --btnSubmitColor: #B8863F;
-  --btnSubmitBorderColor: var(--msp-gold);
+  --activeColor: var(--msp-teal);
+  --activeColorAlpha: rgba(94, 184, 168, 0.9);
+  --uiAccentColor: var(--msp-teal);
+  --highlightOutlineColor: var(--msp-teal);
+  --btnSubmitColor: #3E8A7C;
+  --btnSubmitBorderColor: var(--msp-teal);
   --btnMiniPlayColor: var(--msp-teal);
   --btnMiniPlayBorderColor: #3E8A7C;
-  --checkboxCheckedBgColor: var(--msp-gold);
+  --checkboxCheckedBgColor: var(--msp-teal);
   --darkerGradientPoint: var(--msp-bg);
   --darkerGradientPointAlpha: rgba(12, 19, 22, 0.88);
   --lighterGradientPoint: var(--msp-surface);
@@ -61,9 +60,9 @@ h1, h2, h3, .pageTitle, .sectionTitle, .headerTitle, .detailPageTitle {
   letter-spacing: -0.01em;
 }
 
-/* ---- Gold selection ---- */
+/* ---- Teal selection ---- */
 ::selection {
-  background: var(--msp-gold-soft);
+  background: var(--msp-teal-soft);
   color: var(--msp-text);
 }
 
@@ -81,7 +80,7 @@ h1, h2, h3, .pageTitle, .sectionTitle, .headerTitle, .detailPageTitle {
   border: 2px solid var(--msp-bg);
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: var(--msp-gold);
+  background: var(--msp-teal);
 }
 
 /* ---- Sidebar / drawer ---- */
@@ -90,13 +89,13 @@ h1, h2, h3, .pageTitle, .sectionTitle, .headerTitle, .detailPageTitle {
   border-right: 1px solid var(--msp-border);
 }
 .mainDrawer .navMenuLink:hover {
-  background: var(--msp-gold-soft) !important;
-  color: var(--msp-gold) !important;
+  background: var(--msp-teal-soft) !important;
+  color: var(--msp-teal) !important;
 }
 .mainDrawer .navMenuLink-selected {
-  background: var(--msp-gold-soft) !important;
-  color: var(--msp-gold) !important;
-  border-left: 3px solid var(--msp-gold);
+  background: var(--msp-teal-soft) !important;
+  color: var(--msp-teal) !important;
+  border-left: 3px solid var(--msp-teal);
 }
 
 /* ---- Header ---- */
@@ -113,45 +112,45 @@ h1, h2, h3, .pageTitle, .sectionTitle, .headerTitle, .detailPageTitle {
   transition: transform 0.25s ease, box-shadow 0.25s ease !important;
 }
 .card-hoverable:hover .cardScalable {
-  box-shadow: 0 0.4em 1.4em rgba(217, 168, 108, 0.18), 0 0.2em 0.8em rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 0.4em 1.4em rgba(94, 184, 168, 0.18), 0 0.2em 0.8em rgba(0, 0, 0, 0.6) !important;
   transform: translateY(-2px) scale(1.02) !important;
 }
 .card-hoverable:hover .cardImageContainer {
   transform: scale(1.04) !important;
 }
 .cardOverlayFab-primary {
-  background: var(--msp-gold) !important;
+  background: var(--msp-teal) !important;
   color: #0C1316 !important;
-  box-shadow: 0 0.2em 1em var(--msp-gold-glow) !important;
+  box-shadow: 0 0.2em 1em var(--msp-teal-glow) !important;
 }
 
 /* ---- Buttons ---- */
 .emby-button.raised, .button-submit, .raised {
-  background: linear-gradient(135deg, var(--msp-gold), #C89A5A) !important;
+  background: linear-gradient(135deg, var(--msp-teal), #4A9C8E) !important;
   color: #0C1316 !important;
   border: none !important;
-  box-shadow: 0 0.2em 0.8em var(--msp-gold-glow) !important;
+  box-shadow: 0 0.2em 0.8em var(--msp-teal-glow) !important;
   font-weight: 600;
 }
 .emby-button.raised:hover, .button-submit:hover {
   filter: brightness(1.1);
-  box-shadow: 0 0.3em 1.2em var(--msp-gold-glow) !important;
+  box-shadow: 0 0.3em 1.2em var(--msp-teal-glow) !important;
 }
 
 /* ---- Focus rings ---- */
 .emby-button.show-focus:focus,
 .paper-icon-button-light.show-focus:focus {
-  background-color: var(--msp-gold) !important;
+  background-color: var(--msp-teal) !important;
   color: #0C1316 !important;
 }
 
 /* ---- Progress bars / sliders ---- */
 .paper-slider .paper-slider-knob,
 .paper-slider .paper-slider-pin {
-  background: var(--msp-gold) !important;
+  background: var(--msp-teal) !important;
 }
 .paper-slider .paper-slider-active {
-  background: var(--msp-gold) !important;
+  background: var(--msp-teal) !important;
 }
 
 /* ---- Item detail page ---- */
@@ -165,8 +164,8 @@ h1, h2, h3, .pageTitle, .sectionTitle, .headerTitle, .detailPageTitle {
   backdrop-filter: blur(6px);
 }
 .detailButton:hover {
-  border-color: var(--msp-gold) !important;
-  color: var(--msp-gold) !important;
+  border-color: var(--msp-teal) !important;
+  color: var(--msp-teal) !important;
 }
 
 /* ---- Brand watermark (logo in the background) ----
@@ -174,7 +173,7 @@ h1, h2, h3, .pageTitle, .sectionTitle, .headerTitle, .detailPageTitle {
    low-opacity watermark behind all content. */
 body {
   background-image:
-    radial-gradient(ellipse at 50% 120%, rgba(217, 168, 108, 0.10), transparent 60%),
+    radial-gradient(ellipse at 50% 120%, rgba(94, 184, 168, 0.10), transparent 60%),
     radial-gradient(ellipse at 50% -20%, rgba(94, 184, 168, 0.08), transparent 55%),
     linear-gradient(180deg, #0C1316, #101A1E) !important;
   background-attachment: fixed;
@@ -224,7 +223,7 @@ body::after {
 /* ---- Login page ---- */
 #loginPage {
   background:
-    radial-gradient(ellipse at 50% 120%, rgba(217, 168, 108, 0.12), transparent 60%),
+    radial-gradient(ellipse at 50% 120%, rgba(94, 184, 168, 0.12), transparent 60%),
     radial-gradient(ellipse at 50% -20%, rgba(94, 184, 168, 0.10), transparent 55%),
     linear-gradient(180deg, #0C1316, #101A1E) !important;
 }
@@ -241,8 +240,8 @@ body::after {
   color: var(--msp-text) !important;
 }
 #loginPage .emby-input:focus {
-  border-color: var(--msp-gold) !important;
-  box-shadow: 0 0 0 3px var(--msp-gold-soft);
+  border-color: var(--msp-teal) !important;
+  box-shadow: 0 0 0 3px var(--msp-teal-soft);
 }
 #loginPage .loginDisclaimer {
   color: var(--msp-text-dim) !important;
@@ -254,7 +253,7 @@ body::after {
   background: linear-gradient(180deg, rgba(12, 19, 22, 0.9), transparent) !important;
 }
 .osdVolumeSlider .paper-slider-active {
-  background: var(--msp-gold) !important;
+  background: var(--msp-teal) !important;
 }
 
 /* ---- Dashboard ---- */
@@ -262,12 +261,12 @@ body::after {
   color: var(--msp-text-dim) !important;
 }
 .dashboardFooter:after {
-  color: var(--msp-gold) !important;
+  color: var(--msp-teal) !important;
 }
 
 /* ---- Tables ---- */
 .tableClass tbody tr:hover {
-  background: rgba(217, 168, 108, 0.06) !important;
+  background: rgba(94, 184, 168, 0.06) !important;
 }
 
 /* ---- Dialogs ---- */
@@ -280,13 +279,13 @@ body::after {
 
 /* ---- Tabs ---- */
 .emby-tabs .emby-tab-button-active {
-  color: var(--msp-gold) !important;
-  border-bottom: 2px solid var(--msp-gold) !important;
+  color: var(--msp-teal) !important;
+  border-bottom: 2px solid var(--msp-teal) !important;
 }
 
 /* ---- Search ---- */
 .searchResults .card-hoverable:hover .cardScalable {
-  box-shadow: 0 0.4em 1.4em rgba(217, 168, 108, 0.22) !important;
+  box-shadow: 0 0.4em 1.4em rgba(94, 184, 168, 0.22) !important;
 }
 
 /* ---- Media info badges ---- */
@@ -299,14 +298,14 @@ body::after {
 
 /* ---- Star ratings ---- */
 .starRating .starIcon {
-  color: var(--msp-gold) !important;
+  color: var(--msp-teal) !important;
 }
 
 /* ---- Chapter / trickplay scrubber ---- */
 .chapterThumbContainer {
-  border: 2px solid var(--msp-gold) !important;
+  border: 2px solid var(--msp-teal) !important;
   border-radius: 0.5em !important;
-  box-shadow: 0 0 1em var(--msp-gold-glow) !important;
+  box-shadow: 0 0 1em var(--msp-teal-glow) !important;
 }
 
 /* ---- Toast / notifications ---- */
