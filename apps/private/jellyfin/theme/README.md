@@ -64,6 +64,19 @@ Gelato on-demand streaming causes latency when Jellyfin "grabs" remote content. 
   the library (AIOStreams supports mal/kitsu/anilist IDs). User's AIOStreams config imported via web UI at
   http://192.168.20.222:3000/stremio/configure (Real-Debrid on).
 
+## Performance tuning (Aug 18 2026)
+
+Applied for "faster than Netflix" feel:
+
+- **Transcodes in RAM**: `persistence.transcodes` = emptyDir Memory 2Gi → `/transcodes` tmpfs (was Longhorn network storage). Playback starts near-instant.
+- **CPU guarantees**: requests 2 cores / 1Gi, limits 6 cores / 4Gi (was unset — other pods could starve Jellyfin).
+- **encoding.xml**: `EncoderPreset=veryfast` (faster transcode start), `EnableThrottling=true` + `ThrottleDelaySeconds=30` (frees CPU when paused), `EnableSubtitleExtraction=false` (no remote fetches on Gelato virtual items), `EnableSegmentDeletion=true`, `TranscodingTempPath=/transcodes`.
+- **network.xml**: `EnableResponseCompression=true` (smaller/faster web UI payloads).
+- **Media Bar**: MaxItems 50→10, MaxMovies/MaxTvShows 15→5, PreloadCount 1→0, ShuffleInterval 12s→30s, LoadingCheckInterval 100ms→500ms, EnableTrailers=false (poster/backdrop only).
+- **Gelato.xml**: FFmpegAnalyzeDuration 5M→1M, FFmpegProbeSize 40M→8M.
+- **Scheduled tasks disabled** (6 heavy ones: media segments, subtitles, chapter images, trickplay, etc.) + library auto-refresh off.
+- **Import Catalogs daily 6am** keeps Recently Added fresh.
+
 ## Notes
 
 - **ElegantFin updates**: re-vendor from
