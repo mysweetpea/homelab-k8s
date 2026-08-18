@@ -27,6 +27,13 @@ controllers:
             secretKeyRef:
               name: aiostreams-secrets
               key: AIOSTREAMS_AUTH_PERMISSIONS
+        # Stream/pipeline cache TTLs (24h) — env overrides DB config (web UI
+        # doesn't expose these fields). Matches Gelato StreamTTL=86400 so
+        # stream lists are served from cache instead of re-hitting addons.
+        - name: STREAM_CACHE_TTL
+          value: "86400"
+        - name: PIPELINE_CACHE_TTL
+          value: "86400"
         probes:
           liveness:
             enabled: true
