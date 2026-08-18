@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PluginConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <MoviePath>/tmp/gelato/movies</MoviePath>
+  <SeriesPath>/tmp/gelato/series</SeriesPath>
+  <StreamTTL>3600</StreamTTL>
+  <CatalogMaxItems>100</CatalogMaxItems>
+  <Url>http://192.168.20.222:3000/stremio/672ddf4d-d39c-4a05-905a-e9807a0a0054/eyJpIjoiZFJreEVGWitpRisvQmlaNENFdTZEZz09IiwiZSI6ImdQNWs4MmxXOGpITkZ5amkwa2RJOFE9PSIsInQiOiJhIn0/manifest.json</Url>
+  <EnableMixed>false</EnableMixed>
+  <ExtendLocalSeriesTrees>false</ExtendLocalSeriesTrees>
+  <FilterUnreleased>false</FilterUnreleased>
+  <FilterUnreleasedBufferDays>0</FilterUnreleasedBufferDays>
+  <DisableSourceCount>true</DisableSourceCount>
+  <P2PEnabled>false</P2PEnabled>
+  <P2PDLSpeed>0</P2PDLSpeed>
+  <P2PULSpeed>0</P2PULSpeed>
+  <FFmpegAnalyzeDuration>1M</FFmpegAnalyzeDuration>
+  <FFmpegProbeSize>8M</FFmpegProbeSize>
+  <CreateCollections>false</CreateCollections>
+  <MaxCollectionItems>100</MaxCollectionItems>
+  <DisableSearch>false</DisableSearch>
+  <EnableJavaScriptInjection>true</EnableJavaScriptInjection>
+  <LazyImages>true</LazyImages>
+  <Catalogs>
+    <CatalogConfig>
+      <Id>3c4e3b0.top</Id>
+      <Type>movie</Type>
+      <Name>Popular Movies</Name>
+      <Enabled>true</Enabled>
+      <MaxItems>100</MaxItems>
+      <CreateCollection>false</CreateCollection>
+      <Url />
+    </CatalogConfig>
+    <CatalogConfig>
+      <Id>3c4e3b0.top</Id>
+      <Type>series</Type>
+      <Name>Popular Series</Name>
+      <Enabled>true</Enabled>
+      <MaxItems>100</MaxItems>
+      <CreateCollection>false</CreateCollection>
+      <Url />
+    </CatalogConfig>
+    <CatalogConfig>
+      <Id>3c4e3b0.imdbRating</Id>
+      <Type>movie</Type>
+      <Name>Featured Movies</Name>
+      <Enabled>true</Enabled>
+      <MaxItems>100</MaxItems>
+      <CreateCollection>false</CreateCollection>
+      <Url />
+    </CatalogConfig>
+    <CatalogConfig>
+      <Id>3c4e3b0.imdbRating</Id>
+      <Type>series</Type>
+      <Name>Featured Series</Name>
+      <Enabled>true</Enabled>
+      <MaxItems>100</MaxItems>
+      <CreateCollection>false</CreateCollection>
+      <Url />
+    </CatalogConfig>
+    <CatalogConfig>
+      <Id>3c4e3b0.year</Id>
+      <Type>movie</Type>
+      <Name>New Movies</Name>
+      <Enabled>true</Enabled>
+      <MaxItems>100</MaxItems>
+      <CreateCollection>false</CreateCollection>
+      <Url />
+    </CatalogConfig>
+    <CatalogConfig>
+      <Id>3c4e3b0.year</Id>
+      <Type>series</Type>
+      <Name>New Series</Name>
+      <Enabled>true</Enabled>
+      <MaxItems>100</MaxItems>
+      <CreateCollection>false</CreateCollection>
+      <Url />
+    </CatalogConfig>
+  </Catalogs>
+  <UserConfigs />
+</PluginConfiguration>
