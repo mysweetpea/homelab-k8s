@@ -57,7 +57,7 @@ Gelato on-demand streaming causes latency when Jellyfin "grabs" remote content. 
   Extract Subtitles, Generate Trickplay Images, Media Segment Scan
 - **Library auto-refresh off**: `AutomaticRefreshIntervalDays=0` in
   `/config/root/default/{Movies,TV Shows}/options.xml` (was 1 = daily re-fetch of all Gelato metadata)
-- Gelato README also suggests lowering AIOStreams addon timeouts to ~5s (not yet done — container is exec-less)
+- Gelato README also suggests lowering AIOStreams addon timeouts to ~5s — AIOStreams config is **encrypted in its SQLite DB, web-UI only** (container is exec-less): set per-addon timeouts to 3s for chronically-slow addons (Knaben RD, MediaFusion P2P, AnimeTosho RD, Zilean RD, SubSource), 5s for Comet + Cinemeta at http://192.168.20.222:3000/stremio/configure
 - **Import Catalogs scheduled daily 6am** (DailyTrigger 216000000000 ticks) — keeps Popular/TopRated/NewReleases fresh
 - AIOStreams manifest exposes only 3 catalogs (Popular/TopRated/NewReleases + Search); no anime/upcoming/genre catalogs
   (Gelato provider only supports search/skip extras — no genre filtering). Anime streams DO resolve if items are in
@@ -71,11 +71,15 @@ Applied for "faster than Netflix" feel:
 - **Transcodes in RAM**: `persistence.transcodes` = emptyDir Memory 2Gi → `/transcodes` tmpfs (was Longhorn network storage). Playback starts near-instant.
 - **CPU guarantees**: requests 2 cores / 1Gi, limits 6 cores / 4Gi (was unset — other pods could starve Jellyfin).
 - **encoding.xml**: `EncoderPreset=veryfast` (faster transcode start), `EnableThrottling=true` + `ThrottleDelaySeconds=30` (frees CPU when paused), `EnableSubtitleExtraction=false` (no remote fetches on Gelato virtual items), `EnableSegmentDeletion=true`, `TranscodingTempPath=/transcodes`.
-- **network.xml**: `EnableResponseCompression=true` (smaller/faster web UI payloads).
+- **network.xml**: `EnableResponseCompression` is a 10.8-era option — **inert in 10.11** (Brotli+Gzip are unconditionally on via `AddResponseCompression()` in Startup.cs; the file is kept only for `EnableHttp2`).
 - **Media Bar**: MaxItems 50→10, MaxMovies/MaxTvShows 15→5, PreloadCount 1→0, ShuffleInterval 12s→30s, LoadingCheckInterval 100ms→500ms, EnableTrailers=false (poster/backdrop only).
 - **Gelato.xml**: FFmpegAnalyzeDuration 5M→1M, FFmpegProbeSize 40M→8M.
-- **Scheduled tasks disabled** (6 heavy ones: media segments, subtitles, chapter images, trickplay, etc.) + library auto-refresh off.
+- **Scheduled tasks disabled** (6 heavy ones: media segments, subtitles, chapter images, trickplay, etc.) + library auto-refresh off. ⚠️ Do NOT disable "Optimize database" (runs every 6h: wal_checkpoint + PRAGMA optimize + VACUUM) — verify its IntervalTrigger survives any task-disabling session.
 - **Import Catalogs daily 6am** keeps Recently Added fresh.
+- **CacheSize 20000** in `system.xml` (default = cores×100 = 800 entries) — the in-memory item LRU now holds the whole library (15k+ items) instead of constant eviction + DB re-reads on every home row render.
+- **SQLite page cache 32 MiB** via `database.xml` → `CustomProviderOptions.Options` → `cacheSize=-32768` (KiB) — DB reads served from page cache instead of Longhorn network storage; `pooling=True` (same as default, explicit). Backups: `system.xml.bak-perf`, `database.xml.bak-perf`.
+- **ParallelImageEncodingLimit 4** (default 0 = unlimited = 8 concurrent encodes on 8 cores) — leaves CPU headroom for API/UI work during row scrolls.
+- ⚠️ Row-latency gotcha: after a Jellyfin restart, one-time Gelato startup tasks (SyncSeriesTrees, SyncReleaseDates, CDN refresh) peg CPU for 1–2 min — home rows take 2–6s until they settle, then drop to ~0.25s. Not a regression.
 
 ## Notes
 
