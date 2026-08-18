@@ -155,6 +155,26 @@ without manual intervention.
 | **Monitoring** | Homepage dashboard, Uptime Kuma, Grafana + Loki + Promtail, Netdata |
 | **Infra** | ArgoCD, Image Updater, cert-manager, Longhorn, MetalLB, NetworkPolicies |
 
+### Media streaming (on-demand, Netflix-style)
+
+The media stack is a **Stremio-like on-demand streaming platform**, not a
+traditional download library:
+
+- **Gelato** (Jellyfin plugin) imports catalog metadata from **AIOStreams**
+  (a Stremio addon aggregator) into the Jellyfin database — ~400 movies,
+  175 series, 15k episodes of *virtual* items, refreshed daily via a
+  scheduled import that dedupes by IMDB id.
+- **Streams resolve on demand**: AIOStreams queries Zilean/Comet/Jackettio
+  etc., then Real-Debrid serves the actual file over HTTPS. Stream results
+  are cached 24h (StreamTTL) so browsing stays instant after first touch.
+- **Zero local storage** for media — the 200Gi PVC is reserved for future
+  local libraries; everything streams through the debrid proxy.
+- Full premium UI: Moonfin web frontend (custom nordic theme), Home Screen
+  Sections rows, Media Bar hero carousel, quality tags, intro skipping.
+- **Self-healing**: a cron watcher (5-min) verifies the AIOStreams manifest
+  URL in Gelato's config and auto-repairs it after config re-imports,
+  alerting via Gotify if manual action is needed.
+
 ---
 
 ## Backups

@@ -88,10 +88,27 @@ Applied for "faster than Netflix" feel:
 
 ## Gelato (on-demand streaming) — operational notes
 
-- **Catalogs**: `Gelato.xml` must have the 3 catalogs (Popular / Top Rated / New
-  Releases) `Enabled=true` with `MaxItems=100`, and `EnableJavaScriptInjection=true`
-  (stream buttons in web UI). A config reset silently disables them — re-enable
-  and re-run the "Import Catalogs" scheduled task (`345218a7c524815276c66422a3923758`).
+- **Catalogs**: `Gelato.xml` has the **4 importable catalogs** (Popular +
+  Featured, movie + series) `Enabled=true` with `MaxItems=250` each, and
+  `EnableJavaScriptInjection=true` (stream buttons in web UI). ⚠️ **Catalog
+  constraint**: Gelato's `CatalogService` rebuilds the catalog list from the
+  AIOStreams manifest on **every import**, keeping only `IsImportable()`
+  catalogs (no required extras). The `year`/`last-videos`/`calendar-videos`
+  catalogs have required extras and get **wiped on every import** — don't add
+  them. MaxItems **does** persist through rebuilds (verified).
+- **Stream TTL**: `StreamTTL=86400` (24h) — stream syncs happen once/day/item
+  instead of on every view (was 3600 = 1h, caused 7–14s syncs while browsing).
+- **Import Catalogs** scheduled daily 6am (`345218a7c524815276c66422a3923758`)
+  paginates with `skip` and dedupes by meta.Id → continuous library growth.
+  With MaxItems=250 the library holds ~400 movies / 175 series / 15k episodes.
+- **Manifest URL self-healing**: `gelato/gelato-url-watcher.sh` runs on the
+  master via cron every 5 min. If the manifest URL in `Gelato.xml` stops
+  returning a valid manifest (e.g. after an AIOStreams re-import that created a
+  NEW config UUID), it alerts Gotify; if `/root/gelato-url.txt` contains a
+  working URL it auto-updates `Gelato.xml` + restarts Jellyfin. **Workflow**:
+  always use AIOStreams "Save & Install → Update user" (same UUID, same URL) —
+  "Create Configuration" makes a new UUID and breaks Gelato until the URL is
+  updated.
 - **TMDb Box Sets scan is DISABLED** (triggers emptied): it wipes manual links to
   Gelato virtual items (`gelato://stub/...`) because it counts only real files
   ("only 1 movie" per collection → unlink). Box sets were linked manually via
