@@ -34,6 +34,24 @@ controllers:
           value: "86400"
         - name: PIPELINE_CACHE_TTL
           value: "86400"
+        # Cache value size limit: default 2MB silently SKIPS larger stream
+        # responses (recomputed every request) — raise to 10MB so popular
+        # titles with many addon streams actually stay cached.
+        - name: MAX_CACHE_VALUE_BYTES
+          value: "10000000"
+        # Precache next episode every 1h (default 24h) — binge sessions hit
+        # warm cache (~0.017s) instead of cold resolution (~3.3s).
+        - name: PRECACHE_NEXT_EPISODE_MIN_INTERVAL
+          value: "3600"
+        # Preload cooldown 5min (default 1h) — repeat plays/resumes warm.
+        - name: PRELOAD_MIN_INTERVAL
+          value: "300"
+        # Catalog/meta cache TTL 1h (default 5min) — less upstream chatter,
+        # faster daily Gelato import.
+        - name: CATALOG_CACHE_TTL
+          value: "3600"
+        - name: META_CACHE_TTL
+          value: "3600"
         probes:
           liveness:
             enabled: true
