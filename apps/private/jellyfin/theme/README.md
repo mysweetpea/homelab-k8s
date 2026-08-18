@@ -87,6 +87,16 @@ Applied for "faster than Netflix" feel:
 - **ElegantFin updates**: re-vendor from
   `https://raw.githubusercontent.com/lscambo13/ElegantFin/<commit>/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css`
   (pin a commit, not `main`), re-concatenate with `mysweetpea-nordic.css`, re-POST.
+- ⚠️ **Moonfin theme registry can be wiped** (plugin update/config reset) while the theme JSON survives on disk at
+  `/config/plugins/configurations/Moonfin/themes/mysweetpea_nordic.json` — if `GET /Moonfin/Admin/Themes` returns
+  `{"items":[]}` but `visualTheme=custom` + `customThemeId=mysweetpea_nordic` are set, re-upload the JSON via
+  `POST /Moonfin/Admin/Themes` (Content-Type: application/json, body = the file). Verified: re-upload persists to
+  `Moonfin.Server.xml` `UploadedThemes` and serves at `/Moonfin/Themes/mysweetpea_nordic` (200).
+- ⚠️ **Moonfin "Since You Watched" rows need played items**: the rows query `Filters=IsPlayed` (DatePlayed desc,
+  limit 30) as base items, then match genres/tags/people against the library. Partial plays (PlayedPercentage)
+  do NOT count — mark items played via `POST /Users/{id}/PlayedItems/{itemId}` to seed the rows. LocalRecs
+  virtual libraries are symlinks-to-URLs (jackettio playback links) that Jellyfin CANNOT index as media — do not
+  create them as Jellyfin libraries (empty forever).
 - **Spoiler Guard** (Jellyfin-Enhanced) blurs unwatched posters — that's intended.
 - The `sweetpea` user and all future LDAP users get Movies + TV Shows libraries
   automatically via the LDAP-Auth plugin `EnabledFolders` setting.
