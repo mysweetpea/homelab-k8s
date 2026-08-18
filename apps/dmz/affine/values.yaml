@@ -4,7 +4,7 @@ controllers:
       migrate:
         image:
           repository: ghcr.io/toeverything/affine
-          tag: "stable-174ad9b"
+          tag: "stable-b4c8548"
           pullPolicy: IfNotPresent
         command:
         - sh
@@ -81,7 +81,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/toeverything/affine
-          tag: "stable-174ad9b"
+          tag: "stable-b4c8548"
           pullPolicy: IfNotPresent
         env:
         - name: AFFINE_CONFIG_PATH
