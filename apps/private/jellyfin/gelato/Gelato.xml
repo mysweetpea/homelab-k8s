@@ -75,6 +75,24 @@
       <CreateCollection>false</CreateCollection>
       <Url />
     </CatalogConfig>
+    <CatalogConfig>
+      <Id>3c4e3b0.last-videos</Id>
+      <Type>series</Type>
+      <Name>Recently Updated</Name>
+      <Enabled>true</Enabled>
+      <MaxItems>100</MaxItems>
+      <CreateCollection>false</CreateCollection>
+      <Url />
+    </CatalogConfig>
+    <CatalogConfig>
+      <Id>3c4e3b0.calendar-videos</Id>
+      <Type>series</Type>
+      <Name>Airing Soon</Name>
+      <Enabled>true</Enabled>
+      <MaxItems>100</MaxItems>
+      <CreateCollection>false</CreateCollection>
+      <Url />
+    </CatalogConfig>
   </Catalogs>
   <UserConfigs />
 </PluginConfiguration>
