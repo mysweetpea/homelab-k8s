@@ -100,6 +100,8 @@ Applied for "faster than Netflix" feel:
   virtual libraries are symlinks-to-URLs (jackettio playback links) that Jellyfin CANNOT index as media — do not
   create them as Jellyfin libraries (empty forever).
 - **Spoiler Guard** (Jellyfin-Enhanced) blurs unwatched posters — that's intended.
+- **Jellyfin Enhanced optimization pass (Aug 18)**: 17 premium features ON — AutoSkipOutro (skip credits), ShowReviews+ShowUserReviews, LetterboxdEnabled, RecommendationsPageEnabled, EnableCustomSplashScreen+EnableLoginImage, MetadataIconsEnabled+PeopleTagsEnabled+PluginIconsEnabled, LongPress2xEnabled, RandomUnwatchedOnly, TagsHideOnHover, BookmarksUseNativeTab+CalendarUseNativeTab, SpoilerAutoEnableOnSeerrRequest, ReviewsExpandedByDefault.
+- **Other plugin optimizations (Aug 18)**: Continue Watching Deduplicator DeduplicateMovies=true; Media Preview HoverCountdownEnabled=true + HoverDelayMs=250; Ratings EnableChat=true + EnableFriendsButton=true (2-user household); StarTrack MirrorToNativeRating=true + AutoExportDaily=true. Jellyfin Helper ALL task modes stay DryRun (streaming-only — Gelato virtual items must NEVER be auto-deleted); Media Cleaner KeepMoviesFor=-1 (safe).
 - The `sweetpea` user and all future LDAP users get Movies + TV Shows libraries
   automatically via the LDAP-Auth plugin `EnabledFolders` setting.
 
