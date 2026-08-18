@@ -152,12 +152,32 @@
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
     <SectionSettings>
+      <SectionId>RecentlyAddedMovies</SectionId>
+      <Enabled>true</Enabled>
+      <AllowUserOverride>true</AllowUserOverride>
+      <LowerLimit>1</LowerLimit>
+      <UpperLimit>1</UpperLimit>
+      <OrderIndex>10</OrderIndex>
+      <ViewMode>Landscape</ViewMode>
+      <HideWatchedItems>false</HideWatchedItems>
+    </SectionSettings>
+    <SectionSettings>
+      <SectionId>RecentlyAddedShows</SectionId>
+      <Enabled>true</Enabled>
+      <AllowUserOverride>true</AllowUserOverride>
+      <LowerLimit>1</LowerLimit>
+      <UpperLimit>1</UpperLimit>
+      <OrderIndex>11</OrderIndex>
+      <ViewMode>Landscape</ViewMode>
+      <HideWatchedItems>false</HideWatchedItems>
+    </SectionSettings>
+    <SectionSettings>
       <SectionId>BecauseYouWatched</SectionId>
       <Enabled>true</Enabled>
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
-      <UpperLimit>5</UpperLimit>
-      <OrderIndex>10</OrderIndex>
+      <UpperLimit>4</UpperLimit>
+      <OrderIndex>12</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
