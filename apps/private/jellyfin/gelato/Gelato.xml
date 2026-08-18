@@ -24,72 +24,36 @@
     <CatalogConfig>
       <Id>3c4e3b0.top</Id>
       <Type>movie</Type>
-      <Name>Popular Movies</Name>
+      <Name>Popular</Name>
       <Enabled>true</Enabled>
-      <MaxItems>100</MaxItems>
+      <MaxItems>250</MaxItems>
       <CreateCollection>false</CreateCollection>
       <Url />
     </CatalogConfig>
     <CatalogConfig>
       <Id>3c4e3b0.top</Id>
       <Type>series</Type>
-      <Name>Popular Series</Name>
+      <Name>Popular</Name>
       <Enabled>true</Enabled>
-      <MaxItems>100</MaxItems>
+      <MaxItems>250</MaxItems>
       <CreateCollection>false</CreateCollection>
       <Url />
     </CatalogConfig>
     <CatalogConfig>
       <Id>3c4e3b0.imdbRating</Id>
       <Type>movie</Type>
-      <Name>Featured Movies</Name>
+      <Name>Featured</Name>
       <Enabled>true</Enabled>
-      <MaxItems>100</MaxItems>
+      <MaxItems>250</MaxItems>
       <CreateCollection>false</CreateCollection>
       <Url />
     </CatalogConfig>
     <CatalogConfig>
       <Id>3c4e3b0.imdbRating</Id>
       <Type>series</Type>
-      <Name>Featured Series</Name>
+      <Name>Featured</Name>
       <Enabled>true</Enabled>
-      <MaxItems>100</MaxItems>
-      <CreateCollection>false</CreateCollection>
-      <Url />
-    </CatalogConfig>
-    <CatalogConfig>
-      <Id>3c4e3b0.year</Id>
-      <Type>movie</Type>
-      <Name>New Movies</Name>
-      <Enabled>true</Enabled>
-      <MaxItems>100</MaxItems>
-      <CreateCollection>false</CreateCollection>
-      <Url />
-    </CatalogConfig>
-    <CatalogConfig>
-      <Id>3c4e3b0.year</Id>
-      <Type>series</Type>
-      <Name>New Series</Name>
-      <Enabled>true</Enabled>
-      <MaxItems>100</MaxItems>
-      <CreateCollection>false</CreateCollection>
-      <Url />
-    </CatalogConfig>
-    <CatalogConfig>
-      <Id>3c4e3b0.last-videos</Id>
-      <Type>series</Type>
-      <Name>Recently Updated</Name>
-      <Enabled>true</Enabled>
-      <MaxItems>100</MaxItems>
-      <CreateCollection>false</CreateCollection>
-      <Url />
-    </CatalogConfig>
-    <CatalogConfig>
-      <Id>3c4e3b0.calendar-videos</Id>
-      <Type>series</Type>
-      <Name>Airing Soon</Name>
-      <Enabled>true</Enabled>
-      <MaxItems>100</MaxItems>
+      <MaxItems>250</MaxItems>
       <CreateCollection>false</CreateCollection>
       <Url />
     </CatalogConfig>
