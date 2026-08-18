@@ -58,6 +58,11 @@ Gelato on-demand streaming causes latency when Jellyfin "grabs" remote content. 
 - **Library auto-refresh off**: `AutomaticRefreshIntervalDays=0` in
   `/config/root/default/{Movies,TV Shows}/options.xml` (was 1 = daily re-fetch of all Gelato metadata)
 - Gelato README also suggests lowering AIOStreams addon timeouts to ~5s (not yet done — container is exec-less)
+- **Import Catalogs scheduled daily 6am** (DailyTrigger 216000000000 ticks) — keeps Popular/TopRated/NewReleases fresh
+- AIOStreams manifest exposes only 3 catalogs (Popular/TopRated/NewReleases + Search); no anime/upcoming/genre catalogs
+  (Gelato provider only supports search/skip extras — no genre filtering). Anime streams DO resolve if items are in
+  the library (AIOStreams supports mal/kitsu/anilist IDs). User's AIOStreams config imported via web UI at
+  http://192.168.20.222:3000/stremio/configure (Real-Debrid on).
 
 ## Notes
 
