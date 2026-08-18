@@ -11,18 +11,18 @@ config:
   embedded_pages:
     login_for_welcome: true
 extraVolumes:
-  - name: disclaimer
-    configMap:
-      name: element-web-disclaimer
+- name: disclaimer
+  configMap:
+    name: element-web-disclaimer
 extraVolumeMounts:
-  - name: disclaimer
-    mountPath: /app/index.html
-    subPath: index.html
-    readOnly: true
-  - name: disclaimer
-    mountPath: /app/disclaimer.js
-    subPath: disclaimer.js
-    readOnly: true
+- name: disclaimer
+  mountPath: /app/index.html
+  subPath: index.html
+  readOnly: true
+- name: disclaimer
+  mountPath: /app/disclaimer.js
+  subPath: disclaimer.js
+  readOnly: true
 image:
-  tag: v1.12.25
+  tag: v1.12.26
   repository: ghcr.io/element-hq/element-web
