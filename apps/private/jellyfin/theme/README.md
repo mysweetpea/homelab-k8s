@@ -132,6 +132,17 @@ Applied for "faster than Netflix" feel:
   always use AIOStreams "Save & Install → Update user" (same UUID, same URL) —
   "Create Configuration" makes a new UUID and breaks Gelato until the URL is
   updated.
+- **Continuous stream pre-sync** (`gelato/jellyfin-presync.sh` on the master):
+  the media bar's detail fetches trigger Gelato `SyncStreams` → AIOStreams
+  (5–13s per uncached item — the "10s media bar" symptom). The pipeline keeps
+  everything warm: `*/30` "new" sweep (items created in last 24h — catches new
+  arrivals from the 6h Import Catalogs task) + `17 */12` "full" sweep (all
+  movies, keeps the 24h AIOStreams stream cache warm across Jellyfin restarts,
+  since Gelato's own sync cache is in-memory). Pacing: 2 parallel, 2s apart
+  (~1 req/s — AIOStreams rate-limits harder). ⚠️ `UID` is a readonly bash var —
+  the script uses `JUSER`. Import Catalogs trigger changed daily→**6h interval**
+  (POST `/ScheduledTasks/{id}/Triggers` with `[{"Type":"IntervalTrigger",
+  "IntervalTicks":216000000000}]` — PUT /Triggers is 405 in 10.11).
 - **TMDb Box Sets scan is DISABLED** (triggers emptied): it wipes manual links to
   Gelato virtual items (`gelato://stub/...`) because it counts only real files
   ("only 1 movie" per collection → unlink). Box sets were linked manually via
