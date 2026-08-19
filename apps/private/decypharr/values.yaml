@@ -16,6 +16,14 @@ controllers:
             value: "1000"
           - name: PGID
             value: "1000"
+          - name: DECYPHARR_DEBRIDS__0__NAME
+            value: "RD Primary"
+          - name: DECYPHARR_DEBRIDS__0__PROVIDER
+            value: "realdebrid"
+          - name: DECYPHARR_ARRS__0__NAME
+            value: "Radarr"
+          - name: DECYPHARR_ARRS__1__NAME
+            value: "Sonarr"
         envFrom:
           - secretRef:
               name: decypharr-secrets
