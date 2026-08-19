@@ -38,7 +38,14 @@ controllers:
           - |
             cp /app-config/config.json /app/config.json
             cp /app-config/auth.json /app/auth.json
+            # Inject the RD API key into config.json (env overrides run AFTER
+            # setDefaults, which pre-computes DownloadAPIKeys from an empty
+            # APIKey — file-based key survives that ordering)
+            sed -i "s|\"api_key\": \"\"|\"api_key\": \"$DECYPHARR_DEBRIDS__0__API_KEY\"|" /app/config.json
             chmod 644 /app/config.json /app/auth.json
+        envFrom:
+          - secretRef:
+              name: decypharr-secrets
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:

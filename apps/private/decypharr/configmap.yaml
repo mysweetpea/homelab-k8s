@@ -24,6 +24,7 @@ data:
         {
           "provider": "realdebrid",
           "name": "RD Primary",
+          "api_key": "",
           "download_uncached": false,
           "rate_limit": "250/minute",
           "workers": 25,
