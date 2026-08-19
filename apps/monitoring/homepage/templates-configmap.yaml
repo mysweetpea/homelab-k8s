@@ -459,6 +459,11 @@ data:
             href: http://192.168.20.212:8080
             description: Usenet Downloads
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
+        - Decypharr:
+            id: decypharr
+            href: http://192.168.20.215:8282
+            description: Debrid → STRM Gateway
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qbittorrent.svg
     - Arr Stack:
         - Radarr:
             id: radarr
@@ -516,6 +521,11 @@ data:
             href: http://192.168.20.227:5000
             description: Game Requests
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
+        - Zilean:
+            id: zilean
+            href: http://192.168.20.231:8181
+            description: DMM Cached Indexer
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prowlarr.svg
     - Personal:
         - Vaultwarden:
             id: vaultwarden
@@ -665,6 +675,16 @@ data:
             href: http://192.168.20.229:19999
             description: Real-time Node Monitoring
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
+        - Longhorn:
+            id: longhorn
+            href: http://192.168.20.221
+            description: Storage Management
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/longhorn.svg
+        - Glances:
+            id: glances
+            href: http://192.168.20.232:61208
+            description: System Monitor
+            icon: mdi-speedometer
     - Coming Soon:
         - Hermes Agent:
             id: hermes
@@ -676,6 +696,11 @@ data:
             href: https://torrin.mysweetpea.cc
             description: Debrid Service — Coming Soon
             icon: mdi-link-variant
+        - Stremio:
+            id: stremio
+            href: https://www.stremio.com
+            description: Streaming App — Coming Soon
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/stremio.svg
         - Neko:
             id: neko
             href: https://neko.mysweetpea.cc
