@@ -110,48 +110,34 @@ Applied for "faster than Netflix" feel:
 - The `sweetpea` user and all future LDAP users get Movies + TV Shows libraries
   automatically via the LDAP-Auth plugin `EnabledFolders` setting.
 
-## Gelato (on-demand streaming) — operational notes
+## Debrid library (Decypharr + STRM) — the primary architecture
 
-- **Catalogs**: `Gelato.xml` has the **4 importable catalogs** (Popular +
-  Featured, movie + series) `Enabled=true` with `MaxItems=250` each, and
-  `EnableJavaScriptInjection=true` (stream buttons in web UI). ⚠️ **Catalog
-  constraint**: Gelato's `CatalogService` rebuilds the catalog list from the
-  AIOStreams manifest on **every import**, keeping only `IsImportable()`
-  catalogs (no required extras). The `year`/`last-videos`/`calendar-videos`
-  catalogs have required extras and get **wiped on every import** — don't add
-  them. MaxItems **does** persist through rebuilds (verified).
-- **Stream TTL**: `StreamTTL=86400` (24h) — stream syncs happen once/day/item
-  instead of on every view (was 3600 = 1h, caused 7–14s syncs while browsing).
-- **Import Catalogs** scheduled daily 6am (`345218a7c524815276c66422a3923758`)
-  paginates with `skip` and dedupes by meta.Id → continuous library growth.
-  With MaxItems=250 the library holds ~400 movies / 175 series / 15k episodes.
-- **Manifest URL self-healing**: `gelato/gelato-url-watcher.sh` runs on the
-  master via cron every 5 min. If the manifest URL in `Gelato.xml` stops
-  returning a valid manifest (e.g. after an AIOStreams re-import that created a
-  NEW config UUID), it alerts Gotify; if `/root/gelato-url.txt` contains a
-  working URL it auto-updates `Gelato.xml` + restarts Jellyfin. **Workflow**:
-  always use AIOStreams "Save & Install → Update user" (same UUID, same URL) —
-  "Create Configuration" makes a new UUID and breaks Gelato until the URL is
-  updated.
-- **Continuous stream pre-sync** (`gelato/jellyfin-presync.sh` on the master):
-  the media bar's detail fetches trigger Gelato `SyncStreams` → AIOStreams
-  (5–13s per uncached item — the "10s media bar" symptom). The pipeline keeps
-  everything warm: `15 */6` sweep (items created in last 7 days — catches new
-  arrivals from the 6h Import Catalogs task). ⚠️ **SQLite contention lesson
-  (Aug 19)**: catalog import AND stream syncs both write to the same
-  `jellyfin.db` — running them concurrently causes "database table is locked"
-  errors and 5–10x slowdowns (import went 14s → 9m36s, load 15+). The script
-  SKIPS when Import Catalogs is Running, and is scheduled 30 min after the
-  import. Pacing: 2 parallel, 3s apart. ⚠️ `UID` is a readonly bash var — the
-  script uses `JUSER`. Import Catalogs trigger changed daily→**6h interval**
-  (POST `/ScheduledTasks/{id}/Triggers` with `[{"Type":"IntervalTrigger",
-  "IntervalTicks":216000000000}]` — PUT /Triggers is 405 in 10.11).
+Gelato was **removed Aug 19 2026** (plugin uninstalled, all ~19k virtual items
+purged, watcher + presync crons deleted). The library is now real files only:
+
+- **Seerr → Radarr/Sonarr → Decypharr** (fake qBittorrent, `download_action=strm`)
+  → Real-Debrid instant cache → `.strm` file → arr imports into
+  `/data/media/{movies,tv}` → Jellyfin scans real files.
+- **Metadata**: Kodi/Emby metadata consumer in both arrs writes `movie.nfo` +
+  `poster.jpg`/`fanart.jpg` next to every imported .strm — Jellyfin reads them
+  locally (no per-item scraping).
+- **Playback**: Jellyfin reads the .strm URL → Decypharr WebDAV (`/webdav/stream/`)
+  → RD CDN with HTTP Range support. No FUSE, no privileged pods.
+- **Zilean** (DMM-hash indexer) in Prowlarr → arrs only see RD-cached releases
+  → grabs are instant.
+- Full details: `apps/private/decypharr/README.md` + `apps/private/zilean/README.md`.
+
+⚠️ **RD 451 "infringing_file"** (Decypharr issue #379): RD blocks some releases
+(e.g. YTS copies). The arr re-grabs a different release — expected, not a bug.
+Phase 2 (RD expires Sep 17): add a usenet provider to Decypharr (native NNTP +
+mock SABnzbd API) — the 451 class disappears with usenet.
+
 - **TMDb Box Sets scan is DISABLED** (triggers emptied): it wipes manual links to
   Gelato virtual items (`gelato://stub/...`) because it counts only real files
   ("only 1 movie" per collection → unlink). Box sets were linked manually via
   `POST /Collections/{boxsetId}/Items?ids=...` (9 box sets, 10 Spider-Man movies).
 - **Seerr search results disabled** in Jellyfin-Enhanced (`JellyseerrShowSearchResults=false`)
-  — Gelato makes requests unnecessary; Seerr rows on the home screen are
+  — requests go through Seerr; Seerr rows on the home screen are
   request-only by design (they're not library items).
 - **CollectionSections rows render empty** for Gelato items: the plugin's
   `GetChildren` reads the AncestorIds index, which library scans don't rebuild for
