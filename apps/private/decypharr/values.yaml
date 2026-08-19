@@ -19,11 +19,6 @@ controllers:
         envFrom:
           - secretRef:
               name: decypharr-secrets
-        volumeMounts:
-          - name: config
-            mountPath: /app
-          - name: media
-            mountPath: /data
     initContainers:
       init:
         image:
@@ -36,11 +31,6 @@ controllers:
             cp /app-config/config.json /app/config.json
             cp /app-config/auth.json /app/auth.json
             chmod 644 /app/config.json /app/auth.json
-        volumeMounts:
-          - name: config
-            mountPath: /app
-          - name: app-config
-            mountPath: /app-config
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
@@ -50,6 +40,8 @@ persistence:
   config:
     enabled: true
     type: emptyDir
+    globalMounts:
+    - path: /app
   media:
     enabled: true
     type: persistentVolumeClaim
@@ -60,6 +52,8 @@ persistence:
     enabled: true
     type: configMap
     name: decypharr-config
+    globalMounts:
+    - path: /app-config
 service:
   main:
     controller: main
