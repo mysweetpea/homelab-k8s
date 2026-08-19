@@ -621,3 +621,66 @@ spec:
       protocol: TCP
   policyTypes:
   - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-arr-decypharr-ingress
+  namespace: private
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: decypharr
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: radarr
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: sonarr
+    ports:
+    - port: 8282
+      protocol: TCP
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-jellyfin-decypharr-ingress
+  namespace: private
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: decypharr
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: jellyfin
+    ports:
+    - port: 8282
+      protocol: TCP
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prowlarr-zilean-ingress
+  namespace: private
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: zilean
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: prowlarr
+    ports:
+    - port: 8181
+      protocol: TCP
+  policyTypes:
+  - Ingress

@@ -1,0 +1,72 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: cy01/blackhole
+          tag: v2.5
+        ports:
+          - name: http
+            containerPort: 8282
+            protocol: TCP
+        env:
+          - name: TZ
+            value: America/New_York
+          - name: PUID
+            value: "1000"
+          - name: PGID
+            value: "1000"
+        envFrom:
+          - secretRef:
+              name: decypharr-secrets
+        volumeMounts:
+          - name: config
+            mountPath: /app
+          - name: media
+            mountPath: /data
+    initContainers:
+      init:
+        image:
+          repository: busybox
+          tag: "1.36"
+        command:
+          - /bin/sh
+          - -c
+          - |
+            cp /app-config/config.json /app/config.json
+            cp /app-config/auth.json /app/auth.json
+            chmod 644 /app/config.json /app/auth.json
+        volumeMounts:
+          - name: config
+            mountPath: /app
+          - name: app-config
+            mountPath: /app-config
+    type: deployment
+# Pinned to worker-b: media-storage-lh is RWO (single-node attach)
+defaultPodOptions:
+  nodeSelector:
+    kubernetes.io/hostname: k3s-worker-b
+persistence:
+  config:
+    enabled: true
+    type: emptyDir
+  media:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: media-storage-lh
+    globalMounts:
+    - path: /data
+  app-config:
+    enabled: true
+    type: configMap
+    name: decypharr-config
+service:
+  main:
+    controller: main
+    type: LoadBalancer
+    loadBalancerIP: 192.168.20.215
+    allocateLoadBalancerNodePorts: false
+    ports:
+      http:
+        port: 8282
+        targetPort: 8282
