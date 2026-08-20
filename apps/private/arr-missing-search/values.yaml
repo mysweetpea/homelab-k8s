@@ -1,0 +1,58 @@
+# Nightly "Search for Missing" for Radarr + Sonarr.
+#
+# Why: RD 451 blocks many single-episode/movie grabs. The arrs' own
+# "Search Monitored" scheduled task is NOT enabled (default 0 = disabled),
+# so a failed grab sits forever until manually re-searched. This cron POSTs
+# the same command the UI's "Search for Missing" button sends, every night —
+# when Usenet arrives (Decypharr Phase 2), the retry loop becomes the
+# auto-completion loop.
+controllers:
+  main:
+    type: cronjob
+    cronjob:
+      schedule: "0 4 * * *"
+      concurrencyPolicy: Forbid
+      startingDeadlineSeconds: 600
+      successfulJobsHistory: 3
+      failedJobsHistory: 3
+      backoffLimit: 2
+    pod:
+      restartPolicy: Never
+    containers:
+      main:
+        image:
+          repository: curlimages/curl
+          tag: 8.10.1
+        command:
+        - /bin/sh
+        - -ec
+        - |
+          echo "[$(date)] Radarr missing search..."
+          curl -sS -X POST "http://radarr.private.svc.cluster.local:7878/api/v3/command" \
+            -H "X-Api-Key: $RADARR_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"MissingMoviesSearch"}' || echo "radarr search failed"
+          echo "[$(date)] Sonarr missing search..."
+          curl -sS -X POST "http://sonarr.private.svc.cluster.local:8989/api/v3/command" \
+            -H "X-Api-Key: $SONARR_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"MissingEpisodeSearch"}' || echo "sonarr search failed"
+          echo "[$(date)] done"
+        env:
+        - name: RADARR_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: decypharr-secrets
+              key: DECYPHARR_ARRS__0__TOKEN
+        - name: SONARR_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: decypharr-secrets
+              key: DECYPHARR_ARRS__1__TOKEN
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
