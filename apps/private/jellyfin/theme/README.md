@@ -57,15 +57,9 @@ curl -X POST http://localhost:8096/Branding/Splashscreen \
   `IntrosForMoviesOnly=true`, intro in `DefaultLocalVideos`. Plays before
   every movie, Netflix-style. Re-copy the file + re-run LoadIntros if the
   PVC is ever rebuilt.
-- **Cinema Mode trailers** (`5fcefe1bdf1f4596ac57f2f939c294c5`): one
-  catch-all `TrailerSelectionRule` (all flags false = any trailer),
-  `NumberOfTrailers=2`, `EnforceRatingLimitTrailers=true`. Movies have
-  5–56 YouTube trailers each (verified) → auto-plays 2 before the movie,
-  after the intro. Rule format: `{Year,Decade,Genre,RecentlyAdded,MoreLikeThis,Unplayed}` booleans.
-- **Moonfin push notifications**: `PushEnabled=false` — requires a Firebase
-  service-account JSON (Google Cloud console, browser task) pasted into the
-  Moonfin config page (`FcmServiceAccountJson`). Hosted relay
-  `https://push.moonfin.io/send` is already set. Pending user action.
+- **Cinema Mode REMOVED Aug 20 2026** (user decision — on-demand streaming
+  is the point; pre-roll trailers made it less user-friendly). The
+  catch-all trailer rule + 2-trailer config are gone with it.
 
 ## Efficiency tuning (Aug 18 2026)
 
