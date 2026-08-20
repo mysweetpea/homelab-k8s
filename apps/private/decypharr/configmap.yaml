@@ -60,28 +60,7 @@ data:
         "enabled": false
       },
       "usenet": {
-        "providers": [
-          {
-            "host": "news.eweka.nl",
-            "port": 563,
-            "username": "__EWEKA_USER__",
-            "password": "__EWEKA_PASS__",
-            "backbone": "Omicron",
-            "ssl": true,
-            "max_connections": 20,
-            "priority": 1
-          },
-          {
-            "host": "news.usenetexpress.com",
-            "port": 563,
-            "username": "__UEX_USER__",
-            "password": "__UEX_PASS__",
-            "backbone": "UsenetExpress",
-            "ssl": true,
-            "max_connections": 10,
-            "priority": 2
-          }
-        ],
+        "providers": [],
         "max_connections": 15,
         "processing_max_connections": 15,
         "read_ahead": "16MB",

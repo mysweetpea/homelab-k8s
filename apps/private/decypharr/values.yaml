@@ -42,10 +42,6 @@ controllers:
             # setDefaults, which pre-computes DownloadAPIKeys from an empty
             # APIKey — file-based key survives that ordering)
             sed -i "s|\"api_key\": \"\"|\"api_key\": \"$DECYPHARR_DEBRIDS__0__API_KEY\"|" /app/config.json
-            # Inject usenet provider credentials (phase 2 — placeholders stay
-            # until the sealed secret is populated; empty username/password
-            # means the provider config is inert, no crash)
-            sed -i "s|__EWEKA_USER__|$DECYPHARR_USENET__0__USERNAME|; s|__EWEKA_PASS__|$DECYPHARR_USENET__0__PASSWORD|; s|__UEX_USER__|$DECYPHARR_USENET__1__USERNAME|; s|__UEX_PASS__|$DECYPHARR_USENET__1__PASSWORD|" /app/config.json
             chmod 644 /app/config.json /app/auth.json
         envFrom:
           - secretRef:

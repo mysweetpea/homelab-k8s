@@ -39,9 +39,10 @@ Seerr → Radarr/Sonarr → Decypharr (fake qBittorrent, port 8282)
 **Sealed secret keys** (`sealed-secrets/private/decypharr-secrets.yaml`):
 `DECYPHARR_DEBRIDS__0__API_KEY`, `DECYPHARR_ARRS__0__TOKEN`,
 `DECYPHARR_ARRS__1__TOKEN`, plus (phase 2 usenet, populated when the user
-subscribes): `DECYPHARR_USENET__0__USERNAME`, `DECYPHARR_USENET__0__PASSWORD`
-(primary provider), `DECYPHARR_USENET__1__USERNAME`,
-`DECYPHARR_USENET__1__PASSWORD` (backup block provider).
+subscribes — per-provider, provider array materializes only when `HOST` is set):
+`DECYPHARR_USENET__PROVIDERS__0__HOST`, `__0__PORT`, `__0__USERNAME`,
+`__0__PASSWORD`, `__0__BACKBONE`, `__0__SSL`, `__0__MAX_CONNECTIONS`,
+`__0__PRIORITY` (primary), and `__1__*` (backup block provider).
 
 ⚠️ **Env override gotcha (source-verified)**: Decypharr's env overrides need the
 `DECYPHARR_` prefix AND a `NAME` trigger (`DECYPHARR_DEBRIDS__0__NAME` must be
@@ -50,8 +51,15 @@ set or the API_KEY override is skipped). Worse, `setDefaults()` runs **before**
 `APIKey` — so env-only keys leave the account manager with `[""]` → account
 disabled → "No active accounts available". **Fix**: the init container injects
 the key into `/app/config.json` via sed (file-based, survives the ordering).
-The usenet creds follow the same pattern (`DECYPHARR_USENET__0__*` placeholders
-in configmap.yaml → sed → `/app/config.json`).
+
+⚠️ **Usenet providers validation gate (source-verified)**: `Validate()` requires
+every configured usenet provider to have non-empty username AND password —
+staging providers with empty creds trips the setup-wizard gate → **all API
+endpoints return 503** ("usenet provider username is required... visit
+/setup"). Keep `usenet.providers: []` in the configmap; usenet providers are
+added via env vars (`DECYPHARR_USENET__PROVIDERS__N__*`), which only
+materialize when `HOST` is set — so the sealed secret can hold empty values
+until the user subscribes without breaking the API.
 
 ## Usenet (phase 2 — RD expiry Sep 17 2026)
 
@@ -60,16 +68,19 @@ Arrs submit NZBs to the SABnzbd-compatible API at `/sabnzbd/api` on port 8282;
 Decypharr parses the NZB, streams segments from the NNTP provider on demand
 (STRM mode — zero storage).
 
-Provider config is **staged in configmap.yaml** with placeholder tokens
-(`__EWEKA_USER__` etc.) — the init container injects the real creds from the
-sealed secret. Until the secret is populated, the providers are inert (empty
-username/password, no crash).
+Provider config is **env-var driven** (`DECYPHARR_USENET__PROVIDERS__N__*` in
+the sealed secret — the provider array only materializes when `HOST` is set,
+so empty secret values keep the API healthy). The configmap holds
+`usenet.providers: []` + the tuning block.
 
-**Recommended provider layout** (user buys):
-- **Primary**: Eweka (Omicron backbone, EU, 12+ yr retention, DMCA-resistant)
-- **Backup block**: UsenetExpress or NewsGroupDirect (different backbone,
-  block account as fallback) — Decypharr skips same-backbone providers after
-  423/430 responses when `backbone` matches.
+**Recommended provider layout** (user's chosen purchase):
+- **Primary**: Newshosting (Omicron backbone, EU+US, 6506+ day retention,
+  ~$1.67/mo — DMCA-resistant, matches the resilience goal)
+- **Backup block**: theCubeNet (UsenetExpress backbone, 2TB block $12 —
+  different backbone, pay-once fallback; Decypharr skips same-backbone
+  providers after 423/430 responses when `backbone` matches)
+- Indexers: NinjaCentral + NZBGeek + NZBPlanet (all Newznab with proper
+  categories → sync to arrs cleanly, unlike NZBIndex which has none)
 - Decypharr usenet tuning: `read_ahead: 16MB` prefetch for smooth playback,
   `conn_idle_timeout: 5m` warm NNTP pool, `availability_sample_percent: 10`
   import gate, `disk_buffer_path: /cache/usenet` (emptyDir, 4Gi).
