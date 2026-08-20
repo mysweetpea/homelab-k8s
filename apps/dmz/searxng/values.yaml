@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: searxng/searxng
-          tag: 2026.8.20-8d3dd0cd4
+          tag: 2026.8.20-487d7a96e
     type: deployment
 persistence:
   data:
