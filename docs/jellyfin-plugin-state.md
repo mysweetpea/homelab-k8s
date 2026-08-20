@@ -16,5 +16,9 @@
   → Seerr results now appear in Jellyfin search, request button on every card.
 
 ## Note
-- Seerr settings.json tmdbApiKey is MISSING — SeerrFin TMDB key also unset.
-  Discovery categories may be limited; add a TMDB v4 key when convenient.
+- Seerr has NO TMDB key setting — the key is hardcoded in its bundle
+  (431a8708161bcd1f1fbe7536137e61ed in /app/dist/api/themoviedb/index.js,
+  same design as upstream Overseerr). Do NOT try to set one via API
+  (PUT=405, POST=400 'apiKey is read-only').
+- TMDB v3 key 2dfbe5c2efb2436c489e834f8b55d7a5 added to SeerrFin
+  (TmdbApiKey) + Jellyfin Enhanced (TMDB_API_KEY) Aug 20 2026.
