@@ -3,8 +3,8 @@ controllers:
     containers:
       main:
         image:
-          repository: ipromknight/zilean
-          tag: v3.5.0
+          repository: ghcr.io/mysweetpea/zilean
+          tag: fork-20251216
         ports:
         - name: http
           containerPort: 8181
@@ -33,6 +33,11 @@ controllers:
           value: "true"
         - name: Zilean__EnableDashboard
           value: "false"
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: zilean-secrets
+              key: GITHUB_TOKEN
     type: deployment
 defaultPodOptions:
   nodeSelector:
