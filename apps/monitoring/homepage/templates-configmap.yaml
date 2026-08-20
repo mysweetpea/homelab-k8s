@@ -464,6 +464,19 @@ data:
             href: http://192.168.20.215:8282
             description: Debrid → STRM Gateway
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qbittorrent.svg
+            widget:
+              type: customapi
+              # SABnzbd-compatible API: usenet queue status (NZB entries only).
+              # Auth via ma_username/ma_password query params (arr URL + arr key),
+              # category=Sonarr matches the arrs[].name in Decypharr config.
+              url: http://decypharr.private.svc.cluster.local:8282/sabnzbd/api?mode=queue&output=json&ma_username=http%3A%2F%2Fsonarr%3A8989&ma_password=${SONARR_API_KEY}&category=Sonarr
+              method: GET
+              mappings:
+                - field: queue.slots
+                  label: Usenet Queue
+                  format: size
+                - field: version
+                  label: API
     - Arr Stack:
         - Radarr:
             id: radarr
