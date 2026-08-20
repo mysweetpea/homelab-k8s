@@ -1,4 +1,7 @@
 # Promtail — log shipper (DaemonSet, one per node)
+image:
+  repository: grafana/promtail
+  tag: "3.0.0"
 config:
   clients:
     - url: http://loki.monitoring.svc.cluster.local:3100/loki/api/v1/push

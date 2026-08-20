@@ -2,6 +2,9 @@
 # NOTE: deploymentMode/singleBinary/backend/read/write/persistence/resources/
 # service/gateway/test/monitoring/lokiCanary are TOP-LEVEL chart values.
 loki:
+  image:
+    repository: grafana/loki
+    tag: "3.4.2"
   auth_enabled: false
   commonConfig:
     replication_factor: 1
