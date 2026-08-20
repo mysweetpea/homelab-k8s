@@ -21,7 +21,7 @@ spec:
   sources:
   - repoURL: https://ananace.gitlab.io/charts
     chart: element-web
-    targetRevision: 1.4.37
+    targetRevision: 1.4.42
     helm:
       valueFiles:
       - $values/apps/dmz/element-web/values.yaml

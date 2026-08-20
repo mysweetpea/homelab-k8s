@@ -44,6 +44,24 @@ extraConfig:
     enabled: false
   # --- Disable registration ---
   enable_registration: false
+  # --- E2EE-by-default (greenfield: 1 user, 0 rooms — safe to enforce now) ---
+  encryption_enabled_by_default_for_room_type: all
+  default_room_version: "11"
+  # --- Privacy ---
+  allow_public_rooms_without_auth: false
+  allow_public_rooms_over_federation: false
+  require_auth_for_profile_requests: true
+  limit_profile_requests_to_users_who_share_rooms: true
+  # --- Media ---
+  max_image_size: 10M
+  max_avatar_size: 5M
+  # --- Retention ---
+  retention:
+    enabled: true
+    default_policy:
+      max_lifetime: 90d
+    allowed_lifetime_min: 1d
+    allowed_lifetime_max: 1y
 # OIDC client id/secret + JWT secret are injected from the
 # `matrix-synapse-oidc` Secret (dmz) via env vars, then substituted
 # into the rendered config by extraCommands. NOTHING secret is in git.
