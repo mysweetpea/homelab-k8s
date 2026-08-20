@@ -125,8 +125,11 @@ extraObjects:
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: authentik.image.repository
-                  tag: authentik.image.tag
+                  # ⚠️ chart renders images from global.image.tag (Chart
+                  # AppVersion fallback), NOT authentik.image.tag — this was
+                  # broken (updates were no-ops) until Aug 20 2026.
+                  name: global.image.repository
+                  tag: global.image.tag
         - namePattern: nextcloud
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds

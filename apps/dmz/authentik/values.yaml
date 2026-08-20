@@ -1,7 +1,15 @@
-authentik:
+global:
   image:
     repository: ghcr.io/goauthentik/server
     tag: "2026.8.0"
+authentik:
+  # ⚠️ image tag for the server/worker is rendered from global.image.tag (chart
+  # defaultTag = Chart.AppVersion; authentik.image.* is IGNORED by the chart —
+  # confirmed from chart source _common.tpl:48 + server/deployment.yaml:72).
+  # The image-updater CR writes to global.image.tag (authentik entry).
+  image:
+    repository: ghcr.io/goauthentik/server
+    tag: "2026.5.6"
   # Secrets (secret_key, postgresql password) live in the sealed `authentik`
   # secret (sealed-secrets/dmz/authentik.yaml) — NOT in this file.
   existingSecret:
