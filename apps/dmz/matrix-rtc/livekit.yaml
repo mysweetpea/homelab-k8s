@@ -60,6 +60,11 @@ spec:
         - /livekit-server
         - --config
         - /etc/livekit/config.yaml
+        env:
+        # Neutralize the service-link-injected LIVEKIT_PORT (tcp://10.43.x.x:7880)
+        # which LiveKit would otherwise parse as its own port flag.
+        - name: LIVEKIT_PORT
+          value: "7880"
         ports:
         - containerPort: 7880
           name: signal
