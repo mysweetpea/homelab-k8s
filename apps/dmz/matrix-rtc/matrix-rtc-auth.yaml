@@ -1,0 +1,99 @@
+# MatrixRTC Authorization Service (lk-jwt-service v0.6.0)
+# Bridges Matrix and LiveKit: validates the caller's Matrix OpenID token
+# against Synapse, then issues a LiveKit JWT scoped to the Matrix room.
+# Full-access (room-creating) users = mysweetpea.cc only.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-rtc-auth
+  namespace: dmz
+  labels:
+    app.kubernetes.io/name: matrix-rtc-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: matrix-rtc-auth
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: matrix-rtc-auth
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-master
+      containers:
+      - name: lk-jwt
+        image: ghcr.io/element-hq/lk-jwt-service:latest@sha256:60fc5ded23b45cd2f591463dc739d827683bdac8656f63c30d9a7376597d79a4
+        env:
+        - name: LIVEKIT_URL
+          value: "ws://livekit.dmz.svc.cluster.local:7880"
+        - name: LIVEKIT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: matrix-rtc-livekit
+              key: LIVEKIT_KEY
+        - name: LIVEKIT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: matrix-rtc-livekit
+              key: LIVEKIT_SECRET
+        - name: LIVEKIT_FULL_ACCESS_HOMESERVERS
+          value: "mysweetpea.cc"
+        - name: LIVEKIT_JWT_BIND
+          value: ":8080"
+        - name: LIVEKIT_LOG_LEVEL
+          value: "info"
+        - name: LIVEKIT_SANITY_CHECK_INTERVAL_SECONDS
+          value: "300"
+        ports:
+        - containerPort: 8080
+          name: http
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 65532
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        livenessProbe:
+          httpGet:
+            # Internal path (the public /livekit/jwt prefix is stripped by Traefik)
+            path: /healthz
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 3
+          periodSeconds: 5
+      volumes:
+      - name: tmp
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matrix-rtc-auth
+  namespace: dmz
+  labels:
+    app.kubernetes.io/name: matrix-rtc-auth
+spec:
+  selector:
+    app.kubernetes.io/name: matrix-rtc-auth
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080

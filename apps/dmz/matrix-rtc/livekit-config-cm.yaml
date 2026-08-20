@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: livekit-config
+  namespace: dmz
+  labels:
+    app.kubernetes.io/name: livekit
+data:
+  config.yaml: |
+    # LiveKit config template — keys/webhook key are substituted by the init
+    # container from the matrix-rtc-livekit sealed secret (never in git).
+    # Media path: LAN clients → host candidate 192.168.20.40 (hostNetwork);
+    # internet clients → external TURN relay on VPS (129.213.11.104:3478).
+    port: 7880
+    keys:
+      __API_KEY__: __API_SECRET__
+    rtc:
+      tcp_port: 7881
+      port_range_start: 50000
+      port_range_end: 60000
+      use_external_ip: false
+      advertise_internal_ip: true
+      # TURN relay on the VPS forwards media UDP/TCP to this host
+      turn:
+        enabled: true
+        domain: 129.213.11.104
+        tls_port: 443
+        udp_port: 3478
+        relay_range_start: 50000
+        relay_range_end: 60000
+    room:
+      # Room creation is authorized by lk-jwt-service (full-access users only)
+      auto_create: false
+      enabled: true
+    webhook:
+      api_key: __WEBHOOK_KEY__
+      urls:
+      - https://matrix-rtc.mysweetpea.cc/livekit/jwt/sfu_webhook
+    logging:
+      level: info

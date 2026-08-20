@@ -6,8 +6,30 @@ config:
   disable_guests: true
   disable_3pid_login: true
   disable_registration: true
+  disable_login_language_selector: true
+  # --- Branding (MySweetPea identity — assets hosted on the website) ---
+  brand: MySweetPea
+  default_device_display_name: MySweetPea Chat
+  permalink_prefix: https://chat.mysweetpea.cc
+  default_theme: dark
+  branding:
+    auth_header_logo_url: https://mysweetpea.cc/logo.svg
+    welcome_background_url: https://mysweetpea.cc/mysweetpea-auth-bg.svg
+    auth_footer_links:
+    - text: Home
+      url: https://mysweetpea.cc
+    - text: Services
+      url: https://mysweetpea.cc/services.html
+    - text: Support
+      url: https://mysweetpea.cc/support.html
+  # --- Element Call (MatrixRTC via LiveKit) — exclusive VoIP stack ---
+  element_call:
+    use_exclusively: true
+  # --- UI policy ---
   setting_defaults:
     "UIFeature.registration": false
+    "UIFeature.feedback": false
+    "UIFeature.widgets": true
   embedded_pages:
     login_for_welcome: true
 extraVolumes:

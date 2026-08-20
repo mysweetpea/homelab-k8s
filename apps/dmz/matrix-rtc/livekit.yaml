@@ -1,0 +1,112 @@
+# LiveKit SFU — WebRTC media server for Element Call (MatrixRTC)
+# hostNetwork: media (UDP 50000-60000) must be reachable from the LAN
+# (host candidate 192.168.20.40). Internet clients reach media via the
+# external TURN relay on the VPS (129.213.11.104).
+# Signaling (WebSocket 7880) flows: client → CF tunnel → Traefik → this pod.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: livekit
+  namespace: dmz
+  labels:
+    app.kubernetes.io/name: livekit
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: livekit
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: livekit
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-master
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      initContainers:
+      - name: render-config
+        image: busybox:1.36
+        command:
+        - /bin/sh
+        - -c
+        - |
+          sed -e "s/__WEBHOOK_KEY__/${LIVEKIT_KEY}/" \
+              -e "s/__API_KEY__/${LIVEKIT_KEY}/" \
+              -e "s/__API_SECRET__/${LIVEKIT_SECRET}/" \
+              /etc/livekit-template/config.yaml > /etc/livekit/config.yaml
+        env:
+        - name: LIVEKIT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: matrix-rtc-livekit
+              key: LIVEKIT_KEY
+        - name: LIVEKIT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: matrix-rtc-livekit
+              key: LIVEKIT_SECRET
+        volumeMounts:
+        - name: livekit-template
+          mountPath: /etc/livekit-template
+        - name: livekit-config
+          mountPath: /etc/livekit
+      containers:
+      - name: livekit
+        image: livekit/livekit-server:v1.13.5
+        command:
+        - livekit-server
+        - --config
+        - /etc/livekit/config.yaml
+        ports:
+        - containerPort: 7880
+          name: signal
+          protocol: TCP
+        - containerPort: 7881
+          name: rtc-tcp
+          protocol: TCP
+        - containerPort: 50000
+          name: rtc-udp
+          protocol: UDP
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 65532
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: "2"
+            memory: 1Gi
+        volumeMounts:
+        - name: livekit-config
+          mountPath: /etc/livekit
+          readOnly: true
+      volumes:
+      - name: livekit-template
+        configMap:
+          name: livekit-config
+      - name: livekit-config
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: livekit
+  namespace: dmz
+  labels:
+    app.kubernetes.io/name: livekit
+spec:
+  selector:
+    app.kubernetes.io/name: livekit
+  ports:
+  - name: signal
+    port: 7880
+    targetPort: 7880

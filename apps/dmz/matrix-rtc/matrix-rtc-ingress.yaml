@@ -1,0 +1,41 @@
+---
+# Element Call MatrixRTC — LiveKit SFU signaling + JWT auth service
+# Route: https://matrix-rtc.mysweetpea.cc/livekit/sfu → livekit:7880
+#        https://matrix-rtc.mysweetpea.cc/livekit/jwt → matrix-rtc-auth:8080
+# (WebSocket upgrade required for the SFU signaling connection)
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: matrix-rtc-strip-livekit
+  namespace: dmz
+spec:
+  stripPrefix:
+    prefixes:
+      - /livekit/sfu
+      - /livekit/jwt
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: matrix-rtc
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    # SFU WebSocket signaling (must preserve Upgrade headers)
+    - match: Host(`matrix-rtc.mysweetpea.cc`) && PathPrefix(`/livekit/sfu`)
+      kind: Rule
+      middlewares:
+        - name: matrix-rtc-strip-livekit
+      services:
+        - name: livekit
+          port: 7880
+    # MatrixRTC Authorization Service (JWT issue + webhooks)
+    - match: Host(`matrix-rtc.mysweetpea.cc`) && PathPrefix(`/livekit/jwt`)
+      kind: Rule
+      middlewares:
+        - name: matrix-rtc-strip-livekit
+      services:
+        - name: matrix-rtc-auth
+          port: 8080

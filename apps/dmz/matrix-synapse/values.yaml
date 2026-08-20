@@ -53,15 +53,33 @@ extraConfig:
   require_auth_for_profile_requests: true
   limit_profile_requests_to_users_who_share_rooms: true
   # --- Media ---
-  max_image_size: 10M
-  max_avatar_size: 5M
-  # --- Retention ---
-  retention:
-    enabled: true
-    default_policy:
-      max_lifetime: 90d
-    allowed_lifetime_min: 1d
-    allowed_lifetime_max: 1y
+  # Uploads capped at 100M — Cloudflare free plan max upload is 100MB
+  # (zone setting max_upload: 100), files beyond that fail through the tunnel.
+  max_upload_size: 100M
+  max_image_size: 50M
+  max_avatar_size: 20M
+  # --- History retention: COMPRESS, NEVER PURGE ---
+  # Retention policy disabled (no default purge job). Old messages stay.
+  # DB-level LZ4 compression (applied separately) keeps storage lean instead.
+  # --- MatrixRTC (Element Call / LiveKit) ---
+  experimental_features:
+    # MSC3266: Room summary API (knocking/joining calls over federation)
+    msc3266_enabled: true
+    # MSC4143: MatrixRTC — enables the MSC4519 transports endpoint
+    msc4143_enabled: true
+    # MSC4222: sync v2 state_after (required by Element Call)
+    msc4222_enabled: true
+  max_event_delay_duration: 24h
+  matrix_rtc:
+    transports:
+    - type: livekit
+      livekit_service_url: https://matrix-rtc.mysweetpea.cc/livekit/jwt
+  rc_message:
+    per_second: 0.5
+    burst_count: 30
+  rc_delayed_event_mgmt:
+    per_second: 1
+    burst_count: 20
 # OIDC client id/secret + JWT secret are injected from the
 # `matrix-synapse-oidc` Secret (dmz) via env vars, then substituted
 # into the rendered config by extraCommands. NOTHING secret is in git.
