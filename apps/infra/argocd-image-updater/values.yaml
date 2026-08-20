@@ -158,8 +158,10 @@ extraObjects:
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
-                  name: controllers.main.containers.main.image.repository
-                  tag: controllers.main.containers.main.image.tag
+                  # gissilabs chart renders image from top-level image.repository/tag
+                  # (NOT controllers.* — that bjw-s shape was a silent no-op)
+                  name: image.repository
+                  tag: image.tag
         - namePattern: open-webui
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds
