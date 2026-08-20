@@ -57,7 +57,7 @@ spec:
       - name: livekit
         image: livekit/livekit-server:v1.13.5
         command:
-        - livekit-server
+        - /livekit-server
         - --config
         - /etc/livekit/config.yaml
         ports:
