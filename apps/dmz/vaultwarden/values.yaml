@@ -43,3 +43,12 @@ vaultwarden:
     allowUnknownEmailVerification: false
     clientCacheExpiration: 0
     existingSecret: "vaultwarden-sso"
+  smtp:
+    enabled: true
+    host: "smtp.resend.com"
+    from: "vault@mysweetpea.cc"
+    fromName: "MySweetPea Vault"
+    security: starttls
+    port: "587"
+    authMechanism: Plain
+    existingSecret: "vaultwarden-smtp"
