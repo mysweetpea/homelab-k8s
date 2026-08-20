@@ -598,6 +598,36 @@ extraObjects:
                 helm:
                   name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
+        - namePattern: loki
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/monitoring/loki/values.yaml
+          images:
+            - alias: loki
+              imageName: grafana/loki
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: loki.image.repository
+                  tag: loki.image.tag
+        - namePattern: promtail
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/monitoring/promtail/values.yaml
+          images:
+            - alias: promtail
+              imageName: grafana/promtail
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: image.repository
+                  tag: image.tag
 resources:
   limits:
     cpu: 500m

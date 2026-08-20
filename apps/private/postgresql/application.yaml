@@ -7,13 +7,6 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd.argoproj.io/sync-wave: '1'
-    argocd-image-updater.argoproj.io/image-list: postgresql=docker.io/bitnami/postgresql
-    argocd-image-updater.argoproj.io/postgresql.update-strategy: semver
-    argocd-image-updater.argoproj.io/postgresql.helm.image-spec: image
-    argocd-image-updater.argoproj.io/write-back-method: git
-    argocd-image-updater.argoproj.io/git.repository: git@github.com:mysweetpea/homelab-k8s.git
-    argocd-image-updater.argoproj.io/git.branch: main
-    argocd-image-updater.argoproj.io/write-back-target: helmvalues:apps/private/postgresql/values.yaml
 spec:
   project: default
   destination:
