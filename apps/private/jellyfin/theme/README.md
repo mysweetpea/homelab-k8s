@@ -47,6 +47,26 @@ curl -X POST http://localhost:8096/Branding/Splashscreen \
 3. Upload splashscreen (base64)
 4. Hard-refresh browser (Ctrl+F5) — the web UI caches aggressively
 
+## Premium playback features (Aug 20 2026)
+
+- **Branded intro video** (`mysweetpea-intro.mp4`, 6.2s, 1080p): splashscreen
+  with slow Ken-Burns zoom + fade in/out, generated with ffmpeg
+  (`zoompan` + `vignette` + `fade`). Installed at `/config/intros/` on the
+  Jellyfin config PVC and wired into **Local Intros** plugin
+  (`07d8679501f24d22b174cdc6056c3e7c`): `Local=/config/intros`,
+  `IntrosForMoviesOnly=true`, intro in `DefaultLocalVideos`. Plays before
+  every movie, Netflix-style. Re-copy the file + re-run LoadIntros if the
+  PVC is ever rebuilt.
+- **Cinema Mode trailers** (`5fcefe1bdf1f4596ac57f2f939c294c5`): one
+  catch-all `TrailerSelectionRule` (all flags false = any trailer),
+  `NumberOfTrailers=2`, `EnforceRatingLimitTrailers=true`. Movies have
+  5–56 YouTube trailers each (verified) → auto-plays 2 before the movie,
+  after the intro. Rule format: `{Year,Decade,Genre,RecentlyAdded,MoreLikeThis,Unplayed}` booleans.
+- **Moonfin push notifications**: `PushEnabled=false` — requires a Firebase
+  service-account JSON (Google Cloud console, browser task) pasted into the
+  Moonfin config page (`FcmServiceAccountJson`). Hosted relay
+  `https://push.moonfin.io/send` is already set. Pending user action.
+
 ## Efficiency tuning (Aug 18 2026)
 
 Gelato on-demand streaming causes latency when Jellyfin "grabs" remote content. Applied:
