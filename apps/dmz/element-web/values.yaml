@@ -43,10 +43,6 @@ extraVolumes:
     name: element-web-home
 extraVolumeMounts:
 - name: disclaimer
-  mountPath: /app/index.html
-  subPath: index.html
-  readOnly: true
-- name: disclaimer
   mountPath: /app/disclaimer.js
   subPath: disclaimer.js
   readOnly: true
@@ -57,3 +53,13 @@ extraVolumeMounts:
 image:
   tag: v1.12.26
   repository: ghcr.io/element-hq/element-web
+# --- Durable disclaimer injection ---
+# sub_filter injects the disclaimer <script> into the image's own index.html,
+# so the bundle hash always matches the image (no stale index.html pinning).
+nginxConfig: |-
+  add_header X-Frame-Options SAMEORIGIN;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-XSS-Protection "1; mode=block";
+  add_header Content-Security-Policy "frame-ancestors 'self'";
+  sub_filter '</body>' '<script src="disclaimer.js"></script></body>';
+  sub_filter_once on;
