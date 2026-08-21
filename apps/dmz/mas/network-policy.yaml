@@ -51,6 +51,14 @@ spec:
       ports:
         - protocol: TCP
           port: 5432
+    # Synapse Postgres (dmz ns — needed by syn2mas migration job)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: dmz
+      ports:
+        - protocol: TCP
+          port: 5432
     # Authentik API (dmz)
     - to:
         - podSelector:

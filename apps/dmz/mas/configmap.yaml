@@ -50,6 +50,8 @@ data:
       providers:
         - id: 01M0H0VW783Q1WVPHBNN7AT1FS
           human_name: MySweetPea
+          # Synapse's oidc_providers used idp_id: authentik → internal prefix oidc-
+          synapse_idp_id: oidc-authentik
           issuer: https://auth.mysweetpea.cc/application/o/matrix-mas/
           client_id: 8PgjFyxj5MlOquHvUxOlcZrLA7cuJ7k2yba4OMGT
           client_secret_file: /secrets/ak-client-secret
