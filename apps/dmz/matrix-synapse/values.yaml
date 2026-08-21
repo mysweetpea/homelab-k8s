@@ -4,10 +4,6 @@ serverName: mysweetpea.cc
 publicServerName: matrix.mysweetpea.cc
 wellknown:
   enabled: true
-  # Location sharing (MSC3488): map tile server for Element location pinning
-  extraData:
-    m.tile_server:
-      map_style_url: "https://tiles.openfreemap.org/styles/liberty"
 ingress:
   enabled: false
 postgresql:
@@ -112,6 +108,10 @@ extraConfig:
     msc4143_enabled: true
     # MSC4222: sync v2 state_after (required by Element Call)
     msc4222_enabled: true
+  # --- Location sharing (MSC3488): map tile server (OpenFreeMap, no key) ---
+  extra_well_known_client_content:
+    m.tile_server:
+      map_style_url: https://tiles.openfreemap.org/styles/liberty
   max_event_delay_duration: 24h
   matrix_rtc:
     transports:
