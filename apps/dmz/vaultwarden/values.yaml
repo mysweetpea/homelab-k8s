@@ -113,3 +113,6 @@ vaultwarden:
     port: "587"
     authMechanism: Plain
     existingSecret: "vaultwarden-smtp"
+  push:
+    enabled: true
+    existingSecret: "vaultwarden-push"
