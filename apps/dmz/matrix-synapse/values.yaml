@@ -44,9 +44,7 @@ extraConfig:
   max_upload_size: 50M
   public_baseurl: "https://matrix.mysweetpea.cc/"
   # --- Password login ---
-  # ENABLED for Element X (mobile): Element X only supports password or
-  # OAuth (MAS) login — it CANNOT use legacy SSO (m.login.sso). The MAS
-  # deployment (planned) will replace this and add QR login.
+  # Disabled: MAS (Tier 2) now handles all auth (upstream Authentik OIDC).
   password_config:
     enabled: false
   # --- Disable registration ---
@@ -121,25 +119,16 @@ extraConfig:
   rc_delayed_event_mgmt:
     per_second: 1
     burst_count: 20
-# OIDC client id/secret + JWT secret are injected from the
-# `matrix-synapse-oidc` Secret (dmz) via env vars, then substituted
-# into the rendered config by extraCommands. NOTHING secret is in git.
+# MAS shared secret + email SMTP password are injected from Secrets (dmz)
+# via env vars, then substituted into the rendered config by extraCommands.
+# NOTHING secret is in git.
 extraSecrets:
-  oidc_providers:
-  - idp_id: authentik
-    idp_name: authentik
-    discover: true
-    issuer: "https://auth.mysweetpea.cc/application/o/matrix-synapse/"
-    client_id: "@@OIDC_CLIENT_ID@@"
-    client_secret: "@@OIDC_CLIENT_SECRET@@"
-    scopes:
-    - "openid"
-    - "profile"
-    - "email"
-    user_mapping_provider:
-      config:
-        localpart_template: "{{ user.preferred_username }}"
-        display_name_template: "{{ user.preferred_username|capitalize }}"
+  # --- MAS delegated auth (Tier 2) — Synapse delegates ALL auth to MAS.
+  # Shared secret substituted from the mas-secrets Secret by extraCommands.
+  matrix_authentication_service:
+    enabled: true
+    endpoint: http://mas.dmz.svc.cluster.local:8080
+    secret: "@@MAS_SECRET@@"
   # --- Email notifications (Tier 1, via Resend SMTP) ---
   # smtp_pass substituted from the matrix-synapse-smtp Secret by extraCommands.
   email:
@@ -158,30 +147,11 @@ extraSecrets:
     client_base_url: "https://chat.mysweetpea.cc"
     validation_token_lifetime: 15m
     invite_client_location: "https://chat.mysweetpea.cc"
-  # --- JWT config for backchannel logout ---
-  jwt_config:
-    enabled: true
-    secret: "@@JWT_SECRET@@"
-    algorithm: "RS256"
+  # --- JWT config removed (MAS handles backchannel logout itself) ---
 synapse:
   nodeSelector:
     kubernetes.io/hostname: k3s-master
   extraEnv:
-  - name: OIDC_CLIENT_ID
-    valueFrom:
-      secretKeyRef:
-        name: matrix-synapse-oidc
-        key: oidc-client-id
-  - name: OIDC_CLIENT_SECRET
-    valueFrom:
-      secretKeyRef:
-        name: matrix-synapse-oidc
-        key: oidc-client-secret
-  - name: JWT_SECRET
-    valueFrom:
-      secretKeyRef:
-        name: matrix-synapse-oidc
-        key: jwt-secret
   - name: SMTP_PASS
     valueFrom:
       secretKeyRef:
@@ -192,8 +162,13 @@ synapse:
       secretKeyRef:
         name: matrix-synapse-registration
         key: registration-shared-secret
+  - name: MAS_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: mas-secrets
+        key: matrix-secret
   extraCommands:
-  - sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" -e "s|@@REG_SECRET@@|${REG_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
+  - sed -i -e "s|@@REG_SECRET@@|${REG_SECRET:-}|" -e "s|@@MAS_SECRET@@|${MAS_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
   - sed -i -e "s|@@SMTP_PASS@@|${SMTP_PASS:-}|" /synapse/config/conf.d/secrets.yaml
 image:
   tag: v1.159.0

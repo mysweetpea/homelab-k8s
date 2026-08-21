@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mas-config
+  namespace: dmz
+  labels:
+    app.kubernetes.io/name: mas
+    app.kubernetes.io/part-of: homelab
+data:
+  config.yaml: |
+    # Matrix Authentication Service — MySweetPea
+    # Secrets are mounted from the mas-secrets Secret (dmz) via _file refs.
+    http:
+      public_base: https://mas.mysweetpea.cc/
+      listeners:
+        - name: web
+          resources:
+            - name: discovery
+            - name: human
+            - name: oauth
+            - name: compat
+            - name: graphql
+            - name: assets
+            - name: health
+          binds:
+            - address: "[::]:8080"
+
+    database:
+      host: postgresql.private.svc.cluster.local
+      port: 5432
+      username: mas
+      password_file: /secrets/db-password
+      database: mas
+
+    matrix:
+      kind: synapse
+      homeserver: mysweetpea.cc
+      endpoint: http://matrix-synapse.dmz.svc.cluster.local:8008
+      secret_file: /secrets/matrix-secret
+
+    secrets:
+      encryption_file: /secrets/encryption
+      keys:
+        - key_file: /secrets/rsa-key
+
+    passwords:
+      enabled: false
+
+    upstream_oauth2:
+      providers:
+        - id: 01M0H0VW783Q1WVPHBNN7AT1FS
+          human_name: MySweetPea
+          issuer: https://auth.mysweetpea.cc/application/o/matrix-mas/
+          client_id: 8PgjFyxj5MlOquHvUxOlcZrLA7cuJ7k2yba4OMGT
+          client_secret_file: /secrets/ak-client-secret
+          token_endpoint_auth_method: client_secret_basic
+          scope: "openid profile email"
+          claims_imports:
+            localpart:
+              action: require
+              template: "{{ user.preferred_username }}"
+              on_conflict: set
+            displayname:
+              action: suggest
+              template: "{{ user.name }}"
+            email:
+              action: suggest
+              template: "{{ user.email }}"
+
+    account:
+      email_change_allowed: false
+      displayname_change_allowed: true
+      password_change_allowed: false
+      password_recovery_enabled: false
+      account_deactivation_allowed: true
+
+    branding:
+      service_name: MySweetPea

@@ -1,0 +1,36 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: mas
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`mas.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: mas
+          port: 8080
+
+---
+# Matrix compat endpoints — login/logout/refresh must hit MAS, not Synapse
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: matrix-synapse-compat
+  namespace: dmz
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`matrix.mysweetpea.cc`) && PathRegexp(`^/_matrix/client/(api/v1|r0|v3)/(login|logout|refresh)$`)
+      kind: Rule
+      services:
+        - name: mas
+          port: 8080
+    - match: Host(`matrix.mysweetpea.cc`) && PathRegexp(`^/_matrix/client/(api/v1|r0|v3)/logout/all$`)
+      kind: Rule
+      services:
+        - name: mas
+          port: 8080
