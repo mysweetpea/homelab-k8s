@@ -36,6 +36,7 @@ spec:
           sed -e "s/__WEBHOOK_KEY__/${LIVEKIT_KEY}/" \
               -e "s/__API_KEY__/${LIVEKIT_KEY}/" \
               -e "s/__API_SECRET__/${LIVEKIT_SECRET}/" \
+              -e "s|__TURN_SECRET__|${TURN_SECRET}|" \
               /etc/livekit-template/config.yaml > /etc/livekit/config.yaml
         env:
         - name: LIVEKIT_KEY
@@ -48,6 +49,11 @@ spec:
             secretKeyRef:
               name: matrix-rtc-livekit
               key: LIVEKIT_SECRET
+        - name: TURN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: matrix-rtc-livekit
+              key: TURN_SECRET
         volumeMounts:
         - name: livekit-template
           mountPath: /etc/livekit-template
