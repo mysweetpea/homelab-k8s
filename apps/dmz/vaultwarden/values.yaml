@@ -24,14 +24,13 @@ additionalVolumeMounts:
 
 initContainers:
   - name: patch-web-vault
-    image: busybox:1.36
+    image: vaultwarden/server:1.37.1
     command:
       - /bin/sh
       - -c
       - |
-        cp /web-vault/index.html /web-index/index.html
-        sed -i '/<\/body>/r /disclaimer/disclaimer.html' /web-index/index.html
-        grep -q mysweetpea-login-disclaimer /web-index/index.html || echo 'WARN: disclaimer splice failed'
+        sed '/<\/body>/r /disclaimer/disclaimer.html' /web-vault/index.html > /web-index/index.html
+        grep -q mysweetpea-login-disclaimer /web-index/index.html && echo 'disclaimer splice OK' || { echo 'WARN: disclaimer splice failed'; exit 1; }
     volumeMounts:
       - name: web-index
         mountPath: /web-index

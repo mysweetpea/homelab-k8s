@@ -162,6 +162,17 @@ extraObjects:
                   # (NOT controllers.* — that bjw-s shape was a silent no-op)
                   name: image.repository
                   tag: image.tag
+            # patch-web-vault init container splices the login disclaimer into
+            # the image's own index.html — its tag MUST match the main image or
+            # the patched bundle hashes 404 after a bump (element-web class bug).
+            - alias: vaultwarden-init
+              imageName: vaultwarden/server
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  spec: initContainers[0].image
         - namePattern: open-webui
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds
