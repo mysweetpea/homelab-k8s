@@ -42,7 +42,7 @@ controllers:
             name: homepage-secrets
         image:
           repository: ghcr.io/gethomepage/homepage
-          tag: v2.1.1
+          tag: v2.1.2
     type: deployment
 # Pinned to worker-b: master VM disk is failing (Aug 19 SSD incident) — keep
 # the dashboard off the thrashing master
