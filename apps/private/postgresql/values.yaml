@@ -1,5 +1,11 @@
 ---
 architecture: standalone
+global:
+  # Bitnami chart 18.7.0 defaults to FIPS restricted → OPENSSL_FIPS=yes in the
+  # container → OpenSSL 3.5.6 disables MD5 → Postgres md5() fails with
+  # "could not compute MD5 hash: unsupported" → AFFiNE workspace creation
+  # breaks (workspace_members.id default uses md5()). Homelab: FIPS off.
+  defaultFips: off
 auth:
   existingSecret: postgresql
   secretKeys:
