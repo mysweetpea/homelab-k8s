@@ -16,10 +16,37 @@ additionalVolumes:
   - name: disclaimer
     configMap:
       name: vaultwarden-disclaimer
+  - name: branding
+    configMap:
+      name: vaultwarden-branding
 additionalVolumeMounts:
   - name: web-index
     mountPath: /web-vault/index.html
     subPath: index.html
+    readOnly: true
+  # MySweetPea branding (vaultwarden-branding CM, manual apply):
+  # - SCSS override → compiled to /css/vaultwarden.css (logo + teal accent)
+  # - email templates → header/footer (logo, title, footer link)
+  # - logo PNGs → /web-vault/images/ (referenced by SCSS + email template)
+  - name: branding
+    mountPath: /data/templates/scss/user.vaultwarden.scss.hbs
+    subPath: user.vaultwarden.scss.hbs
+    readOnly: true
+  - name: branding
+    mountPath: /data/templates/email/email_header.hbs
+    subPath: email_header.hbs
+    readOnly: true
+  - name: branding
+    mountPath: /data/templates/email/email_footer.hbs
+    subPath: email_footer.hbs
+    readOnly: true
+  - name: branding
+    mountPath: /web-vault/images/mysweetpea-logo.png
+    subPath: mysweetpea-logo.png
+    readOnly: true
+  - name: branding
+    mountPath: /web-vault/images/mysweetpea-logo-email.png
+    subPath: mysweetpea-logo-email.png
     readOnly: true
 
 initContainers:
@@ -54,6 +81,16 @@ vaultwarden:
   allowSignups: false
   # SSO-only: invitations create accounts outside Authentik
   allowInvitation: false
+  # -- Enable organization event logging (audit log)
+  orgEvents: true
+  # -- Organization event retention in days
+  orgEventsRetention: "30"
+  # -- Number of days to auto-delete trashed items
+  autoDeleteDays: "30"
+  # -- Limit attachment disk usage per user (in KB) — 512MB (2Gi PVC)
+  attachmentLimitUser: "524288"
+  # -- Limit send disk usage per user (in KB) — 512MB (2Gi PVC)
+  sendLimitUser: "524288"
   admin:
     enabled: true
     existingSecret: "vaultwarden-admin"
