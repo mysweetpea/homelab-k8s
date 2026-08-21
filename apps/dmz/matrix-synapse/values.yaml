@@ -108,6 +108,9 @@ extraConfig:
     msc4143_enabled: true
     # MSC4222: sync v2 state_after (required by Element Call)
     msc4222_enabled: true
+    # MSC4108: OIDC sign-in + E2EE setup via QR code (Element "Show QR code"
+    # button is gated on unstable_features.org.matrix.msc4108 == true)
+    msc4108_enabled: true
   # --- Location sharing (MSC3488): map tile server (OpenFreeMap, no key) ---
   extra_well_known_client_content:
     m.tile_server:
