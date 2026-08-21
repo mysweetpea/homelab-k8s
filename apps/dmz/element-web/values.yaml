@@ -137,10 +137,12 @@ nginxConfig: |-
   # (vector-icons/120.570a7f9.png) that change on every image bump —
   # rewrite ANY hash to the unhashed badge icon mounted from the
   # element-web-branding CM (durable, hash-proof).
-  # NOTE: $$1 — the nginx entrypoint runs envsubst on this template,
-  # so $1 must be escaped or it gets eaten.
-  location ~ ^/vector-icons/[0-9]+\.[a-f0-9]+\.png$ {
-      rewrite ^/vector-icons/([0-9]+)\.[a-f0-9]+\.png$ /vector-icons/$$1.png last;
+  # NOTE: regexes MUST be double-quoted — an unquoted trailing $ is
+  # parsed by nginx as a variable reference ("invalid variable name").
+  # $1 is safe: the entrypoint's envsubst uses the variable-list form
+  # and $1 is not a valid env var name, so it passes through untouched.
+  location ~ "^/vector-icons/[0-9]+\.[a-f0-9]+\.png$" {
+      rewrite "^/vector-icons/([0-9]+)\.[a-f0-9]+\.png$" /vector-icons/$1.png last;
   }
   location = /version {
       add_header Cache-Control "no-cache";
