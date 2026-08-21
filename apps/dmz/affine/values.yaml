@@ -32,7 +32,7 @@ controllers:
         - name: AFFINE_INDEXER_ENABLED
           value: "true"
         - name: AFFINE_INDEXER_SEARCH_ENDPOINT
-          value: http://indexer.dmz.svc.cluster.local:9308
+          value: http://affine-indexer.dmz.svc.cluster.local:9308
         resources:
           requests:
             cpu: 100m
@@ -182,7 +182,7 @@ controllers:
         - name: AFFINE_INDEXER_ENABLED
           value: "true"
         - name: AFFINE_INDEXER_SEARCH_ENDPOINT
-          value: http://indexer.dmz.svc.cluster.local:9308
+          value: http://affine-indexer.dmz.svc.cluster.local:9308
         - name: NODE_OPTIONS
           value: "--dns-result-order=ipv4first --require /root/.affine/config/affine-ua-patch.js"
         resources:
