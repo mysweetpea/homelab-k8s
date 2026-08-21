@@ -56,8 +56,9 @@ initContainers:
       - /bin/sh
       - -c
       - |
-        sed '/<\/body>/r /disclaimer/disclaimer.html' /web-vault/index.html > /web-index/index.html
+        sed '/<\/body>/r /disclaimer/disclaimer.html' /web-vault/index.html | sed 's/<title page-title>Vaultwarden Web<\/title>/<title page-title>MySweetPea Vault<\/title>/' > /web-index/index.html
         grep -q mysweetpea-login-disclaimer /web-index/index.html && echo 'disclaimer splice OK' || { echo 'WARN: disclaimer splice failed'; exit 1; }
+        grep -q 'MySweetPea Vault' /web-index/index.html && echo 'title OK' || { echo 'WARN: title replace failed'; exit 1; }
     volumeMounts:
       - name: web-index
         mountPath: /web-index
