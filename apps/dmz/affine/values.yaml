@@ -31,6 +31,13 @@ controllers:
               key: redis-password
         - name: AFFINE_INDEXER_ENABLED
           value: "false"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
       config-writer:
         image:
           repository: alpine
@@ -42,11 +49,29 @@ controllers:
         - |
           cat > /root/.affine/config/config.json <<EOF
           {
+            "server": {
+              "name": "MySweetPea Notes",
+              "externalUrl": "https://notes.mysweetpea.cc"
+            },
             "auth": {
               "allowSignup": false
             },
             "flags": {
               "allowGuestDemoWorkspace": false
+            },
+            "copilot": {
+              "enabled": true,
+              "byok": {
+                "enabled": true
+              }
+            },
+            "mailer": {
+              "SMTP.host": "smtp.resend.com",
+              "SMTP.port": 587,
+              "SMTP.username": "$MAILER_USER",
+              "SMTP.password": "$MAILER_PASSWORD",
+              "SMTP.sender": "MySweetPea Notes <notes@mysweetpea.cc>",
+              "SMTP.name": "notes.mysweetpea.cc"
             },
             "oauth": {
               "providers": {
@@ -77,6 +102,49 @@ controllers:
             secretKeyRef:
               name: affine-secrets
               key: oidc-client-secret
+        - name: MAILER_USER
+          valueFrom:
+            secretKeyRef:
+              name: affine-smtp
+              key: smtp-user
+        - name: MAILER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: affine-smtp
+              key: smtp-password
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+      patch-web-index:
+        image:
+          repository: ghcr.io/toeverything/affine
+          tag: "stable-b4c8548"
+          pullPolicy: IfNotPresent
+        command:
+        - node
+        - -e
+        - |
+          const fs = require('fs');
+          const html = fs.readFileSync('/app/static/selfhost.html', 'utf8');
+          const disc = fs.readFileSync('/branding/disclaimer.html', 'utf8');
+          const patched = html.replace('</body>', disc + '</body>');
+          fs.writeFileSync('/web-index/selfhost.html', patched);
+          if (!patched.includes('mysweetpea-login-disclaimer')) {
+            console.error('disclaimer splice FAILED');
+            process.exit(1);
+          }
+          console.log('disclaimer splice OK');
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
     containers:
       main:
         image:
@@ -108,10 +176,15 @@ controllers:
           value: "true"
         - name: AFFINE_INDEXER_ENABLED
           value: "false"
-        - name: NODE_TLS_REJECT_UNAUTHORIZED
-          value: "0"
         - name: NODE_OPTIONS
           value: "--dns-result-order=ipv4first --require /root/.affine/config/affine-ua-patch.js"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: "2"
+            memory: 2Gi
         ports:
         - containerPort: 3010
           name: http
@@ -171,9 +244,42 @@ persistence:
     globalMounts:
     - path: /root/.affine/storage
   web-index:
+    type: emptyDir
+    advancedMounts:
+      main:
+        main:
+        - path: /app/static/selfhost.html
+          subPath: selfhost.html
+          readOnly: true
+        patch-web-index:
+        - path: /web-index
+  branding:
     type: configMap
-    name: affine-web-index
+    name: affine-branding
     globalMounts:
-    - path: /app/static/selfhost.html
-      subPath: selfhost.html
+    - path: /branding
       readOnly: true
+    advancedMounts:
+      main:
+        main:
+        - path: /app/static/favicon-36.png
+          subPath: favicon-36.png
+          readOnly: true
+        - path: /app/static/favicon-48.png
+          subPath: favicon-48.png
+          readOnly: true
+        - path: /app/static/favicon-72.png
+          subPath: favicon-72.png
+          readOnly: true
+        - path: /app/static/favicon-96.png
+          subPath: favicon-96.png
+          readOnly: true
+        - path: /app/static/favicon-144.png
+          subPath: favicon-144.png
+          readOnly: true
+        - path: /app/static/favicon-192.png
+          subPath: favicon-192.png
+          readOnly: true
+        - path: /app/static/manifest.json
+          subPath: manifest.json
+          readOnly: true

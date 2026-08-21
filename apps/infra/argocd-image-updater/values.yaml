@@ -386,6 +386,15 @@ extraObjects:
                 helm:
                   name: controllers.main.initContainers.migrate.image.repository
                   tag: controllers.main.initContainers.migrate.image.tag
+            - alias: affine-patch
+              imageName: ghcr.io/toeverything/affine
+              commonUpdateSettings:
+                updateStrategy: newest-build
+                allowTags: "regexp:^stable-[a-f0-9]+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.initContainers.patch-web-index.image.repository
+                  tag: controllers.main.initContainers.patch-web-index.image.tag
         - namePattern: bazarr
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds
