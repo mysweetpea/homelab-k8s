@@ -44,7 +44,7 @@ extraConfig:
   # OAuth (MAS) login — it CANNOT use legacy SSO (m.login.sso). The MAS
   # deployment (planned) will replace this and add QR login.
   password_config:
-    enabled: true
+    enabled: false
   # --- Disable registration ---
   enable_registration: false
   # --- E2EE-by-default (greenfield: 1 user, 0 rooms — safe to enforce now) ---
@@ -64,6 +64,54 @@ extraConfig:
   # --- History retention: COMPRESS, NEVER PURGE ---
   # Retention policy disabled (no default purge job). Old messages stay.
   # DB-level LZ4 compression (applied separately) keeps storage lean instead.
+  # --- URL previews (Tier 1) ---
+  url_preview_enabled: true
+  url_preview_ip_range_blacklist:
+  - 127.0.0.0/8
+  - 10.0.0.0/8
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - 100.64.0.0/10
+  - 192.0.0.0/24
+  - 169.254.0.0/16
+  - 192.88.99.0/24
+  - 198.18.0.0/15
+  - 192.0.2.0/24
+  - 198.51.100.0/24
+  - 203.0.113.0/24
+  - 224.0.0.0/4
+  - ::1/128
+  - fe80::/10
+  - fc00::/7
+  - 2001:db8::/32
+  - ff00::/8
+  - fec0::/10
+  # --- Server notices (Tier 1) ---
+  server_notices:
+    system_mxid_localpart: notices
+    system_mxid_display_name: MySweetPea Notices
+    room_name: Server Notices
+    room_topic: Important announcements from the MySweetPea server admin
+    auto_join: true
+  # --- Email notifications (Tier 1, via Resend SMTP) ---
+  # Password injected from the `matrix-synapse-smtp` Secret (dmz) via
+  # extraEnv + extraCommands substitution. NOTHING secret is in git.
+  email:
+    smtp_host: smtp.resend.com
+    smtp_port: 587
+    smtp_user: resend
+    smtp_pass: "@@SMTP_PASS@@"
+    force_tls: false
+    require_transport_security: true
+    enable_tls: true
+    tlsname: smtp.resend.com
+    notif_from: "MySweetPea Matrix <matrix@mysweetpea.cc>"
+    app_name: MySweetPea
+    enable_notifs: true
+    notif_for_new_users: true
+    client_base_url: "https://chat.mysweetpea.cc"
+    validation_token_lifetime: 15m
+    invite_client_location: "https://chat.mysweetpea.cc"
   # --- MatrixRTC (Element Call / LiveKit) ---
   experimental_features:
     # MSC3266: Room summary API (knocking/joining calls over federation)
@@ -126,9 +174,15 @@ synapse:
       secretKeyRef:
         name: matrix-synapse-oidc
         key: jwt-secret
+  - name: SMTP_PASS
+    valueFrom:
+      secretKeyRef:
+        name: matrix-synapse-smtp
+        key: smtp-pass
   extraCommands:
   - |
     sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
+    sed -i -e "s|@@SMTP_PASS@@|${SMTP_PASS:-}|" /synapse/config/homeserver.yaml
 image:
   tag: v1.159.0
   repository: ghcr.io/element-hq/synapse

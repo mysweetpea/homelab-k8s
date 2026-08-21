@@ -32,10 +32,15 @@ config:
     "UIFeature.widgets": true
   embedded_pages:
     login_for_welcome: true
+    # Branded logged-out home page (mounted from element-web-home ConfigMap)
+    home_url: "home.html"
 extraVolumes:
 - name: disclaimer
   configMap:
     name: element-web-disclaimer
+- name: home
+  configMap:
+    name: element-web-home
 extraVolumeMounts:
 - name: disclaimer
   mountPath: /app/index.html
@@ -44,6 +49,10 @@ extraVolumeMounts:
 - name: disclaimer
   mountPath: /app/disclaimer.js
   subPath: disclaimer.js
+  readOnly: true
+- name: home
+  mountPath: /app/home.html
+  subPath: home.html
   readOnly: true
 image:
   tag: v1.12.26

@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: matrix-synapse-smtp
+  namespace: dmz
+spec:
+  encryptedData:
+    smtp-pass: AgAqPRgGvC79OsOaMA9m+8WxRi36k8EQlPRIQA8iaLMOF29xw2sAUBSGfTL3jOyvsXxLWtnC0bR7S9oADaY0/fbbysPb2LqwOlJOst0bnruNgq+V/j9wtLmriyM7LevvYPT0/OLnFha5Pc3GdMwIzttEgNQ/7WsU0f5PQdahbBeBXGpQO6d5423Cty8yHdpc2ZyN5NBvGuZPkKZTtqo1jlJhoIV+o8O77z6SVUn4QWlAxr56/FeCDrY6i9IF3Fd9XwDZqzTfGqpacCw0ug2Vr3ikQpPyXqbjCQ/deX00zvc+LZX3N5/vp+VceVXT63OTRyuvmngznZmGFve7qrTVATLJeW/FlVudwhHXUFI0qTTrJHWZ1FLYRsyVRj+1g4YSWTO+J8GrqgAFvQy4zJAvOQiKDmBOW9fKCrSKRGKSLbUlTFvEBe5G5Ozc+cugttQtMPop+dD8maXBUWR7Y/Gy1mCojsrZPApz9GN7KNXgakP0iGxr2k92hrhujUSf8kNPmD99PuwjYopDMtrVVp0ENonHy2u8ApYQex4zlJcqlkmEyRG+cqttEqz/6Gr7EHoQhvtAyoBnMEBVMWTemvNDw1pHTUXaLiYnjpgHQgomVe00edPnhOPJpbHjazIQOee2gC9Zlr2KAnKmxGTW7niQTErP+vYf4+gs+XPvibtQpfR4e05ffwF4pYAHkcQZN9CmDasQ97NH2Z81CWBQsqliWgeCTCaF6g/bs3Mm2Y5imH2zm/MZD/U=
+  template:
+    metadata:
+      name: matrix-synapse-smtp
+      namespace: dmz
+    type: Opaque
