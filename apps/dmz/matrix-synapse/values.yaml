@@ -39,9 +39,12 @@ signingkey:
 extraConfig:
   max_upload_size: 50M
   public_baseurl: "https://matrix.mysweetpea.cc/"
-  # --- Disable password login ---
+  # --- Password login ---
+  # ENABLED for Element X (mobile): Element X only supports password or
+  # OAuth (MAS) login — it CANNOT use legacy SSO (m.login.sso). The MAS
+  # deployment (planned) will replace this and add QR login.
   password_config:
-    enabled: false
+    enabled: true
   # --- Disable registration ---
   enable_registration: false
   # --- E2EE-by-default (greenfield: 1 user, 0 rooms — safe to enforce now) ---
