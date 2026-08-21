@@ -30,7 +30,9 @@ controllers:
               name: redis-affine
               key: redis-password
         - name: AFFINE_INDEXER_ENABLED
-          value: "false"
+          value: "true"
+        - name: AFFINE_INDEXER_SEARCH_ENDPOINT
+          value: http://indexer.dmz.svc.cluster.local:9308
         resources:
           requests:
             cpu: 100m
@@ -62,7 +64,10 @@ controllers:
             "copilot": {
               "enabled": true,
               "byok": {
-                "enabled": true
+                "enabled": true,
+                "allowCustomEndpoint": true,
+                "allowPrivateEndpoint": false,
+                "allowedProviders": ["openai"]
               }
             },
             "mailer": {
@@ -175,7 +180,9 @@ controllers:
         - name: AFFINE_SERVER_HTTPS
           value: "true"
         - name: AFFINE_INDEXER_ENABLED
-          value: "false"
+          value: "true"
+        - name: AFFINE_INDEXER_SEARCH_ENDPOINT
+          value: http://indexer.dmz.svc.cluster.local:9308
         - name: NODE_OPTIONS
           value: "--dns-result-order=ipv4first --require /root/.affine/config/affine-ua-patch.js"
         resources:
@@ -210,12 +217,42 @@ controllers:
       - ip: "104.21.44.229"
         hostnames:
         - auth.mysweetpea.cc
+  indexer:
+    enabled: true
+    type: deployment
+    containers:
+      main:
+        image:
+          repository: manticoresearch/manticore
+          tag: "10.1.0"
+          pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
+        probes:
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: 9308
+              initialDelaySeconds: 10
 service:
   main:
     controller: main
     ports:
       http:
         port: 3010
+  indexer:
+    controller: indexer
+    ports:
+      http:
+        port: 9308
 ingress:
   main:
     annotations:
@@ -234,15 +271,23 @@ persistence:
     accessMode: ReadWriteOnce
     size: 5Gi
     storageClass: longhorn
-    globalMounts:
-    - path: /root/.affine/config
+    advancedMounts:
+      main:
+        main:
+        - path: /root/.affine/config
+        config-writer:
+        - path: /root/.affine/config
+        migrate:
+        - path: /root/.affine/config
   uploads:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
     size: 10Gi
     storageClass: longhorn
-    globalMounts:
-    - path: /root/.affine/storage
+    advancedMounts:
+      main:
+        main:
+        - path: /root/.affine/storage
   web-index:
     type: emptyDir
     advancedMounts:
@@ -253,6 +298,15 @@ persistence:
           readOnly: true
         patch-web-index:
         - path: /web-index
+  indexer-data:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    storageClass: longhorn
+    advancedMounts:
+      indexer:
+        main:
+        - path: /var/lib/manticore
   branding:
     type: configMap
     name: affine-branding
