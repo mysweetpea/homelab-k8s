@@ -96,22 +96,8 @@ extraConfig:
   # --- Email notifications (Tier 1, via Resend SMTP) ---
   # Password injected from the `matrix-synapse-smtp` Secret (dmz) via
   # extraEnv + extraCommands substitution. NOTHING secret is in git.
-  email:
-    smtp_host: smtp.resend.com
-    smtp_port: 587
-    smtp_user: resend
-    smtp_pass: "@@SMTP_PASS@@"
-    force_tls: false
-    require_transport_security: true
-    enable_tls: true
-    tlsname: smtp.resend.com
-    notif_from: "MySweetPea Matrix <matrix@mysweetpea.cc>"
-    app_name: MySweetPea
-    enable_notifs: true
-    notif_for_new_users: true
-    client_base_url: "https://chat.mysweetpea.cc"
-    validation_token_lifetime: 15m
-    invite_client_location: "https://chat.mysweetpea.cc"
+  # NOTE: lives in extraSecrets (renders into the WRITABLE conf.d/secrets.yaml)
+  # — extraConfig renders into read-only homeserver.yaml where sed can't reach.
   # --- MatrixRTC (Element Call / LiveKit) ---
   experimental_features:
     # MSC3266: Room summary API (knocking/joining calls over federation)
@@ -150,6 +136,24 @@ extraSecrets:
       config:
         localpart_template: "{{ user.preferred_username }}"
         display_name_template: "{{ user.preferred_username|capitalize }}"
+  # --- Email notifications (Tier 1, via Resend SMTP) ---
+  # smtp_pass substituted from the matrix-synapse-smtp Secret by extraCommands.
+  email:
+    smtp_host: smtp.resend.com
+    smtp_port: 587
+    smtp_user: resend
+    smtp_pass: "@@SMTP_PASS@@"
+    force_tls: false
+    require_transport_security: true
+    enable_tls: true
+    tlsname: smtp.resend.com
+    notif_from: "MySweetPea Matrix <matrix@mysweetpea.cc>"
+    app_name: MySweetPea
+    enable_notifs: true
+    notif_for_new_users: true
+    client_base_url: "https://chat.mysweetpea.cc"
+    validation_token_lifetime: 15m
+    invite_client_location: "https://chat.mysweetpea.cc"
   # --- JWT config for backchannel logout ---
   jwt_config:
     enabled: true
@@ -181,7 +185,7 @@ synapse:
         key: smtp-pass
   extraCommands:
   - sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
-  - sed -i -e "s|@@SMTP_PASS@@|${SMTP_PASS:-}|" /synapse/config/homeserver.yaml
+  - sed -i -e "s|@@SMTP_PASS@@|${SMTP_PASS:-}|" /synapse/config/conf.d/secrets.yaml
 image:
   tag: v1.159.0
   repository: ghcr.io/element-hq/synapse
