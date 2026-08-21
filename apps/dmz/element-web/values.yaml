@@ -50,12 +50,24 @@ extraVolumeMounts:
   mountPath: /app/home.html
   subPath: home.html
   readOnly: true
+# Mount the chart's nginx ConfigMap default.conf (contains our sub_filter
+# disclaimer injection) over the image's TEMPLATE path so envsubst processes
+# it at startup (the deployment only mounts config.json from that CM by default).
+- name: config-nginx
+  mountPath: /etc/nginx/templates/default.conf.template
+  subPath: default.conf
+  readOnly: true
 image:
   tag: v1.12.26
   repository: ghcr.io/element-hq/element-web
 # --- Durable disclaimer injection ---
 # sub_filter injects the disclaimer <script> into the image's own index.html,
 # so the bundle hash always matches the image (no stale index.html pinning).
+# NOTE: the chart renders this into element-web-nginx CM default.conf, but the
+# deployment only mounts config.json from that CM — we mount default.conf over
+# /etc/nginx/templates/default.conf.template (extraVolumeMounts below) so
+# envsubst processes it at startup. Must include the image's extra locations
+# (/config, /version, /i18n, /modules) that the chart's default.conf lacks.
 nginxConfig: |-
   add_header X-Frame-Options SAMEORIGIN;
   add_header X-Content-Type-Options nosniff;
@@ -63,3 +75,16 @@ nginxConfig: |-
   add_header Content-Security-Policy "frame-ancestors 'self'";
   sub_filter '</body>' '<script src="disclaimer.js"></script></body>';
   sub_filter_once on;
+  location = /version {
+      add_header Cache-Control "no-cache";
+  }
+  location /i18n/ {
+      add_header Cache-Control "no-cache";
+  }
+  location /config {
+      root /tmp/element-web-config;
+      add_header Cache-Control "no-cache";
+  }
+  location /modules {
+      alias /modules;
+  }
