@@ -36,6 +36,11 @@ signingkey:
     enabled: false
   existingSecret: matrix-synapse-signingkey
   existingSecretKey: signing.key
+config:
+  # Admin API on the main listener (needed for server notices + admin ops).
+  # Requires an admin access token; not exposed publicly.
+  extraMainListenerTypes:
+  - admin
 extraConfig:
   max_upload_size: 50M
   public_baseurl: "https://matrix.mysweetpea.cc/"
