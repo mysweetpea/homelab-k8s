@@ -20,18 +20,17 @@ data:
       port_range_end: 60000
       use_external_ip: false
       advertise_internal_ip: true
-      # TURN relay on the VPS forwards media UDP/TCP to this host
-      turn:
-        enabled: true
-        domain: 129.213.11.104
-        tls_port: 443
-        udp_port: 3478
-        relay_range_start: 50000
-        relay_range_end: 60000
+    # TURN relay on the VPS forwards media UDP/TCP to this host
+    turn:
+      enabled: true
+      domain: 129.213.11.104
+      tls_port: 443
+      udp_port: 3478
+      relay_range_start: 50000
+      relay_range_end: 60000
     room:
       # Room creation is authorized by lk-jwt-service (full-access users only)
       auto_create: false
-      enabled: true
     webhook:
       api_key: __WEBHOOK_KEY__
       urls:
