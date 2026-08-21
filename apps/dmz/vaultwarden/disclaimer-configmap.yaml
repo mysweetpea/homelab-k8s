@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vaultwarden-disclaimer
+  namespace: dmz
+  labels:
+    app.kubernetes.io/name: vaultwarden
+    app.kubernetes.io/part-of: homelab
+data:
+  # Spliced into the image's own /web-vault/index.html by the
+  # patch-web-vault init container (see values.yaml) — durable across
+  # image bumps because the source is always the image's current file.
+  disclaimer.html: |
+    <div id="mysweetpea-login-disclaimer" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(16,16,16,0.94);color:rgba(255,255,255,0.85);text-align:center;padding:10px 18px;font-family:'Segoe UI','Helvetica Neue',sans-serif;font-size:13px;line-height:1.45;border-top:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(4px);">Sign in with your MySweetPea account (Authentik SSO). Use the same username and password as Vaultwarden, AFFiNE, and the other services.</div><script>
+    (function () {
+      function hasSession() {
+        try {
+          for (var i = 0; i < localStorage.length; i++) {
+            var k = localStorage.key(i) || '';
+            if (k.indexOf('access_token') !== -1 || k.indexOf('refresh_token') !== -1) return true;
+          }
+        } catch (e) {}
+        return false;
+      }
+      function update() {
+        var el = document.getElementById('mysweetpea-login-disclaimer');
+        if (el) el.style.display = hasSession() ? 'none' : 'block';
+      }
+      update();
+      setInterval(update, 1500);
+    })();
+    </script>

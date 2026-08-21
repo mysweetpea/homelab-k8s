@@ -4,16 +4,40 @@ persistence:
   size: 2Gi
   storageClass: longhorn
 
-# MySweetPea login disclaimer: mount patched web-vault index.html
+# MySweetPea login disclaimer — DURABLE approach (replaces pinned index.html):
+# the patch-web-vault init container splices the disclaimer snippet into a copy
+# of the IMAGE's own /web-vault/index.html (which always matches the running
+# version's bundle hashes). The old vaultwarden-web-index ConfigMap pinned
+# an entire index.html with hashed bundle filenames — it 404'd on every image
+# bump (same bug class as element-web, fixed commits 156fd01/29607c4).
 additionalVolumes:
   - name: web-index
+    emptyDir: {}
+  - name: disclaimer
     configMap:
-      name: vaultwarden-web-index
+      name: vaultwarden-disclaimer
 additionalVolumeMounts:
   - name: web-index
     mountPath: /web-vault/index.html
     subPath: index.html
     readOnly: true
+
+initContainers:
+  - name: patch-web-vault
+    image: busybox:1.36
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cp /web-vault/index.html /web-index/index.html
+        sed -i '/<\/body>/r /disclaimer/disclaimer.html' /web-index/index.html
+        grep -q mysweetpea-login-disclaimer /web-index/index.html || echo 'WARN: disclaimer splice failed'
+    volumeMounts:
+      - name: web-index
+        mountPath: /web-index
+      - name: disclaimer
+        mountPath: /disclaimer
+        readOnly: true
 
 image:
   tag: "1.37.1"
