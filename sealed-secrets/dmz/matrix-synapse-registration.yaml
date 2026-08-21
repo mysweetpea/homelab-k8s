@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: matrix-synapse-registration
+  namespace: dmz
+spec:
+  encryptedData:
+    registration-shared-secret: AgCjd1AxBGMt5HdIZc3Up5yM1Gd9cbcQeq/fGoQFe3Z8qBM4G7TXRnSU7yGdT87hc+lr7FFXmuVAP+A69hLiuhbIfVrQcTRCH959934G7caz0lDMREhPgE546ITn8ewMovKa0vZSgpJjx2n9K9F0sdbo5nnBldSDRYseswP+SqO6ZMu5oKVd3EqMnFAvGpWokviONXhbWJauZD5qiFn5fPPvRo9aeMpeAcm6m+0V1u2rp/y+TaN5XrsSjxzc4MYzYrUv4M8c0aufkCJwyW/hk6ykOq58LnfBjqt6CQBqcbMO+ZCeQ4IedpncqU7B8+Da2b13iM2lJdYNFllFBYUhr5eu4q58qXUAl6xVByDcMMHp2ltWeS8ApmstA7+pI9nCNhPLeQzy8AIBMfTxwb1DjhT5ET6DDK/QazwpN/hWD376IZZXkcvc8WoUJ1Fbb+NaFnMm6V1YXifyX36y/Jj2jMKHWNULxFhq8ERD/bPMzWoVEZU5fQyP5mE40IIoLkSCbzl4Iz1aLs+BB0hP5okzE00KDvZw+eGUA/RkcfLLUR3gR8Co518pEGFMAZLX2tr7rudbk/BsEhRqVkbwBwiLNvbKAAcK3DpkJeSib8uK+1cAdnWijZJrTk4rj1B43zRcaanrmZxcNBb2SHZDM1v8NicTshpRrnIHRAxlzKPv5ghuYm0nkfBHAFYmkjrrXqw7mSWWGIpcSHHRjss2h+62HLFfvoKX8SakveSVqhcMHZrI0w==
+  template:
+    metadata:
+      name: matrix-synapse-registration
+      namespace: dmz
+    type: Opaque

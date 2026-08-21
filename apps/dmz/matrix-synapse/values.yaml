@@ -36,6 +36,10 @@ signingkey:
     enabled: false
   existingSecret: matrix-synapse-signingkey
   existingSecretKey: signing.key
+config:
+  # Pinned via sealed secret (matrix-synapse-registration) + runtime sed —
+  # chart default randAlphaNum regenerates every render → perpetual OutOfSync.
+  registrationSharedSecret: "@@REG_SECRET@@"
 extraConfig:
   max_upload_size: 50M
   public_baseurl: "https://matrix.mysweetpea.cc/"
@@ -183,8 +187,13 @@ synapse:
       secretKeyRef:
         name: matrix-synapse-smtp
         key: smtp-pass
+  - name: REG_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: matrix-synapse-registration
+        key: registration-shared-secret
   extraCommands:
-  - sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
+  - sed -i -e "s|@@OIDC_CLIENT_ID@@|${OIDC_CLIENT_ID:-}|" -e "s|@@OIDC_CLIENT_SECRET@@|${OIDC_CLIENT_SECRET:-}|" -e "s|@@JWT_SECRET@@|${JWT_SECRET:-}|" -e "s|@@REG_SECRET@@|${REG_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
   - sed -i -e "s|@@SMTP_PASS@@|${SMTP_PASS:-}|" /synapse/config/conf.d/secrets.yaml
 image:
   tag: v1.159.0
