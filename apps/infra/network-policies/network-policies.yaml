@@ -127,6 +127,10 @@ spec:
       protocol: TCP
     - port: 443
       protocol: TCP
+    - port: 465
+      protocol: TCP
+    - port: 587
+      protocol: TCP
     to:
     - ipBlock:
         cidr: 0.0.0.0/0
@@ -135,6 +139,24 @@ spec:
         - 172.16.0.0/12
         - 192.168.0.0/16
   podSelector: {}
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-vaultwarden-cluster-egress
+  namespace: dmz
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: vaultwarden
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.42.0.0/16
+    - ipBlock:
+        cidr: 10.43.0.0/16
   policyTypes:
   - Egress
 ---
