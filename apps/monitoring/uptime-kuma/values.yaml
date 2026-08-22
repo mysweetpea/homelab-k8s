@@ -5,7 +5,7 @@ volume:
   storageClassName: longhorn
   existingClaim: uptime-kuma-pvc
 image:
-  tag: "2.5.0"
+  tag: "2.5.1"
   repository: louislam/uptime-kuma
 service:
   type: ClusterIP
