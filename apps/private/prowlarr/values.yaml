@@ -5,6 +5,13 @@ controllers:
         image:
           repository: ghcr.io/hotio/prowlarr
           tag: release-2.5.2.5491
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
     type: deployment
 persistence:
   config:
