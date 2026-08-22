@@ -5,6 +5,13 @@ controllers:
         image:
           repository: ghcr.io/hotio/radarr
           tag: release-6.3.0.10514
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
