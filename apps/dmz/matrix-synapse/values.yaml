@@ -158,6 +158,13 @@ extraSecrets:
 synapse:
   nodeSelector:
     kubernetes.io/hostname: k3s-master
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
   extraEnv:
   - name: SMTP_PASS
     valueFrom:

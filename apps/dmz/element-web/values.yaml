@@ -118,6 +118,13 @@ extraVolumeMounts:
 image:
   tag: v1.12.26
   repository: ghcr.io/element-hq/element-web
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
 # --- Durable disclaimer injection ---
 # sub_filter injects the disclaimer <script> into the image's own index.html,
 # so the bundle hash always matches the image (no stale index.html pinning).
