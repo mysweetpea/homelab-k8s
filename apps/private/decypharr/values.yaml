@@ -5,6 +5,13 @@ controllers:
         image:
           repository: cy01/blackhole
           tag: v2.5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
         ports:
           - name: http
             containerPort: 8282
