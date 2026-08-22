@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: grafana-alerting
+  namespace: monitoring
+spec:
+  encryptedData:
+    GOTIFY_TOKEN: AgCmKXCLX6i+7uxUrcDJ2Ld9pd6fZ5GL1n710IYUEIV6ZJk2FjQEUdLVHKxnOjSfTQeadIZonmASH5/dQqWM7fWCLkcj+f04J5d7RbE6yfTdgMyIp5qJsLGPYU+XPxESEK7KbQjIqeMrNsazwkEbxnR01WznGemJFVF2pQGwJprfpqOR2db7niBjqlsR4/bBn7zyLf3uGPZWkpnFLb4ftpGfoKaJDpLcFdFpB5JuXt8L6HbEGCWxhSMR4YsS8NkEcRYbl87V24Kf/mjx3s0NUxHgicprfxG3d743TgyuqI1euczySID/Dgxz3kOkrS+gMqDmVef8+qK2+JlfJ3oKiwJ4M7EgEFk3JM/TikHDLZNEFPkNKZX4nFgP1TR/uNnY4Ao1KnpjMFSsl8aLbzsvFBC+UsJ1CjZ6l/rEiUJTt4jsEUV3dM0uDlS2QSMheS+y0hbkmvy61PHYTLMX4heC2qPH34/BBZGKQF1MyqRVFxCkgDVAX6eXCrYDJVxydhOCeLQO4CMyMqpR/J3TnizQ32UvaTASCPFCGjbnWv/ONHCfjM17vh1zNLHLd6ObFH2QyDovt4Fi31RbYQxL+625c3+g2c3yLzeq7R8t9dj+42E97wPO/T0yNLzfkW5i/e+nyJWoAj+/7M5pgDeDdFYdfO7M8pOTGkVqj034vWozZDbXL9edeEWixmoVF8SeCy9lHcuP2SkYW2TGJBAuckWfkEbHcJVi2p75yqROMesxkuW7tJbYAjJwzXABtVye3I9J61Y4
+  template:
+    metadata:
+      name: grafana-alerting
+      namespace: monitoring

@@ -20,6 +20,15 @@ grafana.ini:
   log:
     mode: console
     level: info
+  smtp:
+    enabled: true
+    host: smtp.resend.com:587
+    user: resend
+    # password comes from grafana-smtp sealed secret via GF_SMTP_PASSWORD env
+    email_address: grafana@mysweetpea.cc
+    from_name: MySweetPea Grafana
+    startTLS_policy: OpportunisticStartTLS
+    skip_verify: false
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -31,6 +40,36 @@ datasources:
       isDefault: true
       jsonData:
         maxLines: 1000
+alerting:
+  contactpoints.yaml:
+    apiVersion: 1
+    contactPoints:
+      - orgId: 1
+        name: gotify
+        receivers:
+          - uid: gotify-webhook
+            type: webhook
+            settings:
+              url: "http://gotify.private.svc.cluster.local:80/message?token=$__env{GOTIFY_TOKEN}"
+              httpMethod: POST
+              title: "{{ `{{ template \"default.title\" . }}` }}"
+              body: "{{ `{{ template \"default.message\" . }}` }}"
+            disableResolveMessage: false
+  policies.yaml:
+    apiVersion: 1
+    policies:
+      - orgId: 1
+        receiver: gotify
+        group_by: ["grafana_folder", "alertname"]
+smtp:
+  existingSecret: grafana-smtp
+  userKey: smtp-user
+  passwordKey: smtp-password
+envValueFrom:
+  GOTIFY_TOKEN:
+    secretKeyRef:
+      name: grafana-alerting
+      key: GOTIFY_TOKEN
 persistence:
   enabled: true
   storageClass: longhorn
@@ -47,5 +86,5 @@ service:
   loadBalancerIP: 192.168.20.226
   port: 3000
 image:
-  tag: 13.1.3
+  tag: 13.2.0
   repository: grafana/grafana
