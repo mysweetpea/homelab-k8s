@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/hotio/sonarr
-          tag: v4-4.0.0.748
+          tag: release-4.0.19.2979
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
