@@ -1,0 +1,294 @@
+# ArgoCD — durable values (helm-managed bootstrap, NOT an ArgoCD app).
+# This file exists so `helm upgrade` NEVER loses:
+#   1. The resource.customizations health/ignore patches (was manual-apply,
+#      wiped on every upgrade — the S42 trap)
+#   2. Resource requests/limits (all components were `{}`)
+#
+# Apply:
+#   helm upgrade argocd -n argocd -f apps/infra/argocd/values.yaml \
+#     argo/argo-cd --version 10.4.0
+#   kubectl rollout restart sts/argocd-application-controller -n argocd
+#
+# Verify: kubectl get app -n argocd (all Synced/Healthy), all pods Running.
+#
+# ⚠️ Key naming: resource.customizations keys use `group_Kind` (underscore),
+# e.g. health.apps_Deployment, ignoreResourceUpdates.argoproj.io_Application.
+
+applicationSet:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+configs:
+  cm:
+    admin.enabled: true
+    url: https://argocd.mysweetpea.duckdns.org
+    timeout.reconciliation: 60s
+    timeout.reconciliation.jitter: 60s
+    timeout.hard.reconciliation: 0s
+    statusbadge.enabled: false
+    application.instanceLabelKey: argocd.argoproj.io/instance
+    application.sync.impersonation.enabled: false
+    exec.enabled: false
+    # ---- Health customizations (S41/S42: headless svc + LAN ingress) ----
+    resource.customizations.health.Service: |-
+      hs = {}
+      if obj.spec ~= nil then
+        if obj.spec.type == "LoadBalancer" then
+          if obj.status ~= nil and obj.status.loadBalancer ~= nil then
+            local ingresses = obj.status.loadBalancer.ingress
+            if ingresses ~= nil then
+              for i, ing in ipairs(ingresses) do
+                if (ing.ip ~= nil and ing.ip ~= "") or (ing.hostname ~= nil and ing.hostname ~= "") then
+                  hs.status = "Healthy"
+                  hs.message = "LoadBalancer IP assigned"
+                  return hs
+                end
+              end
+            end
+          end
+        end
+        if obj.spec.clusterIP ~= nil and obj.spec.clusterIP ~= "" and obj.spec.clusterIP ~= "None" then
+          hs.status = "Healthy"
+          hs.message = "ClusterIP assigned"
+          return hs
+        end
+        -- Headless services (clusterIP: None) are healthy by definition
+        if obj.spec.clusterIP == "None" then
+          hs.status = "Healthy"
+          hs.message = "Headless service"
+          return hs
+        end
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for service"
+      return hs
+    resource.customizations.health.networking.k8s.io_Ingress: |-
+      hs = {}
+      if obj.spec ~= nil and obj.spec.rules ~= nil and #obj.spec.rules > 0 then
+        -- Ingress has host rules configured — treat as Healthy even without an
+        -- external LB IP (Traefik doesn't populate status.loadBalancer for
+        -- k8s.local / LAN-only hosts)
+        hs.status = "Healthy"
+        hs.message = "Ingress configured"
+        return hs
+      end
+      if obj.status ~= nil then
+        if obj.status.loadBalancer ~= nil then
+          local ingresses = obj.status.loadBalancer.ingress
+          if ingresses ~= nil then
+            for i, ing in ipairs(ingresses) do
+              if (ing.ip ~= nil and ing.ip ~= "") or (ing.hostname ~= nil and ing.hostname ~= "") then
+                hs.status = "Healthy"
+                hs.message = "Ingress is ready"
+                return hs
+              end
+            end
+          end
+        end
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for ingress"
+      return hs
+    resource.customizations.health.apps_Deployment: |-
+      hs = {}
+      if obj.status ~= nil then
+        if obj.status.conditions ~= nil then
+          for i, condition in ipairs(obj.status.conditions) do
+            if condition.type == "Available" and condition.status == "True" then
+              hs.status = "Healthy"
+              hs.message = "Deployment is available"
+              return hs
+            end
+          end
+        end
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for deployment to become available"
+      return hs
+    resource.customizations.health.apps_StatefulSet: |-
+      hs = {}
+      if obj.status ~= nil then
+        if obj.status.readyReplicas == obj.status.replicas and obj.status.replicas > 0 then
+          hs.status = "Healthy"
+          hs.message = "All replicas ready"
+          return hs
+        end
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for replicas"
+      return hs
+    resource.customizations.health.argoproj.io_Application: |-
+      hs = {}
+      if obj.status ~= nil then
+        if obj.status.health ~= nil then
+          hs.status = obj.status.health.status
+          hs.message = obj.status.health.message
+          return hs
+        end
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for health check"
+      return hs
+    # ---- ignoreResourceUpdates (status noise suppression) ----
+    resource.customizations.ignoreResourceUpdates.all: |-
+      jsonPointers:
+        - /status
+    resource.customizations.ignoreResourceUpdates.ConfigMap: |-
+      jqPathExpressions:
+        - '.metadata.annotations."cluster-autoscaler.kubernetes.io/last-updated"'
+        - '.metadata.annotations."control-plane.alpha.kubernetes.io/leader"'
+    resource.customizations.ignoreResourceUpdates.Endpoints: |-
+      jsonPointers:
+        - /metadata
+        - /subsets
+    resource.customizations.ignoreResourceUpdates.apps_ReplicaSet: |-
+      jqPathExpressions:
+        - '.metadata.annotations."deployment.kubernetes.io/desired-replicas"'
+        - '.metadata.annotations."deployment.kubernetes.io/max-replicas"'
+        - '.metadata.annotations."rollout.argoproj.io/desired-replicas"'
+    resource.customizations.ignoreResourceUpdates.argoproj.io_Application: |-
+      jqPathExpressions:
+        - '.metadata.annotations."notified.notifications.argoproj.io"'
+        - '.metadata.annotations."argocd.argoproj.io/refresh"'
+        - '.metadata.annotations."argocd.argoproj.io/hydrate"'
+        - '.operation'
+    resource.customizations.ignoreResourceUpdates.argoproj.io_Rollout: |-
+      jqPathExpressions:
+        - '.metadata.annotations."notified.notifications.argoproj.io"'
+    resource.customizations.ignoreResourceUpdates.autoscaling_HorizontalPodAutoscaler: |-
+      jqPathExpressions:
+        - '.metadata.annotations."autoscaling.alpha.kubernetes.io/behavior"'
+        - '.metadata.annotations."autoscaling.alpha.kubernetes.io/conditions"'
+        - '.metadata.annotations."autoscaling.alpha.kubernetes.io/metrics"'
+        - '.metadata.annotations."autoscaling.alpha.kubernetes.io/current-metrics"'
+    resource.customizations.ignoreResourceUpdates.discovery.k8s.io_EndpointSlice: |-
+      jsonPointers:
+        - /metadata
+        - /endpoints
+        - /ports
+    # ---- Resource exclusions (control-plane + intermediate resources) ----
+    resource.exclusions: |-
+      ### Network resources created by the Kubernetes control plane and excluded to reduce the number of watched events and UI clutter
+      - apiGroups:
+        - ''
+        - discovery.k8s.io
+        kinds:
+        - Endpoints
+        - EndpointSlice
+      ### Internal Kubernetes resources excluded reduce the number of watched events
+      - apiGroups:
+        - coordination.k8s.io
+        kinds:
+        - Lease
+      ### Internal Kubernetes Authz/Authn resources excluded reduce the number of watched events
+      - apiGroups:
+        - authentication.k8s.io
+        - authorization.k8s.io
+        kinds:
+        - SelfSubjectReview
+        - TokenReview
+        - LocalSubjectAccessReview
+        - SelfSubjectAccessReview
+        - SelfSubjectRulesReview
+        - SubjectAccessReview
+      ### Intermediate Certificate Request excluded reduce the number of watched events
+      - apiGroups:
+        - certificates.k8s.io
+        kinds:
+        - CertificateSigningRequest
+      - apiGroups:
+        - cert-manager.io
+        kinds:
+        - CertificateRequest
+      ### Cilium internal resources excluded reduce the number of watched events and UI Clutter
+      - apiGroups:
+        - cilium.io
+        kinds:
+        - CiliumIdentity
+        - CiliumEndpoint
+        - CiliumEndpointSlice
+      ### Kyverno intermediate and reporting resources excluded reduce the number of watched events and improve performance
+      - apiGroups:
+        - kyverno.io
+        - reports.kyverno.io
+        - wgpolicyk8s.io
+        kinds:
+        - PolicyReport
+        - ClusterPolicyReport
+        - EphemeralReport
+        - ClusterEphemeralReport
+        - AdmissionReport
+        - ClusterAdmissionReport
+        - BackgroundScanReport
+        - ClusterBackgroundScanReport
+        - UpdateRequest
+  params:
+    server.insecure: true
+
+controller:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+dex:
+  enabled: true
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+global:
+  domain: argocd.mysweetpea.duckdns.org
+
+notifications:
+  enabled: false
+
+redis:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+redis-ha:
+  enabled: false
+
+repoServer:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+server:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  service:
+    type: LoadBalancer
+    loadBalancerIP: 192.168.20.220
+    allocateLoadBalancerNodePorts: false
