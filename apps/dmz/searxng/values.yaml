@@ -133,8 +133,8 @@ configMaps:
 
         ui:
           default_locale: "en"
-          theme: "auto"
-          default_theme: "dark"
+          theme: "simple"
+          default_theme: "simple"
 
         outgoing:
           request_timeout: 3.0
