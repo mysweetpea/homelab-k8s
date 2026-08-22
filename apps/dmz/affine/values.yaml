@@ -58,7 +58,13 @@ controllers:
               "externalUrl": "https://notes.mysweetpea.cc"
             },
             "auth": {
-              "allowSignup": false
+              "allowSignup": false,
+              "trustedCloudflareHeaders": true
+            },
+            "doc": {
+              "history": {
+                "interval": 60000
+              }
             },
             "flags": {
               "allowGuestDemoWorkspace": false
