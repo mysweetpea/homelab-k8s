@@ -1965,8 +1965,8 @@ additionalObjects:
         permissions: []
         state: present
       - attrs:
-          access_code_validity: minutes=1
-          access_token_validity: minutes=5
+          access_code_validity: minutes=10
+          access_token_validity: minutes=60
           authentication_flow: null
           authorization_flow: bbe7a23d-68e3-4537-b845-0a858666e2d4
           client_id: BBpDTNkeVT6UmagzF3OrDkPo9sIx6pj1tx5IcdlZ
