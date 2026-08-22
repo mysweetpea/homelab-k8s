@@ -5,6 +5,13 @@ controllers:
         image:
           repository: ghcr.io/flaresolverr/flaresolverr
           tag: v3.5.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 2Gi
     type: deployment
 service:
   main:
