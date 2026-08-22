@@ -12,6 +12,13 @@ controllers:
         securityContext:
           runAsGroup: 1000
           runAsUser: 1000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
     pod:
       securityContext:
         fsGroup: 1000
