@@ -74,6 +74,11 @@ additionalVolumeMounts:
     mountPath: /web-vault/images/icons/android-chrome-512x512.png
     subPath: android-chrome-512x512.png
     readOnly: true
+  # Safari pinned-tab mask icon (monochrome sweetpea flower)
+  - name: branding
+    mountPath: /web-vault/images/safari-pinned-tab.svg
+    subPath: safari-pinned-tab.svg
+    readOnly: true
 
 initContainers:
   - name: patch-web-vault

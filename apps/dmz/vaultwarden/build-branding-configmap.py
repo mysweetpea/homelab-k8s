@@ -19,6 +19,7 @@ TEXT_FILES = {
     "email_header.hbs": HERE / "branding" / "email_header.hbs",
     "email_footer.hbs": HERE / "branding" / "email_footer.hbs",
     "manifest.json": HERE / "branding" / "manifest.json",
+    "safari-pinned-tab.svg": HERE / "branding" / "safari-pinned-tab.svg",
 }
 
 BINARY_FILES = {
