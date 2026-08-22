@@ -189,6 +189,11 @@ controllers:
           value: selfhosted
         - name: AFFINE_BACKEND_RUNTIME_CONFIG_PATH
           value: /root/.affine/config/config.json
+        - name: AFFINE_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: affine-private-key
+              key: private-key
         - name: NODE_OPTIONS
           value: "--dns-result-order=ipv4first --require /root/.affine/config/affine-ua-patch.js"
         resources:
