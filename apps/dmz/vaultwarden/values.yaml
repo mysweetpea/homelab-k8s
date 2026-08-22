@@ -82,11 +82,12 @@ initContainers:
       - /bin/sh
       - -c
       - |
-        sed '/<\/body>/r /disclaimer/disclaimer.html' /web-vault/index.html | sed 's/<title page-title>Vaultwarden Web<\/title>/<title page-title>MySweetPea Vault<\/title>/' | sed 's/href="css\/vaultwarden.css"/href="css\/vaultwarden.css?v=2"/' | sed 's/href="[0-9a-f]\{16,\}\.json"/href="manifest.json"/' > /web-index/index.html
+        sed '/<\/body>/r /disclaimer/disclaimer.html' /web-vault/index.html | sed 's/<title page-title>Vaultwarden Web<\/title>/<title page-title>MySweetPea Vault<\/title>/' | sed 's/href="css\/vaultwarden.css"/href="css\/vaultwarden.css?v=2"/' | sed 's/href="[0-9a-f]\{16,\}\.json"/href="manifest.json"/' | sed 's/href="images\/favicon-16x16.png"/href="images\/favicon-16x16.png?v=2"/; s/href="images\/favicon-32x32.png"/href="images\/favicon-32x32.png?v=2"/; s/href="images\/apple-touch-icon.png"/href="images\/apple-touch-icon.png?v=2"/' > /web-index/index.html
         grep -q mysweetpea-login-disclaimer /web-index/index.html && echo 'disclaimer splice OK' || { echo 'WARN: disclaimer splice failed'; exit 1; }
         grep -q 'MySweetPea Vault' /web-index/index.html && echo 'title OK' || { echo 'WARN: title replace failed'; exit 1; }
         grep -q 'vaultwarden.css?v=2' /web-index/index.html && echo 'css cache-bust OK' || { echo 'WARN: css cache-bust failed'; exit 1; }
         grep -q 'href="manifest.json"' /web-index/index.html && echo 'manifest link OK' || { echo 'WARN: manifest link rewrite failed'; exit 1; }
+        grep -q 'favicon-32x32.png?v=2' /web-index/index.html && echo 'favicon cache-bust OK' || { echo 'WARN: favicon cache-bust failed'; exit 1; }
     volumeMounts:
       - name: web-index
         mountPath: /web-index
