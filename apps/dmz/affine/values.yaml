@@ -187,6 +187,8 @@ controllers:
           value: http://affine-indexer.dmz.svc.cluster.local:9308
         - name: DEPLOYMENT_TYPE
           value: selfhosted
+        - name: AFFINE_BACKEND_RUNTIME_CONFIG_PATH
+          value: /root/.affine/config/config.json
         - name: NODE_OPTIONS
           value: "--dns-result-order=ipv4first --require /root/.affine/config/affine-ua-patch.js"
         resources:
