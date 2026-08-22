@@ -4,7 +4,14 @@ controllers:
       main:
         image:
           repository: ghcr.io/hotio/bazarr
-          tag: release-1.6.0
+          tag: release-v1.6.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
     type: deployment
 persistence:
   config:

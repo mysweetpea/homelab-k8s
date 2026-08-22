@@ -405,7 +405,7 @@ extraObjects:
               imageName: ghcr.io/hotio/bazarr
               commonUpdateSettings:
                 updateStrategy: newest-build
-                allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+$"
+                allowTags: "regexp:^release-\\d+\\.\\d+\\.\\d+$|^release-v\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
                   name: controllers.main.containers.main.image.repository
