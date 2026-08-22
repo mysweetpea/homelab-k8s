@@ -18,11 +18,19 @@ TEXT_FILES = {
     "user.vaultwarden.scss.hbs": HERE / "branding" / "user.vaultwarden.scss.hbs",
     "email_header.hbs": HERE / "branding" / "email_header.hbs",
     "email_footer.hbs": HERE / "branding" / "email_footer.hbs",
+    "manifest.json": HERE / "branding" / "manifest.json",
 }
 
 BINARY_FILES = {
     "mysweetpea-logo.png": HERE / "assets" / "mysweetpea-logo.png",
     "mysweetpea-logo-email.png": HERE / "assets" / "mysweetpea-logo-email.png",
+    # Branded favicons (sweetpea flower on dark circle, from portfolio icon-192)
+    "favicon-16x16.png": HERE / "assets" / "favicon-16x16.png",
+    "favicon-32x32.png": HERE / "assets" / "favicon-32x32.png",
+    "apple-touch-icon.png": HERE / "assets" / "apple-touch-icon.png",
+    # PWA icons (branded manifest.json references these)
+    "android-chrome-192x192.png": HERE / "assets" / "android-chrome-192x192.png",
+    "android-chrome-512x512.png": HERE / "assets" / "android-chrome-512x512.png",
 }
 
 data = {key: path.read_text(encoding="utf-8") for key, path in TEXT_FILES.items()}

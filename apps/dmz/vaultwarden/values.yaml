@@ -48,6 +48,32 @@ additionalVolumeMounts:
     mountPath: /web-vault/images/mysweetpea-logo-email.png
     subPath: mysweetpea-logo-email.png
     readOnly: true
+  # Branded favicons (sweetpea flower) — replace stock Bitwarden icons
+  - name: branding
+    mountPath: /web-vault/images/favicon-16x16.png
+    subPath: favicon-16x16.png
+    readOnly: true
+  - name: branding
+    mountPath: /web-vault/images/favicon-32x32.png
+    subPath: favicon-32x32.png
+    readOnly: true
+  - name: branding
+    mountPath: /web-vault/images/apple-touch-icon.png
+    subPath: apple-touch-icon.png
+    readOnly: true
+  # Branded PWA manifest + icons (index.html link rewritten to manifest.json)
+  - name: branding
+    mountPath: /web-vault/manifest.json
+    subPath: manifest.json
+    readOnly: true
+  - name: branding
+    mountPath: /web-vault/images/icons/android-chrome-192x192.png
+    subPath: android-chrome-192x192.png
+    readOnly: true
+  - name: branding
+    mountPath: /web-vault/images/icons/android-chrome-512x512.png
+    subPath: android-chrome-512x512.png
+    readOnly: true
 
 initContainers:
   - name: patch-web-vault
@@ -56,9 +82,11 @@ initContainers:
       - /bin/sh
       - -c
       - |
-        sed '/<\/body>/r /disclaimer/disclaimer.html' /web-vault/index.html | sed 's/<title page-title>Vaultwarden Web<\/title>/<title page-title>MySweetPea Vault<\/title>/' > /web-index/index.html
+        sed '/<\/body>/r /disclaimer/disclaimer.html' /web-vault/index.html | sed 's/<title page-title>Vaultwarden Web<\/title>/<title page-title>MySweetPea Vault<\/title>/' | sed 's/href="css\/vaultwarden.css"/href="css\/vaultwarden.css?v=2"/' | sed 's/href="[0-9a-f]\{32\}\.json"/href="manifest.json"/' > /web-index/index.html
         grep -q mysweetpea-login-disclaimer /web-index/index.html && echo 'disclaimer splice OK' || { echo 'WARN: disclaimer splice failed'; exit 1; }
         grep -q 'MySweetPea Vault' /web-index/index.html && echo 'title OK' || { echo 'WARN: title replace failed'; exit 1; }
+        grep -q 'vaultwarden.css?v=2' /web-index/index.html && echo 'css cache-bust OK' || { echo 'WARN: css cache-bust failed'; exit 1; }
+        grep -q 'href="manifest.json"' /web-index/index.html && echo 'manifest link OK' || { echo 'WARN: manifest link rewrite failed'; exit 1; }
     volumeMounts:
       - name: web-index
         mountPath: /web-index
