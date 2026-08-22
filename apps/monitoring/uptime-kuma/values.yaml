@@ -7,6 +7,13 @@ volume:
 image:
   tag: "2.5.3"
   repository: louislam/uptime-kuma
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
 service:
   type: ClusterIP
   port: 3001
