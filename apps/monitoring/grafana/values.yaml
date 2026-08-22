@@ -84,7 +84,7 @@ alerting:
                     uid: P8E80F9AEF21F6940
                   intervalMs: 1000
                   maxDataPoints: 43200
-                  queryType: "range"
+                  queryType: "instant"
                   supportMixedQueries: false
                 relativeTimeRange:
                   from: 300
