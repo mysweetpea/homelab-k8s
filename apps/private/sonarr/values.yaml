@@ -5,6 +5,13 @@ controllers:
         image:
           repository: ghcr.io/hotio/sonarr
           tag: release-4.0.19.2979
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
