@@ -49,16 +49,16 @@
     <TypeOptions>
       <Type>Series</Type>
       <MetadataFetchers>
-        <string>Gelato</string>
-        <string>TheMovieDb</string>
+                <string>TheMovieDb</string>
         <string>TheTVDB</string>
-        <string>The Open Movie Database</string>
+        <string>The Open Movie Database
+        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
       </MetadataFetchers>
       <MetadataFetcherOrder>
-        <string>Gelato</string>
-        <string>TheMovieDb</string>
+                <string>TheMovieDb</string>
         <string>TheTVDB</string>
-        <string>The Open Movie Database</string>
+        <string>The Open Movie Database
+        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
       </MetadataFetcherOrder>
       <ImageFetchers>
         <string>Screen Grabber</string>
@@ -74,14 +74,14 @@
     <TypeOptions>
       <Type>Season</Type>
       <MetadataFetchers>
-        <string>Gelato</string>
-        <string>TheMovieDb</string>
-        <string>TheTVDB</string>
+                <string>TheMovieDb</string>
+        <string>TheTVDB
+        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
       </MetadataFetchers>
       <MetadataFetcherOrder>
-        <string>Gelato</string>
-        <string>TheMovieDb</string>
-        <string>TheTVDB</string>
+                <string>TheMovieDb</string>
+        <string>TheTVDB
+        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
       </MetadataFetcherOrder>
       <ImageFetchers>
         <string>Screen Grabber</string>
@@ -97,16 +97,16 @@
     <TypeOptions>
       <Type>Episode</Type>
       <MetadataFetchers>
-        <string>Gelato</string>
-        <string>TheMovieDb</string>
+                <string>TheMovieDb</string>
         <string>TheTVDB</string>
-        <string>The Open Movie Database</string>
+        <string>The Open Movie Database
+        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
       </MetadataFetchers>
       <MetadataFetcherOrder>
-        <string>Gelato</string>
-        <string>TheMovieDb</string>
+                <string>TheMovieDb</string>
         <string>TheTVDB</string>
-        <string>The Open Movie Database</string>
+        <string>The Open Movie Database
+        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
       </MetadataFetcherOrder>
       <ImageFetchers>
         <string>Screen Grabber</string>
