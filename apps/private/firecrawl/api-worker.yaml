@@ -1,0 +1,119 @@
+# ──────────────────────────────────────────────
+# Firecrawl API + workers (lean set)
+# ──────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: firecrawl-api
+  namespace: firecrawl
+spec:
+  selector:
+    app: firecrawl-api
+  ports:
+    - port: 3002
+      targetPort: 3002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firecrawl-api
+  namespace: firecrawl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firecrawl-api
+  template:
+    metadata:
+      labels:
+        app: firecrawl-api
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-a
+      terminationGracePeriodSeconds: 180
+      containers:
+        - name: api
+          image: ghcr.io/firecrawl/firecrawl:latest
+          command: ["node", "--max-old-space-size=4096", "dist/src/index.js"]
+          ports:
+            - containerPort: 3002
+          envFrom:
+            - configMapRef:
+                name: firecrawl-config
+          env:
+            - name: NUQ_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: firecrawl-db
+                  key: NUQ_DATABASE_URL
+            - name: OPENAI_API_KEY
+              value: "093818e81f2e4b75b8906cb43b0bf738.hkW7pmzuXNvqIYEjEmp86C8Y"
+            - name: OPENAI_BASE_URL
+              value: "https://ollama.com/v1"
+            - name: MODEL_NAME
+              value: "gemma4:31b-cloud"
+          resources:
+            requests: {cpu: 500m, memory: 2Gi}
+            limits: {cpu: "2", memory: 4Gi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firecrawl-worker
+  namespace: firecrawl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firecrawl-worker
+  template:
+    metadata:
+      labels:
+        app: firecrawl-worker
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-a
+      containers:
+        - name: worker
+          image: ghcr.io/firecrawl/firecrawl:latest
+          command: ["node", "dist/src/services/queue-worker.js"]
+          envFrom:
+            - configMapRef:
+                name: firecrawl-config
+            - secretRef:
+                name: firecrawl-db
+          resources:
+            requests: {cpu: 250m, memory: 1Gi}
+            limits: {cpu: "1", memory: 2Gi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firecrawl-nuq-worker
+  namespace: firecrawl
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: firecrawl-nuq-worker
+  template:
+    metadata:
+      labels:
+        app: firecrawl-nuq-worker
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-a
+      containers:
+        - name: nuq-worker
+          image: ghcr.io/firecrawl/firecrawl:latest
+          command: ["node", "dist/src/services/worker/nuq-worker.js"]
+          ports:
+            - containerPort: 3006
+          envFrom:
+            - configMapRef:
+                name: firecrawl-config
+            - secretRef:
+                name: firecrawl-db
+          resources:
+            requests: {cpu: 250m, memory: 1Gi}
+            limits: {cpu: "1", memory: 2Gi}

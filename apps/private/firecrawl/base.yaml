@@ -1,0 +1,112 @@
+# ──────────────────────────────────────────────
+# Firecrawl — self-hosted web scraping/crawling (lean: no FDB, no RabbitMQ)
+# Research-verified minimal set: api + worker + nuq-worker(1) + playwright + redis
+# Shared postgresql-0 hosts the nuq database (schema applied via nuq.sql)
+# ──────────────────────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: firecrawl
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: firecrawl-config
+  namespace: firecrawl
+data:
+  HOST: "0.0.0.0"
+  PORT: "3002"
+  ENV: "production"
+  IS_KUBERNETES: "true"
+  REDIS_URL: "redis://firecrawl-redis:6379"
+  REDIS_RATE_LIMIT_URL: "redis://firecrawl-redis:6379"
+  PLAYWRIGHT_MICROSERVICE_URL: "http://firecrawl-playwright:3000/scrape"
+  NUM_WORKERS_PER_QUEUE: "8"
+  NUQ_WORKER_COUNT: "2"
+  USE_DB_AUTHENTICATION: "false"
+  LOGGING_LEVEL: "info"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: firecrawl-redis
+  namespace: firecrawl
+spec:
+  selector:
+    app: firecrawl-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firecrawl-redis
+  namespace: firecrawl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firecrawl-redis
+  template:
+    metadata:
+      labels:
+        app: firecrawl-redis
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-a
+      containers:
+        - name: redis
+          image: redis:alpine
+          args: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+          ports:
+            - containerPort: 6379
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 250m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: firecrawl-playwright
+  namespace: firecrawl
+spec:
+  selector:
+    app: firecrawl-playwright
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firecrawl-playwright
+  namespace: firecrawl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firecrawl-playwright
+  template:
+    metadata:
+      labels:
+        app: firecrawl-playwright
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-a
+      containers:
+        - name: playwright
+          image: ghcr.io/firecrawl/playwright-service:latest
+          ports:
+            - containerPort: 3000
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests: {cpu: 250m, memory: 1Gi}
+            limits: {cpu: "2", memory: 4Gi}

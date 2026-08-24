@@ -1,0 +1,64 @@
+# ──────────────────────────────────────────────
+# Firecrawl nuq-postgres (dedicated — bundles pg_cron + nuq schema)
+# NOT the shared postgres: shared Bitnami image lacks pg_cron
+# ──────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: firecrawl-nuq-postgres
+  namespace: firecrawl
+spec:
+  selector:
+    app: firecrawl-nuq-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: firecrawl-nuq-postgres
+  namespace: firecrawl
+spec:
+  serviceName: firecrawl-nuq-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firecrawl-nuq-postgres
+  template:
+    metadata:
+      labels:
+        app: firecrawl-nuq-postgres
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-worker-a
+      containers:
+        - name: postgres
+          image: ghcr.io/firecrawl/nuq-postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: firecrawl-db
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests: {cpu: 250m, memory: 512Mi}
+            limits: {cpu: 500m, memory: 1Gi}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 8Gi

@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: firecrawl
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: firecrawl
+  source:
+    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    path: apps/private/firecrawl
+    directory:
+      exclude: application.yaml
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
