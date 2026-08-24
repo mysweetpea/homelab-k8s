@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hindsight
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hindsight
+  sources:
+    - repoURL: https://github.com/vectorize-io/hindsight.git
+      targetRevision: main
+      path: helm/hindsight
+      helm:
+        valueFiles:
+          - $values/apps/private/hindsight/values.yaml
+    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+      targetRevision: HEAD
+      ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

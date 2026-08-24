@@ -1,0 +1,36 @@
+# ──────────────────────────────────────────────
+# Hindsight — agent memory (official vectorize-io helm chart)
+# External postgres (shared postgresql-0, DB hindsight + pgvector)
+# LLM = Ollama cloud (same key as Nextcloud/Open WebUI)
+# ──────────────────────────────────────────────
+# version: "0.9.1"
+
+existingSecret: hindsight-secret
+
+api:
+  env:
+    HINDSIGHT_API_LLM_MODEL: "deepseek-v4-flash:0731"
+    HINDSIGHT_API_LLM_BASE_URL: "https://ollama.com/v1"
+
+postgresql:
+  enabled: false
+  external:
+    host: postgresql.private.svc.cluster.local
+    port: 5432
+    database: hindsight
+    username: hindsight
+
+worker:
+  enabled: false
+
+tei:
+  reranker:
+    enabled: false
+  embedding:
+    enabled: false
+
+ingress:
+  enabled: false
+
+serviceAccount:
+  create: true
