@@ -12,7 +12,10 @@ controllers:
           pullPolicy: IfNotPresent
         env:
           DOCLING_SERVE_ENABLE_UI: "true"
-          DOCLING_SERVE_ENABLE_REMOTE_SERVICES: "false"
+          DOCLING_SERVE_ENABLE_REMOTE_SERVICES: "true"
+          DOCLING_SERVE_ALLOW_CUSTOM_PICTURE_DESCRIPTION_CONFIG: "true"
+          UVICORN_WORKERS: "1"
+          DOCLING_SERVE_CUSTOM_PICTURE_DESCRIPTION_PRESETS: '{"mysweetpea_moondream":{"kind":"picture_description_vlm_engine","model_spec":{"name":"moondream","default_repo_id":"moondream","prompt":"Describe this image in a few sentences.","response_format":"plaintext","supported_engines":["api_ollama"],"api_overrides":{"api_ollama":{"params":{"model":"moondream","max_tokens":200}}}},"engine_options":{"engine_type":"api_ollama","url":"http://ollama.dmz.svc.cluster.local:11434/v1/chat/completions","params":{"model":"moondream"}},"prompt":"Describe this image in a few sentences.","generation_config":{"max_new_tokens":200,"do_sample":false}}}'
         resources:
           requests:
             cpu: 250m
