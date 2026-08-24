@@ -610,12 +610,52 @@ data:
             href: https://matrix.mysweetpea.cc
             description: Chat Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
+        - MAS:
+            id: mas
+            href: https://mas.mysweetpea.cc
+            description: Matrix Auth Service
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
+        - Element Call:
+            id: element-call
+            href: https://chat.mysweetpea.cc
+            description: Voice & Video Calls
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
     - Tools:
         - OpenClaw:
             id: openclaw
             href: http://192.168.20.217:8080
             description: AI Agent Gateway
             icon: mdi-robot-outline
+        - Docling:
+            id: docling
+            href: http://192.168.20.234:5001
+            description: Document Conversion
+            icon: mdi-file-convert-outline
+        - Open Terminal:
+            id: open-terminal
+            href: http://192.168.20.236:8000
+            description: AI Terminal Server
+            icon: mdi-console-line
+        - Pipelines:
+            id: pipelines
+            href: http://192.168.20.235:9099
+            description: Agent Pipelines
+            icon: mdi-sitemap
+        - Firecrawl:
+            id: firecrawl
+            href: http://192.168.20.237:3002
+            description: Web Scraper API
+            icon: mdi-spider-web
+        - MCP Server:
+            id: mcp-server
+            href: http://192.168.20.238:8080
+            description: Kubernetes MCP
+            icon: mdi-cube-outline
+        - Hindsight:
+            id: hindsight
+            href: http://192.168.20.233:8888
+            description: Memory System
+            icon: mdi-brain
         - RustDesk:
             id: rustdesk
             href: http://192.168.20.216:21115
@@ -688,6 +728,9 @@ data:
             href: http://192.168.20.229:19999
             description: Real-time Node Monitoring
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/netdata.svg
+            widget:
+              type: netdata
+              url: http://netdata.monitoring.svc.cluster.local:19999
         - Longhorn:
             id: longhorn
             href: http://192.168.20.221
