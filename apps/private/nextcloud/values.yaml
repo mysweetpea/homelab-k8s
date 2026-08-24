@@ -56,6 +56,11 @@ nextcloud:
 persistence:
   enabled: true
   existingClaim: nextcloud-nextcloud-lh
+cronjob:
+  # Background jobs (preview gen, Deck/Collectives/Notes indexing, activity)
+  # were running in AJAX mode (unreliable). Sidecar runs real cron every 5 min.
+  enabled: true
+  type: sidecar
 postgresql:
   enabled: false
 internalDatabase:
