@@ -1,0 +1,183 @@
+{
+  "name": "Resend Email Events",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "resend-events",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "f1a9c8e2-3b4d-4e5f-9a0b-1c2d3e4f5a6b",
+      "name": "Resend Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        0
+      ],
+      "webhookId": "resend-events-hook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst events = items.flatMap((item) => {\n  const raw = item.json && item.json.body !== undefined ? item.json.body : item.json;\n  if (Array.isArray(raw)) return raw;\n  return [raw];\n});\n\nreturn events.map((e) => {\n  const d = e.data || {};\n  const to = Array.isArray(d.to) ? d.to.join(', ') : (d.to || null);\n  return {\n    json: {\n      event_type: e.type || d.event || 'unknown',\n      email_id: d.email_id || d.id || null,\n      recipient: to,\n      sender: d.from || null,\n      subject: d.subject || null,\n      link: d.link || null,\n      ip_address: d.ip || null,\n      user_agent: d['user-agent'] || d.userAgent || null,\n      created_at: d.created_at || e.created_at || null,\n      detail: d\n    }\n  };\n});"
+      },
+      "id": "f2b0d9f3-4c5e-4f6a-8b7c-2d3e4f5a6b7c",
+      "name": "Normalize Events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.event_type }}",
+              "rightValue": "bounce",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "leftValue": "={{ $json.event_type }}",
+              "rightValue": "complaint",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "f3b4e0a4-5d6f-4a7b-9c8d-3e4f5a6b7c8d",
+      "name": "Bounce?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO email_events (event_type, email_id, recipient, sender, subject, link, ip_address, user_agent, detail, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+        "options": {
+          "queryReplacement": "={{ $json.event_type }}, {{ $json.email_id }}, {{ $json.recipient }}, {{ $json.sender }}, {{ $json.subject }}, {{ $json.link }}, {{ $json.ip_address }}, {{ $json.user_agent }}, {{ JSON.stringify($json.detail) }}, {{ $json.created_at }}"
+        }
+      },
+      "id": "f4a5e1b5-6e7a-4b8c-9d9e-4f5a6b7c8d9e",
+      "name": "Store Event",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        140,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "yPSJ6t0yTl3JfbWz",
+          "name": "PostgresSQL Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "message": "={{ '\ud83d\udd34 Email BOUNCED: ' + $json.subject + ' \u2192 ' + $json.recipient + '\\n\\nEvent: ' + $json.event_type + '\\nEmail ID: ' + $json.email_id + '\\nDetail: ' + JSON.stringify($json.detail) }}",
+        "additionalFields": {
+          "priority": 8,
+          "title": "Email Bounced"
+        },
+        "options": {}
+      },
+      "id": "f5a6e2c6-8e8b-4c9c-aeaf-5a6b7c8d9e0f",
+      "name": "Bounce Alert",
+      "type": "n8n-nodes-base.gotify",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -120
+      ],
+      "credentials": {
+        "gotifyApi": {
+          "id": "rEX2d2uzpCBEdrn4",
+          "name": "Gotify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [];"
+      },
+      "id": "f6a7e3d8-9e9c-4dad-abae-6b7c8d9e0f1a",
+      "name": "No Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Resend Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Events": {
+      "main": [
+        [
+          {
+            "node": "Bounce?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Store Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bounce?": {
+      "main": [
+        [
+          {
+            "node": "Bounce Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "homelab"
+  }
+}
