@@ -10,7 +10,7 @@ parent:
     requests:
       cpu: 100m
       memory: 256Mi
-  config:
+  configs:
     health:
       enabled: true
       path: /etc/netdata/health_alarm_notify.conf
