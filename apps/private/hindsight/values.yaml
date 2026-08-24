@@ -8,6 +8,9 @@
 existingSecret: hindsight-secret
 
 api:
+  service:
+    type: LoadBalancer
+    loadBalancerIP: 192.168.20.233
   env:
     HINDSIGHT_API_LLM_MODEL: "deepseek-v4-flash:0731"
     HINDSIGHT_API_LLM_BASE_URL: "https://ollama.com/v1"

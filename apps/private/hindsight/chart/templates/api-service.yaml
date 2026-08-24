@@ -7,6 +7,9 @@ metadata:
     {{- include "hindsight.api.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.api.service.type }}
+  {{- if .Values.api.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.api.service.loadBalancerIP }}
+  {{- end }}
   ports:
   - port: {{ .Values.api.service.port }}
     targetPort: http
