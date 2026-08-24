@@ -1,4 +1,5 @@
 parent:
+  dnsPolicy: ClusterFirst
   persistence:
     enabled: true
     storageclass: longhorn
