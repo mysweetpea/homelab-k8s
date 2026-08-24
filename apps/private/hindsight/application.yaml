@@ -10,16 +10,13 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: hindsight
-  sources:
-    - repoURL: https://github.com/vectorize-io/hindsight.git
-      targetRevision: main
-      path: helm/hindsight
-      helm:
-        valueFiles:
-          - $values/apps/private/hindsight/values.yaml
-    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
-      targetRevision: HEAD
-      ref: values
+  source:
+    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    path: apps/private/hindsight/chart
+    helm:
+      valueFiles:
+        - ../values.yaml
   syncPolicy:
     automated:
       prune: true
