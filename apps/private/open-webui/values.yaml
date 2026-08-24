@@ -6,6 +6,13 @@ controllers:
           repository: ghcr.io/open-webui/open-webui
           tag: "v0.11.0"
           pullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: "2"
+            memory: 2Gi
         env:
           OLLAMA_BASE_URL: http://ollama.dmz.svc.cluster.local:11434
           WEBUI_PORT: "8080"
