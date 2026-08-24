@@ -1,0 +1,59 @@
+# ──────────────────────────────────────────────
+# ComfyUI — GPU image generation (STAGED: deploy when GPU node joins)
+# Prereqs: node labeled gpu-node=true + NVIDIA device plugin installed
+# PVC comfyui-models hosts models (SDXL etc). Wire into Open WebUI via
+# image_generation.comfyui.base_url when live.
+# ──────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: comfyui
+  namespace: private
+spec:
+  selector:
+    app: comfyui
+  ports:
+    - port: 8180
+      targetPort: 8180
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comfyui
+  namespace: private
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: comfyui
+  template:
+    metadata:
+      labels:
+        app: comfyui
+    spec:
+      nodeSelector:
+        gpu-node: "true"
+      containers:
+        - name: comfyui
+          image: comfyui/comfyui:latest
+          ports:
+            - containerPort: 8180
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: all
+          volumeMounts:
+            - name: models
+              mountPath: /comfyui/models
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: "4"
+              memory: 8Gi
+              nvidia.com/gpu: "1"
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: comfyui-models

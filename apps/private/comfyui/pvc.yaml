@@ -1,0 +1,13 @@
+# ComfyUI models PVC — 100Gi Longhorn (single-replica fine; models re-downloadable)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: comfyui-models
+  namespace: private
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 100Gi
