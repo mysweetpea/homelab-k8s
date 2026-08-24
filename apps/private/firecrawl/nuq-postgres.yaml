@@ -30,14 +30,15 @@ spec:
       labels:
         app: firecrawl-nuq-postgres
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: k3s-worker-a
       containers:
         - name: postgres
           image: ghcr.io/firecrawl/nuq-postgres:latest
           ports:
             - containerPort: 5432
           env:
+            # PGDATA subdir avoids Longhorn lost+found initdb failure (issue #3866)
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

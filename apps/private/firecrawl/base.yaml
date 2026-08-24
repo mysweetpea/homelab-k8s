@@ -55,8 +55,6 @@ spec:
       labels:
         app: firecrawl-redis
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: k3s-worker-a
       containers:
         - name: redis
           image: redis:alpine
@@ -94,8 +92,6 @@ spec:
       labels:
         app: firecrawl-playwright
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: k3s-worker-a
       containers:
         - name: playwright
           image: ghcr.io/firecrawl/playwright-service:latest

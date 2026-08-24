@@ -28,8 +28,6 @@ spec:
       labels:
         app: firecrawl-api
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: k3s-worker-a
       terminationGracePeriodSeconds: 180
       containers:
         - name: api
@@ -71,8 +69,6 @@ spec:
       labels:
         app: firecrawl-worker
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: k3s-worker-a
       containers:
         - name: worker
           image: ghcr.io/firecrawl/firecrawl:latest
@@ -101,8 +97,6 @@ spec:
       labels:
         app: firecrawl-nuq-worker
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: k3s-worker-a
       containers:
         - name: nuq-worker
           image: ghcr.io/firecrawl/firecrawl:latest
