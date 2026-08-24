@@ -1789,8 +1789,8 @@ additionalObjects:
         permissions: []
         state: present
       - attrs:
-          access_code_validity: minutes=5
-          access_token_validity: minutes=5
+          access_code_validity: minutes=10
+          access_token_validity: minutes=60
           authentication_flow: null
           authorization_flow: bbe7a23d-68e3-4537-b845-0a858666e2d4
           client_id: 54tyLzMXZcuocUdTDWYR8YxU0T0fAguTVTF14kOp
@@ -1875,8 +1875,8 @@ additionalObjects:
         permissions: []
         state: present
       - attrs:
-          access_code_validity: minutes=5
-          access_token_validity: minutes=5
+          access_code_validity: minutes=10
+          access_token_validity: minutes=60
           authentication_flow: null
           authorization_flow: bbe7a23d-68e3-4537-b845-0a858666e2d4
           client_id: FmxfSIcs2A5dPUQxfeaYhFfbdwytpjFMS1YHtWGh
@@ -2008,8 +2008,8 @@ additionalObjects:
         permissions: []
         state: present
       - attrs:
-          access_code_validity: minutes=5
-          access_token_validity: minutes=5
+          access_code_validity: minutes=10
+          access_token_validity: minutes=60
           authentication_flow: null
           authorization_flow: bbe7a23d-68e3-4537-b845-0a858666e2d4
           client_id: btMjOfSZ7uyBIz4SA5ZyLJdmzarWhMt6ZESFTGgT
