@@ -6,52 +6,56 @@ controllers:
           repository: ghcr.io/mysweetpea/zilean
           tag: latest
         ports:
-        - name: http
-          containerPort: 8181
-          protocol: TCP
+          - name: http
+            containerPort: 8181
+            protocol: TCP
         envFrom:
-        - secretRef:
-            name: zilean-secrets
-        env:
-        - name: Zilean__Dmm__EnableScraping
-          value: "true"
-        - name: Zilean__Dmm__EnableEndpoint
-          value: "true"
-        - name: Zilean__Dmm__ScrapeSchedule
-          value: "0 * * * *"
-        - name: Zilean__Torznab__EnableEndpoint
-          value: "true"
-        - name: Zilean__Imdb__EnableImportMatching
-          value: "true"
-        - name: Zilean__Imdb__EnableEndpoint
-          value: "true"
-        - name: Zilean__Imdb__UseAllCores
-          value: "false"
-        - name: Zilean__Imdb__NumberOfCores
-          value: "2"
-        - name: Zilean__FirstRun
-          value: "true"
-        - name: Zilean__EnableDashboard
-          value: "false"
-        - name: GITHUB_TOKEN
-          valueFrom:
-            secretKeyRef:
+          - secretRef:
               name: zilean-secrets
-              key: GITHUB_TOKEN
-    type: deployment
-defaultPodOptions:
-  nodeSelector:
-    kubernetes.io/hostname: k3s-worker-b
-persistence:
-  data:
-    enabled: true
-    type: emptyDir
+        env:
+          - name: Zilean__Dmm__EnableScraping
+            value: "true"
+          - name: Zilean__Dmm__EnableEndpoint
+            value: "true"
+          - name: Zilean__Dmm__ScrapeSchedule
+            value: "0 * * * *"
+          - name: Zilean__Torznab__EnableEndpoint
+            value: "true"
+          - name: Zilean__Imdb__EnableImportMatching
+            value: "true"
+          - name: Zilean__Imdb__EnableEndpoint
+            value: "true"
+          - name: Zilean__Imdb__UseAllCores
+            value: "false"
+          - name: Zilean__Imdb__NumberOfCores
+            value: "2"
+          - name: Zilean__FirstRun
+            value: "true"
+          - name: Zilean__EnableDashboard
+            value: "false"
+          - name: GITHUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: zilean-secrets
+                key: GITHUB_TOKEN
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: zilean-secrets
+                key: POSTGRES_PASSWORD
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: "2"
+            memory: 3Gi
+
 service:
   main:
     controller: main
     type: LoadBalancer
     loadBalancerIP: 192.168.20.231
-    allocateLoadBalancerNodePorts: false
     ports:
       http:
         port: 8181
