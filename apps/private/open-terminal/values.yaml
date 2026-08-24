@@ -1,0 +1,42 @@
+# ──────────────────────────────────────────────
+# Open Terminal — AI terminal server for Open WebUI
+# Open WebUI connects via terminal_server.connections
+# API key from sealed secret open-terminal-secret (key API_KEY)
+# ──────────────────────────────────────────────
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/open-webui/open-terminal
+          tag: latest
+          pullPolicy: IfNotPresent
+        envFrom:
+          - secretRef:
+              name: open-terminal-secret
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
+
+persistence:
+  data:
+    enabled: true
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 2Gi
+    storageClass: longhorn
+    globalMounts:
+      - path: /home/user
+
+service:
+  main:
+    controller: main
+    type: ClusterIP
+    ports:
+      http:
+        port: 8000
+        targetPort: 8000

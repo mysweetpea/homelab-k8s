@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: docling
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - chart: app-template
+      repoURL: https://bjw-s-labs.github.io/helm-charts
+      targetRevision: 3.7.3
+      helm:
+        valueFiles:
+          - $values/apps/private/docling/values.yaml
+    - ref: values
+      repoURL: https://github.com/mysweetpea/homelab-k8s.git
+      targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: private
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

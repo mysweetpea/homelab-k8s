@@ -1,0 +1,31 @@
+# ──────────────────────────────────────────────
+# Docling Serve (CPU) — document conversion API for Open WebUI RAG
+# Open WebUI connects via rag.docling_server_url
+# ──────────────────────────────────────────────
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: quay.io/docling-project/docling-serve-cpu
+          tag: latest
+          pullPolicy: IfNotPresent
+        env:
+          DOCLING_SERVE_ENABLE_UI: "true"
+          DOCLING_SERVE_ENABLE_REMOTE_SERVICES: "false"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1Gi
+          limits:
+            cpu: "2"
+            memory: 4Gi
+
+service:
+  main:
+    controller: main
+    type: ClusterIP
+    ports:
+      http:
+        port: 5001
+        targetPort: 5001
