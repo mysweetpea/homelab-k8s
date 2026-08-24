@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: pipelines-secret
+  namespace: private
+spec:
+  encryptedData:
+    PIPELINES_API_KEY: AgAaAbbrjUp/9MP0wiXQJq1hPrV1sO0gDMjzSzvhO8oOplpJdOqHrinm7j+Nq5lSuTKRtCcyGe0e+NvBNQxRolkJNnN3noCsJFXqyugZr5GsDfGxFWyUuaQGYzQyqS9l1ZSBGE2fDYsgLAw0l7E6uwvH692eILAEP68z2t09TCiiBAEBIJg4D8ftrkjxyr0gn6XTxvGbkdttJNbwcUEJFspAVgsi1faxBpx9LlkIsXGLPTtqkRIzrRAlk2zYxAxgjqN60K9lOr/GXICOB5mHtYokQwfvMCXv31wRrHZF56twAXzPboDilFm/ED2CIAVgepi3bzMh7zoZduICfMKfCPPuoiqZb5dn5i74UOxdSCCMyi+mirXBwU2oJUf0GmVwXSYX+rDZJCsu9OLd10NTrfjXX/dG/HPEjETLiNbgPaAFWBT5HbMz4AMVPR8sxjzEhWVvyN8Pm8XCkVYVDJQHW/JuhMxsLmn96lwkfMISxKj2OUUbO0Ir+I+5r7oVs/cDxA+ruAd2PVW4nGtN+lUVnUCD9FYusGUb0qeASHu3M3JWRxbGeYbn03VwEw0oTmVQ09s3vlIElDrlSb8jXNfxoS5QJwqG1rIUXLOVFLD/UV9HeFySpns/FufRlXdz+cEfCeNojCcTzicbOL79zPj1T9rrdt+szhegToODP0CVFqBHuf2FwgGy6yEUU+OxSboEOuu/nxiULq2WYxislh0dqPm/ihJRxjpb12FGug==
+  template:
+    metadata:
+      name: pipelines-secret
+      namespace: private
