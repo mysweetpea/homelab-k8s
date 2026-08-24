@@ -58,6 +58,11 @@ persistence:
   existingClaim: nextcloud-nextcloud-lh
 postgresql:
   enabled: false
+internalDatabase:
+  # ⚠️ CRITICAL (Aug 24 2026): chart defaults internalDatabase.enabled=true which
+  # renders SQLITE_DATABASE and IGNORES externalDatabase — Nextcloud ran on SQLite
+  # for 19 days because this was missing. Must stay false for Postgres.
+  enabled: false
 service:
   port: 8080
   type: ClusterIP
