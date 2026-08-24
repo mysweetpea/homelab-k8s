@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: open-terminal-secret
+  namespace: private
+spec:
+  encryptedData:
+    OPEN_TERMINAL_API_KEY: AgCgwka24ojs2CGvhr3URqdSD0j6WhMzjboKWA8lEAOvCV+moTuiUYmQP55/48T7oviSCqCYGIygWXohSaX+eNoALbfl2ffC/kA0L+13/kJyga98fTPpi1hm5TsXA5hgaLyHXfLKM6lefqBOahnx5932TgL/vU4/fPTK2hYQzeQzvNdK/fquTjNm+gQjv+6d5is7FhTub7iJaTHBIwV5rffq/0ofJU0RLjwFq4yn6Eh75cj1OL1IA6DMicLs0fv1jfDNk09dA6fIIRanDFs7g6soD4FwcqhoIcWXtRGwWNHT2MteL4PsgfPlVK8EMkmZSO/7Su6RrpZ0dy4+RGMBq2+AJtFK7vK5tSE7xj17K9Zv2Ibw1BL9r2UYazBDKm2l8XEthklmyISicJQ++rnwdyQMnkcmZ208nIAvfJulIvkA2yp7tTDB/D0vokCMQSn+7r5zEoY4+Ahokl5blTHAQhVzs0HgsfIAHEq/kCu4OAbNnygx01OzxYWwcIqLAarBFS6l8jyj7msZE3xRreQeoqEkR72MMdPpkyuumuQx9zWnkH6TF/gQJWhcYvmPp+gRg4PhjC4m8j9Jf4qYNfy+51CvKm6kMkvPkWZQ2AUA3iuyMcc+4EDT6/kPOSisjdjiaMGgJ7dbvaOskqi4IwKKmI5kg1qckD1ZPXrdTJ+CBXSU9nHzRseTyrqEDgk2KgLyuiqIEV7Uqq1J6wS83nF7socqO+OCqx4ARcug
+  template:
+    metadata:
+      name: open-terminal-secret
+      namespace: private
