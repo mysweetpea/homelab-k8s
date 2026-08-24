@@ -69,6 +69,13 @@ server:
           image:
             repository: ghcr.io/immich-app/immich-server
             pullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
   # No ingress — internal access only (Option A)
   ingress:
     main:
@@ -84,6 +91,13 @@ machine-learning:
           image:
             repository: ghcr.io/immich-app/immich-machine-learning
             pullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 250m
+              memory: 1Gi
+            limits:
+              cpu: "4"
+              memory: 4Gi
           env:
             TRANSFORMERS_CACHE: /cache
             HF_XET_CACHE: /cache/huggingface-xet
