@@ -511,6 +511,23 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-monitoring-gotify-ingress
+  namespace: private
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: gotify
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+  policyTypes:
+  - Ingress
   name: allow-searxng-lan-ingress
   namespace: dmz
 spec:
