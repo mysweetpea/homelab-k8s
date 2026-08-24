@@ -10,6 +10,17 @@ parent:
     requests:
       cpu: 100m
       memory: 256Mi
+  config:
+    health:
+      enabled: true
+      path: /etc/netdata/health_alarm_notify.conf
+      data: |
+        SEND_EMAIL="NO"
+        SEND_SLACK="NO"
+        SEND_GOTIFY="YES"
+        GOTIFY_APP_URL="http://gotify.private.svc.cluster.local:80"
+        GOTIFY_APP_TOKEN="gtfya.7WjZ1rhq2h1FMDapkv7nVwZ3N1752-R2qsfmqE0F5xM"
+        DEFAULT_RECIPIENT_GOTIFY="alarms"
 
 child:
   resources:
