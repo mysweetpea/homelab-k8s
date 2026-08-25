@@ -10,6 +10,13 @@ controllers:
         envFrom:
         - secretRef:
             name: qbittorrent-webui
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
