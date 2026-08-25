@@ -17,6 +17,14 @@ postgresql:
     existingSecret: matrix-synapse-db
     secretKeys:
       userPasswordKey: password
+  primary:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
 redis:
   enabled: true
   auth:
@@ -25,6 +33,14 @@ redis:
     # key `redis-password`.
     existingSecret: matrix-synapse-db
     existingSecretPasswordKey: redis-password
+  primary:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 250m
+        memory: 512Mi
 # Pin to k3s-master to fix cross-node CNI issue with Traefik.
 # NOTE: chart renders nodeSelector from synapse.nodeSelector (top-level is ignored).
 # Signing key already generated (Secret matrix-synapse-signingkey, dmz).

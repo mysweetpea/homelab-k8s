@@ -51,6 +51,13 @@ valkey:
             repository: docker.io/valkey/valkey
             tag: 9.1-alpine
             pullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 512Mi
           persistence:
             data:
               enabled: true
