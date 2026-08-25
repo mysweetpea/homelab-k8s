@@ -971,7 +971,6 @@ entries:
     name: authentik-ldap-outpost
     providers:
     - 18
-    service_connection: 112969be-f636-4162-883d-1fa40fe50ab1
     type: ldap
   conditions: []
   identifiers:
@@ -1008,7 +1007,6 @@ entries:
     name: authentik-proxy-outpost
     providers:
     - 20
-    service_connection: 112969be-f636-4162-883d-1fa40fe50ab1
     type: proxy
   conditions: []
   identifiers:
