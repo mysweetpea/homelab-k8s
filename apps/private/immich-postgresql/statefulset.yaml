@@ -34,10 +34,11 @@ spec:
           image: ghcr.io/immich-app/postgres:17-vectorchord0.4.3-pgvectors0.3.0
           imagePullPolicy: IfNotPresent
           resources:
-            # Minimal requests — cluster is CPU/mem-committed (~99%); limits still cap usage
+            # Limits-only: cluster is CPU/mem-committed (~99%); requests of any size
+            # block scheduling when the RWO volume pins the pod to a full node.
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 1m
+              memory: 16Mi
             limits:
               cpu: "1"
               memory: 1Gi

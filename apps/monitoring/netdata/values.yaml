@@ -38,8 +38,8 @@ k8sState:
       cpu: 500m
       memory: 512Mi
     requests:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 1m
+      memory: 16Mi
 
 service:
   type: LoadBalancer
