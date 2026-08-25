@@ -5,6 +5,36 @@ controllers:
         image:
           repository: ghcr.io/doezer/questarr
           tag: "v1.4.2"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 5000
+              initialDelaySeconds: 15
+              periodSeconds: 30
+              timeoutSeconds: 3
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 5000
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 3
+              failureThreshold: 3
     type: deployment
 
 persistence:
