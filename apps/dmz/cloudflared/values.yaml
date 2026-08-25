@@ -32,6 +32,13 @@ controllers:
             secretKeyRef:
               name: cloudflared-token
               key: tunnel-token
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
         probes:
           liveness:
             enabled: true
