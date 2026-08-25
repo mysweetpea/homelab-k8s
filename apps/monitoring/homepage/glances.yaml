@@ -23,8 +23,25 @@ spec:
       - name: glances
         image: nicolargo/glances:latest
         # NOTE: the image entrypoint does NOT append args — must set command explicitly
+        # Auth: -u <user> reads <config_dir>/<user>.pwd (pbkdf2_hmac sha256 salt$hash)
         command: ["glances"]
-        args: ["-w", "--port", "61208"]
+        args: ["-w", "--port", "61208", "-u", "sweetpea"]
+        env:
+        - name: GLANCES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: glances-auth
+              key: GLANCES_USERNAME
+        - name: GLANCES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: glances-auth
+              key: GLANCES_PASSWORD
+        volumeMounts:
+        - name: glances-pwd
+          mountPath: /root/.config/glances/sweetpea.pwd
+          subPath: sweetpea.pwd
+          readOnly: true
         ports:
         - containerPort: 61208
           name: http
@@ -34,6 +51,14 @@ spec:
             memory: 128Mi
           limits:
             memory: 256Mi
+      volumes:
+      - name: glances-pwd
+        secret:
+          secretName: glances-auth
+          items:
+          - key: sweetpea.pwd
+            path: sweetpea.pwd
+          defaultMode: 0400
 ---
 apiVersion: v1
 kind: Service

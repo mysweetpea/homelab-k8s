@@ -562,6 +562,8 @@ data:
         nodes: true
     - glances:
         url: http://glances.monitoring.svc.cluster.local:61208
+        username: ${GLANCES_USERNAME}
+        password: ${GLANCES_PASSWORD}
         version: 4
     - openmeteo:
         label: SweetPea
