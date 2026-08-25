@@ -8,7 +8,7 @@ controllers:
       main:
         image:
           repository: quay.io/docling-project/docling-serve-cpu
-          tag: latest
+          tag: v1.31.0
           pullPolicy: IfNotPresent
         env:
           DOCLING_SERVE_ENABLE_UI: "true"
