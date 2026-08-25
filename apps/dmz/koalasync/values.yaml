@@ -22,6 +22,9 @@ controllers:
             cpu: 250m
             memory: 256Mi
         probes:
+          # KoalaSync v3.1.5+ rate-limits /health to 10 req/min per client IP.
+          # kubelet probes at 10s = 12 req/min from the same node IP -> 429 flapping.
+          # 30s period = 4 req/min combined (liveness+readiness), safely under the limit.
           liveness:
             enabled: true
             custom: true
@@ -30,6 +33,9 @@ controllers:
                 path: /health
                 port: 3000
               initialDelaySeconds: 15
+              periodSeconds: 30
+              timeoutSeconds: 3
+              failureThreshold: 3
           readiness:
             enabled: true
             custom: true
@@ -38,6 +44,9 @@ controllers:
                 path: /health
                 port: 3000
               initialDelaySeconds: 5
+              periodSeconds: 30
+              timeoutSeconds: 3
+              failureThreshold: 3
     type: deployment
 service:
   main:
