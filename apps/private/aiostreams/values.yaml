@@ -69,6 +69,13 @@ controllers:
                 path: /
                 port: 3000
               initialDelaySeconds: 5
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
     type: deployment
 persistence:
   config:
