@@ -645,7 +645,7 @@ extraObjects:
               imageName: grafana/promtail
               commonUpdateSettings:
                 updateStrategy: semver
-                allowTags: "regexp:^\d+\.\d+\.\d+$"
+                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
                 helm:
                   name: image.repository
