@@ -363,7 +363,7 @@ entries:
     name: gotify-body-mapping
   conditions: []
   identifiers:
-    pk: 26755435-962a-440f-a86f-a50ad0409f1d
+    pk: ea2060d3-33f8-4b15-9594-720e54cc4a5a
   model: authentik_events.notificationwebhookmapping
   permissions: []
   state: present
@@ -371,7 +371,7 @@ entries:
     name: gotify-webhook
     mode: webhook
     webhook_url: !Env AUTHENTIK_BP_GOTIFY_WEBHOOK_URL
-    webhook_mapping_body: 26755435-962a-440f-a86f-a50ad0409f1d
+    webhook_mapping_body: ea2060d3-33f8-4b15-9594-720e54cc4a5a
     webhook_mapping_headers: null
     send_once: false
     email_subject_prefix: ''
@@ -391,7 +391,7 @@ entries:
     client_ip: null
   conditions: []
   identifiers:
-    pk: 67528f90-53ee-4d2c-a198-8c3b75b8732c
+    pk: 0bb4ebf2-6087-4066-bf83-26468b92d1c1
   model: authentik_policies_event_matcher.eventmatcherpolicy
   permissions: []
   state: present
@@ -404,7 +404,7 @@ entries:
     - 6e923379-046d-4466-a62c-3718adc9b7e7
   conditions: []
   identifiers:
-    pk: 706b30de-116d-4160-9dd7-2586c3b61092
+    pk: 00c1c9d3-b5aa-4be5-9282-bea165f53ffb
   model: authentik_events.notificationrule
   permissions: []
   state: present
@@ -414,8 +414,8 @@ entries:
     group: null
     negate: false
     order: 0
-    policy: 67528f90-53ee-4d2c-a198-8c3b75b8732c
-    target: 706b30de-116d-4160-9dd7-2586c3b61092
+    policy: 0bb4ebf2-6087-4066-bf83-26468b92d1c1
+    target: 00c1c9d3-b5aa-4be5-9282-bea165f53ffb
     timeout: 30
     user: null
   conditions: []
