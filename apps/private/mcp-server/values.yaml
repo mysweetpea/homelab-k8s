@@ -9,6 +9,8 @@ controllers:
         - --port
         - "8080"
         - --stateless
+        # Read-only enforcement (RBAC is also read-only — defense in depth)
+        - --read-only
         resources:
           requests:
             cpu: 100m
