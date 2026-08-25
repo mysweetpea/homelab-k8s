@@ -1,6 +1,13 @@
 image:
   tag: 34.0.3
   repository: library/nextcloud
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "2"
+    memory: 2Gi
 nextcloud:
   host: cloud.mysweetpea.cc
   username: admin
@@ -60,6 +67,14 @@ cronjob:
   # were running in AJAX mode (unreliable). Sidecar runs real cron every 5 min.
   enabled: true
   type: sidecar
+  sidecar:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 250m
+        memory: 512Mi
 postgresql:
   enabled: false
 internalDatabase:

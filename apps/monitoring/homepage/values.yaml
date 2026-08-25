@@ -49,6 +49,13 @@ controllers:
         image:
           repository: ghcr.io/gethomepage/homepage
           tag: v2.1.2
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
     type: deployment
 # Pinned to worker-b: master VM disk is failing (Aug 19 SSD incident) — keep
 # the dashboard off the thrashing master

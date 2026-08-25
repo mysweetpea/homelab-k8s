@@ -39,6 +39,22 @@ loki:
 deploymentMode: SingleBinary
 singleBinary:
   replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 50m
+      memory: 256Mi
+# Rules sidecar (loki-sc-rules) resource limits
+sidecar:
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
 # Zero out the SimpleScalable targets (chart defaults them to 3 even in
 # SingleBinary mode, which trips the "no object storage" validation)
 backend:
@@ -52,14 +68,6 @@ persistence:
   enabled: true
   storageClass: longhorn
   size: 10Gi
-
-resources:
-  limits:
-    cpu: 500m
-    memory: 1Gi
-  requests:
-    cpu: 50m
-    memory: 256Mi
 
 service:
   type: ClusterIP
