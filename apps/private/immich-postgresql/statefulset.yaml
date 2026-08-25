@@ -33,6 +33,13 @@ spec:
         - name: postgresql
           image: ghcr.io/immich-app/postgres:17-vectorchord0.4.3-pgvectors0.3.0
           imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
           env:
             - name: POSTGRES_USER
               value: immich

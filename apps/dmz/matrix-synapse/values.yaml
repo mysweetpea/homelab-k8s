@@ -33,7 +33,7 @@ redis:
     # key `redis-password`.
     existingSecret: matrix-synapse-db
     existingSecretPasswordKey: redis-password
-  primary:
+  master:
     resources:
       requests:
         cpu: 50m

@@ -32,6 +32,15 @@ child:
       cpu: 50m
       memory: 128Mi
 
+k8sState:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
 service:
   type: LoadBalancer
   loadBalancerIP: 192.168.20.229
