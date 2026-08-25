@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`vault.mysweetpea.duckdns.org`) || Host(`vault.mysweetpea.cc`)
+    - match: Host(`vault.mysweetpea.cc`)
       kind: Rule
       services:
         - name: vaultwarden
@@ -26,7 +26,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`auth.mysweetpea.duckdns.org`) || Host(`auth.mysweetpea.cc`)
+    - match: Host(`auth.mysweetpea.cc`)
       kind: Rule
       middlewares:
         - name: authentik-https-headers
@@ -45,7 +45,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`request.mysweetpea.duckdns.org`) || Host(`request.mysweetpea.cc`)
+    - match: Host(`request.mysweetpea.cc`)
       kind: Rule
       services:
         - name: seerr
@@ -61,7 +61,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`chat.mysweetpea.duckdns.org`) || Host(`chat.mysweetpea.cc`)
+    - match: Host(`chat.mysweetpea.cc`)
       kind: Rule
       services:
         - name: element-web

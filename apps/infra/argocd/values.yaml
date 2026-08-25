@@ -27,7 +27,7 @@ applicationSet:
 configs:
   cm:
     admin.enabled: true
-    url: https://argocd.mysweetpea.duckdns.org
+    url: http://192.168.20.220:80
     timeout.reconciliation: 60s
     timeout.reconciliation.jitter: 60s
     timeout.hard.reconciliation: 0s
@@ -252,7 +252,7 @@ dex:
       memory: 256Mi
 
 global:
-  domain: argocd.mysweetpea.duckdns.org
+  domain: argocd.mysweetpea.cc
 
 notifications:
   enabled: false

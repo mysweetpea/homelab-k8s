@@ -2,7 +2,7 @@ image:
   tag: 34.0.3
   repository: library/nextcloud
 nextcloud:
-  host: nextcloud.mysweetpea.duckdns.org
+  host: cloud.mysweetpea.cc
   username: admin
   existingSecret:
     enabled: true
@@ -10,7 +10,6 @@ nextcloud:
     usernameKey: username
     passwordKey: password
   trustedDomains:
-  - nextcloud.mysweetpea.duckdns.org
   - cloud.mysweetpea.cc
   - 192.168.20.215
   - nextcloud.private.svc.cluster.local
