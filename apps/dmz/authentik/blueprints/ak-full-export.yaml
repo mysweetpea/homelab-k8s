@@ -944,8 +944,8 @@ entries:
   state: present
 - attrs:
     config:
-      authentik_host: https://auth.mysweetpea.cc/
-      authentik_host_browser: ''
+      authentik_host: http://authentik-server.dmz.svc.cluster.local:80
+      authentik_host_browser: https://auth.mysweetpea.cc/
       authentik_host_insecure: false
       container_image: null
       docker_labels: null
@@ -981,8 +981,8 @@ entries:
   state: present
 - attrs:
     config:
-      authentik_host: https://auth.mysweetpea.cc/
-      authentik_host_browser: ''
+      authentik_host: http://authentik-server.dmz.svc.cluster.local:80
+      authentik_host_browser: https://auth.mysweetpea.cc/
       authentik_host_insecure: false
       container_image: null
       docker_labels: null

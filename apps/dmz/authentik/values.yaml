@@ -7,13 +7,6 @@ authentik:
   # defaultTag = Chart.AppVersion; authentik.image.* is IGNORED by the chart —
   # confirmed from chart source _common.tpl:48 + server/deployment.yaml:72).
   # The image-updater CR writes to global.image.tag (authentik entry).
-  image:
-    repository: ghcr.io/goauthentik/server
-    tag: "2026.5.6"
-  # Secrets (secret_key, postgresql password) live in the sealed `authentik`
-  # secret (sealed-secrets/dmz/authentik.yaml) — NOT in this file.
-  existingSecret:
-    secretName: authentik
   error_reporting:
     enabled: false
   postgresql:
@@ -21,32 +14,39 @@ authentik:
     name: "authentik"
     user: "authentik"
     port: 5432
-  server:
-    ingress:
-      enabled: false
-    metrics:
-      enabled: true
-    resources:
-      requests:
-        memory: "512Mi"
-        cpu: "250m"
-      limits:
-        memory: "1Gi"
-        cpu: "1000m"
-  worker:
-    resources:
-      requests:
-        memory: "256Mi"
-        cpu: "100m"
-      limits:
-        memory: "512Mi"
-        cpu: "500m"
+  # Secrets (secret_key, postgresql password) live in the sealed `authentik`
+  # secret (sealed-secrets/dmz/authentik.yaml) — NOT in this file.
+  existingSecret:
+    secretName: authentik
 # ─────────────────────────────────────────────────────────────────────────────
+# ⚠️ Resources MUST be at top-level `server.resources` / `worker.resources` —
+# the chart renders `.Values.server.resources` (server/deployment.yaml:123) and
+# `.Values.worker.resources` (worker/deployment.yaml:130). Values nested under
+# `authentik.server.*` are SILENTLY IGNORED (verified against chart 2026.8.0;
+# live pods had no limits before Aug 25 2026).
+server:
+  replicas: 1
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+  metrics:
+    enabled: true
 # Worker: 2 replicas — blueprint apply deadlocks with 1 (apply_blueprint blocks
 # all threads waiting for blueprints_find_dict result, which never gets
 # processed; a second worker process breaks the deadlock).
 worker:
   replicas: 2
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
 # Git-backed Blueprints (Session 40, Aug 12 2026)
 #
 # Full instance export via `manage.py export_blueprint` (2026.5.6 — the UI
@@ -78,11 +78,22 @@ postgresql:
       enabled: true
       storageClass: longhorn
       size: 8Gi
-redis:
-  enabled: true
-  architecture: standalone
-  auth:
-    enabled: false
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+# NOTE: redis block is DEAD CONFIG — the 2026.8 chart has no redis subchart
+# (authentik now uses Postgres-backed cache + channel layers, verified in
+# Django settings: django_postgres_cache + django_channels_postgres).
+# Kept commented for reference; removing entirely on next export cycle.
+# redis:
+#   enabled: true
+#   architecture: standalone
+#   auth:
+#     enabled: false
 additionalObjects:
 - apiVersion: v1
   kind: ConfigMap
@@ -1037,8 +1048,8 @@ additionalObjects:
         state: present
       - attrs:
           config:
-            authentik_host: https://auth.mysweetpea.cc/
-            authentik_host_browser: ''
+            authentik_host: http://authentik-server.dmz.svc.cluster.local:80
+            authentik_host_browser: https://auth.mysweetpea.cc/
             authentik_host_insecure: false
             container_image: null
             docker_labels: null
@@ -1074,8 +1085,8 @@ additionalObjects:
         state: present
       - attrs:
           config:
-            authentik_host: https://auth.mysweetpea.cc/
-            authentik_host_browser: ''
+            authentik_host: http://authentik-server.dmz.svc.cluster.local:80
+            authentik_host_browser: https://auth.mysweetpea.cc/
             authentik_host_insecure: false
             container_image: null
             docker_labels: null
