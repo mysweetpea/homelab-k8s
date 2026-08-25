@@ -45,8 +45,8 @@ worker:
       memory: "256Mi"
       cpu: "100m"
     limits:
-      memory: "512Mi"
-      cpu: "500m"
+      memory: "1Gi"
+      cpu: "1000m"
 # Git-backed Blueprints (Session 40, Aug 12 2026)
 #
 # Full instance export via `manage.py export_blueprint` (2026.5.6 — the UI
