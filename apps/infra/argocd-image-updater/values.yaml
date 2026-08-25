@@ -680,20 +680,6 @@ extraObjects:
                 helm:
                   name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
-        - namePattern: firecrawl
-          writeBackConfig:
-            method: git:secret:argocd/ssh-git-creds
-            gitConfig:
-              writeBackTarget: plaintext:apps/private/firecrawl/api-worker.yaml
-          images:
-            - alias: firecrawl
-              imageName: ghcr.io/firecrawl/firecrawl
-              commonUpdateSettings:
-                updateStrategy: semver
-                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
-              manifestTargets:
-                plaintext:
-                  - filePath: apps/private/firecrawl/api-worker.yaml
         - namePattern: hindsight
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds
