@@ -30,7 +30,7 @@ spec:
     ref: values
   - repoURL: https://github.com/mysweetpea/homelab-k8s.git
     targetRevision: HEAD
-    path: apps/private/mcp-server/rbac.yaml
+    path: apps/private/mcp-server/rbac
   syncPolicy:
     automated:
       prune: true
