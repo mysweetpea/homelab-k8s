@@ -1075,6 +1075,7 @@ additionalObjects:
           name: authentik-ldap-outpost
           providers:
           - 18
+          service_connection: null
           type: ldap
         conditions: []
         identifiers:
@@ -1111,6 +1112,7 @@ additionalObjects:
           name: authentik-proxy-outpost
           providers:
           - 20
+          service_connection: null
           type: proxy
         conditions: []
         identifiers:
