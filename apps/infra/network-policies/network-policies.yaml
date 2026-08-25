@@ -576,6 +576,29 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  name: allow-ldap-outpost-authentik-api-egress
+  namespace: dmz
+spec:
+  podSelector:
+    matchLabels:
+      app: authentik-ldap-outpost
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dmz
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: authentik
+    ports:
+    - port: 9000
+      protocol: TCP
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: allow-jellyfin-ldap-outpost-egress
   namespace: private
 spec:
