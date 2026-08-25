@@ -5,7 +5,46 @@ controllers:
         image:
           repository: ghcr.io/containers/kubernetes-mcp-server
           tag: v0.0.66
+        args:
+        - --port
+        - "8080"
+        - --stateless
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              initialDelaySeconds: 10
+              periodSeconds: 30
+              timeoutSeconds: 3
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 3
+              failureThreshold: 3
     type: deployment
+# The ClusterRoleBinding mcp-server-binding binds this SA.
+# ClusterRole + Binding are committed in this app folder (rbac.yaml).
+serviceAccount:
+  create: true
+  name: mcp-server-sa
 service:
   main:
     controller: main

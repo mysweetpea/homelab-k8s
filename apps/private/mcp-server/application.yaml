@@ -6,7 +6,7 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd-image-updater.argoproj.io/image-list: mcpserver=docker.io/mcp-server
+    argocd-image-updater.argoproj.io/image-list: mcpserver=ghcr.io/containers/kubernetes-mcp-server
     argocd-image-updater.argoproj.io/mcpserver.update-strategy: semver
     argocd-image-updater.argoproj.io/mcpserver.helm.image-spec: controllers.main.containers.main.image
     argocd-image-updater.argoproj.io/write-back-method: git
@@ -28,6 +28,9 @@ spec:
   - repoURL: https://github.com/mysweetpea/homelab-k8s.git
     targetRevision: HEAD
     ref: values
+  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    targetRevision: HEAD
+    path: apps/private/mcp-server/rbac.yaml
   syncPolicy:
     automated:
       prune: true

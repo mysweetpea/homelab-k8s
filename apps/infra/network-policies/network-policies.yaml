@@ -225,6 +225,10 @@ spec:
         cidr: 10.42.0.0/16
     - ipBlock:
         cidr: 10.43.0.0/16
+    # kube-apiserver ClusterIP (10.43.0.1) DNATs to the master node IP (192.168.20.40:6443)
+    # which is outside the pod/service CIDRs — required for in-cluster API access.
+    - ipBlock:
+        cidr: 192.168.20.40/32
   podSelector: {}
   policyTypes:
   - Egress
