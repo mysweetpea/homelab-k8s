@@ -2,9 +2,10 @@ image:
   tag: 34.0.3
   repository: library/nextcloud
 resources:
+  # Modest requests — cluster is CPU-committed (~85-98% across nodes)
   requests:
-    cpu: 250m
-    memory: 512Mi
+    cpu: 100m
+    memory: 256Mi
   limits:
     cpu: "2"
     memory: 2Gi
