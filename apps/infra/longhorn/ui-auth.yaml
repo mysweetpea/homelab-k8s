@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: longhorn-basic-auth
+  namespace: longhorn-system
+type: Opaque
+stringData:
+  user: sweetpea
+  pass: MySweetPea-Longhorn-2026!
+  htpasswd: 'sweetpea:$apr1$mysweetp$UvLDNJ6W/vjPMJZDryb4n.'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: longhorn-ui-nginx
+  namespace: longhorn-system
+data:
+  nginx.conf.template: |
+    events { worker_connections 1024; }
+    http {
+        large_client_header_buffers 4 32k;
+        server {
+            gzip on;
+            gzip_min_length 1k;
+            gzip_comp_level 2;
+            gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png image/svg+xml;
+            gzip_vary on;
+            gzip_disable "MSIE [1-6].";
+            include /etc/nginx/mime.types;
+
+            listen ${LONGHORN_UI_PORT};       # IPv4
+            ${IPV6_LISTEN}
+
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_redirect     off;
+            proxy_set_header   X-Forwarded-Host $http_host;
+            proxy_set_header   X-Real-IP        $remote_addr;
+            proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+            proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+            proxy_max_temp_file_size 0;
+            proxy_connect_timeout      90;
+            proxy_send_timeout         90;
+            proxy_read_timeout         90;
+            proxy_buffer_size          4k;
+            proxy_buffers              4 32k;
+            proxy_busy_buffers_size    64k;
+            proxy_temp_file_write_size 64k;
+
+            auth_basic "Longhorn";
+            auth_basic_user_file /etc/nginx/htpasswd;
+
+            location /v1  {
+                proxy_pass ${LONGHORN_MANAGER_IP};
+                proxy_request_buffering off;
+                client_max_body_size 0;
+            }
+
+            location / {
+                root /web/dist;
+                index  index.html;
+                add_header Cache-Control "max-age=0";
+                try_files $uri $uri/ /index.html =404;
+            }
+
+            location ~ ^/.(images|javascript|js|css|flash|media|static)/ {
+                 root /web/dist;
+            }
+        }
+    }
