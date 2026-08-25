@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`n8n.mysweetpea.duckdns.org`) || Host(`n8n.mysweetpea.cc`) || Host(`subscribe.mysweetpea.cc`) || Host(`subscribe.mysweetpea.duckdns.org`)
+    - match: Host(`n8n.mysweetpea.cc`) || Host(`subscribe.mysweetpea.cc`)
       kind: Rule
       services:
         - name: n8n
@@ -89,7 +89,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`media.mysweetpea.duckdns.org`) || Host(`media.mysweetpea.cc`)
+    - match: Host(`media.mysweetpea.cc`)
       kind: Rule
       services:
         - name: jellyfin
