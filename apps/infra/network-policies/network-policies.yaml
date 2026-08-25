@@ -447,6 +447,29 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  name: allow-authentik-gotify-egress
+  namespace: dmz
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: authentik
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: private
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: gotify
+    ports:
+    - port: 80
+      protocol: TCP
+  policyTypes:
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: redis-affine
   namespace: private
 spec:
@@ -511,10 +534,6 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
   name: allow-monitoring-gotify-ingress
   namespace: private
 spec:
@@ -526,8 +545,15 @@ spec:
     - namespaceSelector:
         matchLabels:
           kubernetes.io/metadata.name: monitoring
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dmz
   policyTypes:
   - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: allow-searxng-lan-ingress
   namespace: dmz
 spec:

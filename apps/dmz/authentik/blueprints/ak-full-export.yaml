@@ -358,6 +358,73 @@ entries:
   permissions: []
   state: present
 - attrs:
+    name: gotify-webhook
+    mode: webhook
+    webhook_url: !Env AUTHENTIK_BP_GOTIFY_WEBHOOK_URL
+    webhook_mapping_body: 26755435-962a-440f-a86f-a50ad0409f1d
+    webhook_mapping_headers: null
+    send_once: false
+    email_subject_prefix: ''
+    email_template: ''
+    webhook_ca: null
+  conditions: []
+  identifiers:
+    pk: 6e923379-046d-4466-a62c-3718adc9b7e7
+  model: authentik_events.notificationtransport
+  permissions: []
+  state: present
+- attrs:
+    expression: "return {\n    \"message\": request.context['notification'].body,\n    \"title\": \"authentik\",\n    \"priority\": 5\n}"
+    managed: null
+    name: gotify-body-mapping
+  conditions: []
+  identifiers:
+    pk: 26755435-962a-440f-a86f-a50ad0409f1d
+  model: authentik_events.notificationwebhookmapping
+  permissions: []
+  state: present
+- attrs:
+    name: matcher-login-failed
+    action: login_failed
+    app: null
+    model: null
+    client_ip: null
+  conditions: []
+  identifiers:
+    pk: 67528f90-53ee-4d2c-a198-8c3b75b8732c
+  model: authentik_policies_event_matcher.eventmatcherpolicy
+  permissions: []
+  state: present
+- attrs:
+    destination_event_user: false
+    destination_group: null
+    name: notify-login-failed
+    severity: alert
+    transports:
+    - 6e923379-046d-4466-a62c-3718adc9b7e7
+  conditions: []
+  identifiers:
+    pk: 706b30de-116d-4160-9dd7-2586c3b61092
+  model: authentik_events.notificationrule
+  permissions: []
+  state: present
+- attrs:
+    enabled: true
+    failure_result: false
+    group: null
+    negate: false
+    order: 0
+    policy: 67528f90-53ee-4d2c-a198-8c3b75b8732c
+    target: 706b30de-116d-4160-9dd7-2586c3b61092
+    timeout: 30
+    user: null
+  conditions: []
+  identifiers:
+    pk: 4cf44182-e01c-4947-acab-1790d0db94f6
+  model: authentik_policies.policybinding
+  permissions: []
+  state: present
+- attrs:
     destination_event_user: false
     destination_group: null
     name: default-notify-configuration-error
@@ -365,6 +432,7 @@ entries:
     transports:
     - 01664858-887c-4672-84b2-eaad062a78b0
     - 51b6af1d-a4b1-4198-a6e4-f9d8656a6706
+    - 6e923379-046d-4466-a62c-3718adc9b7e7
   conditions: []
   identifiers:
     pk: 8e83c8e9-6006-4c63-8430-75f64903ebd9
@@ -379,6 +447,7 @@ entries:
     transports:
     - 01664858-887c-4672-84b2-eaad062a78b0
     - 51b6af1d-a4b1-4198-a6e4-f9d8656a6706
+    - 6e923379-046d-4466-a62c-3718adc9b7e7
   conditions: []
   identifiers:
     pk: 1344a6bf-1e60-41ab-a25b-060f9baec557
@@ -407,6 +476,7 @@ entries:
     transports:
     - 01664858-887c-4672-84b2-eaad062a78b0
     - 51b6af1d-a4b1-4198-a6e4-f9d8656a6706
+    - 6e923379-046d-4466-a62c-3718adc9b7e7
   conditions: []
   identifiers:
     pk: 9021d709-cbca-4ffa-a7b4-c68b0e3b30b8
@@ -1216,13 +1286,13 @@ entries:
     amount_lowercase: 0
     amount_symbols: 0
     amount_uppercase: 0
-    check_have_i_been_pwned: false
+    check_have_i_been_pwned: true
     check_static_rules: true
     check_zxcvbn: true
-    error_message: Password needs to be 8 characters or longer.
+    error_message: Password needs to be 15 characters or longer.
     execution_logging: false
     hibp_allowed_count: 0
-    length_min: 8
+    length_min: 15
     name: default-password-change-password-policy
     password_field: password
     symbol_charset: '!\"#$%&''()*+,-./:;<=>?@[\]^_`{|}~'
@@ -2049,7 +2119,7 @@ entries:
   state: present
 - attrs:
     configure_flow: d198805b-4399-4669-ba2b-b1ec6004ae63
-    digits: '6'
+    digits: '8'
     friendly_name: TOTP Device
     name: default-authenticator-totp-setup
   conditions: []
@@ -2089,11 +2159,11 @@ entries:
     device_type_restrictions: []
     friendly_name: WebAuthn device
     hints: []
-    max_attempts: 0
+    max_attempts: 5
     name: default-authenticator-webauthn-setup
     prevent_duplicate_devices: false
     resident_key_requirement: preferred
-    user_verification: preferred
+    user_verification: required
   conditions: []
   identifiers:
     pk: 26799e97-e5fb-4ccd-aa03-0c840d41eab8
@@ -2409,7 +2479,7 @@ entries:
     remember_device: days=30
     remember_me_offset: seconds=0
     session_duration: seconds=0
-    terminate_other_sessions: false
+    terminate_other_sessions: true
   conditions: []
   identifiers:
     pk: 5f4efbe9-39f8-4e0a-ba0c-30fd95e81dab
@@ -2423,7 +2493,7 @@ entries:
     remember_device: days=30
     remember_me_offset: seconds=0
     session_duration: seconds=0
-    terminate_other_sessions: false
+    terminate_other_sessions: true
   conditions: []
   identifiers:
     pk: 1ccfb882-43ca-4716-bfdd-014f56d98ddc
@@ -2437,7 +2507,7 @@ entries:
     remember_device: days=30
     remember_me_offset: seconds=0
     session_duration: seconds=0
-    terminate_other_sessions: false
+    terminate_other_sessions: true
   conditions: []
   identifiers:
     pk: b6f04789-c139-407e-9618-5a206951959e
@@ -2557,6 +2627,7 @@ entries:
     flow_recovery: null
     flow_unenrollment: null
     flow_user_settings: 2cec39b4-9ef7-40f8-a5ef-dc0aba22f146
+    flow_user_switch: a3f19429-2b0b-4409-a1c5-0399200b4ef1
     web_certificate: null
   conditions: []
   identifiers:
