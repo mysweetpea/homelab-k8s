@@ -373,6 +373,8 @@ data:
             widget:
               type: traefik
               url: http://192.168.20.210:8080
+              username: ${TRAEFIK_USERNAME}
+              password: ${TRAEFIK_PASSWORD}
         - ArgoCD:
             id: argocd
             href: http://192.168.20.220

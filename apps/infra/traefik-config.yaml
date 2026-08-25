@@ -1,0 +1,26 @@
+# k3s-native Traefik config override — applied by k3s at startup (survives upgrades)
+# This file must ALSO exist on the master at:
+#   /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+# (k3s loads HelmChartConfig manifests from that directory at boot)
+# Chart schema verified against bundled traefik-39.0.701+up39.0.7.tgz:
+#   resources (top-level), logs.access.enabled, additionalArguments (top-level)
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    providers:
+      kubernetesCRD:
+        allowCrossNamespace: true
+    logs:
+      access:
+        enabled: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi

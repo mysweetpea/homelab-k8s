@@ -1,8 +1,26 @@
-# Traefik Dashboard IngressRoute (k3s-managed Traefik)
-# Manual apply (no ArgoCD app for kube-system):
+# Traefik Dashboard + API — basic auth middleware + IngressRoute
+# Manual apply (k3s-managed Traefik, no ArgoCD app for kube-system):
 #   kubectl apply -f apps/infra/traefik-dashboard.yaml
-# Exposes the Traefik API + dashboard on the :8080 entrypoint (192.168.20.210:8080).
-# Required by the homepage traefik widget (it queries /api/http/routers).
+# Homepage traefik widget uses the same creds (username: sweetpea / password: MySweetPea-Traefik-2026!)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: traefik-dashboard-auth
+  namespace: kube-system
+type: Opaque
+stringData:
+  users: |
+    sweetpea:$apr1$mysweetp$6XxKkRYmiLK8.i3c3LbIC/
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: traefik-dashboard-auth
+  namespace: kube-system
+spec:
+  basicAuth:
+    secret: traefik-dashboard-auth
+---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -14,6 +32,8 @@ spec:
   routes:
     - match: PathPrefix(`/api`) || PathPrefix(`/dashboard`)
       kind: Rule
+      middlewares:
+        - name: traefik-dashboard-auth
       services:
         - name: api@internal
           kind: TraefikService
