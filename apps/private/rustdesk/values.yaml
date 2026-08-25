@@ -10,7 +10,14 @@ controllers:
         command:
         - hbbs
         - -r
-        - 192.168.20.216:21117
+        - 192.168.20.211:21117
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            memory: 512Mi
+            cpu: 500m
   hbbr:
     type: deployment
     containers:
@@ -21,6 +28,13 @@ controllers:
           pullPolicy: IfNotPresent
         command:
         - hbbr
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            memory: 512Mi
+            cpu: 500m
 service:
   hbbs:
     controller: hbbs
