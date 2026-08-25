@@ -462,22 +462,6 @@ additionalObjects:
           permissions: []
           state: present
         - attrs:
-            name: gotify-webhook
-            mode: webhook
-            webhook_url: !Env AUTHENTIK_BP_GOTIFY_WEBHOOK_URL
-            webhook_mapping_body: 26755435-962a-440f-a86f-a50ad0409f1d
-            webhook_mapping_headers: null
-            send_once: false
-            email_subject_prefix: ''
-            email_template: ''
-            webhook_ca: null
-          conditions: []
-          identifiers:
-            pk: 6e923379-046d-4466-a62c-3718adc9b7e7
-          model: authentik_events.notificationtransport
-          permissions: []
-          state: present
-        - attrs:
             expression: "return {\n    \"message\": request.context['notification'].body,\n    \"title\": \"authentik\",\n    \"priority\": 5\n}"
             managed: null
             name: gotify-body-mapping
@@ -485,6 +469,22 @@ additionalObjects:
           identifiers:
             pk: 26755435-962a-440f-a86f-a50ad0409f1d
           model: authentik_events.notificationwebhookmapping
+          permissions: []
+          state: present
+        - attrs:
+            name: gotify-webhook
+            mode: webhook
+            webhook_url: !Env AUTHENTIK_BP_GOTIFY_WEBHOOK_URL
+            webhook_mapping_body: 26755435-962a-440f-a86f-a50ad0409f1d
+            webhook_mapping_headers: null
+            send_once: false
+            email_subject_prefix: ''
+            email_template: email/event_notification.html
+            webhook_ca: null
+          conditions: []
+          identifiers:
+            pk: 6e923379-046d-4466-a62c-3718adc9b7e7
+          model: authentik_events.notificationtransport
           permissions: []
           state: present
         - attrs:
