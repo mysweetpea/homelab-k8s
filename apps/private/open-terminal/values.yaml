@@ -9,11 +9,11 @@ controllers:
       main:
         image:
           repository: ghcr.io/open-webui/open-terminal
-          tag: 0.10.2
+          tag: 0.12.2
           pullPolicy: IfNotPresent
         envFrom:
-          - secretRef:
-              name: open-terminal-secret
+        - secretRef:
+            name: open-terminal-secret
         resources:
           requests:
             cpu: 100m
@@ -21,7 +21,6 @@ controllers:
           limits:
             cpu: "1"
             memory: 1Gi
-
 persistence:
   data:
     enabled: true
@@ -30,8 +29,7 @@ persistence:
     size: 2Gi
     storageClass: longhorn
     globalMounts:
-      - path: /home/user
-
+    - path: /home/user
 service:
   main:
     controller: main
