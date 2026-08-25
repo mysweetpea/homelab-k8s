@@ -28,6 +28,12 @@ controllers:
               -e "s|\${AUTHENTIK_API_TOKEN}|${AUTHENTIK_API_TOKEN}|g" \
               -e "s|\${ARGOCD_API_TOKEN}|${ARGOCD_API_TOKEN}|g" \
               -e "s|\${UPTIME_KUMA_SLUG}|${UPTIME_KUMA_SLUG}|g" \
+              -e "s|\${TRAEFIK_USERNAME}|${TRAEFIK_USERNAME}|g" \
+              -e "s|\${TRAEFIK_PASSWORD}|${TRAEFIK_PASSWORD}|g" \
+              -e "s|\${LONGHORN_USERNAME}|${LONGHORN_USERNAME}|g" \
+              -e "s|\${LONGHORN_PASSWORD}|${LONGHORN_PASSWORD}|g" \
+              -e "s|\${GLANCES_USERNAME}|${GLANCES_USERNAME}|g" \
+              -e "s|\${GLANCES_PASSWORD}|${GLANCES_PASSWORD}|g" \
               "$f"
           done
         envFrom:
