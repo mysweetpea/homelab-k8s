@@ -181,6 +181,31 @@ spec:
   policyTypes:
   - Egress
 ---
+# Ingress counterpart: dmz default-deny blocks ALL ingress to pods with no
+# allow rule — affine-main's migrate/init + runtime MUST reach the indexer
+# (9308). Without this, CreateIndexerTables data migration fails with
+# ECONNREFUSED once both pods schedule on an enforcing node.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-affine-indexer-ingress
+  namespace: dmz
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: affine
+      app.kubernetes.io/component: indexer
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: affine
+    ports:
+    - port: 9308
+      protocol: TCP
+  policyTypes:
+  - Ingress
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
