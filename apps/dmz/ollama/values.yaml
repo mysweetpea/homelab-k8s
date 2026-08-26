@@ -4,12 +4,12 @@ controllers:
       main:
         image:
           repository: ollama/ollama
-          tag: 0.32.15
+          tag: 0.33.0
         env:
-          - name: OLLAMA_MODELS
-            value: /data/models
-          - name: OLLAMA_HOST
-            value: 0.0.0.0:11434
+        - name: OLLAMA_MODELS
+          value: /data/models
+        - name: OLLAMA_HOST
+          value: 0.0.0.0:11434
         resources:
           requests:
             cpu: 500m
@@ -25,7 +25,7 @@ persistence:
     size: 20Gi
     storageClass: longhorn
     globalMounts:
-      - path: /data
+    - path: /data
 service:
   main:
     controller: main
