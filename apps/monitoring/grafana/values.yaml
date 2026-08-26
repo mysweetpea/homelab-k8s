@@ -29,6 +29,16 @@ grafana.ini:
     from_name: MySweetPea Grafana
     startTLS_policy: OpportunisticStartTLS
     skip_verify: false
+  # ── MySweetPea branding ──
+  branding:
+    app_title: MySweetPea Grafana
+    login_logo: /public/img/mysweetpea-logo.svg
+    login_background_image: /public/img/mysweetpea-auth-bg.svg
+    login_subtitle: MySweetPea homelab monitoring
+    login_hide_version: true
+    theme: dark
+    report_logo: /public/img/mysweetpea-logo.svg
+    favicon: /public/img/mysweetpea-logo.svg
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -136,6 +146,19 @@ persistence:
   enabled: true
   storageClass: longhorn
   size: 5Gi
+extraVolumes:
+- name: grafana-branding
+  configMap:
+    name: grafana-branding
+extraVolumeMounts:
+- name: grafana-branding
+  mountPath: /public/img/mysweetpea-logo.svg
+  subPath: mysweetpea-logo.svg
+  readOnly: true
+- name: grafana-branding
+  mountPath: /public/img/mysweetpea-auth-bg.svg
+  subPath: mysweetpea-auth-bg.svg
+  readOnly: true
 resources:
   limits:
     cpu: 500m
