@@ -14,6 +14,13 @@ api:
   env:
     HINDSIGHT_API_LLM_MODEL: "deepseek-v4-flash:0731"
     HINDSIGHT_API_LLM_BASE_URL: "https://ollama.com/v1"
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
 
 postgresql:
   enabled: false

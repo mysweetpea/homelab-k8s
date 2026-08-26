@@ -204,7 +204,7 @@ controllers:
           value: "--dns-result-order=ipv4first --require /root/.affine/config/affine-ua-patch.js"
         resources:
           requests:
-            cpu: 500m
+            cpu: 150m
             memory: 512Mi
           limits:
             cpu: "2"
