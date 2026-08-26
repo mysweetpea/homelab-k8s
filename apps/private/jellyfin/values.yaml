@@ -6,8 +6,11 @@ controllers:
           repository: jellyfin/jellyfin
           tag: 10.11.11
         resources:
+          # Right-sized Aug 2026: idle draw ~80-150m; transcode bursts go to
+          # the 6000m limit. Request was 2000m = 1.9 vCPU of phantom
+          # reservation on worker-b (the 97%-committed node).
           requests:
-            cpu: 2000m
+            cpu: 250m
             memory: 1Gi
           limits:
             cpu: 6000m

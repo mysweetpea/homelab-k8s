@@ -78,7 +78,7 @@ server:
             pullPolicy: IfNotPresent
           resources:
             requests:
-              cpu: 250m
+              cpu: 100m
               memory: 512Mi
             limits:
               cpu: "2"
@@ -100,8 +100,8 @@ machine-learning:
             pullPolicy: IfNotPresent
           resources:
             requests:
-              cpu: 250m
-              memory: 1Gi
+              cpu: 100m
+              memory: 512Mi
             limits:
               cpu: "4"
               memory: 4Gi

@@ -53,7 +53,7 @@ spec:
             - name: MODEL_NAME
               value: "gemma4:31b-cloud"
           resources:
-            requests: {cpu: 500m, memory: 2Gi}
+            requests: {cpu: 100m, memory: 512Mi}
             limits: {cpu: "2", memory: 4Gi}
 ---
 apiVersion: apps/v1
@@ -81,7 +81,7 @@ spec:
             - secretRef:
                 name: firecrawl-db
           resources:
-            requests: {cpu: 250m, memory: 1Gi}
+            requests: {cpu: 50m, memory: 256Mi}
             limits: {cpu: "1", memory: 2Gi}
 ---
 apiVersion: apps/v1
@@ -111,5 +111,5 @@ spec:
             - secretRef:
                 name: firecrawl-db
           resources:
-            requests: {cpu: 250m, memory: 1Gi}
+            requests: {cpu: 50m, memory: 256Mi}
             limits: {cpu: "1", memory: 2Gi}
