@@ -33,9 +33,11 @@ controllers:
               name: cloudflared-token
               key: tunnel-token
         resources:
+          # Limits-only: cluster CPU/mem committed (~99%); 50m request + anti-affinity
+          # left the 2nd replica unschedulable
           requests:
-            cpu: 50m
-            memory: 64Mi
+            cpu: 1m
+            memory: 16Mi
           limits:
             cpu: 250m
             memory: 256Mi
