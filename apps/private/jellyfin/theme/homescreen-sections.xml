@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PluginConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Enabled>true</Enabled>
-  <LazyLoadEnabled>false</LazyLoadEnabled>
-  <NumSectionsPerPage>10</NumSectionsPerPage>
+  <LazyLoadEnabled>true</LazyLoadEnabled>
+  <NumSectionsPerPage>6</NumSectionsPerPage>
   <AllowUserOverride>true</AllowUserOverride>
   <LibreTranslateUrl />
   <LibreTranslateApiKey />
@@ -72,22 +72,12 @@
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
     <SectionSettings>
-      <SectionId>topten</SectionId>
-      <Enabled>true</Enabled>
-      <AllowUserOverride>true</AllowUserOverride>
-      <LowerLimit>1</LowerLimit>
-      <UpperLimit>1</UpperLimit>
-      <OrderIndex>2</OrderIndex>
-      <ViewMode>Landscape</ViewMode>
-      <HideWatchedItems>false</HideWatchedItems>
-    </SectionSettings>
-    <SectionSettings>
       <SectionId>Genre</SectionId>
       <Enabled>true</Enabled>
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>5</UpperLimit>
-      <OrderIndex>3</OrderIndex>
+      <OrderIndex>2</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -97,7 +87,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>4</UpperLimit>
-      <OrderIndex>4</OrderIndex>
+      <OrderIndex>3</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -107,7 +97,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>5</OrderIndex>
+      <OrderIndex>4</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -117,7 +107,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>6</OrderIndex>
+      <OrderIndex>5</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -127,7 +117,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>7</OrderIndex>
+      <OrderIndex>6</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -137,17 +127,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>8</OrderIndex>
-      <ViewMode>Landscape</ViewMode>
-      <HideWatchedItems>false</HideWatchedItems>
-    </SectionSettings>
-    <SectionSettings>
-      <SectionId>WatchAgain</SectionId>
-      <Enabled>true</Enabled>
-      <AllowUserOverride>true</AllowUserOverride>
-      <LowerLimit>1</LowerLimit>
-      <UpperLimit>1</UpperLimit>
-      <OrderIndex>9</OrderIndex>
+      <OrderIndex>7</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -157,7 +137,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>10</OrderIndex>
+      <OrderIndex>8</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -167,7 +147,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>11</OrderIndex>
+      <OrderIndex>9</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -177,7 +157,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>12</OrderIndex>
+      <OrderIndex>10</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
