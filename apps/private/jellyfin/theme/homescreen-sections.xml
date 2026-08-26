@@ -72,12 +72,22 @@
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
     <SectionSettings>
+      <SectionId>topten</SectionId>
+      <Enabled>true</Enabled>
+      <AllowUserOverride>true</AllowUserOverride>
+      <LowerLimit>1</LowerLimit>
+      <UpperLimit>1</UpperLimit>
+      <OrderIndex>2</OrderIndex>
+      <ViewMode>Landscape</ViewMode>
+      <HideWatchedItems>false</HideWatchedItems>
+    </SectionSettings>
+    <SectionSettings>
       <SectionId>Genre</SectionId>
       <Enabled>true</Enabled>
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>5</UpperLimit>
-      <OrderIndex>2</OrderIndex>
+      <OrderIndex>3</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -87,7 +97,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>4</UpperLimit>
-      <OrderIndex>3</OrderIndex>
+      <OrderIndex>4</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -97,7 +107,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>4</OrderIndex>
+      <OrderIndex>5</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -107,7 +117,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>5</OrderIndex>
+      <OrderIndex>6</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -117,7 +127,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>6</OrderIndex>
+      <OrderIndex>7</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -127,7 +137,7 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>7</OrderIndex>
+      <OrderIndex>8</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
@@ -137,22 +147,12 @@
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
       <UpperLimit>1</UpperLimit>
-      <OrderIndex>8</OrderIndex>
-      <ViewMode>Landscape</ViewMode>
-      <HideWatchedItems>false</HideWatchedItems>
-    </SectionSettings>
-    <SectionSettings>
-      <SectionId>MyList</SectionId>
-      <Enabled>true</Enabled>
-      <AllowUserOverride>true</AllowUserOverride>
-      <LowerLimit>1</LowerLimit>
-      <UpperLimit>1</UpperLimit>
       <OrderIndex>9</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
     <SectionSettings>
-      <SectionId>MyMedia</SectionId>
+      <SectionId>MyList</SectionId>
       <Enabled>true</Enabled>
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
