@@ -19,9 +19,10 @@ postgresql:
       userPasswordKey: password
   primary:
     resources:
+      # Limits-only: cluster CPU/mem committed (~99%); real requests block scheduling
       requests:
-        cpu: 250m
-        memory: 256Mi
+        cpu: 1m
+        memory: 16Mi
       limits:
         cpu: "1"
         memory: 1Gi
