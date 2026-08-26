@@ -72,21 +72,21 @@
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
     <SectionSettings>
-      <SectionId>Genre</SectionId>
+      <SectionId>BecauseYouWatched</SectionId>
       <Enabled>true</Enabled>
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
-      <UpperLimit>5</UpperLimit>
+      <UpperLimit>3</UpperLimit>
       <OrderIndex>2</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
     </SectionSettings>
     <SectionSettings>
-      <SectionId>BecauseYouWatched</SectionId>
+      <SectionId>Genre</SectionId>
       <Enabled>true</Enabled>
       <AllowUserOverride>true</AllowUserOverride>
       <LowerLimit>1</LowerLimit>
-      <UpperLimit>4</UpperLimit>
+      <UpperLimit>3</UpperLimit>
       <OrderIndex>3</OrderIndex>
       <ViewMode>Landscape</ViewMode>
       <HideWatchedItems>false</HideWatchedItems>
