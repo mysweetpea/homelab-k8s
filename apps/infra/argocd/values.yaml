@@ -278,6 +278,14 @@ repoServer:
     limits:
       cpu: 1000m
       memory: 1Gi
+  # chart default liveness (healthz?full=true, timeoutSeconds:1) kills repo-server
+  # under manifest-generation load (10 restarts observed Aug 20-27); give it headroom
+  livenessProbe:
+    timeoutSeconds: 8
+    periodSeconds: 20
+  readinessProbe:
+    timeoutSeconds: 8
+    periodSeconds: 15
 
 server:
   replicas: 1
