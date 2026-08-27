@@ -684,7 +684,7 @@ extraObjects:
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds
             gitConfig:
-              writeBackTarget: helmvalues:apps/private/hindsight/values.yaml
+              writeBackTarget: helmvalues:../values.yaml
           images:
             - alias: hindsight
               imageName: ghcr.io/vectorize-io/hindsight-api

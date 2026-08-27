@@ -61,7 +61,7 @@ spec:
           mountPath: /etc/livekit
       containers:
       - name: livekit
-        image: livekit/livekit-server:v1.13.5
+        image: livekit/livekit-server:v1.13.6
         command:
         - /livekit-server
         - --config

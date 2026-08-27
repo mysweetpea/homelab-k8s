@@ -44,7 +44,7 @@
         "operation": "executeQuery",
         "query": "SELECT \n  CASE \n    WHEN NOT EXISTS (SELECT 1 FROM invite_codes WHERE code = $1) \n      THEN 'invalid'\n    WHEN EXISTS (SELECT 1 FROM invite_codes WHERE code = $1 AND used = true) \n      THEN 'used'\n    ELSE 'valid'\n  END as status;",
         "options": {
-          "queryReplacement": "={{ $json.code }}"
+          "queryReplacement": "={{ $json.code || 'invalid-missing-code' }}"
         }
       },
       "type": "n8n-nodes-base.postgres",
