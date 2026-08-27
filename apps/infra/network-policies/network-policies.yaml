@@ -133,6 +133,8 @@ spec:
       protocol: TCP
     - port: 9001
       protocol: TCP
+    - port: 563
+      protocol: TCP
     to:
     - ipBlock:
         cidr: 0.0.0.0/0
@@ -316,6 +318,8 @@ spec:
     - port: 587
       protocol: TCP
     - port: 9001
+      protocol: TCP
+    - port: 563
       protocol: TCP
     to:
     - ipBlock:
