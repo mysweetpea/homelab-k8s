@@ -4,6 +4,13 @@ serverName: mysweetpea.cc
 publicServerName: matrix.mysweetpea.cc
 wellknown:
   enabled: true
+  resources:
+    requests:
+      cpu: 5m
+      memory: 15Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
 ingress:
   enabled: false
 postgresql:
