@@ -15,6 +15,14 @@ controllers:
           DOCLING_SERVE_ENABLE_REMOTE_SERVICES: "true"
           DOCLING_SERVE_ALLOW_CUSTOM_PICTURE_DESCRIPTION_CONFIG: "true"
           UVICORN_WORKERS: "1"
+          # Open WebUI integration guide recommends 600s for large documents
+          # (default 120s times out on long PDFs)
+          DOCLING_SERVE_MAX_SYNC_WAIT: "600"
+          # Persist downloaded HF models across pod restarts (was re-downloading every boot)
+          DOCLING_SERVE_ARTIFACTS_PATH: "/models"
+          # Guards for the CPU-only pod
+          DOCLING_SERVE_MAX_FILE_SIZE: "52428800"
+          DOCLING_SERVE_MAX_NUM_PAGES: "300"
           DOCLING_SERVE_CUSTOM_PICTURE_DESCRIPTION_PRESETS: '{"mysweetpea_moondream":{"kind":"picture_description_vlm_engine","model_spec":{"name":"moondream","default_repo_id":"moondream","prompt":"Describe this image in a few sentences.","response_format":"plaintext","supported_engines":["api_ollama"],"api_overrides":{"api_ollama":{"params":{"model":"moondream","max_tokens":200}}}},"engine_options":{"engine_type":"api_ollama","url":"http://ollama.dmz.svc.cluster.local:11434/v1/chat/completions","params":{"model":"moondream"}},"prompt":"Describe this image in a few sentences.","generation_config":{"max_new_tokens":200,"do_sample":false}}}'
         resources:
           requests:
@@ -23,6 +31,14 @@ controllers:
           limits:
             cpu: "2"
             memory: 4Gi
+
+persistence:
+  models:
+    type: persistentVolumeClaim
+    enabled: true
+    existingClaim: docling-models
+    globalMounts:
+      - path: /models
 
 service:
   main:

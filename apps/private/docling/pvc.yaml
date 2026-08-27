@@ -1,0 +1,12 @@
+# Docling model cache PVC (HF artifacts survive pod restarts)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: docling-models
+  namespace: private
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi

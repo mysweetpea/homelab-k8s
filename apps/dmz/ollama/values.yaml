@@ -10,6 +10,23 @@ controllers:
           value: /data/models
         - name: OLLAMA_HOST
           value: 0.0.0.0:11434
+        # Multi-client tuning (AFFiNE, Nextcloud, Open WebUI, Docling all call this server):
+        # keep the 3b model resident so callers don't eat multi-second cold loads every 5m
+        - name: OLLAMA_KEEP_ALIVE
+          value: "2h"
+        # allow 2 concurrent requests instead of queueing; queue headroom above default 512
+        - name: OLLAMA_NUM_PARALLEL
+          value: "2"
+        - name: OLLAMA_MAX_LOADED_MODELS
+          value: "2"
+        # 4096 default context is small for RAG; 8k fits 3b within 8Gi limit
+        - name: OLLAMA_CONTEXT_LENGTH
+          value: "8192"
+        # KV cache quantization frees ~half the cache; more headroom under 8Gi
+        - name: OLLAMA_KV_CACHE_TYPE
+          value: q8_0
+        - name: OLLAMA_FLASH_ATTENTION
+          value: "1"
         resources:
           requests:
             cpu: 500m

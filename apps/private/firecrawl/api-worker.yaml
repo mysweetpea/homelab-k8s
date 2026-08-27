@@ -47,7 +47,10 @@ spec:
                   name: firecrawl-db
                   key: NUQ_DATABASE_URL
             - name: OPENAI_API_KEY
-              value: "093818e81f2e4b75b8906cb43b0bf738.hkW7pmzuXNvqIYEjEmp86C8Y"
+              valueFrom:
+                secretKeyRef:
+                  name: firecrawl-db
+                  key: OPENAI_API_KEY
             - name: OPENAI_BASE_URL
               value: "https://ollama.com/v1"
             - name: MODEL_NAME

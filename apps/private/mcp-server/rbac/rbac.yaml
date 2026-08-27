@@ -13,7 +13,6 @@ rules:
   - pods
   - services
   - configmaps
-  - secrets
   - namespaces
   - persistentvolumeclaims
   verbs:
