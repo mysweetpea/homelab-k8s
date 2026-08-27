@@ -133,6 +133,13 @@ alerting:
               summary: "High ERROR logs detected in cluster"
             labels:
               severity: warning
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    folderAnnotation: grafana_folder
+    provider:
+      allowUiUpdates: true
 smtp:
   existingSecret: grafana-smtp
   userKey: smtp-user
