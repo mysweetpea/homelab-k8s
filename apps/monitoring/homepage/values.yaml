@@ -32,8 +32,6 @@ controllers:
               -e "s|\${TRAEFIK_PASSWORD}|${TRAEFIK_PASSWORD}|g" \
               -e "s|\${LONGHORN_USERNAME}|${LONGHORN_USERNAME}|g" \
               -e "s|\${LONGHORN_PASSWORD}|${LONGHORN_PASSWORD}|g" \
-              -e "s|\${GLANCES_USERNAME}|${GLANCES_USERNAME}|g" \
-              -e "s|\${GLANCES_PASSWORD}|${GLANCES_PASSWORD}|g" \
               "$f"
           done
         envFrom:

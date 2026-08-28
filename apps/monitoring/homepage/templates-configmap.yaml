@@ -410,11 +410,6 @@ data:
             href: http://192.168.20.221
             description: Storage Management
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/longhorn.svg
-        - Glances:
-            id: glances
-            href: http://192.168.20.232:61208
-            description: System Monitor
-            icon: mdi-speedometer
     - Coming Soon:
         - Hermes Agent:
             id: hermes
@@ -555,11 +550,6 @@ data:
         total: true
         labels: true
         nodes: true
-    - glances:
-        url: http://glances.monitoring.svc.cluster.local:61208
-        username: ${GLANCES_USERNAME}
-        password: ${GLANCES_PASSWORD}
-        version: 4
     - openmeteo:
         label: SweetPea
         latitude: 40.7128
