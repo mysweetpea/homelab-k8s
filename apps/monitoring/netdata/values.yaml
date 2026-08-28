@@ -18,6 +18,11 @@ parent:
     - secretRef:
         name: netdata-gotify
   configs:
+    telemetry-opt-out:
+      enabled: true
+      path: /etc/netdata/.opt-out-from-anonymous-statistics
+      data: |
+        # Anonymous usage statistics disabled (privacy: no phone-home).
     health:
       enabled: true
       path: /etc/netdata/health_alarm_notify.conf
