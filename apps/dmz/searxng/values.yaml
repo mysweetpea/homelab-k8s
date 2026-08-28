@@ -58,7 +58,8 @@ configMaps:
               - npm
               - pypi
               - crates.io
-              - docker hub
+              # 'docker hub' engine also removed Aug 28 2026: same empty-response failure
+              # mode as 'github code' (returns 0-byte responses, kills combined queries).
               - mdn
               - mankier
               - lib.rs
