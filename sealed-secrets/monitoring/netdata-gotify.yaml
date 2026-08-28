@@ -1,0 +1,19 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    argocd.argoproj.io/tracking-id: netdata:bitnami.io/SealedSecret:monitoring/netdata-gotify
+  annotations:
+    sealedsecrets.bitnami.com/namespace-wide: "true"
+  name: netdata-gotify
+  namespace: monitoring
+spec:
+  encryptedData:
+    GOTIFY_TOKEN: AgBauUWAchw/MQ3RPTDK13ZkVK5hoJd70sW++8sKG8pzL523kYzAGqBOXn7BKrFZt2m48BT4iiGkdVNPVCKqXvEYBICQjq4bEA9SsNz4phPw0VrrPXV1RlDY8qxWM3kUKN2ynFUdEUpKj56oewqaYHscNiENXRD+5E++J+YVPXs0vS7sC4OAXqiiAwlS2DmtMmg8Z6WEUVzKvOt81XVzjzDBeQXQH4BGq5cupF84dsgPyToa8SJ4+r/PeM3a223LJ5jAE7Z+93rUDGNlp/CYQ0IVnBoG4Z9KrJUWSzpgLn0o1s/x5KP9NN8661hPnf3e9xMH4WqKycVkq7r2Vsf4sjiP1PnwTRm+u45fQ7HEchT/h6Bu1EXiMkDRO5fpYNrdCRz+SMcMebV/8NJ9hpDb3dViN6iXkMw8iw1CTldZ02rIxXfONgtjhMD/Br3AyfRgeFulFP+im1T6zcmEMqJzBRsphNojlKhciiMvOL+7KDqLphCNdrWPWGEGEvdZUN2pJ/VQ3VwkFm86PVQH+sgZi04PBCGeQrpVbCHdNPJ5hOf/1FOFCfnQ038b4Jdp62lt4h8TyTHV1At9bHJF3Ig/EAptJ5sOlhsv0q8f05L+CfjucKU2EcrQJOEcQoE636KMj4Z9j5rExhvxenr2yESJNbqrQWajIAq4wJVsolvCEtQAfv4oueOKWAltNbx3AjbNOZAg9VUslI5AckcaeUfwhOYqGjOXGan9L0M0p6+icmmCO0loDuD/9P1k5jxvGnu/AW/8
+  template:
+    metadata:
+      annotations:
+        sealedsecrets.bitnami.com/namespace-wide: "true"
+      name: netdata-gotify
+      namespace: monitoring

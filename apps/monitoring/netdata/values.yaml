@@ -11,6 +11,13 @@ parent:
     requests:
       cpu: 100m
       memory: 256Mi
+  # Gotify token injected from the netdata-gotify sealed secret (NEVER inline it here —
+  # this repo is public; the token was removed from git in the Aug 28 2026 audit).
+  envValueFrom:
+    GOTIFY_TOKEN:
+      secretKeyRef:
+        name: netdata-gotify
+        key: GOTIFY_TOKEN
   configs:
     health:
       enabled: true
@@ -20,7 +27,8 @@ parent:
         SEND_SLACK="NO"
         SEND_GOTIFY="YES"
         GOTIFY_APP_URL="http://gotify.private.svc.cluster.local:80"
-        GOTIFY_APP_TOKEN="gtfya.7WjZ1rhq2h1FMDapkv7nVwZ3N1752-R2qsfmqE0F5xM"
+        # alarm-notify.sh sources this file as shell — the sealed-secret env var expands here
+        GOTIFY_APP_TOKEN="${GOTIFY_TOKEN}"
         DEFAULT_RECIPIENT_GOTIFY="alarms"
 
 child:
