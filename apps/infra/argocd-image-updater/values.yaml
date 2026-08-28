@@ -278,21 +278,6 @@ extraObjects:
                 helm:
                   name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
-        - namePattern: qdrant
-          writeBackConfig:
-            method: git:secret:argocd/ssh-git-creds
-            gitConfig:
-              writeBackTarget: helmvalues:apps/private/qdrant/values.yaml
-          images:
-            - alias: qdrant
-              imageName: docker.io/qdrant/qdrant
-              commonUpdateSettings:
-                updateStrategy: semver
-                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
-              manifestTargets:
-                helm:
-                  name: image.repository
-                  tag: image.tag
         - namePattern: flaresolverr
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds

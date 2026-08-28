@@ -51,7 +51,6 @@ watch history. Keeping them off the public internet means:
 | `nzbdav/` | Usenet access |
 | `openclaw/` | AI agent gateway |
 | `mcp-server/` | Model Context Protocol server |
-| `qdrant/` | Vector database |
 | `questarr/` | Game discovery (IGDB) |
 | `redis-affine-master/` | Redis for AFFiNE |
 
