@@ -530,21 +530,6 @@ extraObjects:
                 helm:
                   name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
-        - namePattern: questarr
-          writeBackConfig:
-            method: git:secret:argocd/ssh-git-creds
-            gitConfig:
-              writeBackTarget: helmvalues:apps/private/questarr/values.yaml
-          images:
-            - alias: questarr
-              imageName: ghcr.io/doezer/questarr
-              commonUpdateSettings:
-                updateStrategy: semver
-                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
-              manifestTargets:
-                helm:
-                  name: controllers.main.containers.main.image.repository
-                  tag: controllers.main.containers.main.image.tag
         - namePattern: searxng
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds

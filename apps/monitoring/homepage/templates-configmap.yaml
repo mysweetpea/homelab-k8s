@@ -206,11 +206,6 @@ data:
             href: http://192.168.20.214:8191
             description: Cloudflare Bypass
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
-        - Questarr:
-            id: questarr
-            href: http://192.168.20.227:5000
-            description: Game Requests
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/steam.svg
         - Zilean:
             id: zilean
             href: http://192.168.20.231:8181

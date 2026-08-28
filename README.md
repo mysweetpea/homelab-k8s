@@ -151,7 +151,7 @@ without manual intervention.
 | Zone | Services |
 |------|----------|
 | **DMZ** (public, behind SSO) | Authentik, Cloudflare Tunnel, Matrix (Synapse + Element), Vaultwarden, AFFiNE, Seerr, KoalaSync, Ollama, SearXNG |
-| **Private** (LAN / internal) | Jellyfin (Moonfin + 34 plugins), Nextcloud, Immich, n8n, Gotify, Open WebUI, Radarr/Sonarr/Bazarr/Prowlarr/qBittorrent, AIOStreams, RustDesk, Qdrant, Questarr, MCP server, NZBDav, OpenClaw, Flaresolverr, PostgreSQL, Redis |
+| **Private** (LAN / internal) | Jellyfin (Moonfin + 34 plugins), Nextcloud, Immich, n8n, Gotify, Open WebUI, Radarr/Sonarr/Bazarr/Prowlarr/qBittorrent, AIOStreams, RustDesk, MCP server, NZBDav, OpenClaw, Flaresolverr, PostgreSQL, Redis |
 | **Monitoring** | Homepage dashboard, Uptime Kuma, Grafana + Loki + Promtail, Netdata |
 | **Infra** | ArgoCD, Image Updater, cert-manager, Longhorn, MetalLB, NetworkPolicies |
 
@@ -226,7 +226,7 @@ the off-site repos small.
 │   │   ├── aiostreams/         # Streaming (Stremio-style)
 │   │   ├── rustdesk/           # Remote desktop
 │   │   ├── flaresolverr/       # Cloudflare-bypass proxy
-│   │   ├── nzbdav/ openclaw/ mcp-server/ qdrant/ questarr/
+│   │   ├── nzbdav/ openclaw/ mcp-server/
 │   │   ├── media-storage/      # Shared 200Gi media PVC
 │   │   ├── redis-affine-master/
 │   │   └── ingress-routes/
