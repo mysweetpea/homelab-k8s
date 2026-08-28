@@ -44,7 +44,6 @@ configMaps:
         server:
           base_url: "http://192.168.20.230:8080"
           image_proxy: true
-          method: "GET"
 
         search:
           formats:
