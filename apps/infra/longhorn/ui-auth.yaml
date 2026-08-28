@@ -1,13 +1,7 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: longhorn-basic-auth
-  namespace: longhorn-system
-type: Opaque
-stringData:
-  user: sweetpea
-  pass: MySweetPea-Longhorn-2026!
-  htpasswd: 'sweetpea:$apr1$mysweetp$UvLDNJ6W/vjPMJZDryb4n.'
+# SECURITY (audit Aug 28 2026): the Secret now ships SEALED at
+# sealed-secrets/longhorn-system/longhorn-basic-auth.yaml — the plaintext
+# form previously committed here has been removed. Apply order: sealed
+# secret first, then this file.
 ---
 apiVersion: v1
 kind: ConfigMap
