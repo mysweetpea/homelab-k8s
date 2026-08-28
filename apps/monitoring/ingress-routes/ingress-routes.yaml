@@ -30,7 +30,7 @@ spec:
     - match: Host(`status.mysweetpea.cc`)
       kind: Rule
       middlewares:
-        - name: kuma-auth@kubernetescrd
+        - name: kuma-auth
       services:
         - name: uptime-kuma
           port: 3001
