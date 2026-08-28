@@ -20,15 +20,13 @@ config:
 extraArgs:
   - --registries-conf-path
   - /app/config/registries.conf
-# The controller gates readiness on its first cache warm-up (readyz 'warmup-check'). A slow
-# registry call during warm-up (e.g. docker.io rate-limiting) stalls the gate; with the chart
-# defaults (failureThreshold 3 x period 20s) kubelet kills the pod ~1 min in and the warm-up
-# restarts from zero -> endless loop (13 restarts in 14d on the old pod). The reconcile loop
-# itself completes in ~13s with zero errors, so give readiness a 15-minute grace window to let
-# a slow warm-up finish instead of thrashing.
-readinessProbe:
-  failureThreshold: 30
-  periodSeconds: 20
+# NOTE (audit Aug 28 2026): the controller gates readiness on its first cache warm-up
+# (readyz 'warmup-check'). A slow registry call during warm-up stalls the gate; chart 1.2.x
+# HARDCODES the readiness probe (failureThreshold 3, no values override supported), so a
+# >1min warm-up causes a restart loop. Observed behavior: warm-up eventually completes
+# (~10-12min) and the pod goes 1/1 Ready; reconcile loop itself always worked (13s, 0 errors).
+# If restarts recur, options: chart-side fix (upstream issue candidate), or a kubectl patch
+# post-sync (rejected: breaks GitOps purity).
 # ImageUpdater CR — v1.2.1 controller is CR-driven.
 # CRITICAL (Session 41, Aug 14 2026): each app needs BOTH
 #   - images[].manifestTargets.helm.tag = <values.yaml tag path>  (where to write)
