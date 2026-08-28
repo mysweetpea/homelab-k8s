@@ -10,8 +10,8 @@ spec:
     namespace: monitoring
   sources:
     - chart: grafana
-      repoURL: https://grafana.github.io/helm-charts
-      targetRevision: 8.8.2
+      repoURL: https://grafana-community.github.io/helm-charts
+      targetRevision: 13.0.0
       helm:
         valueFiles:
           - $values/apps/monitoring/grafana/values.yaml
