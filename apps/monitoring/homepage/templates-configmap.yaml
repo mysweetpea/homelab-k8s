@@ -35,34 +35,34 @@ data:
         header: false
         style: row
         columns: 4
-      Core Services:
+      Infrastructure:
         tab: 🏠 Home
         icon: mdi-server-outline
         style: row
         columns: 4
-      Monitoring:
-        tab: 📊 System
-        icon: mdi-chart-line
-        style: row
-        columns: 5
       Streaming:
         tab: 🎬 Media
         icon: mdi-movie-open-outline
         style: row
-        columns: 4
-      Arr Stack:
+        columns: 5
+      Download Stack:
         tab: 🎬 Media
         icon: mdi-download-multiple-outline
         style: row
         columns: 4
-      AI Services:
+      AI & Assistants:
         tab: 🤖 AI
         icon: mdi-robot-outline
         style: row
-        columns: 3
-      Personal:
+        columns: 4
+      AI Tooling:
+        tab: 🤖 AI
+        icon: mdi-tools
+        style: row
+        columns: 5
+      Personal Cloud:
         tab: 🔒 Private
-        icon: mdi-account-heart-outline
+        icon: mdi-cloud-lock-outline
         style: row
         columns: 4
       Chat:
@@ -78,12 +78,15 @@ data:
 
   bookmarks.yaml: |
     - Quick Links:
-        - Homepage:
-            - abbr: HP
-              href: http://192.168.20.213:3000
+        - My Site:
+            - abbr: MS
+              href: https://mysweetpea.cc
         - GitHub:
             - abbr: GH
               href: https://github.com/mysweetpea
+        - Cloudflare:
+            - abbr: CF
+              href: https://dash.cloudflare.com
         - ArgoCD:
             - abbr: AR
               href: http://192.168.20.220
@@ -134,11 +137,6 @@ data:
             href: http://192.168.20.222:3000
             description: Stream Anything
             icon: mdi-all-inclusive-box
-        - NzbDAV:
-            id: nzbdav
-            href: http://192.168.20.212:8080
-            description: Usenet Downloads
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
         - Decypharr:
             id: decypharr
             href: http://192.168.20.215:8282
@@ -154,7 +152,12 @@ data:
                   format: size
                 - field: version
                   label: API
-    - Arr Stack:
+        - NzbDAV:
+            id: nzbdav
+            href: http://192.168.20.212:8080
+            description: Usenet Streaming (WebDAV)
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/sabnzbd.svg
+    - Download Stack:
         - Radarr:
             id: radarr
             href: http://192.168.20.218:7878
@@ -194,24 +197,24 @@ data:
         - qBittorrent:
             id: qbittorrent
             href: http://192.168.20.225:8080
-            description: Download Client
+            description: Torrent Client (Games)
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/qbittorrent.svg
             widget:
               type: qbittorrent
               url: http://qbittorrent.private.svc.cluster.local:8080
               username: ${QBITTORRENT_USER}
               password: ${QBITTORRENT_PASS}
-        - FlareSolverr:
-            id: flaresolverr
-            href: http://192.168.20.214:8191
-            description: Cloudflare Bypass
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
         - Zilean:
             id: zilean
             href: http://192.168.20.231:8181
             description: DMM Cached Indexer
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/prowlarr.svg
-    - AI Services:
+        - FlareSolverr:
+            id: flaresolverr
+            href: http://192.168.20.214:8191
+            description: Cloudflare Bypass
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/flaresolverr.svg
+    - AI & Assistants:
         - Open WebUI:
             id: open-webui
             href: https://ai.mysweetpea.cc
@@ -230,31 +233,6 @@ data:
                 - field: models
                   label: Models
                   format: size
-        - Docling:
-            id: docling
-            href: http://192.168.20.234:5001
-            description: Document Conversion
-            icon: mdi-file-convert-outline
-        - Pipelines:
-            id: pipelines
-            href: http://192.168.20.235:9099
-            description: Agent Pipelines
-            icon: mdi-sitemap
-        - Open Terminal:
-            id: open-terminal
-            href: http://192.168.20.236:8000
-            description: AI Terminal Server
-            icon: mdi-console-line
-        - Firecrawl:
-            id: firecrawl
-            href: http://192.168.20.237:3002
-            description: Web Scraper API
-            icon: mdi-spider-web
-        - MCP Server:
-            id: mcp-server
-            href: http://192.168.20.238:8080
-            description: Kubernetes MCP
-            icon: mdi-cube-outline
         - Hindsight:
             id: hindsight
             href: http://192.168.20.233:8888
@@ -265,7 +243,28 @@ data:
             href: http://192.168.20.217:8080
             description: AI Agent Gateway
             icon: mdi-robot-outline
-    - Personal:
+    - AI Tooling:
+        - Docling:
+            id: docling
+            href: http://192.168.20.234:5001
+            description: Document Conversion
+            icon: mdi-file-convert-outline
+        - Firecrawl:
+            id: firecrawl
+            href: http://192.168.20.237:3002
+            description: Web Scraper API
+            icon: mdi-spider-web
+        - MCP Server:
+            id: mcp-server
+            href: http://192.168.20.238:8080
+            description: Kubernetes MCP
+            icon: mdi-cube-outline
+        - Open Terminal:
+            id: open-terminal
+            href: http://192.168.20.236:8000
+            description: AI Terminal Server
+            icon: mdi-console-line
+    - Personal Cloud:
         - Vaultwarden:
             id: vaultwarden
             href: https://vault.mysweetpea.cc
@@ -325,6 +324,17 @@ data:
             href: https://sync.mysweetpea.cc
             description: Sync Watch Parties
             icon: mdi-sync
+            widget:
+              type: customapi
+              url: http://koalasync.dmz.svc.cluster.local:3000/health
+              method: GET
+              mappings:
+                - field: rooms
+                  label: Rooms
+                  format: number
+                - field: connections
+                  label: Peers
+                  format: number
         - RustDesk:
             id: rustdesk
             href: http://192.168.20.216:21115
@@ -334,7 +344,7 @@ data:
         - Element:
             id: element
             href: https://chat.mysweetpea.cc
-            description: Matrix Chat Client
+            description: Matrix Client · Chat, Voice & Video
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
         - Matrix Synapse:
             id: matrix
@@ -346,12 +356,7 @@ data:
             href: https://mas.mysweetpea.cc
             description: Matrix Auth Service
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/matrix.svg
-        - Element Call:
-            id: element-call
-            href: https://chat.mysweetpea.cc
-            description: Voice & Video Calls
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/element.svg
-    - Core Services:
+    - Infrastructure:
         - Authentik:
             id: authentik
             href: https://auth.mysweetpea.cc
@@ -382,7 +387,6 @@ data:
             href: http://192.168.20.230:8080
             description: Private Search
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
-    - Monitoring:
         - Uptime Kuma:
             id: uptime-kuma
             href: https://status.mysweetpea.cc
@@ -395,7 +399,7 @@ data:
         - Grafana:
             id: grafana
             href: http://192.168.20.226:3000
-            description: Dashboards, Logs & Metrics
+            description: Dashboards & Logs
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/grafana.svg
         - Netdata:
             id: netdata
@@ -414,119 +418,54 @@ data:
         - Hermes Agent:
             id: hermes
             href: https://hermes.mysweetpea.cc
-            description: AI Assistant - Coming Soon
+            description: AI Assistant
             icon: mdi-robot-happy-outline
+        - Sunshine VM:
+            id: sunshine
+            href: ""
+            description: Cloud Gaming (games via qBittorrent)
+            icon: mdi-sun-wireless-outline
+            server: ""
         - Torrin:
             id: torrin
             href: https://torrin.mysweetpea.cc
-            description: Debrid Service - Coming Soon
+            description: Debrid Service
             icon: mdi-link-variant
-        - Stremio:
-            id: stremio
-            href: https://www.stremio.com
-            description: Streaming App - Coming Soon
-            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/stremio.svg
         - Neko:
             id: neko
             href: https://neko.mysweetpea.cc
-            description: Virtual Browser - Coming Soon
+            description: Virtual Browser
             icon: mdi-cat
+        - Stremio:
+            id: stremio
+            href: https://www.stremio.com
+            description: Streaming App
+            icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/stremio.svg
         - Syncthing:
             id: syncthing
             href: ""
-            description: File Sync - Coming Soon
+            description: File Sync
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/syncthing.svg
             server: ""
         - Stalwart:
             id: stalwart
             href: ""
-            description: Mail Server - Coming Soon
+            description: Mail Server
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/stalwart.svg
             server: ""
         - Remux:
             id: remux
             href: ""
-            description: Media Transcoder - Coming Soon
+            description: Media Transcoder
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/tdarr.svg
             server: ""
         - Obsidian:
             id: obsidian
             href: ""
-            description: Knowledge Base - Coming Soon
+            description: Knowledge Base
             icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@main/svg/obsidian.svg
             server: ""
-        - Minecraft:
-            id: minecraft
-            href: ""
-            description: Game Server - Coming Soon
-            icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@main/svg/minecraft.svg
-            server: ""
-        - Valheim:
-            id: valheim
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-axe
-            server: ""
-        - Palworld:
-            id: palworld
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-paw
-            server: ""
-        - Terraria:
-            id: terraria
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-pickaxe
-            server: ""
-        - Rust:
-            id: rust
-            href: ""
-            description: Game Server - Coming Soon
-            icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@main/svg/rust.svg
-            server: ""
-        - ARK:
-            id: ark
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-dinosaur
-            server: ""
-        - CS2:
-            id: cs2
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-crosshairs
-            server: ""
-        - Factorio:
-            id: factorio
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-factory
-            server: ""
-        - Satisfactory:
-            id: satisfactory
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-conveyor-belt
-            server: ""
-        - Project Zomboid:
-            id: project-zomboid
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-skull
-            server: ""
-        - 7 Days to Die:
-            id: 7dtd
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-skull-crossbones
-            server: ""
-        - Garry's Mod:
-            id: gmod
-            href: ""
-            description: Game Server - Coming Soon
-            icon: mdi-toy-brick-outline
-            server: ""
+
   widgets.yaml: |
     - resources:
         backend: resources
@@ -554,6 +493,12 @@ data:
         label: SweetPea
         latitude: 40.7128
         longitude: -74.006
+    - datetime:
+        text_size: xl
+        format:
+          dateStyle: long
+          timeStyle: short
+          hourCycle: h12
     - greeting:
         text: SweetPea
         text_size: xl
@@ -845,4 +790,3 @@ data:
       if (document.readyState === "complete") init();
       else window.addEventListener("load", init);
     })();
-
