@@ -172,18 +172,13 @@ extraVolumeMounts:
   mountPath: /usr/share/grafana/public/img/grafana_text_logo_light.svg
   subPath: mysweetpea-logo.svg
   readOnly: true
-# Favicons (contrast-boosted flower renders; login <link> points at build/img/fav32.png)
-- name: grafana-branding
-  mountPath: /usr/share/grafana/public/img/fav32.png
-  subPath: fav32.png
-  readOnly: true
+# Favicons (contrast-boosted flower renders). NOTE: only the build/img/ copies are mounted —
+# the login <link> references build/img/fav32.png (relative), and nested subPath mounts into
+# public/img/ (where grafana_icon.svg already mounts) fail at container-create with
+# 'not a directory' (nested bind-mount ordering).
 - name: grafana-branding
   mountPath: /usr/share/grafana/public/build/img/fav32.png
   subPath: fav32.png
-  readOnly: true
-- name: grafana-branding
-  mountPath: /usr/share/grafana/public/img/apple-touch-icon.png
-  subPath: apple-touch-icon.png
   readOnly: true
 - name: grafana-branding
   mountPath: /usr/share/grafana/public/build/img/apple-touch-icon.png
