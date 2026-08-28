@@ -235,7 +235,7 @@ additionalObjects:
           state: present
         - attrs:
             backchannel_providers: []
-            group: ''
+            group: Private Cloud
             meta_description: Next-gen knowledge base — planning, sorting and creating together.
             meta_hide: false
             meta_icon: https://mysweetpea.cc/assets/icons/affine.svg
@@ -254,7 +254,7 @@ additionalObjects:
           state: present
         - attrs:
             backchannel_providers: []
-            group: ''
+            group: Private Cloud
             meta_description: Self-hosted photo and video backup with AI search.
             meta_hide: false
             meta_icon: https://mysweetpea.cc/assets/icons/immich.svg
@@ -273,7 +273,7 @@ additionalObjects:
           state: present
         - attrs:
             backchannel_providers: []
-            group: ''
+            group: Media
             meta_description: Movies, TV shows and music, streamed to any device.
             meta_hide: false
             meta_icon: https://mysweetpea.cc/assets/icons/jellyfin.svg
@@ -292,7 +292,7 @@ additionalObjects:
           state: present
         - attrs:
             backchannel_providers: []
-            group: ''
+            group: Media
             meta_description: Sync your AI conversations across devices.
             meta_hide: false
             meta_icon: https://mysweetpea.cc/assets/icons/koalasync.svg
@@ -311,7 +311,7 @@ additionalObjects:
           state: present
         - attrs:
             backchannel_providers: []
-            group: ''
+            group: Chat
             meta_description: Secure, decentralized chat with Element.
             meta_hide: false
             meta_icon: https://mysweetpea.cc/assets/icons/matrix.svg
@@ -330,7 +330,7 @@ additionalObjects:
           state: present
         - attrs:
             backchannel_providers: []
-            group: ''
+            group: Private Cloud
             meta_description: Your files, calendar, contacts and office documents.
             meta_hide: false
             meta_icon: https://mysweetpea.cc/assets/icons/nextcloud.svg
@@ -349,7 +349,7 @@ additionalObjects:
           state: present
         - attrs:
             backchannel_providers: []
-            group: ''
+            group: AI
             meta_description: Private AI chat with your own models.
             meta_hide: false
             meta_icon: https://mysweetpea.cc/assets/icons/openwebui.svg
@@ -368,7 +368,7 @@ additionalObjects:
           state: present
         - attrs:
             backchannel_providers: []
-            group: ''
+            group: Security
             meta_description: Password manager — keep your credentials safe.
             meta_hide: false
             meta_icon: https://mysweetpea.cc/assets/icons/vaultwarden.svg
@@ -2287,20 +2287,21 @@ additionalObjects:
         - attrs:
             captcha_stage: null
             case_insensitive_matching: true
-            enable_remember_me: false
+            enable_remember_me: true
             enrollment_flow: null
             name: default-authentication-identification
             password_stage: null
             passwordless_flow: null
             pretend_user_exists: true
-            recovery_flow: null
+            recovery_flow:
+              pk: d2918f48-9401-4638-a60a-4a340fb7c62c
             show_matched_user: true
             show_source_labels: false
             sources: []
             user_fields:
             - email
             - username
-            webauthn_stage: null
+            webauthn_stage: 4be25534-be0c-47a2-ba2d-5d2c416d3423
           conditions: []
           identifiers:
             pk: 6900b58d-d2a4-4df2-82a2-ae7bdfee22b1
@@ -2610,7 +2611,7 @@ additionalObjects:
             network_binding: no_binding
             remember_device: days=30
             remember_me_offset: seconds=0
-            session_duration: seconds=0
+            session_duration: days=7
             terminate_other_sessions: true
           conditions: []
           identifiers:
