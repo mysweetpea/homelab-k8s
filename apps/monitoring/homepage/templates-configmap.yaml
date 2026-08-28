@@ -389,7 +389,7 @@ data:
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/searxng.svg
         - Uptime Kuma:
             id: uptime-kuma
-            href: https://status.mysweetpea.cc
+            href: https://status.mysweetpea.cc/status/homelab
             description: Health Checks & Status
             icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/uptime-kuma.svg
             widget:
