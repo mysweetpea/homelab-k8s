@@ -1,0 +1,36 @@
+# Longhorn settings — durable copy of out-of-band Settings CR changes (Aug 28 2026 audit)
+#
+# Longhorn is helm-installed on the master (helm release `longhorn` in longhorn-system, chart
+# 1.12.1) with ALL chart values null — the settings below live as Settings CRs that helm does
+# NOT manage. Helm upgrades preserve them, but they are not in Git without this file.
+#
+# Apply: kubectl apply -f apps/infra/longhorn/settings.yaml
+# (idempotent; matches live values as of the Aug 28 audit)
+---
+apiVersion: longhorn.io/v1beta2
+kind: Setting
+metadata:
+  name: default-replica-count
+  namespace: longhorn-system
+value: '{"v1":"2","v2":"2"}'   # 2 workers only — 3 replicas on 2 nodes cannot schedule
+---
+apiVersion: longhorn.io/v1beta2
+kind: Setting
+metadata:
+  name: upgrade-checker
+  namespace: longhorn-system
+value: "false"                 # no phone-home to longhorn.io (privacy, matches Grafana posture)
+---
+apiVersion: longhorn.io/v1beta2
+kind: Setting
+metadata:
+  name: storage-over-provisioning-percentage
+  namespace: longhorn-system
+value: "200"                   # raised Aug 19 2026 during eviction (logical vs max space)
+---
+apiVersion: longhorn.io/v1beta2
+kind: Setting
+metadata:
+  name: replica-auto-balance
+  namespace: longhorn-system
+value: "disabled"              # 39/39 replicas already perfectly split across the 2 workers
