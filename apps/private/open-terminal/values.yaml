@@ -14,6 +14,11 @@ controllers:
         envFrom:
         - secretRef:
             name: open-terminal-secret
+        env:
+          # cap runaway agent commands (unset = runs forever)
+          OPEN_TERMINAL_EXECUTE_TIMEOUT: "300"
+          # only Open WebUI may call the API
+          CORS_ALLOWED_ORIGINS: "https://chat.mysweetpea.cc"
         resources:
           requests:
             cpu: 100m

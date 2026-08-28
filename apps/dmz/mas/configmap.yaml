@@ -57,6 +57,10 @@ data:
           client_secret_file: /secrets/ak-client-secret
           token_endpoint_auth_method: client_secret_basic
           scope: "openid profile email"
+          # harden the code flow with PKCE (S256); Authentik supports it
+          pkce_method: always
+          # kill all MAS sessions when Authentik logs out (backchannel logout)
+          on_backchannel_logout: logout_all
           claims_imports:
             localpart:
               action: require
@@ -68,6 +72,8 @@ data:
             email:
               action: suggest
               template: "{{ user.email }}"
+            # skip the "confirm these attributes" screen — frictionless first login
+            skip_confirmation: true
 
     account:
       email_change_allowed: false

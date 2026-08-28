@@ -25,6 +25,11 @@ config:
   # --- Element Call (MatrixRTC via LiveKit) — exclusive VoIP stack ---
   element_call:
     use_exclusively: true
+    # branded strings instead of "Element Call"
+    brand: MySweetPea Calls
+  # unauthenticated users go straight into the SSO flow (single IdP, no passwords)
+  sso_redirect_options:
+    immediate: true
   # --- MySweetPea custom theme (teal accent, matches Jellyfin/Homepage) ---
   # Theme name in settings is "custom-MySweetPea" (enumerateThemes prefixes
   # custom-). compound tokens override the Compound design system; colors
