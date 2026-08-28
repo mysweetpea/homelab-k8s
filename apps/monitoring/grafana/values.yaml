@@ -147,29 +147,26 @@ persistence:
   size: 5Gi
 # ── MySweetPea branding (OSS approach) ──
 # Grafana OSS ignores the Enterprise-only [branding] ini section. The login card + navbar logo come
-# from the stock file /usr/share/grafana/public/img/grafana_icon.svg — overwrite it (and the text
-# logos for consistency) from the grafana-branding ConfigMap in a root initContainer before grafana boots.
-extraInitContainers:
-- name: branding
-  image: busybox:1.37
-  command:
-    - sh
-    - -c
-    - |
-      cp /branding/mysweetpea-logo.svg /usr/share/grafana/public/img/grafana_icon.svg
-      cp /branding/mysweetpea-logo.svg /usr/share/grafana/public/img/grafana_text_logo_dark.svg
-      cp /branding/mysweetpea-logo.svg /usr/share/grafana/public/img/grafana_text_logo_light.svg
-      chown 472:472 /usr/share/grafana/public/img/grafana_icon.svg \
-                     /usr/share/grafana/public/img/grafana_text_logo_dark.svg \
-                     /usr/share/grafana/public/img/grafana_text_logo_light.svg
-  volumeMounts:
-  - name: grafana-branding
-    mountPath: /branding
-    readOnly: true
+# from stock files in /usr/share/grafana/public/img/ — the web root. ConfigMap subPath mounts shadow
+# the stock files in place (kubelet does the mount; no root initContainer needed; siblings untouched).
+# NOTE: subPath mounts need the target file's directory to exist in the image — it does (stock files).
 extraVolumes:
 - name: grafana-branding
   configMap:
     name: grafana-branding
+extraVolumeMounts:
+- name: grafana-branding
+  mountPath: /usr/share/grafana/public/img/grafana_icon.svg
+  subPath: mysweetpea-logo.svg
+  readOnly: true
+- name: grafana-branding
+  mountPath: /usr/share/grafana/public/img/grafana_text_logo_dark.svg
+  subPath: mysweetpea-logo.svg
+  readOnly: true
+- name: grafana-branding
+  mountPath: /usr/share/grafana/public/img/grafana_text_logo_light.svg
+  subPath: mysweetpea-logo.svg
+  readOnly: true
 resources:
   limits:
     cpu: 500m
