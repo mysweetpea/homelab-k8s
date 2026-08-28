@@ -1,0 +1,14 @@
+---
+# Basic-auth middleware protecting the Uptime Kuma ADMIN surface
+# (anything under status.mysweetpea.cc that is not the public status page).
+# Creds = kuma-auth secret (same user/hash as traefik-dashboard-auth).
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: kuma-auth
+  namespace: monitoring
+  annotations:
+    argocd.argoproj.io/tracking-id: monitoring-ingress-routes:traefik.io/Middleware:monitoring/kuma-auth
+spec:
+  basicAuth:
+    secret: kuma-auth

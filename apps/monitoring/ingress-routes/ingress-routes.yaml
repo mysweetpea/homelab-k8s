@@ -1,7 +1,14 @@
 ---
-# Uptime Kuma — status.mysweetpea.cc
-# Tunnel routes status.mysweetpea.cc -> Traefik (192.168.20.210:80)
-# This IngressRoute sends it to the uptime-kuma service in monitoring.
+# Uptime Kuma — status.mysweetpea.cc (split-routing)
+# Tunnel routes status.mysweetpea.cc -> Traefik (192.168.20.210:80).
+#
+# Public surface (visitor status page, consumed by mysweetpea.cc/status.html):
+#   /status/public                      — public status page
+#   /api/status-page/public             — page config API
+#   /api/status-page/heartbeat/public   — heartbeat API
+#
+# Everything else (admin UI, /status/homelab, metrics, sockets) requires
+# basic auth (kuma-auth secret — same creds as traefik-dashboard-auth).
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -11,10 +18,19 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`status.mysweetpea.cc`)
+    # --- public: visitor status page + its two read-only APIs ---
+    - match: Host(`status.mysweetpea.cc`) && (PathPrefix(`/status/public`) || Path(`/api/status-page/public`) || PathPrefix(`/api/status-page/heartbeat/public`))
       kind: Rule
       middlewares:
         - name: uptime-kuma-cors
+      services:
+        - name: uptime-kuma
+          port: 3001
+    # --- admin surface: everything else under the host ---
+    - match: Host(`status.mysweetpea.cc`)
+      kind: Rule
+      middlewares:
+        - name: kuma-auth@kubernetescrd
       services:
         - name: uptime-kuma
           port: 3001

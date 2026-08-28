@@ -1,0 +1,13 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: kuma-auth
+  namespace: monitoring
+spec:
+  encryptedData:
+    users: AgB5c7rDSoODfjdK64SCs5AyPmVVO+J16Srh8tDdCrtK6/Yuf9HKeyr7Em8uSl+DUg0eZmM9PQsm/3HJEU9R0YL3vCTXqvOKj9UHdRgqSKYrjFEXFch7ywIr24IiZFdmAQNB3b+rvz4geL2vA1t01v0OEu1gKzvWxBHXxPIHXzySpSo98wiS1B4Cyj5k66ZRnY7mwYu5UnX1F/2RKV4jCkkPuMQcz8PIq/yERxhZCWpDBzVpZUm7JAAnwSy4QbJcA+/Oo+HcerPnHDlLJvV0jy0QBBcZI5XQIiqe6VqAeBRCq1fYIago1URyjf0VYXLe7qknccfy0626MY3Et/ykI4TjSDedZ1xUcj1seZO/vYYjvXuZ7xGJErm8eTbiom6hXnn0mErozeeBA/icOpUk9HHbjjsYn18Do/7CX4QoUoIoBbSUMemn1iA62KzLXMwnsC8Ebj04VOQHu0qWfLltBTKps6jHyNx7sZ0lPRjJbuMrfV/+nolFnBSY2rh/1mBAgdoJdn1YavuSkWcHuTDluMETWzda8LT6vf/Tl+zKCPeU1Agum0m0ap9WliFpgUk2FO96YADVRbyBb8BgC0KSIHEYIaQP1jdgKtYQDMHQH7bIqzHW35uqENJAeUupmMZVDeTvwCllQJ4uNF1eCQZf+U71zDK2ge6WMp7z91q+IXdhxfvEfZwIQG9jDNWPK61Xb0o5A7qIdqy9a8aCyceNRT7Z0TuOm6O8V8c4PHDaCJ1aQamwpRPKRVgT2zsOQjWjkQ==
+  template:
+    metadata:
+      name: kuma-auth
+      namespace: monitoring
