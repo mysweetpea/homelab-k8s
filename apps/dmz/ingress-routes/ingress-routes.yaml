@@ -30,6 +30,7 @@ spec:
       kind: Rule
       middlewares:
         - name: authentik-https-headers
+        - name: authentik-rate-limit
       services:
         - name: authentik-server
           port: 80

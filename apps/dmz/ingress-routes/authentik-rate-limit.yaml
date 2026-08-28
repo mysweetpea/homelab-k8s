@@ -1,0 +1,16 @@
+---
+# Rate-limit the SSO front door (defense-in-depth beneath the Cloudflare edge rule).
+# avg 10 req/10s per source IP with burst 20 — generous for legit SSO traffic
+# (browser fetches CSS/JS/icons on login), tight enough to blunt credential stuffing.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: authentik-rate-limit
+  namespace: dmz
+  annotations:
+    argocd.argoproj.io/tracking-id: dmz-ingress-routes:traefik.io/Middleware:dmz/authentik-rate-limit
+spec:
+  rateLimit:
+    average: 10
+    period: 10s
+    burst: 20
