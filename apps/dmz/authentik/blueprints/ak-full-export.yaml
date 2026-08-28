@@ -2189,8 +2189,7 @@ entries:
     password_stage: null
     passwordless_flow: null
     pretend_user_exists: true
-    recovery_flow:
-      pk: d2918f48-9401-4638-a60a-4a340fb7c62c
+    recovery_flow: d2918f48-9401-4638-a60a-4a340fb7c62c
     show_matched_user: true
     show_source_labels: false
     sources: []
