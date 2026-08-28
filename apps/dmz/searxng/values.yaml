@@ -26,96 +26,17 @@ configMaps:
       settings.yml: |
         # MySweetPea SearXNG — curated settings (GitOps-managed)
         # Full docs: https://docs.searxng.org/admin/settings/
-        use_default_settings:
-          engines:
-            keep_only:
-              # general web (all support the site: operator)
-              - google
-              - bing
-              - duckduckgo
-              - brave
-              - mojeek
-              - qwant
-              - yep
-              - marginalia
-              - mwmbl
-              - sepiasearch
-              - searchmysite
-              - wiby
-              - wikipedia
-              - wiktionary
-              # IT / code
-              - github
-              # 'github code' engine removed Aug 28 2026: crashes the gunicorn worker when
-              # combined with other engines (connection dies mid-response, empty 200s) —
-              # the GitHub code-search API requires auth and hard-fails unauthenticated.
-              - gitlab
-              - codeberg
-              - stackoverflow
-              - superuser
-              - askubuntu
-              - hackernews
-              - npm
-              - pypi
-              - crates.io
-              # 'docker hub' engine also removed Aug 28 2026: same empty-response failure
-              # mode as 'github code' (returns 0-byte responses, kills combined queries).
-              - mdn
-              - mankier
-              - lib.rs
-              - pub.dev
-              - rubygems
-              - packagist
-              # science
-              - arxiv
-              - pubmed
-              - crossref
-              - semantic scholar
-              - openalex
-              - springer nature
-              - core.ac.uk
-              # images
-              - bing images
-              - google images
-              - duckduckgo images
-              - brave.images
-              - pixabay images
-              - openverse
-              - unsplash
-              - wallhaven
-              # videos
-              - bing videos
-              - duckduckgo videos
-              - brave.videos
-              - google videos
-              - vimeo
-              - dailymotion
-              - peertube
-              - odysee
-              - rumble
-              # news
-              - bing news
-              - duckduckgo news
-              - google news
-              - qwant news
-              # music
-              - bandcamp
-              - soundcloud
-              # map
-              - openstreetmap
-              - photon
-              # social
-              - lemmy posts
-              - lemmy communities
-              - mastodon hashtags
-              - mastodon users
-              # language / reference
-              - dictzone
-              - libretranslate
-              - lingva
-              - mymemory translated
-              - wikicommons.images
-              - wikicommons.videos
+        use_default_settings: true
+
+        engines:
+          - name: brave
+            disabled: true
+          - name: duckduckgo
+            disabled: true
+          - name: startpage
+            disabled: true
+          - name: google cse
+            disabled: true
 
         general:
           instance_name: "MySweetPea Search"
