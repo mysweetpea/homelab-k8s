@@ -13,11 +13,10 @@ parent:
       memory: 256Mi
   # Gotify token injected from the netdata-gotify sealed secret (NEVER inline it here —
   # this repo is public; the token was removed from git in the Aug 28 2026 audit).
-  envValueFrom:
-    GOTIFY_TOKEN:
-      secretKeyRef:
+  # netdata chart exposes env only via envFrom (parent.env is plain values, not refs).
+  envFrom:
+    - secretRef:
         name: netdata-gotify
-        key: GOTIFY_TOKEN
   configs:
     health:
       enabled: true
