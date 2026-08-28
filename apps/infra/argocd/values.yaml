@@ -6,7 +6,7 @@
 #
 # Apply:
 #   helm upgrade argocd -n argocd -f apps/infra/argocd/values.yaml \
-#     argo/argo-cd --version 10.4.0
+#     argo/argo-cd --version 10.4.1
 #   kubectl rollout restart sts/argocd-application-controller -n argocd
 #
 # Verify: kubectl get app -n argocd (all Synced/Healthy), all pods Running.
