@@ -29,16 +29,8 @@ grafana.ini:
     from_name: MySweetPea Grafana
     startTLS_policy: OpportunisticStartTLS
     skip_verify: false
-  # ── MySweetPea branding ──
-  branding:
-    app_title: MySweetPea Grafana
-    login_logo: /public/img/mysweetpea-logo.svg
-    login_background_image: /public/img/mysweetpea-auth-bg.svg
-    login_subtitle: MySweetPea homelab monitoring
-    login_hide_version: true
-    theme: dark
-    report_logo: /public/img/mysweetpea-logo.svg
-    favicon: /public/img/mysweetpea-logo.svg
+  # NOTE: Grafana OSS has NO [branding] ini section (Enterprise-only) - branding is done by
+  # overwriting stock public assets via the 'branding' initContainer (extraInitContainers below).
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -153,19 +145,31 @@ persistence:
   enabled: true
   storageClass: longhorn
   size: 5Gi
+# ── MySweetPea branding (OSS approach) ──
+# Grafana OSS ignores the Enterprise-only [branding] ini section. The login card + navbar logo come
+# from the stock file /usr/share/grafana/public/img/grafana_icon.svg — overwrite it (and the text
+# logos for consistency) from the grafana-branding ConfigMap in a root initContainer before grafana boots.
+extraInitContainers:
+- name: branding
+  image: busybox:1.37
+  command:
+    - sh
+    - -c
+    - |
+      cp /branding/mysweetpea-logo.svg /usr/share/grafana/public/img/grafana_icon.svg
+      cp /branding/mysweetpea-logo.svg /usr/share/grafana/public/img/grafana_text_logo_dark.svg
+      cp /branding/mysweetpea-logo.svg /usr/share/grafana/public/img/grafana_text_logo_light.svg
+      chown 472:472 /usr/share/grafana/public/img/grafana_icon.svg \
+                     /usr/share/grafana/public/img/grafana_text_logo_dark.svg \
+                     /usr/share/grafana/public/img/grafana_text_logo_light.svg
+  volumeMounts:
+  - name: grafana-branding
+    mountPath: /branding
+    readOnly: true
 extraVolumes:
 - name: grafana-branding
   configMap:
     name: grafana-branding
-extraVolumeMounts:
-- name: grafana-branding
-  mountPath: /public/img/mysweetpea-logo.svg
-  subPath: mysweetpea-logo.svg
-  readOnly: true
-- name: grafana-branding
-  mountPath: /public/img/mysweetpea-auth-bg.svg
-  subPath: mysweetpea-auth-bg.svg
-  readOnly: true
 resources:
   limits:
     cpu: 500m
