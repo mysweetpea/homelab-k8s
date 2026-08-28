@@ -1874,7 +1874,7 @@ entries:
     jwt_federation_providers: []
     jwt_federation_sources: []
     logout_method: backchannel
-    logout_uri: ''
+    logout_uri: https://cloud.mysweetpea.cc/index.php/apps/user_oidc/backchannel-logout/authentik
     name: Provider for nextcloud
     property_mappings:
     - 48532f9e-e0fb-47e8-8af1-39de46e39f00
@@ -2007,7 +2007,7 @@ entries:
     jwt_federation_providers: []
     jwt_federation_sources: []
     logout_method: backchannel
-    logout_uri: ''
+    logout_uri: https://photos.mysweetpea.cc/api/oauth/backchannel-logout
     name: Provider for immich
     property_mappings:
     - 48532f9e-e0fb-47e8-8af1-39de46e39f00
