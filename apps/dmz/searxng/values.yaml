@@ -46,7 +46,9 @@ configMaps:
               - wiktionary
               # IT / code
               - github
-              - github code
+              # 'github code' engine removed Aug 28 2026: crashes the gunicorn worker when
+              # combined with other engines (connection dies mid-response, empty 200s) —
+              # the GitHub code-search API requires auth and hard-fails unauthenticated.
               - gitlab
               - codeberg
               - stackoverflow
