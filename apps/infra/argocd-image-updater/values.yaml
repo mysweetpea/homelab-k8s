@@ -575,6 +575,21 @@ extraObjects:
                 helm:
                   name: controllers.main.containers.main.image.repository
                   tag: controllers.main.containers.main.image.tag
+        - namePattern: zilean
+          writeBackConfig:
+            method: git:secret:argocd/ssh-git-creds
+            gitConfig:
+              writeBackTarget: helmvalues:apps/private/zilean/values.yaml
+          images:
+            - alias: zilean
+              imageName: ghcr.io/mysweetpea/zilean
+              commonUpdateSettings:
+                updateStrategy: semver
+                allowTags: "regexp:^v\\d+\\.\\d+\\.\\d+$"
+              manifestTargets:
+                helm:
+                  name: controllers.main.containers.main.image.repository
+                  tag: controllers.main.containers.main.image.tag
         - namePattern: loki
           writeBackConfig:
             method: git:secret:argocd/ssh-git-creds
