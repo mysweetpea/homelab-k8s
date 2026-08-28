@@ -4,13 +4,13 @@ controllers:
       main:
         image:
           repository: searxng/searxng
-          tag: 2026.8.22-9fea41204
+          tag: 2026.8.28-a30b2d474
         env:
-          - name: SEARXNG_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: searxng-secret
-                key: SEARXNG_SECRET
+        - name: SEARXNG_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: searxng-secret
+              key: SEARXNG_SECRET
         resources:
           requests:
             cpu: 100m
@@ -145,13 +145,13 @@ persistence:
     type: configMap
     identifier: config
     globalMounts:
-      - path: /etc/searxng/settings.yml
-        subPath: settings.yml
-        readOnly: true
+    - path: /etc/searxng/settings.yml
+      subPath: settings.yml
+      readOnly: true
   data:
     existingClaim: searxng-data-lh
     globalMounts:
-      - path: /var/cache/searxng
+    - path: /var/cache/searxng
 service:
   main:
     controller: main
