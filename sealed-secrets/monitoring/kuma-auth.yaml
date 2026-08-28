@@ -2,13 +2,16 @@
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
+  annotations:
+    sealedsecrets.bitnami.com/namespace-wide: "true"
   name: kuma-auth
   namespace: monitoring
 spec:
   encryptedData:
-    users: AgAPAF0OrK/kL3pfXOV9UOgZUyadDQe0L44wkg2FR0K6vaMkciDXOsM+ZBqkKTCOgP5OiDRvjnSxF66oH0l3NxBihOuFWURKQOZY0HXShwFd60cmzdakMLR7fFeIAPYnfZEik5R++16EhIe5IIoGeLGLvbIJ+PP8r+WbFC1pcF2JsnqBBNOlrczrIzmtPrGxHXMtXQTAP+2qd07ljGyE4aB8XgwMupfR8N7H/eTY7ZovTybALaakDOnvqwbZb+y2WB6VpMXFKbvSowNvt/geVFK7xX1+PixoOk5otFNkAOwZQ+iacYz7HssrP+V+g0HNcUfYFB62HDfZkMIZSG4G2YAnNsGWokqbbpgJSJEfycIIS4YwgupfsxU7H0MbRxljgJ0Vkv1XGTpPI9Bfeu67ypJISor5xODTCLNsH9GbVc3md4F3r+1ItOCmWJfI0S1ce8jNjHlsHj+LVBRngAkN84SKA4advTNYuMROp58DlTEtHBU8yp1l1AZhvG/PYz4bS1XpYJjBTMsoxw3VcqIg2sWOac2RoKaB3iD4sFmdSCwxhnbDJM7etVeby39sJhBbTobIhAwHHma4Erpuou5Nhdo2MYRiAVh/P/0GrOcAG36iJdGFYaJv/sbyGqcxP42XUyzyDPLfONK3YVRyz0gvCx7GM0zgeQ4ZTXz5HfMROr3RVNZq+aJr6ttl7l6fDFE1+ibxYipaMfCTs2F57j1dD/RgjBk2hUqGKPehBEDUptOW3Yu0Wkj2hJ/ZMM5A28vr
+    users: AgDSjLD1M4TUZ8gu9fwxhlWkltoY9AGo3gfL82SroDxda7DYidza1Jb12yKykUnlA8qE2fbxdLVn5PF2qSecTzRp3wav86SqpoS5HdiLcPlrQp/EC+rBks7HH46bnf2w6TORFCLVGHFptRkwt1Pp5xe+ExAbf5GXRcUIZea35r3v2VTkCY2pjOUDYc2rhfwJ9kHmnDswVaNqVnhRwdXgV804c6KX1/xVVbyCLTizqjbDDpi8rGD1B0Gt+03daWD/sWdjrXEJ7jZgAymYPd6fdOREZRwHNs/ap5lbNvdd7U+QF0PiSseiAYvqkObFiA7CNtP/Qan6TgyeveHbInn++L+Va2TTJmpTAgHpYdlUE+cu+ETZ0BTNsWuevrwR8rFReo4F09txGNJlrO0Pt/T5kER4tYrHfpsCjgvCnaxA636lfjus1Lay3rcCu0v36Yo48OLQmmFEwIt223XFhri9rQ5eoUZi6tWwOQAL3sfhiqiz+N+JwnjOdG4XbHwljW0RELAfRDLNX6gKuEd5w442LhaGjUGuks/bucXqcrvbpAV35/SHF6tx0gED74tSDoh8E7gq8EwAOD3MBRI/bmhAma+lQhqPB2piyhutrGxNPMR+GHNQ61etbquTvxB6S4fmkOjxQbAqQraoyP56iM94CnPRNxYP78k8UxLeZXYPdCq2slTv5rNjGmSblVOGh4xEANcWtA4RzKKJqA8hbm/2Cuy2Wxbp0AoLgOAQY+tCwe/CIffLCYw24O+cOxhlErn6
   template:
     metadata:
+      annotations:
+        sealedsecrets.bitnami.com/namespace-wide: "true"
       name: kuma-auth
       namespace: monitoring
-    type: Opaque

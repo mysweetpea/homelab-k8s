@@ -3,18 +3,15 @@ apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
   annotations:
-    argocd.argoproj.io/tracking-id: traefik-manual:bitnami.io/SealedSecret:kube-system/traefik-dashboard-auth
-  annotations:
     sealedsecrets.bitnami.com/namespace-wide: "true"
   name: traefik-dashboard-auth
   namespace: kube-system
 spec:
   encryptedData:
-    users: AgAcCG0DvfKUIOg4j2sc1OYz/TdFyMjNQW3nnB2HdFcnOIsj0l/vQn9jZIFPiJCWUnUEfXZ9mRZCpHSwqE97MqVC508B5OmZefZkwTxRTiw7MABl3dLAWNsFj3MoH8/1UXWQRpXUKs1s5XMOJR3YVO2SabSOWN+KRUBafgE/zNCPwC62s0dSLjv62SQmW8qfASJyMr1FMq8KCmgxYWy280vuXXVcqAjIVkkoPxEPZkRhuwsQ001/ozFH8i0jQ/MLVsjqy4xulUAwSM+WH5xZVNsCbY2xFDLMZWTfdGbTMuE5z9vAPJe3EvyqnPETHbk2hko2PJZXsV1QJEitilUfejUBqJGNycSjTNpgSvqkcbIPHOAoM7KQrQ4wvFW+/OTKm2z+HQ3ZAvl4pZUWosLiMC4kbRQ/1LU9G1vZGpV2C1W16+QGX9NHgYjOWPKGDGKM0wfv2grNpXybMZNvJV27yBjAo9zl6mrJ3SEw7TcHCZO7yw3+3ILmmaZUFl6Y2zrMm+pLfAGfaH4xtu4IbyFCNhJdMpRWbgmi0tHYRggorIi3Awv6RBsyURS5wFbYr4i+5KMDfWIqWaX8Z6UrPh3cdLMIW40AJYwlVdCdkOJaM3GbChx51HVPama5wqcQJM7ZB2C4NouEaWVHKax3oAxh2MEd3PObn0PRhtHNpBHpyCZFrBrMO9dzu2yEjG5Cd5br4/eMWNlbX7X+2mHuxnyFj4MUfp5v0pkRJlTRqFcklu8oVGVofp3NXcLsrnTeDaydBQ==
+    users: AgALyvls5KPu9vTvOAEMzjTFDPV9nZlJdOhoyTPoKQ8FpoIPe+9cskORHPF2tKIdFpTZ7+Hg6q1cJKK2iITrNaGJh0tDI8AmoXFXVVwD8D+2raTgO2ZIZS6iZF5XhLY6WvZWiltBxgxoeCck2VJzKLURKDKE9rBYfGgrZEbhMh+k1LkcoTKWahddxJhIK5tQy64knMw6uWo3AR91a1LmANMLO/h1rRQdp5EwXgXeueuaojdlI/QX3aA4GHrBuISwiQ54gDJ1bD9k9hZZ5r5VKYMxVSSwLwU0SjnvAglSfwS89qDo2dRESHqQZDf4aYyE1SLe0Jh2oHXdldFE5CTtLeJkFxaDzqQ95ome0/vpouW4gRl83ofYhuear6GhW7t5YPN+lbtdkhiYD25Sk5QV+OJa+L5oVJ9zhplAjlPQEJwTyLIJg1vr8UrcZOTAEkSur4jY/3PAH3dD3VOBkPsTu26ojy81MdHJkf/vAGaRs/rCX072sIoW4r+x0JL7s6AO5V6wouS4fP4a8PKTibW7t29fG0PXmj1uz8b5k9+YfkwkDCEZW+Yzpaivr/0XAuGDPKx7BEUv8EfUDrHeThBrQ9xVQa1KB3hvWizeKeZNq0/zYWnUI+6l2vaPYBlVQ2v7vIr08hMEkyjxSruXT0OG8H6gyzmhtjfdrCtv4oMQvzVCJM1aEXjl5D2B4q4LsMCYWcQzCq4Hy95hnN245QOl/dwVw291+yafT+Xoj+XIEcWPl/OG8rcN/TNcZY8NSGtg
   template:
     metadata:
       annotations:
         sealedsecrets.bitnami.com/namespace-wide: "true"
       name: traefik-dashboard-auth
       namespace: kube-system
-    type: Opaque
