@@ -31,9 +31,12 @@ controllers:
           requests:
             cpu: 500m
             memory: 1Gi
+            # Counted by kubelet for eviction ranking (ephemeral-storage pressure evicted pods Aug 28)
+            ephemeral-storage: 2Gi
           limits:
             cpu: "4"
             memory: 8Gi
+            ephemeral-storage: 6Gi
     type: deployment
 persistence:
   data:
