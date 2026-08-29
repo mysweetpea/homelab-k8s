@@ -7,7 +7,7 @@ controllers:
           tag: v3.1.5
         env:
           PORT: "3000"
-          MIN_VERSION: "3.1.0"
+          MIN_VERSION: "3.1.5"
           MAX_ROOMS: "100"
           MAX_PEERS_PER_ROOM: "50"
           DEBUG_LOGGING: "0"
