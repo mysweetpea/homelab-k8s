@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/open-webui/open-webui
-          tag: "v0.11.1"
+          tag: "v0.11.2"
           pullPolicy: IfNotPresent
         resources:
           requests:
@@ -22,10 +22,10 @@ controllers:
         envFrom:
         - secretRef:
             name: open-webui-oidc
-        # ⚠️ Probes REMOVED (Session 39): v0.11.0 bug — probe traffic deadlocks the
-        # event loop ~60s after startup (liveness fails → kubelet SIGKILLs, exit 137).
-        # Verified with 6 test pods: no probes = stable 4min+; probes = death at ~110s.
-        # Monitored externally by Uptime Kuma (monitor #9).
+            # ⚠️ Probes REMOVED (Session 39): v0.11.0 bug — probe traffic deadlocks the
+            # event loop ~60s after startup (liveness fails → kubelet SIGKILLs, exit 137).
+            # Verified with 6 test pods: no probes = stable 4min+; probes = death at ~110s.
+            # Monitored externally by Uptime Kuma (monitor #9).
 service:
   main:
     controller: main
