@@ -1,66 +1,62 @@
-controllers:
-  main:
-    containers:
-      main:
-        image:
-          repository: searxng/searxng
-          tag: 2026.8.29-d226b78bc
-        env:
-        - name: SEARXNG_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: searxng-secret
-              key: SEARXNG_SECRET
-        resources:
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          limits:
-            cpu: 1000m
-            memory: 1Gi
-    type: deployment
-configMaps:
-  config:
-    enabled: true
-    data:
-      settings.yml: |
-        # MySweetPea SearXNG — curated settings (GitOps-managed)
-        # Full docs: https://docs.searxng.org/admin/settings/
-        use_default_settings: true
+# MySweetPea SearXNG — curated settings (GitOps-managed)
+# Full docs: https://docs.searxng.org/admin/settings/
+#
+# 2026-08-31 redesign: with use_default_settings:true AND only 4 engines disabled,
+# EVERY query fanned out to 60+ engines from one LAN IP — majors (DDG/Qwant/etc)
+# hit CAPTCHA immediately and cascading suspensions caused "only wikipedia" and
+# "no results" episodes. Public instances that stay healthy run 3-8 engines.
+# New approach: explicitly ENABLE a small curated roster; everything else disabled.
+# Re-enable others ONLY one at a time, testing after each (limiter suspensions cascade).
+use_default_settings: true
 
-        engines:
-          - name: brave
-            disabled: true
-          - name: startpage
-            disabled: true
-          - name: google cse
-            disabled: true
+engines:
+  # ── disabled by audit (keys required; keep DDG off — CAPTCHAs under burst) ──
+  - name: brave
+    disabled: true
+  - name: startpage
+    disabled: true
+  - name: google cse
+    disabled: true
+  # ── re-enabled explicitly (this UN-disables them from default-off state) ──
+  - name: google
+    disabled: false
+  - name: bing
+    disabled: false
+  - name: duckduckgo web
+    disabled: false
+  - name: wikipedia
+    disabled: false
+  - name: mojeek
+    disabled: false
+  - name: marginalia
+    disabled: false
 
-        general:
-          instance_name: "MySweetPea Search"
+general:
+  instance_name: "MySweetPea Search"
 
-        server:
-          base_url: "http://192.168.20.230:8080"
-          image_proxy: true
+server:
+  base_url: "http://192.168.20.230:8080"
+  image_proxy: true
 
-        search:
-          formats:
-            - html
-            - json
-          autocomplete: "duckduckgo"
-          favicon_resolver: "duckduckgo"
-          safe_search: 0
-          default_lang: "auto"
+search:
+  formats:
+    - html
+    - json
+  autocomplete: "duckduckgo"
+  favicon_resolver: "duckduckgo"
+  safe_search: 0
+  default_lang: "auto"
 
-        ui:
-          default_locale: "en"
-          theme: "simple"
-          default_theme: "simple"
+ui:
+  default_locale: "en"
+  theme: "simple"
+  default_theme: "simple"
 
-        outgoing:
-          request_timeout: 6.0
-          pool_connections: 100
-          pool_maxsize: 10
+outgoing:
+  request_timeout: 6.0
+  pool_connections: 100
+  pool_maxsize: 10
+
 persistence:
   config:
     type: configMap
