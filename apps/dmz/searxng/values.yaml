@@ -7,7 +7,42 @@
 # "no results" episodes. Public instances that stay healthy run 3-8 engines.
 # New approach: explicitly ENABLE a small curated roster; everything else disabled.
 # Re-enable others ONLY one at a time, testing after each (limiter suspensions cascade).
-use_default_settings: true
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: searxng/searxng
+          tag: 2026.8.29-d226b78bc
+        env:
+        - name: SEARXNG_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: searxng-secret
+              key: SEARXNG_SECRET
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+    type: deployment
+configMaps:
+  config:
+    enabled: true
+    data:
+      settings.yml: |
+        # MySweetPea SearXNG — curated settings (GitOps-managed)
+        # Full docs: https://docs.searxng.org/admin/settings/
+        #
+        # 2026-08-31 redesign: with use_default_settings:true AND only 4 engines disabled,
+        # EVERY query fanned out to 60+ engines from one LAN IP — majors (DDG/Qwant/etc)
+        # hit CAPTCHA immediately and cascading suspensions caused "only wikipedia" and
+        # "no results" episodes. Public instances that stay healthy run 3-8 engines.
+        # New approach: explicitly ENABLE a small curated roster; everything else disabled.
+        # Re-enable others ONLY one at a time, testing after each (limiter suspensions cascade).
+        use_default_settings: true
 
 engines:
   # ── disabled by audit (keys required; keep DDG off — CAPTCHAs under burst) ──
