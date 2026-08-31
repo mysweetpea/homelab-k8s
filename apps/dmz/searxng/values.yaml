@@ -31,8 +31,6 @@ configMaps:
         engines:
           - name: brave
             disabled: true
-          - name: duckduckgo
-            disabled: true
           - name: startpage
             disabled: true
           - name: google cse
@@ -60,7 +58,7 @@ configMaps:
           default_theme: "simple"
 
         outgoing:
-          request_timeout: 3.0
+          request_timeout: 6.0
           pool_connections: 100
           pool_maxsize: 10
 persistence:
