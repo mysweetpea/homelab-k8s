@@ -8,7 +8,7 @@ controllers:
       main:
         image:
           repository: quay.io/docling-project/docling-serve-cpu
-          tag: v1.31.0
+          tag: v1.32.0
           pullPolicy: IfNotPresent
         env:
           DOCLING_SERVE_ENABLE_UI: "true"
@@ -31,15 +31,13 @@ controllers:
           limits:
             cpu: "2"
             memory: 4Gi
-
 persistence:
   models:
     type: persistentVolumeClaim
     enabled: true
     existingClaim: docling-models
     globalMounts:
-      - path: /models
-
+    - path: /models
 service:
   main:
     controller: main
