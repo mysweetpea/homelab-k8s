@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: searxng/searxng
-          tag: 2026.8.29-d226b78bc
+          tag: 2026.9.1-79c8ffe0d
         env:
         - name: SEARXNG_SECRET
           valueFrom:
@@ -74,7 +74,6 @@ configMaps:
           request_timeout: 6.0
           pool_connections: 100
           pool_maxsize: 10
-
 persistence:
   config:
     type: configMap
