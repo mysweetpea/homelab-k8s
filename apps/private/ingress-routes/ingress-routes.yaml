@@ -79,6 +79,22 @@ spec:
         - name: gotify
           port: 80
 ---
+# iGotify Notification Assist — igotify.mysweetpea.cc (iOS push bridge)
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: igotify-assist
+  namespace: private
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`igotify.mysweetpea.cc`)
+      kind: Rule
+      services:
+        - name: igotify-assist
+          port: 80
+---
 # Jellyfin — media.mysweetpea.cc
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute

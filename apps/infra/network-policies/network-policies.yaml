@@ -507,6 +507,58 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  name: allow-igotify-assist
+  namespace: private
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: igotify-assist
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+    ports:
+    - port: 80
+      protocol: TCP
+  egress:
+  # to Gotify (websocket)
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: gotify
+    ports:
+    - port: 80
+      protocol: TCP
+  # internet egress (SecNtfy relay -> APNs) is granted by the ns-wide
+  # allow-internet-egress policy (443/53 to 0.0.0.0/0 minus RFC1918)
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gotify-from-igotify-assist
+  namespace: private
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: gotify
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: igotify-assist
+    ports:
+    - port: 80
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: redis-affine
   namespace: private
 spec:
