@@ -29,7 +29,7 @@ data:
           "rate_limit": "250/minute",
           "workers": 25,
           "minimum_free_slot": 0,
-          "limit": 100,
+          "limit": 0,
           "torrents_refresh_interval": "5m",
           "download_links_refresh_interval": "10m",
           "auto_expire_links_after": "24h",
