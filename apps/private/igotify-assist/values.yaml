@@ -25,7 +25,7 @@ controllers:
             spec:
               httpGet:
                 path: /Health
-                port: 80
+                port: 8080
               initialDelaySeconds: 30
               periodSeconds: 30
           readiness:
@@ -34,7 +34,7 @@ controllers:
             spec:
               httpGet:
                 path: /Health
-                port: 80
+                port: 8080
               initialDelaySeconds: 10
 service:
   main:
@@ -43,6 +43,7 @@ service:
     ports:
       http:
         port: 80
+        targetPort: 8080
 persistence:
   data:
     type: persistentVolumeClaim
