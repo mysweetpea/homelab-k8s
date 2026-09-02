@@ -1,0 +1,45 @@
+# Longhorn recurring jobs — applied manually (Longhorn is not ArgoCD-managed; apply with:
+#   kubectl apply -f apps/infra/longhorn/recurring-jobs.yaml
+# Volumes in the "default" group match automatically (Longhorn 1.11+ removed
+# volume.spec.recurringJobSelector; group matching is automatic).
+#
+# daily-snapshot — 03:00 snapshot, retain 5 (pre-existing; kept here for reference,
+#                  still applied from recurring-job-daily-snapshot.yaml).
+# daily-backup   — 04:00, block-level backup of ALL volumes to the VPS NFS target
+#                  (nfs://100.82.13.16:/export/longhorn-backups/cluster over NetBird),
+#                  retain 7.
+# weekly-trim    — Sunday 05:00, filesystem-trim on all volumes: returns deleted-file
+#                  blocks to Longhorn (fstrim-equivalent that also handles
+#                  snapshot-referenced space). Without it, churn-heavy volumes
+#                  (netdata dbengine, jellyfin transcodes) balloon vs real data.
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: daily-backup
+  namespace: longhorn-system
+spec:
+  cron: "0 4 * * *"
+  task: backup
+  groups:
+    - default
+  retain: 7
+  concurrency: 2
+  labels:
+    app: mysweetpea
+    type: backup
+---
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: weekly-trim
+  namespace: longhorn-system
+spec:
+  cron: "0 5 * * 0"
+  task: filesystem-trim
+  groups:
+    - default
+  retain: 1
+  labels:
+    app: mysweetpea
+    type: trim
