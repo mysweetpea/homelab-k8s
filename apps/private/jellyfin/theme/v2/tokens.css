@@ -1,0 +1,69 @@
+/* ============================================================
+   MSP UI v2 — DESIGN TOKENS (single source of truth)
+   ------------------------------------------------------------
+   One token sheet that every v2 layer consumes (app bar, CSS
+   overlay, injector scripts, Moonfin theme parity later).
+   Three palettes selectable via body[data-msp-theme="..."]:
+     "ember"   — Obsidian Ember (graphite + warm amber)
+     "nordic2" — Nordic 2.0 (evolution of current teal, modernized)
+     "aurora"  — Aurora (deep indigo + electric violet/cyan)
+   Deploy route: VPS /var/www/jellyfin-assets/ + JS Injector
+   loader (reverter-proof), NOT CustomCss (branding reverter).
+   Target apps: web, desktop (JMP - conservative CSS only),
+   Android/webview, webOS/Tizen. iOS + Android TV = native apps,
+   out of scope (platform fact).
+   ============================================================ */
+
+:root,
+body[data-msp-theme="ember"] {
+  /* surfaces */
+  --msp-bg: #0B0D10;
+  --msp-surface: #12151A;
+  --msp-elevated: #1A1F27;
+  --msp-border: rgba(255, 255, 255, 0.08);
+  /* text */
+  --msp-text: #EDEFF2;
+  --msp-muted: #9AA3AE;
+  /* accent */
+  --msp-accent: #E2A85F;
+  --msp-accent-soft: rgba(226, 168, 95, 0.14);
+  --msp-accent-glow: rgba(226, 168, 95, 0.35);
+  --msp-accent-contrast: #14100A;
+  /* geometry + motion */
+  --msp-radius-lg: 20px;
+  --msp-radius-md: 14px;
+  --msp-radius-sm: 10px;
+  --msp-appbar-h: 60px;
+  --msp-appbar-gap: 14px;
+  --msp-blur: 18px;
+  --msp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body[data-msp-theme="nordic2"] {
+  --msp-bg: #0A1216;
+  --msp-surface: #101B21;
+  --msp-elevated: #16242B;
+  --msp-border: rgba(148, 210, 200, 0.10);
+  --msp-text: #F0F5F4;
+  --msp-muted: #8FA6A3;
+  --msp-accent: #4FD1B5;
+  --msp-accent-soft: rgba(79, 209, 181, 0.14);
+  --msp-accent-glow: rgba(79, 209, 181, 0.32);
+  --msp-accent-contrast: #06231D;
+}
+
+body[data-msp-theme="aurora"] {
+  --msp-bg: #0A0B14;
+  --msp-surface: #101223;
+  --msp-elevated: #171A2E;
+  --msp-border: rgba(139, 124, 246, 0.12);
+  --msp-text: #ECEEF8;
+  --msp-muted: #97A0B8;
+  --msp-accent: #8B7CF6;
+  --msp-accent-soft: rgba(139, 124, 246, 0.16);
+  --msp-accent-glow: rgba(139, 124, 246, 0.38);
+  --msp-accent-contrast: #12102A;
+  /* aurora carries a support hue for gradients only */
+  --msp-accent-2: #45D6D0;
+  --msp-accent-grad: linear-gradient(120deg, #8B7CF6 0%, #45D6D0 100%);
+}

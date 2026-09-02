@@ -1,0 +1,193 @@
+/* ============================================================
+   MSP UI v2 — AURORA TEST OVERLAY (palette trial 1 of 3)
+   ------------------------------------------------------------
+   TEST MODE: additive injector layer. Remove = delete the
+   "MSP Aurora Test" script in JS Injector (or POST back the
+   snapshot injector-config-backup-aurora-test.json).
+   Touches NO CustomCss/branding — reverter-immune.
+   Load order: injected LAST into <head> = wins all ties.
+   Palette: Aurora (see v2/tokens.css — violet #8B7CF6 /
+   cyan #45D6C8 on deep indigo #0A0B14).
+   ============================================================ */
+
+@keyframes msp-aurora-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ==== SECTION:VPS — synced to VPS /var/www/jellyfin-assets/aurora-test.css ==== */
+
+/* ---- 1. Aurora variables (override spine + every --msp-* token) ---- */
+
+:root {
+  /* msp tokens consumed by nordic overlay + polish layers */
+  --msp-bg: #0A0B14;
+  --msp-bg-soft: #101223;
+  --msp-surface: #101223;
+  --msp-surface-2: #171A2E;
+  --msp-teal: #8B7EF6;
+  --msp-teal-soft: rgba(139, 126, 246, 0.18);
+  --msp-teal-glow: rgba(139, 124, 246, 0.42);
+  --msp-text: #ECEEF8;
+  --msp-text-dim: #97A0B8;
+  --msp-border: rgba(139, 124, 246, 0.20);
+  /* aurora extras */
+  --msp-violet: #8B7EF6;
+  --msp-cyan: #45D6C8;
+  --msp-grad: linear-gradient(120deg, #8B7EF6, #45D6C8);
+
+  /* ElegantFin spine overrides */
+  --activeColor: var(--msp-violet);
+  --activeColorAlpha: rgba(139, 124, 246, 0.9);
+  --uiAccentColor: var(--msp-violet);
+  --highlightOutlineColor: var(--msp-violet);
+  --btnSubmitColor: #6F5BE0;
+  --btnSubmitBorderColor: var(--msp-violet);
+  --btnMiniPlayColor: var(--msp-violet);
+  --btnMiniPlayBorderColor: #6F5BE0;
+  --checkboxCheckedBgColor: var(--msp-violet);
+  --darkerGradientPoint: var(--msp-bg);
+  --darkerGradientPointAlpha: rgba(10, 11, 20, 0.88);
+  --lighterGradientPoint: var(--msp-surface);
+  --lighterGradientPointAlpha: rgba(16, 18, 35, 0.85);
+  --gradientPointAlpha: rgba(16, 18, 35, 0.35);
+  --textColor: var(--msp-text);
+  --dimTextColor: var(--msp-text-dim);
+  --borderColor: #2A2F45;
+  --darkerBorderColor: #1C1F30;
+  --lighterBorderColor: rgba(236, 238, 248, 0.16);
+  --drawerColor: rgba(16, 18, 35, 0.94);
+  --headerColor: rgba(16, 18, 35, 0.85);
+  --headerColorGradient: linear-gradient(180deg, rgba(10, 11, 20, 0.94) 30%, 55%, transparent 90%);
+  --headerColorGradientAlt: linear-gradient(180deg, #0A0B14, 70%, transparent);
+  --selectorBackgroundColor: #171A2E;
+  --selectorBackgroundColorAlpha: rgba(23, 26, 46, 0.6);
+  --tableBodyColor: #12141F;
+  --cardBackgroundGradient: linear-gradient(0deg, var(--darkerGradientPoint), 25%, var(--lighterGradientPoint));
+  --backgroundGradient: linear-gradient(0deg, var(--darkerGradientPoint) 35%, var(--lighterGradientPoint));
+  --shadow: 0 0.15em 0.4em rgba(0, 0, 0, 0.55);
+}
+
+/* ---- 2. Aurora ambient glow (web-family only, native-safe) ---- */
+body {
+  background-image:
+    radial-gradient(ellipse 55% 42% at 18% -8%, rgba(139, 124, 246, 0.15), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 85% 8%, rgba(69, 214, 200, 0.10), transparent 65%),
+    radial-gradient(ellipse 70% 45% at 50% 115%, rgba(139, 124, 246, 0.12), transparent 60%),
+    linear-gradient(180deg, #0A0B14, #101223) !important;
+  background-attachment: fixed;
+}
+#loginPage {
+  background:
+    radial-gradient(ellipse 60% 45% at 20% -10%, rgba(139, 124, 246, 0.20), transparent 62%),
+    radial-gradient(ellipse 50% 42% at 85% 10%, rgba(69, 214, 200, 0.14), transparent 62%),
+    linear-gradient(180deg, #0A0B14, #101223) !important;
+}
+
+/* recolor the nordic logo watermark violet */
+body::after {
+  filter: saturate(1.1) hue-rotate(215deg) !important;
+}
+
+/* ---- 3. Retint gradient panels hard-coded teal in polish layers ---- */
+.itemDetailPage {
+  background: linear-gradient(180deg, rgba(10, 11, 20, 0) 0%, rgba(10, 11, 20, 0.55) 42%, #0A0B14 100%) !important;
+}
+.itemDetailPage .detailPagePrimaryContainer {
+  background: rgba(16, 18, 35, 0.40) !important;
+  border: 1px solid rgba(139, 124, 246, 0.14) !important;
+}
+.featured-content .gradient-overlay {
+  background: linear-gradient(90deg, rgba(10, 11, 20, 0.92) 0%, rgba(10, 11, 20, 0.55) 45%, rgba(10, 11, 20, 0.05) 100%) !important;
+}
+
+/* ==== SECTION:CLIENT — duplicated inside the injector script ==== */
+/* (VPS-hosted rules STOP here; everything below is carried inline  */
+
+/* ---- 4. App bar: floating pill skeleton (TEST preview) ---- */
+:root {
+  --appbar-h: 60px;
+  --appbar-gap: 12px;
+}
+.skinHeader {
+  top: var(--appbar-gap) !important;
+  left: var(--appbar-gap) !important;
+  right: var(--appbar-gap) !important;
+  background: rgba(16, 18, 35, 0.62) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  backdrop-filter: blur(18px) saturate(1.25);
+  border: 1px solid rgba(139, 124, 246, 0.20) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45) !important;
+  padding-inline: 18px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1099;
+}
+.mainAnimatedPage {
+  padding-top: calc(var(--appbar-h) + var(--appbar-gap) * 2);
+}
+.skinHeader .headerButton,
+.paper-icon-button-light {
+  border-radius: 50% !important;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.skinHeader .headerButton:hover,
+.paper-icon-button-light:hover {
+  background: rgba(139, 124, 246, 0.18) !important;
+  color: #ECEEF8 !important;
+  box-shadow: 0 0 14px rgba(139, 124, 246, 0.35);
+}
+.skinHeader .headerSearchInput,
+.skinHeader .searchfields-txtSearch {
+  border-radius: 999px;
+  background: rgba(23, 26, 46, 0.70);
+  border: 1px solid rgba(139, 124, 246, 0.20);
+}
+.skinHeader .headerSearchInput:focus,
+.skinHeader .searchfields-txtSearch:focus {
+  border-color: var(--msp-violet) !important;
+  box-shadow: 0 0 0 3px rgba(139, 124, 246, 0.18), 0 0 18px rgba(139, 124, 246, 0.30);
+  outline: none;
+}
+
+/* ---- 5. Detail tabs: pill segments ---- */
+.itemDetailPage .emby-tab-button {
+  border-radius: 999px;
+  padding-inline: 14px;
+}
+.itemDetailPage .emby-tab-button-active {
+  background: rgba(139, 124, 246, 0.16) !important;
+  border-bottom: none !important;
+  box-shadow: 0 0 12px rgba(139, 124, 246, 0.30);
+}
+
+/* ---- 6. Aurora gradient accents (the signature) ---- */
+.emby-button.raised,
+.button-submit,
+.raised {
+  background: var(--msp-grad) !important;
+  color: #0E1020 !important;
+  box-shadow: 0 0.2em 0.9em rgba(139, 124, 246, 0.40) !important;
+  animation: msp-aurora-shift 8s ease infinite;
+  background-size: 180% 180% !important;
+}
+.cardOverlayFab-primary {
+  background: var(--msp-grad) !important;
+  color: #0E1020 !important;
+}
+.btnPlay.detailButton,
+.detailButton.btnPlay {
+  background: var(--msp-grad) !important;
+  color: #0E1020 !important;
+  animation: msp-aurora-shift 8s ease infinite;
+  background-size: 200% 200%;
+}
+
+/* ---- 7. Scrollbar + selection ---- */
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(139, 124, 246, 0.55);
+}
+::selection {
+  background: rgba(139, 124, 246, 0.40);
+}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MSP UI v2 — App Bar &amp; Palette Preview</title>
+<style>
+  /* SNAPSHOT of tokens.css + appbar-float.css (v2 skeleton) at creation.
+     Palette tweaks belong in theme/v2/tokens.css — this file is a preview. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root, body[data-msp-theme="ember"] {
+    --msp-bg:#0B0D10; --msp-surface:#12151A; --msp-elevated:#1A1F27;
+    --msp-border:rgba(255,255,255,.08); --msp-text:#EDEFF2; --msp-muted:#9AA3AE;
+    --msp-accent:#E2A85F; --msp-accent-soft:rgba(226,168,95,.14);
+    --msp-accent-glow:rgba(226,168,95,.35); --msp-accent-contrast:#14100A;
+  }
+  body[data-msp-theme="nordic2"] {
+    --msp-bg:#0A1216; --msp-surface:#101B21; --msp-elevated:#16242B;
+    --msp-border:rgba(148,210,200,.10); --msp-text:#F0F5F4; --msp-muted:#8FA6A3;
+    --msp-accent:#4FD1B5; --msp-accent-soft:rgba(79,209,181,.14);
+    --msp-accent-glow:rgba(79,209,181,.32); --msp-accent-contrast:#06231D;
+  }
+  body[data-msp-theme="aurora"] {
+    --msp-bg:#0A0B14; --msp-surface:#101223; --msp-elevated:#171A2E;
+    --msp-border:rgba(139,124,246,.12); --msp-text:#ECEEF8; --msp-muted:#97A0B8;
+    --msp-accent:#8B7CF6; --msp-accent-soft:rgba(139,124,246,.16);
+    --msp-accent-glow:rgba(139,124,246,.38); --msp-accent-contrast:#12102A;
+  }
+  body {
+    background: var(--msp-bg);
+    color: var(--msp-text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 640px;
+    transition: background .35s ease;
+    padding: 0 0 40px;
+    overflow-x: hidden;
+  }
+
+  /* backdrop glow */
+  .stage-backdrop {
+    position: absolute; inset: 0; height: 420px; pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% -10%, var(--msp-accent-glow), transparent 65%),
+      radial-gradient(ellipse 40% 40% at 85% 20%, rgba(255,255,255,.04), transparent 70%);
+    opacity: .5;
+  }
+  .wrap { position: relative; max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- the floating pill app bar ---------- */
+  .appbar {
+    position: sticky; top: 12px; z-index: 50;
+    margin-top: 14px;
+    height: 60px;
+    display: flex; align-items: center; gap: 14px;
+    background: color-mix(in srgb, var(--msp-surface) 78%, transparent);
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border: 1px solid var(--msp-border);
+    border-radius: 20px;
+    padding: 10px 18px;
+    transition: background .3s ease, box-shadow .3s ease, border .3s ease;
+  }
+  .appbar.scrolled {
+    background: color-mix(in srgb, var(--msp-elevated) 88%, transparent);
+    box-shadow: 0 10px 34px rgba(0,0,0,.55), 0 0 0 1px var(--msp-accent-soft), 0 0 24px var(--msp-accent-glow);
+  }
+  .logo {
+    font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+    font-size: 13px; white-space: nowrap;
+  }
+  .logo b { color: var(--msp-accent); }
+  .appbar .spacer { flex: 1; }
+
+  .search {
+    display: flex; align-items: center; gap: 8px;
+    background: color-mix(in srgb, var(--msp-elevated) 70%, transparent);
+    border: 1px solid var(--msp-border);
+    border-radius: 999px; padding: 8px 14px; width: 180px;
+    color: var(--msp-muted); font-size: 12.5px; cursor: text;
+    transition: width .25s ease, border .25s ease, box-shadow .25s ease;
+  }
+  .search:focus-within {
+    width: 250px; border-color: var(--msp-accent);
+    box-shadow: 0 0 0 3px var(--msp-accent-soft), 0 0 18px var(--msp-accent-glow);
+  }
+  .search input {
+    background: none; border: none; outline: none; color: var(--msp-text);
+    font-size: 12.5px; width: 100%;
+  }
+  .search svg { flex: none; }
+
+  .iconbtn {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: grid; place-items: center; cursor: pointer; border: none;
+    background: none; color: var(--msp-muted);
+    transition: background .2s, color .2s, box-shadow .2s;
+  }
+  .iconbtn:hover { background: var(--msp-accent-soft); color: var(--msp-text); box-shadow: 0 0 14px var(--msp-accent-glow); }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--msp-border);
+    display: grid; place-items: center; font-size: 13px; font-weight: 600;
+    color: var(--msp-accent-contrast); background: var(--msp-accent); cursor: pointer;
+  }
+
+  /* ---------- detail tabs under the pill ---------- */
+  .tabs { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+  .tab {
+    border-radius: 999px; padding: 8px 18px; font-size: 12.5px;
+    color: var(--msp-muted); cursor: pointer; border: none; background: none;
+    transition: all .2s ease; font-weight: 500;
+  }
+  .tab:hover { color: var(--msp-text); }
+  .tab.active { background: var(--msp-accent-soft); color: var(--msp-text); box-shadow: 0 0 12px var(--msp-accent-glow); }
+
+  /* ---------- content mock ---------- */
+  .detail-hero { display: flex; gap: 18px; margin-top: 26px; align-items: flex-end; }
+  .poster {
+    width: 150px; height: 225px; border-radius: 14px; flex: none;
+    background: linear-gradient(160deg, var(--msp-elevated), var(--msp-surface));
+    border: 1px solid var(--msp-border); box-shadow: 0 14px 34px rgba(0,0,0,.5);
+  }
+  .meta h1 { font-size: 26px; letter-spacing: -.02em; margin-bottom: 6px; }
+  .meta .facts { color: var(--msp-muted); font-size: 12px; margin-bottom: 12px; }
+  .meta .facts b { color: var(--msp-accent); font-weight: 600; }
+  .btnplay {
+    background: var(--msp-accent); color: var(--msp-accent-contrast);
+    border: none; border-radius: 999px; padding: 10px 26px;
+    font-weight: 700; font-size: 13px; cursor: pointer; margin-right: 10px;
+    box-shadow: 0 4px 18px var(--msp-accent-glow);
+  }
+  .btnghost {
+    background: none; color: var(--msp-text); border: 1px solid var(--msp-border);
+    border-radius: 999px; padding: 10px 22px; font-size: 13px; cursor: pointer;
+  }
+  .hero-desc { color: var(--msp-muted); font-size: 13px; line-height: 1.6; max-width: 620px; margin-top: 18px; }
+
+  .row-title { margin-top: 30px; font-size: 15px; font-weight: 600; }
+  .cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-top: 12px; }
+  .card {
+    aspect-ratio: 2/3; border-radius: 12px; border: 1px solid var(--msp-border);
+    background: linear-gradient(165deg, var(--msp-elevated), var(--msp-surface));
+    transition: transform .2s ease, border .2s ease;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--msp-accent); }
+
+  /* ---------- palette switcher ---------- */
+  .palette-bar {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 34px; flex-wrap: wrap;
+  }
+  .palette-bar .lbl { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--msp-muted); margin-right: 4px; }
+  .sw {
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+    border: 1px solid var(--msp-border); background: var(--msp-surface);
+    color: var(--msp-text); border-radius: 999px; padding: 8px 16px; font-size: 12.5px;
+    transition: all .2s ease;
+  }
+  .sw .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .sw:hover { border-color: var(--msp-accent); }
+  .sw.active { border-color: var(--msp-accent); box-shadow: 0 0 0 3px var(--msp-accent-soft); }
+</style>
+</head>
+<body data-msp-theme="ember">
+  <div class="stage-backdrop"></div>
+  <div class="wrap">
+    <div class="appbar" id="appbar">
+      <div class="logo">My<b>Sweet</b>Pea</div>
+      <div class="spacer"></div>
+      <label class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="Search…">
+      </label>
+      <button class="iconbtn" title="Cast">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 16.1A5 5 0 0 1 5.9 20"/><path d="M2 12.05A9 9 0 0 1 9.95 20"/><path d="M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/></svg>
+      </button>
+      <button class="iconbtn" title="Cast-less spacer" style="display:none"></button>
+      <div class="avatar">M</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active">Overview</button>
+      <button class="tab">Episodes</button>
+      <button class="tab">Cast</button>
+      <button class="tab">Similar</button>
+    </div>
+
+    <div class="detail-hero">
+      <div class="poster"></div>
+      <div class="meta">
+        <h1>Dark Horizon</h1>
+        <div class="facts"><b>4K HDR</b> · 2026 · 2h 14m · <b>★ 8.4</b></div>
+        <button class="btnplay">▶ Play</button><button class="btnghost">Request</button>
+      </div>
+    </div>
+    <p class="hero-desc">A mock detail page to judge palette contrast, accent readability, button hierarchy, and the floating app-bar treatment against real content density. The bar below demonstrates the scrolled (accent-glow) state.</p>
+
+    <div class="row-title">Continue Watching</div>
+    <div class="cards">
+      <div class="card"></div><div class="card"></div><div class="card"></div>
+      <div class="card"></div><div class="card"></div><div class="card"></div>
+    </div>
+
+    <div class="palette-bar">
+      <span class="lbl">Palette</span>
+      <button class="sw active" data-theme="ember"><span class="dot" style="background:#E2A85F"></span>Obsidian Ember</button>
+      <button class="sw" data-theme="nordic2"><span class="dot" style="background:#4FD1B5"></span>Nordic 2.0</button>
+      <button class="sw" data-theme="aurora"><span class="dot" style="background:#8B7CF6"></span>Aurora</button>
+      <span class="lbl" style="margin-left:14px;">State</span>
+      <button class="sw" id="scrollToggle">Toggle scrolled glow</button>
+    </div>
+  </div>
+  <script>
+    document.querySelectorAll('.sw[data-theme]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.body.dataset.mspTheme = b.dataset.theme;
+        document.querySelectorAll('.sw[data-theme]').forEach(function (x) { x.classList.toggle('active', x === b); });
+      });
+    });
+    var appbar = document.getElementById('appbar');
+    document.getElementById('scrollToggle').addEventListener('click', function () {
+      appbar.classList.toggle('scrolled');
+      this.classList.toggle('active', appbar.classList.contains('scrolled'));
+    });
+  </script>
+</body>
+</html>
