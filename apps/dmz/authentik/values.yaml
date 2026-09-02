@@ -27,12 +27,13 @@ authentik:
 server:
   replicas: 1
   # ⚠️ Gunicorn worker recycling root-caused as login-latency class (Sep 2 audit):
-  # default max_requests=1000 recycles workers every ~1-2h at current traffic;
-  # the first login after a recycle pays a cold flow-executor (~10-38s measured).
-  # -1 disables recycling. Also add a keep-warm if >10s logins recur post-fix.
+  # default max_requests=1000 recycles workers; the first login after a recycle
+  # pays a cold flow-executor (~10-38s measured). 2026.8 (Rust server) REJECTS
+  # -1 ("Value must be positive" — crash-looped, verified) → use 1e9 = never
+  # recycles in practice while passing validation.
   env:
   - name: AUTHENTIK_WEB__MAX_REQUESTS
-    value: "-1"
+    value: "1000000000"
   resources:
     requests:
       memory: "512Mi"
