@@ -4,8 +4,8 @@
 set -euo pipefail
 
 export RESTIC_PASSWORD="$(cat /root/.restic-passphrase)"
-VPS_REPO="sftp:${VPS_REPO}"
-PC_REPO="sftp:${PC_REPO}"
+VPS_REPO="sftp:ubuntu@129.213.11.104:/home/ubuntu/restic-repo"
+PC_REPO="sftp:${PC_SFTP_TARGET}"
 LOG="/var/log/restic-backup.log"
 
 # ---- failure alerting (Gotify "Backup Alerts" app id 12) ----
@@ -157,6 +157,10 @@ else
   echo "[$DATE] PC BACKUP FAILED" >> "$LOG"
   notify_fail "PC restic push" "Nightly backup to PC failed at $DATE (IP drift? PC asleep?)"
 fi
+
+# 6. Heartbeat to Uptime Kuma push monitor (alerts if the whole chain stops running)
+KUMA_PUSH_URL="http://uptime-kuma.monitoring.svc.cluster.local:3001/api/push/${KUMA_PUSH_TOKEN}"
+curl -s -m 10 "$KUMA_PUSH_URL?msg=ok&ping=" > /dev/null 2>&1 || true
 
 
 # 3q. Nextcloud data (user files + DB-adjacent data dir; previews regenerable - excluded)
