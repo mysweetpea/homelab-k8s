@@ -178,7 +178,7 @@ extraSecrets:
     client_base_url: "https://chat.mysweetpea.cc"
     validation_token_lifetime: 15m
     invite_client_location: "https://chat.mysweetpea.cc"
-  # --- JWT config removed (MAS handles backchannel logout itself) ---
+    # --- JWT config removed (MAS handles backchannel logout itself) ---
 synapse:
   nodeSelector:
     kubernetes.io/hostname: k3s-master
@@ -209,5 +209,5 @@ synapse:
   - sed -i -e "s|@@REG_SECRET@@|${REG_SECRET:-}|" -e "s|@@MAS_SECRET@@|${MAS_SECRET:-}|" /synapse/config/conf.d/secrets.yaml
   - sed -i -e "s|@@SMTP_PASS@@|${SMTP_PASS:-}|" /synapse/config/conf.d/secrets.yaml
 image:
-  tag: v1.159.0
+  tag: v1.160.0
   repository: ghcr.io/element-hq/synapse
