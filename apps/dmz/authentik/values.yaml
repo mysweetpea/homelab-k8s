@@ -26,6 +26,13 @@ authentik:
 # live pods had no limits before Aug 25 2026).
 server:
   replicas: 1
+  # ⚠️ Gunicorn worker recycling root-caused as login-latency class (Sep 2 audit):
+  # default max_requests=1000 recycles workers every ~1-2h at current traffic;
+  # the first login after a recycle pays a cold flow-executor (~10-38s measured).
+  # -1 disables recycling. Also add a keep-warm if >10s logins recur post-fix.
+  env:
+  - name: AUTHENTIK_WEB__MAX_REQUESTS
+    value: "-1"
   resources:
     requests:
       memory: "512Mi"
