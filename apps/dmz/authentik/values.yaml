@@ -86,6 +86,13 @@ postgresql:
       enabled: true
       storageClass: longhorn
       size: 8Gi
+    # ⚠️ JIT MUST STAY OFF (root-caused Sep 2 2026): Postgres JIT compiled the
+    # flow-planner's 7.3KB 9-source-join query on EVERY login (~9s JIT vs 0.3ms
+    # execution — pathological 1.8e13 row estimate). This caused every reported
+    # authentik login hang. ALTER SYSTEM already set it live (postgresql.auto.conf
+    # on the PVC); mirrored here so the chart re-applies it if the PVC is recreated.
+    extendedConfiguration: |
+      jit = off
     resources:
       requests:
         memory: "256Mi"
