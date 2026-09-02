@@ -9,6 +9,26 @@ controllers:
         env:
           ENABLE_CONSOLE_LOG: "true"
           ENABLE_SCALAR_UI: "false"
+          # Pinned-connection mode: the Assist's websocket to Gotify MUST use the
+          # internal cluster URL — dialing the public https://gotify.mysweetpea.cc
+          # routes out through Cloudflare where Bot Fight Mode 403s the websocket
+          # upgrade from a server IP (logs: "403 when 101 expected").
+          # Tokens come from the phone's registration (sealed igotify-assist-tokens).
+          GOTIFY_URLS:
+            valueFrom:
+              secretKeyRef:
+                name: igotify-assist-tokens
+                key: GOTIFY_URLS
+          GOTIFY_CLIENT_TOKENS:
+            valueFrom:
+              secretKeyRef:
+                name: igotify-assist-tokens
+                key: GOTIFY_CLIENT_TOKENS
+          SECNTFY_TOKENS:
+            valueFrom:
+              secretKeyRef:
+                name: igotify-assist-tokens
+                key: SECNTFY_TOKENS
         securityContext:
           allowPrivilegeEscalation: false
         resources:
