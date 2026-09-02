@@ -1,7 +1,4 @@
 #!/bin/bash
-# NOTE: repo copy is sanitized — real repo URLs (VPS/PC SFTP) live on k3s-master
-# at /root/backup-scripts/. Apply template by setting VPS_REPO/PC_REPO env vars or
-# re-editing on the master. See apps/infra/longhorn/BACKUP-TARGET.md for the design.
 # MySweetPea homelab backup script — restic to VPS (off-site) + PC (local)
 # Backs up: sealed-secrets key, k3s state.db, pg-dumps, config-backup
 set -euo pipefail
@@ -10,6 +7,17 @@ export RESTIC_PASSWORD="$(cat /root/.restic-passphrase)"
 VPS_REPO="sftp:${VPS_REPO}"
 PC_REPO="sftp:${PC_REPO}"
 LOG="/var/log/restic-backup.log"
+
+# ---- failure alerting (Gotify "Backup Alerts" app id 12) ----
+notify_fail() {
+  local WHAT="$1" DETAIL="$2"
+  local TOKEN
+  TOKEN=$(cat /root/.gotify-backup-token 2>/dev/null) || return
+  curl -s --max-time 10 -X POST "http://10.43.11.212/message?token=$TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "{\"title\":\"BACKUP FAILED: $WHAT\",\"message\":\"$DETAIL - check /var/log/restic-backup.log on k3s-master\",\"priority\":8}" >/dev/null
+  echo "[$(date +%Y%m%d-%H%M%S)] ALERT pushed: $WHAT" >> "$LOG"
+}
 DATE="$(date +%Y%m%d-%H%M%S)"
 
 echo "[$DATE] === RESTIC BACKUP START ===" >> "$LOG"
@@ -137,6 +145,7 @@ if restic backup "$STAGE" --tag "$TAG" --exclude "*.log" >> "$LOG" 2>&1; then
   echo "[$DATE] VPS backup OK" >> "$LOG"
 else
   echo "[$DATE] VPS BACKUP FAILED" >> "$LOG"
+  notify_fail "VPS restic push" "Nightly backup to VPS failed at $DATE (VPS down? network?)"
 fi
 
 # 4b. Restic backup to PC (secondary, local)
@@ -146,6 +155,7 @@ if restic backup "$STAGE" --tag "$TAG" --exclude "*.log" >> "$LOG" 2>&1; then
   echo "[$DATE] PC backup OK" >> "$LOG"
 else
   echo "[$DATE] PC BACKUP FAILED" >> "$LOG"
+  notify_fail "PC restic push" "Nightly backup to PC failed at $DATE (IP drift? PC asleep?)"
 fi
 
 
