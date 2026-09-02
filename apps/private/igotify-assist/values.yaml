@@ -9,6 +9,8 @@ controllers:
         env:
           ENABLE_CONSOLE_LOG: "true"
           ENABLE_SCALAR_UI: "false"
+        securityContext:
+          allowPrivilegeEscalation: false
         resources:
           requests:
             memory: 128Mi
@@ -41,12 +43,11 @@ service:
     ports:
       http:
         port: 80
-defaultPodOptions:
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 1654
-    runAsGroup: 1654
-    fsGroup: 1654
-    seccompProfile:
-      type: RuntimeDefault
-  topologySpreadConstraints: []
+persistence:
+  data:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    storageClass: longhorn
+    globalMounts:
+    - path: /app/data
