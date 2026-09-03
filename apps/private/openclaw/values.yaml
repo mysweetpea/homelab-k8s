@@ -11,7 +11,7 @@ controllers:
             value: local
         image:
           repository: ghcr.io/openclaw/openclaw
-          tag: "2026.8.2"
+          tag: "2026.9.1"
         envFrom:
         - secretRef:
             name: openclaw-secrets
