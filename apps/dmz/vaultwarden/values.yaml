@@ -80,7 +80,7 @@ additionalVolumeMounts:
   readOnly: true
 initContainers:
 - name: patch-web-vault
-  image: vaultwarden/server:testing
+  image: vaultwarden/server:1.37.2
   command:
   - /bin/sh
   - -c
@@ -98,7 +98,7 @@ initContainers:
     mountPath: /disclaimer
     readOnly: true
 image:
-  tag: "testing"
+  tag: "1.37.2"
   repository: vaultwarden/server
 resources:
   requests:
