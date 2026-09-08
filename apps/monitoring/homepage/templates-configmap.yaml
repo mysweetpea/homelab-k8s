@@ -819,6 +819,12 @@ data:
           description: Watched List & Ratings
           icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/watcharr.svg
           server: ''
+      - CrossWatch:
+          id: crosswatch
+          href: https://github.com/cenodude/CrossWatch
+          description: Sync Watch History Across Trackers
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/crosswatch.svg
+          server: ''
   settings.yaml: |
     title: SweetPea Homelab
     description: Your private command center
