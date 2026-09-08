@@ -132,6 +132,23 @@ internalDatabase:
 service:
   port: 8080
   type: ClusterIP
+# notify_push port needs its own Service (the chart's service only exposes
+# 8080): Traefik's /push route targets nextcloud-push:7867.
+extraManifests:
+  - |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nextcloud-push
+      namespace: private
+    spec:
+      type: ClusterIP
+      ports:
+        - name: push
+          port: 7867
+          targetPort: 7867
+      selector:
+        app.kubernetes.io/name: nextcloud
 externalDatabase:
   enabled: true
   type: postgresql
