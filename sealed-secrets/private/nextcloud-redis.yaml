@@ -1,0 +1,20 @@
+{
+  "kind": "SealedSecret",
+  "apiVersion": "bitnami.com/v1alpha1",
+  "metadata": {
+    "name": "nextcloud-redis",
+    "namespace": "private"
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "name": "nextcloud-redis",
+        "namespace": "private"
+      },
+      "type": "Opaque"
+    },
+    "encryptedData": {
+      "redis-password": "AgBrARLsEcrg1gtYNeRdM863NosNyqusYpBdscQyIi7yFqu4ZrqSaRIT/n55kX352GFS6DBa7/FhJjFNc4SekSPsCMSKh1XTgPU1geGXB06HQJgRvyG9PI789ruxPt2gKR4hpqLyQK/DWGxOsP7VRQKjg0JKlVb5OLqdT3gr852xFueBCol/JfxNxrpKqvrger0a2gG6zOAF3lwOq/l+WkbO8D52AUP2E/I4rm77kn7sVRAPHjlEZzh6FSsrLyA/Ofx1WyUVStrkHQb7LPqYdGfcI9XKyAewJOxxLzdeCodgJBX6ZenLcQrW/nctNf8kgb8JmymlZQYvjXKN52bwtIoA3vPZp81juBP3DWbXnkCxnuwBsyo5xnIRxP7gtn7ViVanSus4QrSpdU0ilN4dC0svXJjQT0a4XujSQcV3oCndVWkDaLkCfhpHP2JZrNr6o7xJbrGjB+BGU3IsdU9dd3xbx9bfrcdX12URuPNWplaKrEH8dgJXDrrVSxYNY+ksl/Bwt8o3GF3boPKO49FwGw9rE+c8BiLHjIPYbjQXjvIr0zPrFt94kK+2YfyPhMDMNFyyUYSoNy62lO+TrwGuFNbwei74YldcJBxv5imHsNcKpeo2Q3cf6IAxfqoMvC/nOg0CZgzidpwrWw3eeqbONeLIM8wTFRsR04kG0iDCktBiTq2lC3xFZUMlcgXFZlBbK7A/TIE6lKiZxkLgkDIhZb5opQxiqjrUxxQ2wZzA3RQnCfWNa6j7GWsoe3LynzcMFVI="
+    }
+  }
+}

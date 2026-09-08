@@ -60,9 +60,45 @@ nextcloud:
     - name: nextcloud-oidc
       mountPath: /run/secrets/nextcloud-oidc
       readOnly: true
+  # ── notify_push (real-time file sync + notifications) ──
+  # App installed via occ (custom_apps/notify_push ships the binary). Sidecar
+  # runs the websocket binary; config.php points clients at /push/.
+  # Setup check "Client Push" clears only when this is running.
+  extraSidecarContainers:
+    - name: notify-push
+      image: library/nextcloud:34.0.3
+      command: ["/bin/sh", "-c", "exec /var/www/html/custom_apps/notify_push/bin/x86_64/notify_push /var/www/html/config/config.php"]
+      workingDir: /var/www/html
+      volumeMounts:
+        - name: nextcloud-main
+          mountPath: /var/www/html
+      resources:
+        requests:
+          cpu: 20m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+
 persistence:
   enabled: true
   existingClaim: nextcloud-nextcloud-lh
+# ── Redis (notify_push queue + file-locking cache + session cache) ──
+# notify_push (real-time sync) hard-requires a Redis queue; without it occ
+# throws RedisException "Connection refused" on every run. Cache/queue data
+# is ephemeral (clients reconnect, locks rebuild) → persistence OFF, no PVC,
+# not in the backup set. Password: sealed secret nextcloud-redis.
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    existingSecret: nextcloud-redis
+    existingSecretPasswordKey: redis-password
+  master:
+    persistence:
+      enabled: false
+
 cronjob:
   # Background jobs (preview gen, Deck/Collectives/Notes indexing, activity)
   # were running in AJAX mode (unreliable). Sidecar runs real cron every 5 min.
