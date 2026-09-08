@@ -765,6 +765,60 @@ data:
           description: Knowledge Base
           icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@main/svg/obsidian.svg
           server: ''
+      - Minecraft Server:
+          id: minecraft
+          href: ''
+          description: Game Server (with friends)
+          icon: https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/minecraft.svg
+          server: ''
+      - Unsloth Studio:
+          id: unsloth
+          href: https://unsloth.ai/docs
+          description: Local AI Model Training
+          icon: https://avatars.githubusercontent.com/u/150920049?v=4
+          server: ''
+      - Maintainerr:
+          id: maintainerr
+          href: https://github.com/jorenn92/Maintainerr
+          description: Auto-Remove Unwatched Media
+          icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@main/svg/maintainerr.svg
+          server: ''
+      - Cleanuparr:
+          id: cleanuparr
+          href: https://github.com/Cleanuparr/Cleanuparr
+          description: Auto-Cleanup Blocked Media
+          icon: mdi-broom
+          server: ''
+      - Wizarr:
+          id: wizarr
+          href: https://github.com/wizarrrr/wizarr
+          description: Guided Onboarding for New Users
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/wizarr.svg
+          server: ''
+      - Profilarr:
+          id: profilarr
+          href: https://profilarr.com
+          description: Sync Arr Quality Profiles
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/profilarr.svg
+          server: ''
+      - Paperless AI:
+          id: paperless-ai
+          href: https://github.com/clusterzx/paperless-ai
+          description: AI Document Analyzer
+          icon: mdi-file-search-outline
+          server: ''
+      - Speaches:
+          id: speaches
+          href: https://github.com/speaches-ai/speaches
+          description: AI Transcription (Whisper API)
+          icon: mdi-microphone-message-outline
+          server: ''
+      - Watcharr:
+          id: watcharr
+          href: https://github.com/sbondCo/Watcharr
+          description: Watched List & Ratings
+          icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/svg/watcharr.svg
+          server: ''
   settings.yaml: |
     title: SweetPea Homelab
     description: Your private command center
