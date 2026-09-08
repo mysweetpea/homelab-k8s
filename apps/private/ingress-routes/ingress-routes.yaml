@@ -41,6 +41,12 @@ spec:
   entryPoints:
     - web
   routes:
+    # notify_push websocket endpoint (real-time sync; sidecar on 7867)
+    - match: Host(`cloud.mysweetpea.cc`) && PathPrefix(`/push`)
+      kind: Rule
+      services:
+        - name: nextcloud
+          port: 7867
     - match: Host(`cloud.mysweetpea.cc`)
       kind: Rule
       services:
