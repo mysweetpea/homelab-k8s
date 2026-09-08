@@ -2,18 +2,22 @@
 
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.36.1-326CE5?logo=kubernetes&logoColor=white)](https://k3s.io)
 [![GitOps](https://img.shields.io/badge/GitOps-ArgoCD-EF7B4D?logo=argo&logoColor=white)](https://argo-cd.readthedocs.io/)
-[![K3s](https://img.shields.io/badge/K3s-3%20nodes-FFC61C?logo=kubernetes&logoColor=white)](https://k3s.io)
-[![Services](https://img.shields.io/badge/Services-40%2B-8FAFB5)](https://mysweetpea.cc)
+[![Services](https://img.shields.io/badge/Apps-55-8FAFB5)](#what-runs-on-it)
+[![Secrets](https://img.shields.io/badge/Sealed_Secrets-55-00A98F?logo=sealedsecrets)](#secrets-management)
 [![SSO](https://img.shields.io/badge/SSO-Authentik-8A2BE2)](https://goauthentik.io)
-[![Storage](https://img.shields.io/badge/Storage-Longhorn-00A98F)](https://longhorn.io)
-[![License](https://img.shields.io/badge/License-Proprietary-9cf)](LICENSE)
+[![Storage](https://img.shields.io/badge/Storage-Longhorn_3--2--1-00A98F?logo=longhorn&logoColor=white)](#backups--disaster-recovery)
+[![Self-hostable](https://img.shields.io/badge/Self--host-installer-2EA44F)](installer/)
 
-A self-hosted, GitOps-managed Kubernetes cluster running **40+ services** for
-the MySweetPea community — privacy-first alternatives to everyday cloud
-services, all running on hardware I own and manage.
+A self-hosted, GitOps-managed Kubernetes cluster running **55 applications** —
+privacy-first alternatives to everyday cloud services, an on-demand media
+platform, and a full observability stack — for the MySweetPea community.
 
-**Live site:** https://mysweetpea.cc
+**Live site:** https://mysweetpea.cc · **Status:** https://status.mysweetpea.cc
 **Website repo:** https://github.com/mysweetpea/portfolio
+
+> 🛠️ **Want to run this yourself?** Most of this stack is reusable — see the
+> [self-hosting installer](installer/). It deploys any subset of these services
+> to your own cluster, generates your own secrets, and rewires the domain.
 
 ---
 
@@ -21,53 +25,106 @@ services, all running on hardware I own and manage.
 
 ![Architecture diagram](docs/architecture.svg)
 
-### At a glance
+| | |
+|---|---|
+| **Cluster** | 3-node K3s v1.36.1 (Ubuntu 26.04), Flannel CNI |
+| **Ingress** | Traefik + MetalLB (LAN load-balancer pool `.210–.240`) |
+| **External access** | Cloudflare Tunnel — **zero inbound ports open** |
+| **Storage** | Longhorn (2-replica, 40 volumes) + shared media PVC |
+| **GitOps** | ArgoCD app-of-apps + Image Updater (auto-commits version bumps) |
+| **Identity** | Authentik SSO — OIDC + LDAP + proxy outposts |
+| **Network policy** | 40 NetworkPolicies, default-deny across 3 zones |
+| **Secrets** | 55 SealedSecrets — encrypted at rest in this public repo |
+| **Observability** | Grafana + Loki + Promtail, Netdata, Uptime Kuma (48 monitors), Homepage |
 
-- **3-node K3s cluster** (v1.36.1+k3s1, Ubuntu 26.04) — one control-plane node
-  and two workers
-- **Flannel** CNI, **Traefik** ingress, **MetalLB** load balancer (21-IP pool)
-- **Longhorn** distributed storage (RWO + RWX) across all three nodes
-- **Cloudflare Tunnel** for external access — **no inbound ports open**
-- **ArgoCD** GitOps with **Image Updater** — container images auto-update and
-  version bumps are committed back to this repo (48 applications)
-- **Authentik** SSO (OIDC + LDAP + Proxy outposts) — single sign-on across
-  14+ public-facing services
-- **Netbird** mesh VPN for private LAN access, with a cloud VPS acting as relay
-- **3-zone VLAN** segmentation (OpenWrt firewall) plus **29 Kubernetes
-  NetworkPolicies** enforcing default-deny ingress (17 in the DMZ, 12 in the
-  private zone)
+### Hardware
+
+| Node | Role | Specs |
+|------|------|-------|
+| `k3s-master` | control-plane | Proxmox VM (OptiPlex) · 8 vCPU · 16 GB · 120 GB |
+| `k3s-worker-a` | worker | EliteBook 745 G5 · 8 vCPU · 10 GB · 240 GB |
+| `k3s-worker-b` | worker | EliteBook 840 G6 · 8 vCPU · 24 GB · 470 GB |
+| Oracle VPS | egress + perf layer | ARM · nginx TLS edge, brotli, cache warmers, Longhorn backup target (150 GB volume) |
+
+The network is split into **3 VLAN zones** (OpenWrt): management, DMZ, and
+trusted — with the cluster adding its own default-deny layer on top.
 
 ---
 
 ## What is this?
 
-MySweetPea is a collection of self-hosted services — password manager, media
-server, cloud storage, notes, AI chat, private search, and more — provided to a
-small community. Instead of renting servers from a cloud provider, everything
-runs on a **3-node Kubernetes cluster** in a home lab.
+MySweetPea is a small community platform: self-hosted alternatives to everyday
+cloud services (password manager, media, files, photos, notes, AI chat, private
+search, Matrix chat), funded by one-time contributions instead of subscriptions.
 
 This repository is the **single source of truth** for that infrastructure.
-Every service, configuration, and security policy is declared as code here.
-Nothing is configured by hand on the servers — if it isn't in this repo, it
-doesn't exist.
+Every service, policy, and secret is declared as code — if it isn't in this
+repo, it doesn't exist.
+
+### Why GitOps?
+
+1. **Reviewable** — every change is a commit; nothing happens silently.
+2. **Auditable** — full infrastructure history preserved in Git.
+3. **Recoverable** — the entire stack can be rebuilt from this repo (and has
+   been tested against that bar: backups capture the sealed-secrets key).
+
+ArgoCD continuously reconciles live state against this repo; hand-made changes
+on the cluster are reverted.
 
 ---
 
-## Why GitOps?
+## What runs on it
 
-All infrastructure changes flow through Git, which gives three things that
-matter for any production system:
+| Zone | Services |
+|------|----------|
+| **DMZ** (public, behind SSO) | Authentik, Cloudflare Tunnel, Vaultwarden, Nextcloud, Immich, AFFiNE, Matrix (Synapse + Element + MAS + RTC), Seerr, KoalaSync, Ollama, SearXNG |
+| **Private** (LAN) | Jellyfin (+ Moonfin client), Decypharr, Radarr, Sonarr, Bazarr, Prowlarr, qBittorrent, AIOStreams, Zilean, n8n, Gotify, Open WebUI, RustDesk, Hindsight, Docling, Firecrawl, FlareSolverr, MCP server, OpenClaw, Open-Terminal, NZBDav, PostgreSQL, Redis |
+| **Monitoring** | Homepage, Uptime Kuma, Grafana, Loki, Promtail, Netdata |
+| **Infra** | ArgoCD, Image Updater, cert-manager, Longhorn, MetalLB, Traefik, NetworkPolicies |
 
-1. **Reviewability** — every change is a commit with a message; nothing happens
-   silently.
-2. **Auditability** — the full history of the infrastructure is preserved,
-   including who changed what and when.
-3. **Recovery** — if a node dies or a cluster needs rebuilding, the entire
-   stack can be recreated from this repo.
+### Media: on-demand streaming, not a media library
 
-[ArgoCD](https://argo-cd.readthedocs.io/) continuously compares the live
-cluster against this repo and reconciles any drift — if someone changes a
-deployment by hand, ArgoCD puts it back to the declared state.
+The media stack works like a private streaming service — nothing is stored
+locally until the moment someone presses play:
+
+```
+Seerr (requests) ─► Radarr/Sonarr ─► Decypharr ─► Real-Debrid ─► .strm files
+                                                                      │
+        Moonfin / Jellyfin ◄──────────── HTTP (on-demand) ◄───────────┘
+```
+
+- **~200 movies + 180 series** as lightweight `.strm` pointers; content
+  resolves to a debrid-cached HTTPS stream at play time.
+- **Decypharr** bridges the arr stack to the debrid service and keeps the
+  `.strm` index in sync with the account.
+- **Jellyfin 10.11** with the **Moonfin** client (custom Aurora Glass theme)
+  and 34 plugins; a VPS nginx edge adds brotli, image/cache warmers, and
+  auth-guarded row caches so cold opens are ~1–2 s.
+- Quality/profile automation (scored custom formats), per-episode subtitles
+  via Bazarr, and a weekly plugin-update check.
+
+---
+
+## Backups & disaster recovery
+
+3-2-1 coverage, all automated, all verified with phone alerts:
+
+| Layer | What | Schedule |
+|-------|------|----------|
+| **Snapshots** | Longhorn per-volume | daily 03:00, keep 5 |
+| **Off-site** | Longhorn → NFS on VPS (WireGuard/NetBird transport) | daily 04:00, keep 7 |
+| **On-site** | restic → local PC (SFTP) | daily 02:30, retry 08:00 |
+| **Databases** | pg_dump all DBs | daily 02:00, keep 7 |
+| **Config** | k3s state + app configs | daily 03:00 |
+| **Integrity** | restic check | monthly |
+
+**Failure alerting:** every leg pushes to Gotify on failure; a morning
+watchdog script independently verifies freshness of all backup legs; a Kuma
+push-monitor heartbeats the nightly chain. iOS delivery via iGotify.
+
+The sanitized (credential-free) copies of all backup scripts live in
+[`scripts/backup/`](scripts/backup/); the Longhorn target runbook is at
+[`apps/infra/longhorn/BACKUP-TARGET.md`](apps/infra/longhorn/BACKUP-TARGET.md).
 
 ---
 
@@ -86,199 +143,116 @@ directory:
 
 Each service directory follows the same pattern:
 
-- `application.yaml` — the ArgoCD Application (Helm chart + values reference +
-  Image Updater annotations)
-- `values.yaml` — the Helm values (bjw-s `app-template` chart)
+- `application.yaml` — ArgoCD Application (chart + values ref + Image Updater annotations)
+- `values.yaml` — Helm values (bjw-s `app-template`)
 
-**Safety settings** — added after two data-loss incidents early on:
+**Safety settings** — added after two early data-loss incidents:
 
 ```yaml
 syncPolicy:
   automated:
     prune: false      # NEVER auto-prune — prevents namespace/PVC deletion
-    selfHeal: false   # requires manual sync for structural changes
+    selfHeal: false   # structural changes require a manual sync
 ```
 
-The `private`, `dmz`, and `monitoring` namespaces carry
-`helm.sh/resource-policy: keep` so they survive syncs.
-
-> ⚠️ **Lesson learned:** ArgoCD syncs from the **committed** Git state, not the
-> working tree. Uncommitted `values.yaml` changes are silently ignored — always
-> commit and push before syncing.
+> ⚠️ **Lesson learned:** ArgoCD syncs from the **committed** Git state, not
+> the working tree. Uncommitted `values.yaml` edits are silently ignored —
+> always commit and push before syncing.
 
 ### Secrets management
 
-Credentials are the hardest part of any GitOps setup — you can't commit
-plaintext passwords to a public repo, but you also can't lose them.
-
-The solution is **Sealed Secrets**: secrets are encrypted with the cluster's
-public key and committed as `SealedSecret` resources (28 of them, under
-`sealed-secrets/`). Only the cluster's private key — which never leaves the
-cluster — can decrypt them. ArgoCD applies them like any other manifest, and a
-cluster rebuild only needs the sealed-secrets key (which is captured in the
-backups).
+Credentials can't be committed to a public repo, but must survive cluster
+rebuilds. **Sealed Secrets** solves this: secrets are encrypted with the
+cluster's public key and committed as `SealedSecret`` resources (55 files
+under `sealed-secrets/`). Only the cluster's private key — captured in
+backups, never in this repo — can decrypt them.
 
 ```bash
 kubeseal --format yaml < secret.yaml > sealed-secrets/<ns>/<name>.yaml
 ```
 
+> This also means the sealed secrets in this repo are **useless to anyone
+> who forks it** — by design. The [installer](installer/) generates your own
+> from templates instead.
+
 ### Network security
 
-Security is layered, defense-in-depth:
-
-1. **Physical segmentation** — the network is split into 3 VLAN zones at the
-   router (OpenWrt firewall), isolating management, DMZ, and private traffic.
-2. **Default-deny at the cluster level** — 29 Kubernetes NetworkPolicies
-   enforce zero-trust: nothing can talk to anything unless a policy explicitly
-   allows it. The DMZ has 17 policies, the private zone 12.
-3. **No exposed ports** — all public access goes through a Cloudflare Tunnel;
-   there are no inbound firewall rules to attack.
-4. **Single identity** — Authentik provides SSO (OIDC/OAuth2) with invite-only
-   registration, so users have one account and services never manage their own
-   password databases.
+1. **Physical segmentation** — 3 VLAN zones at the router.
+2. **Default-deny in-cluster** — 40 NetworkPolicies; nothing talks to
+   anything unless explicitly allowed.
+3. **No exposed ports** — all public access via Cloudflare Tunnel.
+4. **Single identity** — Authentik SSO with invite-only registration; LAN UIs
+   sit behind basic auth.
 
 ### Automated updates
 
-ArgoCD Image Updater watches annotated images, checks registries for new
-versions, and commits version bumps back to this repo (git write-back). The
-cluster has processed 100+ automatic update commits — services stay current
-without manual intervention.
+ArgoCD Image Updater watches annotated images, checks registries, and
+commits version bumps back to this repo — 100+ automatic update commits so
+far. The same loop updates Jellyfin plugins weekly with an E2E verifier.
 
 ---
 
-## What runs on it
+## Self-hosting this repo
 
-| Zone | Services |
-|------|----------|
-| **DMZ** (public, behind SSO) | Authentik, Cloudflare Tunnel, Matrix (Synapse + Element), Vaultwarden, AFFiNE, Seerr, KoalaSync, Ollama, SearXNG |
-| **Private** (LAN / internal) | Jellyfin (Moonfin + 34 plugins), Nextcloud, Immich, n8n, Gotify, Open WebUI, Radarr/Sonarr/Bazarr/Prowlarr/qBittorrent, AIOStreams, RustDesk, MCP server, NZBDav, OpenClaw, Flaresolverr, PostgreSQL, Redis |
-| **Monitoring** | Homepage dashboard, Uptime Kuma, Grafana + Loki + Promtail, Netdata |
-| **Infra** | ArgoCD, Image Updater, cert-manager, Longhorn, MetalLB, NetworkPolicies |
+The stack is packaged for reuse:
 
-### Media streaming (on-demand, Netflix-style)
+```bash
+./installer/install.sh
+```
 
-The media stack is a **Stremio-like on-demand streaming platform**, not a
-traditional download library:
+- Pick **any subset** of services (or a bundle: core / media / productivity / comms / ai / monitoring)
+- The installer **generates your own sealed secrets** from templates (mine can't be reused — they're encrypted to my cluster)
+- Rewires `mysweetpea.cc` → your domain across all values
+- Applies only your selected apps and waits for them to go healthy
 
-- **Gelato** (Jellyfin plugin) imports catalog metadata from **AIOStreams**
-  (a Stremio addon aggregator) into the Jellyfin database — ~400 movies,
-  175 series, 15k episodes of *virtual* items, refreshed daily via a
-  scheduled import that dedupes by IMDB id.
-- **Streams resolve on demand**: AIOStreams queries Zilean/Comet/Jackettio
-  etc., then Real-Debrid serves the actual file over HTTPS. Stream results
-  are cached 24h (StreamTTL) so browsing stays instant after first touch.
-- **Zero local storage** for media — the 200Gi PVC is reserved for future
-  local libraries; everything streams through the debrid proxy.
-- Full premium UI: Moonfin web frontend (custom nordic theme), Home Screen
-  Sections rows, Media Bar hero carousel, quality tags, intro skipping.
-- **Self-healing**: a cron watcher (5-min) verifies the AIOStreams manifest
-  URL in Gelato's config and auto-repairs it after config re-imports,
-  alerting via Gotify if manual action is needed.
-
----
-
-## Backups
-
-Automated backups run daily on the control-plane node:
-
-| What | When | Details |
-|------|------|---------|
-| PostgreSQL dumps | daily 02:00 | All databases, 4-day retention |
-| K8s config snapshots | daily 03:00 | Cluster state, 7-day retention |
-| restic (encrypted) | daily 02:30 | Off-site to two locations (cloud VPS + local PC), retention 7 daily / 4 weekly / 6 monthly + prune |
-
-The restic job also captures the **sealed-secrets key** (critical for cluster
-rebuild) and gzip-compresses the k3s state database before upload (127 MB →
-~11 MB). Restic's content-defined chunking deduplicates similar dumps, keeping
-the off-site repos small.
+Requirements and full details: [`installer/README.md`](installer/).
 
 ---
 
 ## Repository layout
 
 ```
-├── bootstrap/
-│   └── root-application.yaml   # Root ArgoCD app (app-of-apps, prune:false)
+├── bootstrap/root-application.yaml   # App-of-apps root (prune:false)
+├── installer/                        # Self-hosting installer + secret templates
+│   ├── install.sh                    #   Interactive multi-service deployer
+│   ├── services.yaml                 #   Service catalog (secrets needed per app)
+│   └── secret-templates/             #   Placeholder secrets for kubeseal
 ├── apps/
-│   ├── dmz/                    # Internet-facing services (behind tunnel/SSO)
-│   │   ├── authentik/          # SSO provider (OIDC/LDAP/Proxy)
-│   │   ├── authentik-ldap-outpost/
-│   │   ├── authentik-tls-proxy/
-│   │   ├── cloudflared/        # Cloudflare Tunnel
-│   │   ├── element-web/        # Matrix client
-│   │   ├── matrix-synapse/     # Matrix homeserver
-│   │   ├── vaultwarden/        # Password manager
-│   │   ├── affine/             # Notes
-│   │   ├── seerr/              # Media requests
-│   │   ├── koalasync/          # Sync
-│   │   ├── ollama/             # Local LLM
-│   │   ├── searxng/            # Private search
-│   │   └── ingress-routes/     # Traefik IngressRoutes + Auth middleware
-│   ├── private/                # LAN / internal services
-│   │   ├── jellyfin/           # Media server (Moonfin + 34 plugins)
-│   │   ├── postgresql/         # Shared PostgreSQL (PG18)
-│   │   ├── n8n/                # Automation + webhook backend
-│   │   ├── nextcloud/          # Files
-│   │   ├── immich/ + immich-postgresql/  # Photos
-│   │   ├── gotify/             # Notifications
-│   │   ├── open-webui/         # AI chat
-│   │   ├── radarr/ sonarr/ bazarr/ prowlarr/ qbittorrent/  # Media stack
-│   │   ├── aiostreams/         # Streaming (Stremio-style)
-│   │   ├── rustdesk/           # Remote desktop
-│   │   ├── flaresolverr/       # Cloudflare-bypass proxy
-│   │   ├── nzbdav/ openclaw/ mcp-server/
-│   │   ├── media-storage/      # Shared 200Gi media PVC
-│   │   ├── redis-affine-master/
-│   │   └── ingress-routes/
-│   ├── monitoring/
-│   │   ├── homepage/           # Dashboard
-│   │   ├── uptime-kuma/        # Status page (status.mysweetpea.cc)
-│   │   ├── grafana/ + loki/ + promtail/ + netdata/   # Observability
-│   │   └── ingress-routes/
-│   └── infra/
-│       ├── argocd/             # ArgoCD config
-│       ├── argocd-image-updater/
-│       ├── cert-manager/
-│       ├── longhorn/
-│       ├── metallb/
-│       ├── network-policies/   # 29 NetworkPolicies (17 dmz + 12 private)
-│       ├── coredns-custom.yaml
-│       ├── traefik-dashboard.yaml
-│       └── argocd-sync-windows.yaml
-└── sealed-secrets/             # Encrypted secrets (28 files)
-    ├── argocd/
-    ├── dmz/
-    └── private/
+│   ├── dmz/                          # Internet-facing (tunnel + SSO)
+│   ├── private/                      # LAN services (media stack, DBs, AI tooling)
+│   ├── monitoring/                   # Dashboards, status, logs, metrics
+│   └── infra/                        # ArgoCD, Longhorn, MetalLB, netpols, ...
+├── sealed-secrets/                   # 55 encrypted secrets (cluster-key bound)
+├── scripts/
+│   ├── backup/                       # Sanitized copies of the backup chain
+│   └── customize-domain.sh           # Rewire domain for self-hosters
+├── docs/                             # Architecture diagram, plugin state notes
+└── workflows/                        # n8n workflow exports
 ```
 
 ---
 
 ## Common operations
 
-### Sync an app
-
 ```bash
-argocd login <argocd-server> --username admin --password <pass> --insecure
+# Sync an app
 argocd app sync <app-name>
-```
 
-### Add a new service
+# Add a new service
+#   1. apps/<ns>/<service>/{application.yaml,values.yaml}
+#   2. commit + push  (ArgoCD reads committed state only)
+#   3. kubectl apply -f apps/<ns>/<service>/application.yaml
 
-1. Create `apps/<ns>/<service>/application.yaml` + `values.yaml`
-2. Commit + push
-3. `kubectl apply -f apps/<ns>/<service>/application.yaml`
-4. `argocd app sync <service>`
-
-### Check auto-update status
-
-```bash
-argocd-image-updater list
+# Seal a new secret
+kubeseal --format yaml < secret.yaml > sealed-secrets/<ns>/<name>.yaml
 ```
 
 ---
 
 ## License / contact
 
+The infrastructure code in this repo is provided as-is for reference and
+self-hosting. Service containers carry their upstream licenses.
+
 Questions: support@mysweetpea.cc
-Website: https://github.com/mysweetpea/portfolio
-This repo: https://github.com/mysweetpea/homelab-k8s
+Infrastructure: https://github.com/mysweetpea/homelab-k8s · Website: https://github.com/mysweetpea/portfolio

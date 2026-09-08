@@ -1,0 +1,94 @@
+# Installer catalog.
+#
+# bundles: plain lists of service names for the interactive picker.
+#
+# secrets: services whose charts reference secrets by NAME (envFrom /
+# chart-level existingSecret / sidecar CRDs) rather than inline secretKeyRef
+# pairs in values.yaml. Map: service -> { secret-name: [keys...] }.
+# The install.sh parser covers the inline secretKeyRef case automatically;
+# this map adds what it cannot see.
+
+bundles:
+  core:
+    - metallb
+    - traefik-k3s
+    - cert-manager
+    - longhorn
+    - argocd
+    - argocd-image-updater
+    - network-policies
+    - dmz-ingress-routes
+    - private-ingress-routes
+    - monitoring-ingress-routes
+
+  monitoring:
+    - homepage
+    - uptime-kuma
+    - grafana
+    - loki
+    - promtail
+    - netdata
+
+  media:
+    - media-storage
+    - jellyfin
+    - decypharr
+    - radarr
+    - sonarr
+    - bazarr
+    - prowlarr
+    - qbittorrent
+    - aiostreams
+    - zilean
+    - flaresolverr
+
+  productivity:
+    - postgresql
+    - vaultwarden
+    - nextcloud
+    - immich
+    - immich-postgresql
+    - affine
+    - redis-affine-master
+
+  comms:
+    - matrix-synapse
+    - mas
+    - element-web
+    - matrix-rtc
+
+  identity:
+    - authentik
+    - authentik-ldap-outpost
+    - authentik-proxy-outpost
+    - cloudflared
+
+  ai:
+    - ollama
+    - open-webui
+    - hindsight
+    - docling
+    - firecrawl
+
+secrets:
+  decypharr:
+    decypharr-secrets: [DECYPHARR_DEBRIDS__0__API_KEY, DECYPHARR_ARRS__0__TOKEN, DECYPHARR_ARRS__1__TOKEN]
+  vaultwarden:
+    vaultwarden-admin: [password]
+    vaultwarden-sso: [CLIENT_ID, CLIENT_SECRET]
+    vaultwarden-smtp: [SMTP_USER, SMTP_PASSWORD]
+    vaultwarden-push: [PUSH_INSTALLATION_ID, PUSH_INSTALLATION_KEY]
+  jellyfin: {}          # no secret needed
+  radarr: {}
+  sonarr: {}
+  homepage:
+    homepage-secrets: [AUTHENTIK_API_TOKEN, GOTIFY_ADMIN_PASS, N8N_API_KEY]
+  uptime-kuma: {}       # creds live in its own DB
+  netdata:
+    netdata-gotify: [GOTIFY_TOKEN, GOTIFY_URL]
+  grafana:
+    grafana-admin: [admin-user, admin-password]
+    grafana-smtp: [SMTP_USER, SMTP_PASSWORD]
+    grafana-alerting: {} # alertmanager config if used
+  argocd:
+    repo-3319904380: [https://github.com/mysweetpea/homelab-k8s.git, type_git]
