@@ -886,3 +886,30 @@ spec:
       protocol: TCP
   policyTypes:
   - Ingress
+---
+# Authentik workers/server: K8s API access (outpost discovery, KubernetesSync,
+# /version checks). The ClusterIP DNATs to the master node IP — same pattern
+# as allow-cluster-internal-egress (private ns); dmz lacked it, causing worker
+# 'Connection refused 10.43.0.1:443 /version/' retries every 15min.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-authentik-kubeapi-egress
+  namespace: dmz
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: authentik
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.43.0.0/16
+    - ipBlock:
+        cidr: 192.168.20.40/32
+    ports:
+    - port: 6443
+      protocol: TCP
+    - port: 443
+      protocol: TCP
+  policyTypes:
+  - Egress
