@@ -196,5 +196,5 @@ service:
   loadBalancerIP: 192.168.20.226
   port: 3000
 image:
-  tag: 13.2.0
+  tag: 13.2.1
   repository: grafana/grafana

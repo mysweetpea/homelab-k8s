@@ -4,7 +4,7 @@
 loki:
   image:
     repository: grafana/loki
-    tag: "3.4.2"
+    tag: "3.5.12"
   auth_enabled: false
   commonConfig:
     replication_factor: 1
