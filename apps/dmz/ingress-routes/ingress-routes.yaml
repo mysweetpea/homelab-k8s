@@ -31,6 +31,7 @@ spec:
       middlewares:
         - name: authentik-https-headers
         - name: authentik-rate-limit
+        - name: authentik-no-cache-html
       services:
         - name: authentik-server
           port: 80
