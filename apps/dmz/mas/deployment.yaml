@@ -26,7 +26,7 @@ spec:
         fsGroup: 65532
       containers:
         - name: mas
-          image: ghcr.io/element-hq/matrix-authentication-service@sha256:e82b2e4a5f9c7ca74096743349160795f5b5a792556fb85c6b5166a9180a5985
+          image: ghcr.io/element-hq/matrix-authentication-service@sha256:52c18ffcc940220a3b6aa5985b7e09d24ac27f5ed10a4d660c312e48f73ff105 # v1.24.0
           imagePullPolicy: IfNotPresent
           args: ["server"]
           ports:
