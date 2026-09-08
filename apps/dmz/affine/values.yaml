@@ -200,6 +200,18 @@ controllers:
             secretKeyRef:
               name: affine-private-key
               key: private-key
+        # Authentik OIDC — consumed by the config-writer heredoc ($OIDC_CLIENT_ID/
+        # $OIDC_CLIENT_SECRET) to render config.json oauth.providers.oidc
+        - name: OIDC_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: affine-secrets
+              key: oidc-client-id
+        - name: OIDC_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: affine-secrets
+              key: oidc-client-secret
         - name: NODE_OPTIONS
           value: "--dns-result-order=ipv4first --require /root/.affine/config/affine-ua-patch.js"
         resources:
