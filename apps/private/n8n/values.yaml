@@ -11,6 +11,10 @@ controllers:
           N8N_SECURE_COOKIE: "true"
           N8N_HOST: "n8n.mysweetpea.cc"
           N8N_WEBHOOK_URL: "https://subscribe.mysweetpea.cc"
+          # Kill outbound telemetry + template fetches (api.n8n.io) — log noise on
+          # transient DNS blips (EAI_AGAIN), and nothing user-facing depends on them
+          N8N_DIAGNOSTICS_ENABLED: "false"
+          N8N_TEMPLATES_ENABLED: "false"
           EXECUTIONS_DATA_PRUNE: "true"
           EXECUTIONS_DATA_MAX_AGE: "168"
           EXECUTIONS_DATA_HARD_PRUNE: "true"
