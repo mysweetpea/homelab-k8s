@@ -1,7 +1,7 @@
 global:
   image:
     repository: ghcr.io/goauthentik/server
-    tag: "2026.8.1"
+    tag: "2026.8.2"
 authentik:
   # ⚠️ image tag for the server/worker is rendered from global.image.tag (chart
   # defaultTag = Chart.AppVersion; authentik.image.* is IGNORED by the chart —
