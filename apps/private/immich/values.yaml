@@ -10,7 +10,8 @@ controllers:
     containers:
       main:
         image:
-          tag: v3.1.0
+          tag: v3.2.0
+          repository: ghcr.io/immich-app/immich-server
         env:
           # Database connection (immich-postgresql in private namespace)
           DB_HOSTNAME: immich-postgresql.private.svc.cluster.local
@@ -25,9 +26,8 @@ controllers:
           # Security: enable CSP (recommended in v2.7.0 release notes)
           IMMICH_HELMET_FILE: "false"
         envFrom:
-          - secretRef:
-              name: immich-db
-
+        - secretRef:
+            name: immich-db
 # Immich-specific configuration
 immich:
   metrics:
@@ -35,11 +35,9 @@ immich:
   persistence:
     library:
       existingClaim: immich-library-lh
-
 # Configuration (set via admin UI after first boot)
 configuration: {}
 configurationKind: ConfigMap
-
 # ── Bundled Valkey (replaces external redis-immich-master) ──
 valkey:
   enabled: true
@@ -65,7 +63,6 @@ valkey:
               type: persistentVolumeClaim
               accessMode: ReadWriteOnce
               storageClass: longhorn
-
 # ── Immich Server ──
 server:
   enabled: true
@@ -87,7 +84,6 @@ server:
   ingress:
     main:
       enabled: false
-
 # ── Machine Learning ──
 machine-learning:
   enabled: true
