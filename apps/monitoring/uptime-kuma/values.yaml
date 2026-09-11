@@ -5,7 +5,7 @@ volume:
   storageClassName: longhorn
   existingClaim: uptime-kuma-pvc
 image:
-  tag: "2.5.3"
+  tag: "2.5.4"
   repository: louislam/uptime-kuma
 resources:
   requests:
