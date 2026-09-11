@@ -13,6 +13,10 @@ controllers:
             cpu: 500m
             memory: 512Mi
     type: deployment
+# Pinned to worker-b: media-storage-lh is RWO (single-node attach)
+defaultPodOptions:
+  nodeSelector:
+    kubernetes.io/hostname: k3s-worker-b
 persistence:
   config:
     existingClaim: bazarr-lh
