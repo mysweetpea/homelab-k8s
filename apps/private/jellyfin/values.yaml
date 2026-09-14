@@ -14,7 +14,11 @@ controllers:
             memory: 1Gi
           limits:
             cpu: 6000m
-            memory: 4Gi
+            # Raised 4Gi -> 6Gi after the Sep 13 OOMKill (hit 3.7GB anon-rss
+            # during thread-pool back-pressure from a runaway MdbList warmer;
+            # the warmer is fixed at the source, this is headroom against
+            # future startup-scan spikes).
+            memory: 6Gi
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
