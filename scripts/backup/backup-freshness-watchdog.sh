@@ -14,12 +14,25 @@ TODAY=$(date +%Y%m%d)
 fail() {
   # dedupe: only once per day
   [ -f "$MARKER" ] && grep -q "^$TODAY$" "$MARKER" && return 0
-  curl -s -m 10 -X POST "$GOTIFY/message?token=$(cat "$TOKEN_FILE")" \
+  local TOK
+  TOK=$(cat "$TOKEN_FILE" 2>/dev/null)
+  if [ -z "$TOK" ]; then
+    echo "[$(date +%Y%m%d-%H%M%S)] WATCHDOG ALERT SKIPPED: $TOKEN_FILE missing or empty" >> "$LOG"
+    return 0
+  fi
+  # Token in a header, not the URL (query strings leak into logs). --fail so a
+  # rejected POST never gets recorded as a delivered alert; marker only on 2xx.
+  curl -sS --fail -m 10 -X POST "$GOTIFY/message" \
+    -H "X-Gotify-Key: $TOK" \
     -H "Title: BACKUP WATCHDOG: $1" \
     -H "Priority: 8" \
-    --data-binary "$2" > /dev/null
-  echo "[$(date +%Y%m%d-%H%M%S)] WATCHDOG ALERT pushed: $1" >> "$LOG"
-  echo "$TODAY" > "$MARKER"
+    --data-binary "$2" > /dev/null 2>&1; rc=$?
+  if [ $rc -eq 0 ]; then
+    echo "[$(date +%Y%m%d-%H%M%S)] WATCHDOG ALERT pushed: $1" >> "$LOG"
+    echo "$TODAY" > "$MARKER"
+  else
+    echo "[$(date +%Y%m%d-%H%M%S)] WATCHDOG ALERT FAILED to push: $1 (alerting broken)" >> "$LOG"
+  fi
 }
 
 # 1. Today 02:30 restic run must show both legs OK

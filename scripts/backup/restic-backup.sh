@@ -1,11 +1,15 @@
 #!/bin/bash
+# NOTE: repo copy is sanitized — real repo URLs (VPS/PC SFTP) and the Kuma
+# push token live on k3s-master at /root/backup-scripts/. Set VPS_REPO/PC_REPO/
+# KUMA_PUSH_TOKEN env vars (or re-edit on the master). See
+# apps/infra/longhorn/BACKUP-TARGET.md for the design.
 # MySweetPea homelab backup script — restic to VPS (off-site) + PC (local)
 # Backs up: sealed-secrets key, k3s state.db, pg-dumps, config-backup
 set -euo pipefail
 
 export RESTIC_PASSWORD="$(cat /root/.restic-passphrase)"
-VPS_REPO="sftp:ubuntu@129.213.11.104:/home/ubuntu/restic-repo"
-PC_REPO="sftp:${PC_SFTP_TARGET}"
+VPS_REPO="${VPS_REPO:-}"
+PC_REPO="${PC_REPO:-}"
 LOG="/var/log/restic-backup.log"
 
 # ---- failure alerting (Gotify "Backup Alerts" app id 12) ----
@@ -13,10 +17,21 @@ notify_fail() {
   local WHAT="$1" DETAIL="$2"
   local TOKEN
   TOKEN=$(cat /root/.gotify-backup-token 2>/dev/null) || return
-  curl -s --max-time 10 -X POST "http://10.43.11.212/message?token=$TOKEN" \
-    -H "Content-Type: application/json" \
-    -d "{\"title\":\"BACKUP FAILED: $WHAT\",\"message\":\"$DETAIL - check /var/log/restic-backup.log on k3s-master\",\"priority\":8}" >/dev/null
-  echo "[$(date +%Y%m%d-%H%M%S)] ALERT pushed: $WHAT" >> "$LOG"
+  if [ -z "$TOKEN" ]; then
+    echo "[$(date +%Y%m%d-%H%M%S)] ALERT SKIPPED: /root/.gotify-backup-token missing or empty" >> "$LOG"
+    return
+  fi
+  # Token in a header, not the URL (query strings leak into access logs).
+  # --fail + conditional marker: never log "ALERT pushed" for a rejected POST.
+  curl -sS --fail --max-time 10 -X POST "http://10.43.11.212/message" \
+       -H "X-Gotify-Key: $TOKEN" \
+       -H "Content-Type: application/json" \
+       -d "{\"title\":\"BACKUP FAILED: $WHAT\",\"message\":\"$DETAIL - check /var/log/restic-backup.log on k3s-master\",\"priority\":8}" >/dev/null; rc=$?
+  if [ $rc -eq 0 ]; then
+    echo "[$(date +%Y%m%d-%H%M%S)] ALERT pushed: $WHAT" >> "$LOG"
+  else
+    echo "[$(date +%Y%m%d-%H%M%S)] ALERT FAILED to push for "$WHAT" (rc=$rc) - alerting is broken, investigate" >> "$LOG"
+  fi
 }
 DATE="$(date +%Y%m%d-%H%M%S)"
 

@@ -17,10 +17,20 @@ if ! grep -q "\[${TODAY}-.*\] PC backup OK" "$LOG"; then
   if ! grep -q "\[${TODAY}-.*\] ALERT pushed: PC unreachable all day" "$LOG"; then
     TOKEN=$(cat /root/.gotify-backup-token 2>/dev/null)
     if [ -n "$TOKEN" ]; then
-      curl -s --max-time 10 -X POST "http://10.43.11.212/message?token=$TOKEN" \
-        -H "Content-Type: application/json" \
-        -d "{\"title\":\"BACKUP FAILED: PC unreachable\",\"message\":\"PC backup missed at both 02:30 and 08:00 retry - PC asleep, IP drift, or powered off. Backups to VPS continue; PC copy is stale.\",\"priority\":8}" >/dev/null
-      echo "[$(date +%Y%m%d-%H%M%S)] ALERT pushed: PC unreachable all day" >> "$LOG"
+      # Token in the JSON body, not the URL: query strings land in proxy/access
+      # logs. Priority 8 = emergency. --fail so a rejected POST does not look
+      # like a delivered alert. Marker is written ONLY on a confirmed 2xx.
+      curl -sS --fail --max-time 10 -X POST "http://10.43.11.212/message" \
+           -H "X-Gotify-Key: $TOKEN" \
+           -H "Content-Type: application/json" \
+           -d "{\"title\":\"BACKUP FAILED: PC unreachable\",\"message\":\"PC backup missed at both 02:30 and 08:00 retry - PC asleep, IP drift, or powered off. Backups to VPS continue; PC copy is stale.\",\"priority\":8}" >/dev/null; rc=$?
+      if [ $rc -eq 0 ]; then
+        echo "[$(date +%Y%m%d-%H%M%S)] ALERT pushed: PC unreachable all day" >> "$LOG"
+      else
+        echo "[$(date +%Y%m%d-%H%M%S)] ALERT FAILED to push (curl rc=$rc) - PC unreachable AND alerting broken" >> "$LOG"
+      fi
+    else
+      echo "[$(date +%Y%m%d-%H%M%S)] ALERT SKIPPED: /root/.gotify-backup-token missing or empty" >> "$LOG"
     fi
   fi
 fi
