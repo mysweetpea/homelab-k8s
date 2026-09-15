@@ -59,11 +59,20 @@ controllers:
         envFrom:
           - secretRef:
               name: decypharr-secrets
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 5"]
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
   nodeSelector:
     kubernetes.io/hostname: k3s-worker-b
+  # DB lock hygiene: entries.db/items.db use exclusive lock files on the state
+  # PVC. If a replacement pod opens them before the old process fully exits,
+  # New() panics ("store is already open by another process"). A preStop pause
+  # guarantees the old process releases locks before termination completes.
+  terminationGracePeriodSeconds: 45
 persistence:
   # Persistent app state: db/ (entries, queue, repair state) + usenet/
   # (NZB metadata + watched .nzb files). RD state rebuilds from the RD
