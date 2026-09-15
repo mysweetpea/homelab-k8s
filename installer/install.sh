@@ -110,11 +110,17 @@ if [ "$DOMAIN" != "mysweetpea.cc" ]; then
   ok "domain rewritten (your local clone only — do not push upstream)"
 fi
 if grep -rq 'loadBalancerIP: 192\.168\.20\.' apps; then
-  read -r -p "Strip hardcoded loadBalancerIPs so MetalLB auto-assigns? [Y/n] " ans
+  # Non-interactive runs (piped stdin, sourced for tests, CI) must NOT take the
+  # destructive default. Only strip on an explicit "y"; otherwise keep the IPs.
+  if [ -t 0 ]; then
+    read -r -p "Strip hardcoded loadBalancerIPs so MetalLB auto-assigns? [y/N] " ans
+  else
+    ans=""
+  fi
   case "$ans" in
-    n|N) warn "keeping 192.168.20.x IPs — edit values to match your LAN" ;;
-    *)   grep -rl 'loadBalancerIP: 192\.168\.20\.' apps | xargs sed -i '/loadBalancerIP: 192\.168\.20\./d'
+    y|Y) grep -rl 'loadBalancerIP: 192\.168\.20\.' apps | xargs sed -i '/loadBalancerIP: 192\.168\.20\./d'
          ok "loadBalancerIP lines stripped" ;;
+    *)   warn "keeping 192.168.20.x IPs — edit values to match your LAN" ;;
   esac
 fi
 
