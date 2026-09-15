@@ -7,11 +7,11 @@ controllers:
           tag: v2.5
         resources:
           requests:
-            cpu: 100m
-            memory: 256Mi
+            cpu: 200m
+            memory: 512Mi
           limits:
-            cpu: 500m
-            memory: 1Gi
+            cpu: 1500m
+            memory: 2Gi
         ports:
           - name: http
             containerPort: 8282
@@ -59,9 +59,14 @@ defaultPodOptions:
   nodeSelector:
     kubernetes.io/hostname: k3s-worker-b
 persistence:
-  config:
+  # Persistent app state: db/ (entries, queue, repair state) + usenet/
+  # (NZB metadata + watched .nzb files). RD state rebuilds from the RD
+  # account on boot, but USENET state has no server-side source — without
+  # this volume every pod restart would orphan every usenet stream.
+  state:
     enabled: true
-    type: emptyDir
+    type: persistentVolumeClaim
+    existingClaim: decypharr-state-lh
     globalMounts:
     - path: /app
   media:
