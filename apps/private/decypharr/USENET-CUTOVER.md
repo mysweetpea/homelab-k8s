@@ -1,0 +1,159 @@
+# October Usenet Cutover — Plug-and-Play Runbook
+
+**When:** when the user's Usenet credentials arrive (Newshosting + UsenetExpress block account).
+**RD expires:** 2026-10-17 (verified via RD API — user should confirm on the RD website).
+**Prereq:** user purchases providers + 3 indexers (NZBGeek, NZBPlanet, +1; see budget plan).
+
+Everything below is **already staged and scratch-verified** (2026-09-15). The
+cutover itself is a credentials drop + arr priority flip + indexer adds.
+
+---
+
+## What is already in place (verified 2026-09-15)
+
+| Piece | State |
+|---|---|
+| Decypharr usenet streaming (direct NNTP, no SABnzbd) | Built into v2.5, running |
+| `usenet.providers: []` in configmap | Staged empty — provider array materializes ONLY when HOST is set (no 503 gate trip) |
+| Provider env schema | `DECYPHARR_USENET__PROVIDERS__N__{HOST,PORT,USERNAME,PASSWORD,BACKBONE,SSL,MAX_CONNECTIONS,PRIORITY,BACKUP}` — all fields present in v2.5 binary |
+| NNTP egress (port 563) | Open in `allow-internet-egress` netpol |
+| SAB-mock client in Radarr + Sonarr | id=3, both test green (`{}` = no errors) |
+| Decypharr state persistence | **NEW** `decypharr-state-lh` PVC — NZB metadata survives restarts (was emptyDir = fatal for usenet) |
+| auth.json preservation | Init container no longer overwrites (token stable across restarts) |
+| Repair chain | Decypharr sweep (managed source) + strm-repair-bridge (arr blocklist+re-search) — verified E2E |
+| Download dirs | `/data/decypharr-downloads/{Radarr,Sonarr}` exist (case matches categories) |
+
+**Scratch-proven credential mechanics** (docker test, 2026-09-15):
+- Full creds via env → both providers materialize, `backup:true` accepted, SAB mock 200, gated paths 200
+- Partial creds (host only) → `503 "usenet provider password is required"` — **all fields must land together**
+- Port 563 auto-forces SSL; BACKBONE auto-lowercased
+
+---
+
+## Cutover steps (exact order)
+
+### 1. Fill the sealed secret (NEW values, all at once)
+
+On the master (kubeseal + cluster key live there):
+```bash
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+cd homelab-k8s
+
+# Build the PLAIN secret delta (keys not yet in the sealed secret):
+cat > /tmp/decy-usenet.yaml <<'EOF'
+apiVersion: v1
+kind: Secret
+metadata:
+  name: decypharr-secrets
+  namespace: private
+stringData:
+  DECYPHARR_USENET__PROVIDERS__0__HOST: news.newshosting.com
+  DECYPHARR_USENET__PROVIDERS__0__PORT: "563"
+  DECYPHARR_USENET__PROVIDERS__0__USERNAME: <user>
+  DECYPHARR_USENET__PROVIDERS__0__PASSWORD: <pass>
+  DECYPHARR_USENET__PROVIDERS__0__BACKBONE: Omicron
+  DECYPHARR_USENET__PROVIDERS__0__SSL: "true"
+  DECYPHARR_USENET__PROVIDERS__0__MAX_CONNECTIONS: "40"
+  DECYPHARR_USENET__PROVIDERS__0__PRIORITY: "1"
+  DECYPHARR_USENET__PROVIDERS__1__HOST: news.usenetexpress.com
+  DECYPHARR_USENET__PROVIDERS__1__PORT: "563"
+  DECYPHARR_USENET__PROVIDERS__1__USERNAME: <user>
+  DECYPHARR_USENET__PROVIDERS__1__PASSWORD: <pass>
+  DECYPHARR_USENET__PROVIDERS__1__BACKBONE: UsenetExpress
+  DECYPHARR_USENET__PROVIDERS__1__SSL: "true"
+  DECYPHARR_USENET__PROVIDERS__1__MAX_CONNECTIONS: "20"
+  DECYPHARR_USENET__PROVIDERS__1__PRIORITY: "2"
+  DECYPHARR_USENET__PROVIDERS__1__BACKUP: "true"   # block account = fallback tier only
+EOF
+
+# MERGE into the existing sealed secret (preserves the RD/arr tokens):
+kubeseal --controller-name sealed-secrets --controller-namespace kube-system \
+  --merge-into sealed-secrets/private/decypharr-secrets.yaml < /tmp/decy-usenet.yaml
+
+rm /tmp/decy-usenet.yaml   # scrub plaintext
+# verify the merged file now has the new keys:
+grep -c "DECYPHARR_USENET" sealed-secrets/private/decypharr-secrets.yaml   # → expect 15
+```
+
+**⚠️ Backbone facts (researched):** Newshosting = Omicron; UsenetExpress (theCubeNet/NewsGroupDirect
+block) = UsenetExpress backbone. `backbone` lets Decypharr skip same-backbone providers after
+423/430 article-not-found. `backup: true` = only consulted when ALL primaries fail (block-billing
+protection).
+
+### 2. Push + sync + restart
+
+```bash
+git add -f sealed-secrets/private/decypharr-secrets.yaml   # gitignored by default
+git commit -m "decypharr: usenet provider credentials (phase 2 cutover)"
+git push
+# ArgoCD syncs the SealedSecret -> Secret; then restart to pick up env:
+kubectl rollout restart deploy/decypharr -n private
+```
+
+### 3. Verify the cutover (the exact checks)
+
+```bash
+# a) providers materialized
+kubectl exec -n private deploy/decypharr -- cat /app/config.json | python3 -c \
+  "import json,sys; d=json.load(sys.stdin); print(len(d['usenet']['providers']), 'providers')"
+# → expect 2
+
+# b) SAB mock answers (via LB or in-cluster)
+curl -s "http://decypharr.private.svc.cluster.local:8282/sabnzbd/api?mode=version"  # {"version":"4.5.0"}
+# c) arr clients re-test (both should return {} = no errors)
+#    Radarr: Settings → Download Clients → Decypharr (Usenet) → Test
+#    (or API: POST /api/v3/downloadclient/test with the client body)
+# d) live grab — grab one movie via Radarr search, then:
+kubectl logs -n private deploy/decypharr --tail=50 | grep -i "nzb\|usenet"
+# e) playback — open the movie in Jellyfin; strm should resolve (206)
+```
+
+### 4. Flip arr priorities (usenet first, RD as fallback)
+
+In both arrs: set Decypharr (Usenet) priority **1**, Decypharr (RD) priority **2**.
+(The RD client stays enabled as a safety net; usenet now wins every grab.)
+- Radarr: `PUT /api/v3/downloadclient/3` priority=1; `PUT .../2` priority=2
+- Sonarr: same ids.
+
+### 5. Add the 3 indexers to Prowlarr (5070 enabled for anime)
+
+NZBGeek + NZBPlanet + one more (abNZB/altHUB). **Enable category 5070 (TV/Anime) on all three**
+plus 2000-series movies. Sync to both arrs after adding.
+
+Anime pipeline (researched): the key groups ([DKB], [ASW], [LoliHouse]) ARE mirrored to Usenet
+via ameNZB; add ameNZB as a Generic Newznab (`https://amenzb.moe/api` + profile key, IP-pinned)
+if anime coverage gaps appear.
+
+### 6. Post-cutover tuning (only if needed)
+
+| Symptom | Lever |
+|---|---|
+| Slow first byte | `usenet.read_ahead` 16MB→32MB; raise provider `MAX_CONNECTIONS` |
+| 430 not-found | Check BACKBONE values; verify backup=true flag; try the alternate release (bridge re-search handles) |
+| Stalls | `processing_timeout` 10m default OK; check `max_active_downloads` (currently 5) |
+| RD still grabbing | Priorities didn't save — re-check both arr clients |
+
+---
+
+## Rollback (if usenet misbehaves)
+
+1. Flip arr priorities back (RD=1, usenet=2) — RD still works until 2026-10-17.
+2. Or disable the usenet client in both arrs entirely.
+3. Decypharr keeps RD configured (validation needs ≥1 provider of either kind).
+
+## Known limitations (researched, accepted)
+
+- **v2.5 DMCA gotcha**: a dead NZB returns HTTP 500 to the arr → Sonarr reads "Download Client
+  Unavailable" (issue #284, open). Mitigation = the strm-repair-bridge (blocklist+re-search) +
+  queue_cleanup rules (already configured). Beta v2.5.1 fixes this properly.
+- **No PAR2 repair in v2.5** (beta-only). Incomplete releases rely on the arr grabbing a replacement.
+- **Priority ≠ backup by default** — that's why the block provider is marked `backup: true`.
+- **First byte is contention-dependent** (0.3–19s reported under parallel load). Keep provider
+  connections generous.
+
+## Upstream watch
+
+- `cy01/blackhole:beta` (v2.5.1-beta, 2026-09-14) carries: strm-aware arr candidate matching,
+  PAR2 repairability groundwork, memory-first buffering, SAB fixes. Consider bumping after
+  burn-in — **not** before the cutover.
+- Image-updater CR currently pins `^\d+\.\d+(\.\d+)?$` → beta/latest tags NOT auto-picked.
