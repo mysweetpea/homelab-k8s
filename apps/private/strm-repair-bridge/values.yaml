@@ -630,7 +630,7 @@ persistence:
     type: persistentVolumeClaim
     existingClaim: media-storage-lh
     globalMounts:
-    - path: /data/media
+    - path: /data
   tmp:
     enabled: true
     type: emptyDir
