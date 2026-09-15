@@ -21,26 +21,58 @@ Dead `.strm` entries 404 at playback **forever** in this stack. Root cause chain
 
 Daily CronJob (`30 6 * * *`, after the 05:30 Decypharr sweep) —
 
-1. Reads Decypharr `GET /api/repair/health` (broken entries + reasons).
-2. **Scans strm contents** for the entry mapping: every strm's first line is
+1. **Detections — two sources**:
+   a. `GET /api/repair/health` → probe-broken entries (status=broken).
+   b. `GET /api/browse/__bad__` → the **sticky-Bad-flag dead zone**
+      (see next section — the probe can't see these).
+   Deduped; probe-broken wins on conflict.
+2. **Streamability verification** (before any destructive action): ranged
+   GET on the exact `webdav/stream/__all__/<entry>/<file>` URL Jellyfin
+   uses (file name pulled from the strm's own URL). 200/206 = alive →
+   `FALSE-ALARM ... skipping`; 500/412/451 = dead → proceed. This is what
+   prevents false deletion when a flag outlives its failure.
+3. **Scans strm contents** for the entry mapping: every strm's first line is
    `http://decypharr.../webdav/stream/__all__/<URL-ENCODED ENTRY>/<file>`, so
-   entry→strm is exact (no name fuzziness). 4,729/4,730 joins verified.
-3. Joins strm absolute path → Radarr `movieFile.path` / Sonarr
+   entry→strm is exact (no name fuzziness). 4,726/4,727 joins verified.
+4. Joins strm absolute path → Radarr `movieFile.path` / Sonarr
    `episodeFile.path` (both in-container `/data/media/...` absolute).
-4. Executes the arr remediation:
+5. Executes the arr remediation:
    - `DELETE /api/v3/{movie,episode}file/{id}` — remove the dead pointer
    - `POST /api/v3/history/failed/{historyId}` — blocklist the grab
      (arrs have `autoRedownloadFailed=true` → auto re-search)
    - `POST /api/v3/command` `{MoviesSearch, movieIds}` /
      `{EpisodeSearch, episodeIds}` — explicit re-search
-5. Writes a ledger at `/decy-state/strm-repair-ledger.json` (on the
+6. Writes a ledger at `/decy-state/strm-repair-ledger.json` (on the
    decypharr-state-lh PVC).
+
+## ⚠️ THE STICKY-BAD-FLAG DEAD ZONE (found 2026-09-15, closed by the bridge)
+
+~50 entries returned HTTP 500 at playback with body
+`can't repair <name> since it's been marked as bad`. Investigation proved:
+
+- The 500 comes from Decypharr's **`entry.Bad` sticky flag** set by the link
+  service when unrestrict fails repeatedly (`markEntryBad` in
+  `pkg/manager/link/service.go`). Root cause observed: **RD 451
+  "infringing_file"** — content IS on RD (`status: downloaded`) but the
+  actual download is DMCA-blocked (confirmed by direct unrestrict on the RD
+  API). The old YTS wave is exactly this class.
+- **The health probe reports these "healthy"**: the probe's `CheckFile`
+  (STAT / `/unrestrict/check`) still passes while the real unrestrict 451s.
+  Consequence: the repair sweep never selects them, `/api/repair/fix`
+  returns `no fixable broken entries`, and `recheck?fix=true` does NOT clear
+  the flag. They'd 404 forever.
+- Detection: `GET /api/browse/__bad__` lists them. Remediation: same as any
+  dead entry (arr delete + blocklist + re-search) — the bridge handles it.
+
+**If playback 500s with "marked as bad"**: check `__bad__`; the bridge's next
+run repairs it, or run a manual job immediately.
 
 ## Safety rails
 
 | Rail | Behavior |
 |---|---|
 | Dry-run default | `--execute` required to act |
+| Streamability verify | Only empirically-dead entries are touched (FALSE-ALARM skip) |
 | Provider-down guard | If the freshest sweep has ≥20 probed and ≥90% broken, skip (mass failure = outage, not per-release death) |
 | Action cap | `--limit` (25/run) bounds first burn-in |
 | Settle cooldown | Entries not re-processed within `ARR_SETTLE_HOURS` (6h) |
