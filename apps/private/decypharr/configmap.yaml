@@ -61,7 +61,7 @@ data:
       },
       "repair": {
         "enabled": true,
-        "source": "arr",
+        "source": "managed",
         "schedule": "30 5 * * *",
         "workers": 5,
         "strategy": "per_entry",

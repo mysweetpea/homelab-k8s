@@ -44,7 +44,13 @@ controllers:
           - -c
           - |
             cp /app-config/config.json /app/config.json
-            cp /app-config/auth.json /app/auth.json
+            # Preserve auth.json across restarts: Decypharr generates its API
+            # token on first boot and saves it here. Overwriting with the
+            # configmap copy would re-generate a NEW token every restart and
+            # invalidate API consumers (e.g. the strm-repair-bridge).
+            if [ ! -f /app/auth.json ]; then
+              cp /app-config/auth.json /app/auth.json
+            fi
             # Inject the RD API key into config.json (env overrides run AFTER
             # setDefaults, which pre-computes DownloadAPIKeys from an empty
             # APIKey — file-based key survives that ordering)

@@ -1,0 +1,535 @@
+#!/usr/bin/env python3
+"""
+strm-repair-bridge — connect Decypharr's strm health detections to
+Radarr/Sonarr blocklist + re-search.
+
+Why this exists
+---------------
+Our library is zero-storage .strm (Decypharr webdav pointers), NOT symlinks.
+Decypharr v2.5's native repair worker can *detect* broken entries for this
+setup (source=managed probes every managed entry's provider link), but its
+built-in repair is symlink-gated: `collectArrFiles()` resolves Arr file paths
+via `readSymlinkTarget()` and strm files aren't symlinks, so broken files
+never get Arr file IDs attached → no blocklist, no re-search. Dead strms then
+sit in the library 404ing at playback until manually fixed (this is exactly
+why ~60 dead YTS strms lingered).
+
+This bridge supplies the missing link. It:
+
+  1. reads Decypharr's entry-health state (broken entries + failure reasons),
+  2. maps each broken entry to the .strm files that reference it by SCANNING
+     STRM CONTENT — every strm's first line is
+       http://decypharr.../webdav/stream/__all__/<URL-ENCODED ENTRY>/<file>
+     so the entry→strm mapping is exact, no name fuzziness. (Fallback name
+     matching covers strms that predate the /stream/ shape.)
+  3. maps strm path → Arr file record (Radarr moviefile.path / Sonarr
+     episodefile.path are absolute in-container paths, exact match),
+  4. drives Arr-side remediation:
+       Radarr: DELETE /api/v3/moviefile/{id}
+               POST   /api/v3/history/failed/{histId}   (blocklist; arr
+                      auto-re-searches when autoRedownloadFailed=true)
+               POST   /api/v3/command MoviesSearch {movieIds:[...]}
+       Sonarr: DELETE /api/v3/episodefile/{id}
+               POST   /api/v3/history/failed/{histId}
+               POST   /api/v3/command EpisodeSearch {episodeIds:[...]}
+
+Safety rails (all mandatory):
+  * --dry-run is the DEFAULT; --execute performs actions.
+  * PROVIDER-DOWN GUARD: when the freshest sweep probed ≥20 entries and
+    ≥90% came back broken, the pass is skipped (mass failure = provider
+    outage, not per-release death). Mirrors JellySTRMprobe
+    DeleteFailureThreshold=99 semantics.
+  * Per-run action cap (MAX_ACTIONS_PER_RUN) bounds first-time burn-in.
+  * Cooldown ledger — an entry is not re-processed for ARR_SETTLE_HOURS
+    (replacement needs time to land).
+  * Only entries Decypharr independently marks `broken` are acted on.
+
+Usage:
+  strm-repair-bridge.py [--dry-run|--execute] [--limit N]
+                        [--strm-index /path/index.json]  # offline test mode
+                        [--scan-root /data/media]
+
+Deployed as a CronJob after the nightly Decypharr sweep.
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from datetime import datetime, timedelta, timezone
+
+# ---------------------------------------------------------------- config
+
+DECY_API = os.environ.get("DECY_API", "http://decypharr.private.svc.cluster.local:8282")
+RADARR_API = os.environ.get("RADARR_API", "http://radarr.private.svc.cluster.local:7878")
+SONARR_API = os.environ.get("SONARR_API", "http://sonarr.private.svc.cluster.local:8989")
+RADARR_KEY = os.environ.get("RADARR_API_KEY", "")
+SONARR_KEY = os.environ.get("SONARR_API_KEY", "")
+DECY_TOKEN = os.environ.get("DECY_API_TOKEN", "")
+
+SCAN_ROOT = os.environ.get("SCAN_ROOT", "/data/media")
+STATE_FILE = os.environ.get("STATE_FILE", "/data/.strm-repair-ledger.json")
+
+PROVIDER_DOWN_PCT = float(os.environ.get("PROVIDER_DOWN_PCT", "90"))
+MAX_ACTIONS_PER_RUN = int(os.environ.get("MAX_ACTIONS_PER_RUN", "25"))
+ARR_SETTLE_HOURS = float(os.environ.get("ARR_SETTLE_HOURS", "6"))
+
+HTTP_TIMEOUT = 45
+WEBDAV_MARKER = "/webdav/"
+
+
+def log(msg: str) -> None:
+    print(f"[{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}] {msg}", flush=True)
+
+
+def parse_dt(s):
+    """Parse Decypharr timestamps (nanosecond precision, tz offset) safely."""
+    if not s:
+        return None
+    try:
+        s2 = s.replace("Z", "+00:00")
+        if "." in s2:
+            head, rest = s2.split(".", 1)
+            frac, tz = "", ""
+            for i, ch in enumerate(rest):
+                if ch.isdigit():
+                    frac += ch
+                else:
+                    tz = rest[i:]
+                    break
+            s2 = f"{head}.{frac[:6]}{tz}"
+        dt = datetime.fromisoformat(s2)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def http_json(url, method="GET", headers=None, body=None, timeout=HTTP_TIMEOUT):
+    req = urllib.request.Request(url, method=method, headers=headers or {})
+    data = None
+    if body is not None:
+        data = json.dumps(body).encode()
+        req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, data=data, timeout=timeout) as resp:
+            raw = resp.read()
+            if not raw:
+                return resp.status, None
+            try:
+                return resp.status, json.loads(raw)
+            except json.JSONDecodeError:
+                return resp.status, raw.decode(errors="replace")
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode(errors="replace")
+    except Exception as e:  # noqa: BLE001
+        return 0, str(e)
+
+
+def decy_token() -> str:
+    """Read Decypharr's API token live.
+
+    Order: explicit env override, then the shared state PVC (the CronJob
+    mounts decypharr-state-lh at DECY_STATE_DIR so it always sees the
+    CURRENT token — Decypharr regenerates it if auth.json is ever wiped),
+    then a direct file in this container."""
+    global DECY_TOKEN
+    if DECY_TOKEN:
+        return DECY_TOKEN
+    state_dir = os.environ.get("DECY_STATE_DIR", "")
+    for path in filter(None, [
+        os.path.join(state_dir, "auth.json") if state_dir else "",
+        "/app/auth.json",
+    ]):
+        try:
+            with open(path) as f:
+                tok = json.load(f).get("api_token", "")
+            if tok:
+                return tok
+        except Exception:  # noqa: BLE001
+            continue
+    return ""
+
+
+# ---------------------------------------------------------------- strm scanning
+
+def entry_from_strm_url(line: str):
+    """Extract the Decypharr entry name from a strm's first line.
+    Shapes seen in the wild:
+      .../webdav/stream/__all__/<ENCODED ENTRY>/<file>
+      .../webdav/<category>/<ENCODED ENTRY>/<file>
+    Returns the decoded entry name or None."""
+    line = (line or "").strip()
+    if WEBDAV_MARKER not in line:
+        return None
+    tail = line.split(WEBDAV_MARKER, 1)[1]
+    parts = [p for p in tail.split("/") if p]
+    if not parts:
+        return None
+    # ['stream', '__all__', '<entry>', '<file>']  or  ['<category>', '<entry>', '<file>']
+    if len(parts) >= 3 and parts[0] == "stream":
+        return urllib.parse.unquote(parts[2]), urllib.parse.unquote(parts[3]) if len(parts) > 3 else ""
+    if len(parts) >= 2:
+        return urllib.parse.unquote(parts[1]), urllib.parse.unquote(parts[2]) if len(parts) > 2 else ""
+    return None
+
+
+def scan_strm_index(root: str):
+    """Walk root for *.strm, return {strm_path: entry_name}."""
+    idx = {}
+    for dirpath, _dirs, files in os.walk(root):
+        for fn in files:
+            if not fn.endswith(".strm"):
+                continue
+            p = os.path.join(dirpath, fn)
+            try:
+                with open(p, "r", errors="replace") as f:
+                    line = f.readline()
+            except Exception:  # noqa: BLE001
+                continue
+            got = entry_from_strm_url(line)
+            if got:
+                idx[p] = got[0]
+    return idx
+
+
+def load_strm_index_file(path):
+    with open(path) as f:
+        return json.load(f)
+
+
+# ---------------------------------------------------------------- decypharr side
+
+class Decypharr:
+    def __init__(self, token: str):
+        self.h = {"Authorization": f"Bearer {token}"}
+
+    def repair_runs(self):
+        st, d = http_json(f"{DECY_API}/api/repair/runs", headers=self.h)
+        if st != 200:
+            raise RuntimeError(f"repair/runs failed: {st} {d}")
+        return d if isinstance(d, list) else d.get("runs", d.get("items", []))
+
+    def health_all(self):
+        broken = {}
+        offset = 0
+        while True:
+            st, d = http_json(
+                f"{DECY_API}/api/repair/health?limit=500&offset={offset}", headers=self.h
+            )
+            if st != 200:
+                raise RuntimeError(f"repair/health failed: {st} {d}")
+            items = d if isinstance(d, list) else d.get("items", d.get("health", []))
+            if not items:
+                break
+            for x in items:
+                if x.get("status") == "broken" and x.get("entry_name"):
+                    broken[x["entry_name"]] = x
+            if len(items) < 500:
+                break
+            offset += 500
+            if offset > 40000:
+                break
+        return list(broken.values())
+
+
+# ---------------------------------------------------------------- arr side
+
+class Arr:
+    def __init__(self, base, key, name):
+        self.base, self.key, self.name = base, key, name
+
+    def api(self, path, method="GET", body=None):
+        return http_json(
+            f"{self.base}{path}", method=method, headers={"X-Api-Key": self.key}, body=body
+        )
+
+    def moviefiles(self):
+        st, movies = self.api("/api/v3/movie")
+        if st != 200 or not isinstance(movies, list):
+            return []
+        out = []
+        for m in movies:
+            mf = m.get("movieFile")
+            if mf and mf.get("path"):
+                mf["movieId"] = m.get("id")
+                out.append(mf)
+        return out
+
+    def episodefiles(self):
+        st, series = self.api("/api/v3/series")
+        if st != 200 or not isinstance(series, list):
+            return []
+        out = []
+        for s in series:
+            st2, files = self.api(f"/api/v3/episodefile?seriesId={s.get('id')}")
+            if st2 != 200 or not isinstance(files, list):
+                continue
+            # build episodeFileId -> episodeId map from the episode list
+            st3, eps = self.api(f"/api/v3/episode?seriesId={s.get('id')}")
+            file_to_ep = {}
+            if st3 == 200 and isinstance(eps, list):
+                for e in eps:
+                    if e.get("episodeFileId"):
+                        file_to_ep[e["episodeFileId"]] = e.get("id")
+            for f in files:
+                if f.get("path"):
+                    f["seriesId"] = s.get("id")
+                    f["episodeId"] = file_to_ep.get(f.get("id"))
+                    out.append(f)
+        return out
+
+    def history_for_movie(self, movie_id):
+        st, d = self.api(f"/api/v3/history/movie?movieId={movie_id}")
+        return d if st == 200 and isinstance(d, list) else []
+
+    def history_for_series(self, series_id):
+        st, d = self.api(f"/api/v3/history/series?seriesId={series_id}")
+        return d if st == 200 and isinstance(d, list) else []
+
+    def delete_file(self, kind, file_id):
+        ep = "moviefile" if kind == "movie" else "episodefile"
+        req = urllib.request.Request(
+            f"{self.base}/api/v3/{ep}/{file_id}",
+            method="DELETE",
+            headers={"X-Api-Key": self.key},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT) as r:
+                return r.status in (200, 204)
+        except Exception:  # noqa: BLE001
+            return False
+
+    def mark_failed(self, history_id):
+        st, _ = self.api(f"/api/v3/history/failed/{history_id}", method="POST")
+        return st in (200, 201, 202, 204)
+
+    def search(self, body):
+        st, _ = self.api("/api/v3/command", method="POST", body=body)
+        return st in (200, 201)
+
+
+# ---------------------------------------------------------------- ledger
+
+def load_ledger():
+    try:
+        with open(STATE_FILE) as f:
+            return json.load(f)
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def save_ledger(led):
+    d = os.path.dirname(STATE_FILE)
+    if d:
+        os.makedirs(d, exist_ok=True)
+    tmp = STATE_FILE + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(led, f, indent=1)
+    os.replace(tmp, STATE_FILE)
+
+
+# ---------------------------------------------------------------- main
+
+def main():
+    ap = argparse.ArgumentParser()
+    g = ap.add_mutually_exclusive_group()
+    g.add_argument("--dry-run", action="store_true", default=True)
+    g.add_argument("--execute", action="store_true", default=False)
+    ap.add_argument("--limit", type=int, default=MAX_ACTIONS_PER_RUN)
+    ap.add_argument("--scan-root", default=SCAN_ROOT)
+    ap.add_argument("--strm-index", default=None,
+                    help="JSON {strm_path: entry_name} — offline test mode; "
+                         "skips the filesystem scan")
+    args = ap.parse_args()
+    execute = args.execute
+
+    log(f"mode={'EXECUTE' if execute else 'DRY-RUN'} limit={args.limit} "
+        f"provider_down_pct={PROVIDER_DOWN_PCT} settle={ARR_SETTLE_HOURS}h")
+
+    tok = decy_token()
+    if not tok:
+        log("FATAL: no Decypharr API token")
+        return 2
+    decy = Decypharr(tok)
+
+    # ---- provider-down guard
+    try:
+        runs = decy.repair_runs()
+        if runs:
+            latest = sorted(runs, key=lambda r: r.get("started_at") or "")[-1]
+            stats = latest.get("stats", {})
+            probed, broken = stats.get("probed", 0), stats.get("broken", 0)
+            log(f"freshest sweep: status={latest.get('status')} probed={probed} "
+                f"broken={broken} healthy={stats.get('healthy', 0)}")
+            if probed >= 20 and broken / max(probed, 1) * 100 >= PROVIDER_DOWN_PCT:
+                log(f"PROVIDER-DOWN GUARD: {broken}/{probed} ≥ {PROVIDER_DOWN_PCT}% broken "
+                    f"— skipping (mass failure = outage, not per-release death)")
+                return 0
+    except Exception as e:  # noqa: BLE001
+        log(f"warn: sweep stats unavailable ({e}); continuing")
+
+    # ---- detections
+    try:
+        broken_entries = decy.health_all()
+    except Exception as e:  # noqa: BLE001
+        log(f"FATAL: cannot read health state: {e}")
+        return 2
+    log(f"broken entries flagged: {len(broken_entries)}")
+    if not broken_entries:
+        log("nothing to repair")
+        return 0
+
+    # ---- strm index: entry_name -> [strm paths]
+    if args.strm_index:
+        raw = load_strm_index_file(args.strm_index)
+        log(f"strm index loaded from file: {len(raw)} strms")
+    else:
+        raw = scan_strm_index(args.scan_root)
+        log(f"strm scan: {len(raw)} strms under {args.scan_root}")
+    entry_to_strms = {}
+    for strm_path, entry_name in raw.items():
+        entry_to_strms.setdefault(entry_name, []).append(strm_path)
+
+    # ---- arr indexes: strm path -> file record
+    radarr = Arr(RADARR_API, RADARR_KEY, "radarr")
+    sonarr = Arr(SONARR_API, SONARR_KEY, "sonarr")
+    mfs = radarr.moviefiles()
+    efs = sonarr.episodefiles()
+    path_index = {}
+    for f in mfs:
+        path_index[f["path"]] = ("movie", f)
+    for f in efs:
+        path_index[f["path"]] = ("episode", f)
+    log(f"arr index: {len(mfs)} movie files, {len(efs)} episode files; "
+        f"path joins={sum(1 for p in path_index if p in raw)}")
+
+    ledger = load_ledger()
+    now = datetime.now(timezone.utc)
+    actions = 0
+    planned = 0
+    unmatched = []
+    skipped_cooldown = 0
+    skipped_settled = 0
+
+    # per-arr search batches (one command per arr per run)
+    movie_ids, episode_ids = set(), set()
+    movie_hist, ep_hist = set(), set()
+    movie_files, ep_files = set(), set()
+    acted_entries = []
+
+    for h in broken_entries:
+        name = h.get("entry_name", "")
+        if not name:
+            continue
+        led = ledger.get(name, {})
+        acted_at = led.get("acted_at")
+        if acted_at:
+            acted = parse_dt(acted_at)
+            # (a) settle cooldown — replacement needs time to land
+            if acted and now - acted < timedelta(hours=ARR_SETTLE_HOURS):
+                skipped_cooldown += 1
+                continue
+            # (b) act again ONLY if the entry failed again after our action
+            # (replacement landed and later died). Prevents blocklist churn
+            # on titles whose every candidate is unrepairable (RD 451 class).
+            failed_again = parse_dt(h.get("last_failed_at"))
+            if failed_again is None or (acted and failed_again <= acted):
+                skipped_settled += 1
+                continue
+
+        reason = h.get("failure_reason") or (
+            (h.get("broken_files") or [{}])[0].get("reason") if h.get("broken_files") else ""
+        )
+
+        strms = entry_to_strms.get(name, [])
+        matched = [(p, path_index[p]) for p in strms if p in path_index]
+        if not matched:
+            unmatched.append((name, reason, len(strms)))
+            ledger.setdefault(name, {})["last_seen"] = now.isoformat()
+            continue
+        if actions >= args.limit:
+            continue
+
+        kinds = {k for _, (k, _) in matched}
+        planned += 1
+        actions += 1
+        acted_entries.append(name)
+        log(f"  MATCH: {name[:70]} reason={reason} strms={len(strms)} "
+            f"arr_files={len(matched)} kinds={sorted(kinds)}")
+
+        for _p, (kind, f) in matched:
+            if kind == "movie":
+                movie_files.add(f.get("id"))
+                movie_ids.add(f.get("movieId"))
+            else:
+                ep_files.add(f.get("id"))
+                episode_ids.add(f.get("episodeId") or 0)
+            # gather history once per media id below
+
+        # history lookups (dedup by media id)
+        if "movie" in kinds:
+            mids = {f.get("movieId") for _, (k, f) in matched if k == "movie"}
+            for mid in mids:
+                for r in radarr.history_for_movie(mid):
+                    if r.get("eventType") == "grabbed":
+                        movie_hist.add(r.get("id"))
+        if "episode" in kinds:
+            sids = {f.get("seriesId") for _, (k, f) in matched if k == "episode"}
+            for sid in sids:
+                for r in sonarr.history_for_series(sid):
+                    if r.get("eventType") == "grabbed":
+                        ep_hist.add(r.get("id"))
+
+        if execute:
+            ledger[name] = {
+                "acted_at": now.isoformat(),
+                "kind": ",".join(sorted(kinds)),
+                "strm_count": len(strms),
+                "arr_files": len(matched),
+                "reason": reason,
+            }
+
+    # ---- execute batched actions
+    if execute and (movie_files or ep_files):
+        log(f"EXECUTE: movieFiles={sorted(x for x in movie_files if x)} "
+            f"episodeFiles={sorted(x for x in ep_files if x)} "
+            f"blocklist(hist) movie={sorted(movie_hist)} ep={sorted(ep_hist)}")
+        for fid in sorted(x for x in movie_files if x):
+            ok = radarr.delete_file("movie", fid)
+            log(f"  radarr DELETE moviefile/{fid} -> {ok}")
+        for fid in sorted(x for x in ep_files if x):
+            ok = sonarr.delete_file("episode", fid)
+            log(f"  sonarr DELETE episodefile/{fid} -> {ok}")
+        for hid in sorted(movie_hist):
+            ok = radarr.mark_failed(hid)
+            log(f"  radarr history/failed/{hid} -> {ok}")
+        for hid in sorted(ep_hist):
+            ok = sonarr.mark_failed(hid)
+            log(f"  sonarr history/failed/{hid} -> {ok}")
+        if movie_ids:
+            ok = radarr.search({"name": "MoviesSearch", "movieIds": sorted(x for x in movie_ids if x)})
+            log(f"  radarr MoviesSearch {sorted(movie_ids)} -> {ok}")
+        if episode_ids:
+            ok = sonarr.search({"name": "EpisodeSearch", "episodeIds": sorted(x for x in episode_ids if x)})
+            log(f"  sonarr EpisodeSearch {sorted(episode_ids)[:20]}... -> {ok}")
+        save_ledger(ledger)
+
+    if unmatched:
+        log(f"unmatched broken entries (no strm/arr linkage): {len(unmatched)}")
+        for name, reason, n in unmatched[:15]:
+            log(f"    {name[:70]} (reason={reason}, strms={n})")
+
+    log(f"done: entries_planned={planned} actions_used={actions}/{args.limit} "
+        f"cooldown_skips={skipped_cooldown} settled_skips={skipped_settled} "
+        f"({'EXECUTED' if execute else 'dry-run — nothing changed'})")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
