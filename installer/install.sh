@@ -57,23 +57,27 @@ inline_refs() {
 }
 
 # catalog secrets (services.yaml -> secrets.<service>: {name: [keys]})
+# Emits one "secret-name<TAB>key" line per key. Handles:
+#   - services listed after the first one (section state is tracked separately
+#     from the service-match state, so a non-matching service can't wedge it)
+#   - multiple keys per secret (split inside awk, one line each)
+#   - empty maps  name: {}  and bare entries (skipped, they carry no keys)
 catalog_refs() {
   [ -f installer/services.yaml ] || return 0
   awk -v svc="$1" '
-    /^secrets:/ {ins=1; next}
-    ins && /^  [a-z0-9-]+:/ {
-      cur=$0; sub(/.*^  /,"",cur); sub(/:.*/,"",cur)
-      ins=(cur==svc); next
+    /^secrets:/ {insec=1; next}
+    insec && /^  [A-Za-z0-9_.-]+:/ {
+      cur=$0; sub(/^  /,"",cur); sub(/:.*/,"",cur)
+      want=(cur==svc); next
     }
-    ins && /^    [A-Za-z0-9_.-]+:/ {
+    insec && want && /^    [A-Za-z0-9_.-]+:/ {
+      if ($0 !~ /\[/) next
       n=$0; sub(/^ +/,"",n); sub(/:.*/,"",n)
       k=$0; sub(/^[^:]*: *\[/,"",k); sub(/\].*/,"",k); gsub(/ /,"",k)
-      gsub(/,/, "\n", k)
-      print n "\t" k
+      cnt=split(k, arr, ",")
+      for (i=1; i<=cnt; i++) if (arr[i]!="") print n "\t" arr[i]
     }
-  ' installer/services.yaml | while IFS=$'\t' read -r n keys; do
-    while IFS= read -r k; do [ -n "$k" ] && echo -e "$n\t$k"; done <<< "$keys"
-  done
+  ' installer/services.yaml
 }
 
 gen_placeholder_secret() { # $1=ns $2=name  stdin: keys (one per line)
@@ -174,7 +178,7 @@ for svc in "${SELECTED[@]}"; do
         ok "secret $ns/$sname already exists — keeping"
         continue
       fi
-      gen_placeholder_secret "$ns" "$sname" <<< "${SEEN[$sname]}" > /tmp/msp-secret.yaml
+      gen_placeholder_secret "$ns" "$sname" <<< "${SEEN[$sname]// /$'\n'}" > /tmp/msp-secret.yaml
       if kubeseal "${KUBESEAL_ARGS[@]}" --format yaml < /tmp/msp-secret.yaml \
         | kubectl apply -f - >/dev/null; then
         ok "secret $ns/$sname sealed + applied (placeholder values)"

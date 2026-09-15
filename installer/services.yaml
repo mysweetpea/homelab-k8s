@@ -91,4 +91,4 @@ secrets:
     grafana-smtp: [SMTP_USER, SMTP_PASSWORD]
     grafana-alerting: {} # alertmanager config if used
   argocd:
-    repo-3319904380: [https://github.com/mysweetpea/homelab-k8s.git, type_git]
+    repo-3319904380: [name, url, username, password, type]
