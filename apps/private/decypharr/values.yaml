@@ -34,6 +34,14 @@ controllers:
         envFrom:
           - secretRef:
               name: decypharr-secrets
+        # DB lock hygiene: the state PVC holds exclusive lock files
+        # (entries.db.lock, items.db.lock, ...). Give the process a moment on
+        # SIGTERM so it releases locks before the replacement pod can open
+        # them ("store is already open by another process" = startup panic).
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 5"]
     initContainers:
       init:
         image:
@@ -59,10 +67,6 @@ controllers:
         envFrom:
           - secretRef:
               name: decypharr-secrets
-        lifecycle:
-          preStop:
-            exec:
-              command: ["/bin/sh", "-c", "sleep 5"]
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
