@@ -71,17 +71,6 @@ controllers:
           limits:
             cpu: 500m
             memory: 256Mi
-        volumeMounts:
-        - name: script
-          mountPath: /scripts
-          readOnly: true
-        - name: decy-state
-          mountPath: /decy-state
-        - name: media
-          mountPath: /data/media
-          readOnly: true
-        - name: tmp
-          mountPath: /tmp
 configMaps:
   script:
     enabled: true
