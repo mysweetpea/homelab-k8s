@@ -124,13 +124,27 @@ Anime pipeline (researched): the key groups ([DKB], [ASW], [LoliHouse]) ARE mirr
 via ameNZB; add ameNZB as a Generic Newznab (`https://amenzb.moe/api` + profile key, IP-pinned)
 if anime coverage gaps appear.
 
-### 6. Post-cutover tuning (only if needed)
+### 6. Connection budget + tuning (20-user scale)
+
+**The math that matters** (from Sep 2026 research): your account pool = Newshosting 100 + UsenetExpress 50 = **150 NNTP connections total**. Each actively-streaming file holds `usenet.max_connections` (15) connections — so ~10 simultaneous streams consume the whole pool. Two protections are already in place:
+
+| Knob | Value now | Why |
+|---|---|---|
+| `usenet.max_connections` | 15 | Per-**stream** NNTP width. 15 × 10 streams = 150 = full pool. If 15-user concurrency ever happens, lower to 8-10 and raise `read_ahead` instead (bandwidth comes from read-ahead, not raw conn count). |
+| `usenet.buffer_memory` | 512MB (explicit) | Host-wide RAM cap across ALL open streams — the researched **real concurrency ceiling** (decoded-article budget, not connections). Raise to 1-2GB after burn-in if streams stall while RAM is idle. |
+| `usenet.read_ahead` | 16MB | Prefetch window; 32MB if first-byte feels slow under load. |
+| `max_active_downloads` | 5 | Shared torrent+NZB concurrent *non-streaming* jobs (imports/parses). Fine to keep. |
+| provider `max_connections` | 100 (NH) + 50 (UX) at cutover | Must match your actual account limits — never exceed, providers ban over-limit accounts. |
+
+Watch `NzbDAV #477`-class risk (unbounded conn growth) does NOT apply here — Decypharr pools per provider; but during cutover burn-in, watch `/api/queue` + provider dashboards for a few days to confirm connection counts stay ≤ account limits.
+
+Jellyfin-side guard (already live): `RemoteClientBitrateLimit` 12 Mbps per stream → caps how many heavy streams can pile up.
 
 | Symptom | Lever |
 |---|---|
-| Slow first byte | `usenet.read_ahead` 16MB→32MB; raise provider `MAX_CONNECTIONS` |
-| 430 not-found | Check BACKBONE values; verify backup=true flag; try the alternate release (bridge re-search handles) |
-| Stalls | `processing_timeout` 10m default OK; check `max_active_downloads` (currently 5) |
+| Slow first byte | `usenet.read_ahead` 16MB→32MB; check provider RTT; raise `socket_read_buffer` |
+| 430 not-found | Check BACKBONE values; verify backup=true flag; the bridge's re-search grabs an alternate release automatically |
+| Stalls mid-play | Raise `buffer_memory` 512MB→1GB; check `processing_timeout` (10m ok) |
 | RD still grabbing | Priorities didn't save — re-check both arr clients |
 
 ---
