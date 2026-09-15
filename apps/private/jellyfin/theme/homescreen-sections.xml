@@ -8,7 +8,10 @@
   <LibreTranslateApiKey />
   <JellyseerrUrl>http://seerr.dmz.svc.cluster.local:5055</JellyseerrUrl>
   <JellyseerrExternalUrl>https://request.mysweetpea.cc</JellyseerrExternalUrl>
-  <JellyseerrApiKey>MTc4NTgxMjgxMDA5MzY0NTFkNjZiLTdjY2QtNDExOS04MWM4LTQ1MDg5ODM0MmYyNw==</JellyseerrApiKey>
+  <!-- NOTE: API keys are placeholders in the repo copy. Live values live in the
+       pod at /config/plugins/configurations/Jellyfin.Plugin.HomeScreenSections.xml
+       (and each arr's own API key settings). Re-enter before restoring. -->
+  <JellyseerrApiKey>@@JELLYSEERR_API_KEY@@</JellyseerrApiKey>
   <JellyseerrPreferredLanguages>en</JellyseerrPreferredLanguages>
   <DefaultMoviesLibraryId>f137a2dd21bbc1b99aa5c0f6bf02a805</DefaultMoviesLibraryId>
   <DefaultTVShowsLibraryId>767bffe4f11c93ef34b805451a696a4e</DefaultTVShowsLibraryId>
@@ -16,7 +19,7 @@
   <DefaultBooksLibraryId />
   <DefaultMusicVideosLibraryId />
   <Sonarr>
-    <ApiKey>aee91cd322d14a71a83c606ab718c8b7</ApiKey>
+    <ApiKey>@@SONARR_API_KEY@@</ApiKey>
     <Url>http://sonarr.private.svc.cluster.local:8989</Url>
     <UpcomingTimeframeValue>2</UpcomingTimeframeValue>
     <UpcomingTimeframeUnit>Weeks</UpcomingTimeframeUnit>
@@ -25,7 +28,7 @@
     <ConsiderDigitalRelease>true</ConsiderDigitalRelease>
   </Sonarr>
   <Radarr>
-    <ApiKey>f09e78ee43c645258000206341f8dbb6</ApiKey>
+    <ApiKey>@@RADARR_API_KEY@@</ApiKey>
     <Url>http://radarr.private.svc.cluster.local:7878</Url>
     <UpcomingTimeframeValue>3</UpcomingTimeframeValue>
     <UpcomingTimeframeUnit>Months</UpcomingTimeframeUnit>

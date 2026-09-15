@@ -65,7 +65,6 @@ config:
   # chart default randAlphaNum regenerates every render → perpetual OutOfSync.
   registrationSharedSecret: "@@REG_SECRET@@"
 extraConfig:
-  max_upload_size: 50M
   public_baseurl: "https://matrix.mysweetpea.cc/"
   # --- Password login ---
   # Disabled: MAS (Tier 2) now handles all auth (upstream Authentik OIDC).

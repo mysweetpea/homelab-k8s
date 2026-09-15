@@ -51,14 +51,18 @@
       <MetadataFetchers>
                 <string>TheMovieDb</string>
         <string>TheTVDB</string>
-        <string>The Open Movie Database
-        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
+        <string>The Open Movie Database</string>
+        <string>AniDB</string>
+        <string>AniList</string>
+        <string>Kitsu</string>
       </MetadataFetchers>
       <MetadataFetcherOrder>
                 <string>TheMovieDb</string>
         <string>TheTVDB</string>
-        <string>The Open Movie Database
-        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
+        <string>The Open Movie Database</string>
+        <string>AniDB</string>
+        <string>AniList</string>
+        <string>Kitsu</string>
       </MetadataFetcherOrder>
       <ImageFetchers>
         <string>Screen Grabber</string>
@@ -75,13 +79,17 @@
       <Type>Season</Type>
       <MetadataFetchers>
                 <string>TheMovieDb</string>
-        <string>TheTVDB
-        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
+        <string>TheTVDB</string>
+        <string>AniDB</string>
+        <string>AniList</string>
+        <string>Kitsu</string>
       </MetadataFetchers>
       <MetadataFetcherOrder>
                 <string>TheMovieDb</string>
-        <string>TheTVDB
-        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
+        <string>TheTVDB</string>
+        <string>AniDB</string>
+        <string>AniList</string>
+        <string>Kitsu</string>
       </MetadataFetcherOrder>
       <ImageFetchers>
         <string>Screen Grabber</string>
@@ -99,14 +107,18 @@
       <MetadataFetchers>
                 <string>TheMovieDb</string>
         <string>TheTVDB</string>
-        <string>The Open Movie Database
-        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
+        <string>The Open Movie Database</string>
+        <string>AniDB</string>
+        <string>AniList</string>
+        <string>Kitsu</string>
       </MetadataFetchers>
       <MetadataFetcherOrder>
                 <string>TheMovieDb</string>
         <string>TheTVDB</string>
-        <string>The Open Movie Database
-        <string>AniDB</string><string>AniList</string><string>Kitsu</string></string>
+        <string>The Open Movie Database</string>
+        <string>AniDB</string>
+        <string>AniList</string>
+        <string>Kitsu</string>
       </MetadataFetcherOrder>
       <ImageFetchers>
         <string>Screen Grabber</string>
