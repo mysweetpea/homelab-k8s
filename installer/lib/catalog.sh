@@ -135,6 +135,7 @@ catalog_load() {
     echo "catalog: ERROR: cannot read catalog file: $file" >&2
     return 1
   fi
+  CATALOG_FILE="$file"
   local tag f1 f2 cur_app cur_uc parse_err
   cur_app=-1
   cur_uc=-1
@@ -399,6 +400,26 @@ _catalog_validate_run() {
     fi
     echo "catalog: OK"
   )
+}
+
+
+# catalog_secrets <app> -> "secret-name:k1,k2" lines (from services.yaml secrets:)
+catalog_secrets() {
+  [ -f "${CATALOG_FILE:-}" ] || { echo "catalog: ERROR: catalog_secrets needs CATALOG_FILE set by catalog_load" >&2; return 1; }
+  awk '
+    $0 ~ /^secrets:/ { insec=1; next }
+    insec && /^[a-z_]+:/ { insec=0 }
+    insec && $0 ~ ("^  " app ":") { inapp=1; next }
+    inapp && /^  [^ ]/ { inapp=0 }
+    inapp && /^    [^ ]/ {
+      line=$0
+      sub(/^    /, "", line)
+      name=line; sub(/:.*/, "", name)
+      keys=line; sub(/^[^:]*: */, "", keys)
+      gsub(/[][]/, "", keys); gsub(/, */, ",", keys); gsub(/[ \t]/, "", keys)
+      if (keys != "" && keys != "{}") printf "%s:%s\n", name, keys
+    }
+  ' app="$1" "${CATALOG_FILE:?}"
 }
 
 catalog_validate() {
