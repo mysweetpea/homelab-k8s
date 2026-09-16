@@ -7,6 +7,13 @@
 # pairs in values.yaml. Map: service -> { secret-name: [keys...] }.
 # The install.sh parser covers the inline secretKeyRef case automatically;
 # this map adds what it cannot see.
+#
+# apps: v3 catalog — per-app metadata for the guided/expert pickers
+# (category, plain-language description, RAM estimate in MB, dependencies,
+# use-case ids, URL subdomain, guided-default flag, optional risk note).
+# Queried by installer/lib/catalog.sh.
+#
+# use_cases: id -> {label, description} for use-case-driven selection.
 
 bundles:
   core:
@@ -92,3 +99,553 @@ secrets:
     grafana-alerting: {} # alertmanager config if used
   argocd:
     repo-3319904380: [name, url, username, password, type]
+
+apps:
+  # ---- core / platform ----
+  metallb:
+    category: core
+    description: Gives your services real network IPs on your LAN
+    ram_mb: 64
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  traefik-k3s:
+    category: core
+    description: Routes internet traffic to the right service
+    ram_mb: 256
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  cert-manager:
+    category: core
+    description: Issues TLS certificates (advanced; optional)
+    ram_mb: 256
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: false
+    risk: not used by the default apps; advanced users only
+  longhorn:
+    category: core
+    description: Keeps your data safe with replicated storage
+    ram_mb: 512
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: needs the iscsi tools installed on every node
+  argocd:
+    category: core
+    description: Keeps everything up to date and self-healing
+    ram_mb: 512
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  argocd-image-updater:
+    category: core
+    description: Auto-updates apps when new versions ship
+    ram_mb: 256
+    requires: argocd
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  network-policies:
+    category: core
+    description: Basic network firewall rules between services
+    ram_mb: 0
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  coredns-custom:
+    category: core
+    description: Custom cluster DNS forwarding
+    ram_mb: 0
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  dmz/ingress-routes:
+    category: core
+    description: Web addresses and login gates for public services
+    ram_mb: 0
+    requires: traefik-k3s
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  private/ingress-routes:
+    category: core
+    description: Web addresses for internal services
+    ram_mb: 0
+    requires: traefik-k3s
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  monitoring/ingress-routes:
+    category: core
+    description: Web addresses for monitoring tools
+    ram_mb: 0
+    requires: traefik-k3s
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+
+  # ---- identity ----
+  authentik:
+    category: identity
+    description: One login for all your apps
+    ram_mb: 1024
+    requires: postgresql
+    use_cases: ""
+    subdomain: auth
+    guided_default: false
+    risk: ""
+  authentik-ldap-outpost:
+    category: identity
+    description: Login helper for devices and apps that need LDAP
+    ram_mb: 128
+    requires: authentik
+    use_cases: ""
+    subdomain: ""
+    guided_default: false
+    risk: ""
+  authentik-proxy-outpost:
+    category: identity
+    description: Login gate for apps without built-in single sign-on
+    ram_mb: 128
+    requires: authentik
+    use_cases: ""
+    subdomain: ""
+    guided_default: false
+    risk: ""
+  cloudflared:
+    category: identity
+    description: Connects your homelab to your own web address securely
+    ram_mb: 128
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: false
+    risk: needs a Cloudflare account and a tunnel token
+
+  # ---- monitoring ----
+  homepage:
+    category: monitoring
+    description: A home page with links and live status for your services
+    ram_mb: 128
+    requires: ""
+    use_cases: dashboard
+    subdomain: home
+    guided_default: true
+    risk: ""
+  uptime-kuma:
+    category: monitoring
+    description: Watchdog that alerts you when something goes down
+    ram_mb: 128
+    requires: ""
+    use_cases: monitoring
+    subdomain: status
+    guided_default: false
+    risk: ""
+  grafana:
+    category: monitoring
+    description: Charts and dashboards for metrics and logs
+    ram_mb: 256
+    requires: ""
+    use_cases: monitoring
+    subdomain: grafana
+    guided_default: false
+    risk: ""
+  loki:
+    category: monitoring
+    description: Stores logs from all your services
+    ram_mb: 384
+    requires: ""
+    use_cases: monitoring
+    subdomain: ""
+    guided_default: false
+    risk: ""
+  promtail:
+    category: monitoring
+    description: Ships logs to Loki
+    ram_mb: 96
+    requires: loki
+    use_cases: monitoring
+    subdomain: ""
+    guided_default: false
+    risk: ""
+  netdata:
+    category: monitoring
+    description: Real-time per-server health stats
+    ram_mb: 384
+    requires: ""
+    use_cases: monitoring
+    subdomain: netdata
+    guided_default: false
+    risk: ""
+
+  # ---- media ----
+  media-storage:
+    category: media
+    description: Shared storage folder for your media library
+    ram_mb: 0
+    requires: ""
+    use_cases: media-server,media-auto
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  jellyfin:
+    category: media
+    description: Stream your movies and shows to every device
+    ram_mb: 1536
+    requires: media-storage
+    use_cases: media-server,watch-together
+    subdomain: media
+    guided_default: true
+    risk: benefits from 2+ CPU cores
+  seerr:
+    category: media
+    description: Family can request movies and shows themselves
+    ram_mb: 256
+    requires: jellyfin
+    use_cases: requests,media-server
+    subdomain: request
+    guided_default: true
+    risk: ""
+  radarr:
+    category: media
+    description: Automatically downloads movies you ask for
+    ram_mb: 384
+    requires: media-storage,prowlarr
+    use_cases: media-auto
+    subdomain: radarr
+    guided_default: true
+    risk: ""
+  sonarr:
+    category: media
+    description: Automatically downloads TV episodes
+    ram_mb: 384
+    requires: media-storage,prowlarr
+    use_cases: media-auto
+    subdomain: sonarr
+    guided_default: true
+    risk: ""
+  prowlarr:
+    category: media
+    description: Finds downloads across indexer sites
+    ram_mb: 256
+    requires: ""
+    use_cases: media-auto
+    subdomain: prowlarr
+    guided_default: true
+    risk: ""
+  bazarr:
+    category: media
+    description: Automatically downloads subtitles
+    ram_mb: 384
+    requires: media-storage
+    use_cases: media-auto
+    subdomain: bazarr
+    guided_default: true
+    risk: ""
+  decypharr:
+    category: media
+    description: Streams from premium debrid and usenet services
+    ram_mb: 256
+    requires: media-storage
+    use_cases: media-auto
+    subdomain: decypharr
+    guided_default: true
+    risk: needs a paid Real-Debrid or usenet account
+  qbittorrent:
+    category: media
+    description: Torrent downloads (manual, optional)
+    ram_mb: 384
+    requires: media-storage
+    use_cases: ""
+    subdomain: qbittorrent
+    guided_default: false
+    risk: ""
+  aiostreams:
+    category: media
+    description: Stremio addon hub for streaming sources
+    ram_mb: 256
+    requires: ""
+    use_cases: media-server
+    subdomain: aiostreams
+    guided_default: false
+    risk: ""
+  zilean:
+    category: media
+    description: Speeds up download searches (hash lookup cache)
+    ram_mb: 256
+    requires: ""
+    use_cases: media-auto
+    subdomain: ""
+    guided_default: false
+    risk: ""
+  flaresolverr:
+    category: media
+    description: Solves website anti-bot checks for indexers
+    ram_mb: 512
+    requires: ""
+    use_cases: media-auto
+    subdomain: ""
+    guided_default: false
+    risk: ""
+
+  # ---- productivity ----
+  postgresql:
+    category: productivity
+    description: Shared database used by several apps
+    ram_mb: 512
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  vaultwarden:
+    category: productivity
+    description: Password manager, syncs to all your devices
+    ram_mb: 128
+    requires: postgresql
+    use_cases: passwords
+    subdomain: vault
+    guided_default: true
+    risk: ""
+  nextcloud:
+    category: productivity
+    description: Your private Dropbox - files, calendar, contacts
+    ram_mb: 1024
+    requires: postgresql
+    use_cases: files
+    subdomain: cloud
+    guided_default: true
+    risk: ""
+  immich:
+    category: productivity
+    description: Google Photos, but self-hosted - backup and sharing
+    ram_mb: 2048
+    requires: immich-postgresql
+    use_cases: photos
+    subdomain: photos
+    guided_default: true
+    risk: needs 4GB+ RAM total with its photo-analysis service
+  immich-postgresql:
+    category: productivity
+    description: Database for Immich
+    ram_mb: 512
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  affine:
+    category: productivity
+    description: Collaborative notes and whiteboards
+    ram_mb: 1024
+    requires: postgresql,redis-affine-master
+    use_cases: files
+    subdomain: notes
+    guided_default: false
+    risk: ""
+  redis-affine-master:
+    category: productivity
+    description: Cache for AFFiNE
+    ram_mb: 128
+    requires: ""
+    use_cases: ""
+    subdomain: ""
+    guided_default: true
+    risk: ""
+
+  # ---- comms ----
+  matrix-synapse:
+    category: comms
+    description: Private chat server (Matrix protocol)
+    ram_mb: 1024
+    requires: postgresql
+    use_cases: chat
+    subdomain: matrix
+    guided_default: true
+    risk: ""
+  mas:
+    category: comms
+    description: Modern login service for Matrix clients
+    ram_mb: 256
+    requires: postgresql
+    use_cases: chat
+    subdomain: ""
+    guided_default: true
+    risk: ""
+  element-web:
+    category: comms
+    description: Chat web app for Matrix
+    ram_mb: 128
+    requires: matrix-synapse
+    use_cases: chat
+    subdomain: element
+    guided_default: true
+    risk: ""
+  matrix-rtc:
+    category: comms
+    description: Voice and video calls in Matrix
+    ram_mb: 512
+    requires: ""
+    use_cases: chat
+    subdomain: rtc
+    guided_default: true
+    risk: uses host networking
+
+  # ---- ai ----
+  ollama:
+    category: ai
+    description: Runs AI language models locally
+    ram_mb: 2048
+    requires: ""
+    use_cases: ai-chat
+    subdomain: ollama
+    guided_default: true
+    risk: big RAM and disk user
+  open-webui:
+    category: ai
+    description: ChatGPT-style interface for your local AI
+    ram_mb: 512
+    requires: postgresql
+    use_cases: ai-chat
+    subdomain: chat
+    guided_default: true
+    risk: ""
+  hindsight:
+    category: ai
+    description: Long-term memory service for AI agents
+    ram_mb: 512
+    requires: postgresql
+    use_cases: ai-tools
+    subdomain: ""
+    guided_default: false
+    risk: ""
+  docling:
+    category: ai
+    description: Converts PDFs and documents for AI use
+    ram_mb: 1024
+    requires: ""
+    use_cases: ai-tools
+    subdomain: docling
+    guided_default: false
+    risk: ""
+  firecrawl:
+    category: ai
+    description: Turns web pages into clean text for AI
+    ram_mb: 1024
+    requires: ""
+    use_cases: ai-tools
+    subdomain: firecrawl
+    guided_default: false
+    risk: ""
+
+  # ---- automation & misc ----
+  n8n:
+    category: automation
+    description: Automate tasks between your apps (like IFTTT)
+    ram_mb: 512
+    requires: postgresql
+    use_cases: automation
+    subdomain: n8n
+    guided_default: false
+    risk: ""
+  searxng:
+    category: automation
+    description: Private metasearch (web results, no tracking)
+    ram_mb: 256
+    requires: ""
+    use_cases: search
+    subdomain: search
+    guided_default: false
+    risk: ""
+  gotify:
+    category: automation
+    description: Push notifications to your phone
+    ram_mb: 64
+    requires: ""
+    use_cases: notifications
+    subdomain: gotify
+    guided_default: false
+    risk: ""
+  igotify-assist:
+    category: automation
+    description: Delivers notifications to iPhones
+    ram_mb: 128
+    requires: gotify
+    use_cases: notifications
+    subdomain: ""
+    guided_default: false
+    risk: ""
+  koalasync:
+    category: automation
+    description: Watch parties - synced playback for friends
+    ram_mb: 64
+    requires: jellyfin
+    use_cases: watch-together
+    subdomain: sync
+    guided_default: false
+    risk: ""
+
+use_cases:
+  photos:
+    label: Photos
+    description: Back up and share your photo library
+  files:
+    label: Files & notes
+    description: Store, sync and collaborate on documents
+  passwords:
+    label: Passwords
+    description: One vault for every login, on all your devices
+  media-server:
+    label: Media server
+    description: Stream your movies and shows anywhere
+  media-auto:
+    label: Automated downloads
+    description: Request it once, downloaded automatically
+  watch-together:
+    label: Watch together
+    description: Synchronized watch parties with friends
+  chat:
+    label: Chat & calls
+    description: Private messaging, voice and video
+  ai-chat:
+    label: Local AI chat
+    description: A private ChatGPT-style assistant
+  ai-tools:
+    label: AI tools
+    description: Document and web tools that feed AI workflows
+  dashboard:
+    label: Dashboard
+    description: One home page for all your services
+  monitoring:
+    label: Monitoring
+    description: Know when something is down before anyone notices
+  automation:
+    label: Automation
+    description: Connect your apps to automate busywork
+  requests:
+    label: Family requests
+    description: Let family request media themselves
+  search:
+    label: Private search
+    description: Web search without the tracking
+  notifications:
+    label: Notifications
+    description: Push alerts to your phone
