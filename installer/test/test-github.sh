@@ -84,7 +84,7 @@ contains "t3 gh-missing message" "$err" "GitHub CLI"
 WORK="$TMP/pushwork-$$"; BARE="$TMP/pushbare-$$.git"
 rm -rf "$WORK" "$BARE"
 mkdir -p "$WORK"
-git init -q --bare "$BARE"
+git init -q --bare "$(msp "$BARE")"
 (cd "$WORK" && git init -q)
 (cd "$WORK" && git remote add origin "$(msp "$BARE")")
 printf "seed\n" > "$WORK/values.yaml"
@@ -94,7 +94,7 @@ export PATH="$STUB:$PATH"
 out=$(MSP_ORIGIN_OVERRIDE="$(msp "$BARE")" gh_push_dir "$WORK" "tester/homelab-k8s" "install: configure homelab" 2>/dev/null); rc=$?
 check "t4 first push rc=0" "$rc" "0"
 contains "t4 first push says pushed" "$out" "pushed"
-head1=$(git --git-dir "$(msp "$BARE")" ls-remote HEAD 2>/dev/null | awk '{print $1}')
+head1=$(cd "$WORK" && git ls-remote origin HEAD 2>/dev/null | awk '{print $1}')
 [ -n "$head1" ]; check "t4 bare repo has commit" "$([ -n "$head1" ] && echo yes || echo no)" "yes"
 
 out=$(MSP_ORIGIN_OVERRIDE="$(msp "$BARE")" gh_push_dir "$WORK" "tester/homelab-k8s" "install: configure homelab" 2>/dev/null); rc=$?
@@ -108,24 +108,25 @@ contains "t4 noreply email used" "$em" "42+tester@users.noreply.github.com"
 # ---------------------------------------------------------------- t5 sync upstream (local remotes only)
 UP="$TMP/up-$$.git"; CL="$TMP/clone-$$"
 rm -rf "$UP" "$CL"
-git init -q --bare "$UP"
-git init -q "$CL"
-(cd "$CL" && git remote add upstream "$UP")
+git init -q --bare "$(msp "$UP")"
+mkdir -p "$CL"
+(cd "$CL" && git init -q)
+(cd "$CL" && git remote add upstream "$(msp "$UP")")
 # put a commit on upstream/main
 C2="$TMP/upseed-$$"; rm -rf "$C2"; mkdir -p "$C2"
 (cd "$C2" && git init -q)
-(cd "$C2" && git remote add origin "$UP")
+(cd "$C2" && git remote add origin "$(msp "$UP")")
 echo seed > "$C2/seed.txt"
 (cd "$C2" && git add -A && git -c user.name=t -c user.email=t@e.c commit -qm seed)
 (cd "$C2" && git push -q origin "HEAD:refs/heads/main") 2>/dev/null
-out=$(gh_sync_upstream "$CL" "someone/upstream" 2>/dev/null); rc=$?
+out=$(MSP_UPSTREAM_OVERRIDE="$(msp "$UP")" gh_sync_upstream "$CL" "someone/upstream" 2>/dev/null); rc=$?
 check "t5 sync rc=0" "$rc" "0"
-contains "t5 sync result" "$out" "up-to-date"
+case "$out" in *up-to-date*|*rebased*) PASS=$((PASS+1)); printf 'PASS: t5 sync result\n' ;; *) FAIL=$((FAIL+1)); printf 'FAIL: t5 sync result (%s)\n' "$out" ;; esac
 # upstream moved; clone has no local change -> rebase fast-forward
 echo more > "$C2/more.txt"
 (cd "$C2" && git add -A && git -c user.name=t -c user.email=t@e.c commit -qm more)
 (cd "$C2" && git push -q origin "HEAD:refs/heads/main") 2>/dev/null
-out=$(gh_sync_upstream "$CL" "someone/upstream" 2>/dev/null); rc=$?
+out=$(MSP_UPSTREAM_OVERRIDE="$(msp "$UP")" gh_sync_upstream "$CL" "someone/upstream" 2>/dev/null); rc=$?
 check "t5 rebase rc=0" "$rc" "0"
 
 # ---------------------------------------------------------------- hygiene

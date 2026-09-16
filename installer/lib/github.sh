@@ -72,8 +72,6 @@ gh_ensure_fork() { # <upstream> -> echoes "<user>/homelab-k8s"
 
 gh_push_dir() { # <git_dir> <user/repo> <commit_msg>
   local dir="$1" slug="$2" msg="$3"
-  printf 'DBG_PUSH dir=[%s] gitdir=%s
-' "$dir" "$([ -d "$dir/.git" ] && echo yes || echo no)" >&2
   [ -d "$dir/.git" ] || { warn "Not a git repository: $dir"; return 1; }
 
   # identity: only set if unset; prefer noreply address for privacy
@@ -83,6 +81,8 @@ gh_push_dir() { # <git_dir> <user/repo> <commit_msg>
   (cd "$dir" && git config user.name "$login" && git config user.email "${uid}+${login}@users.noreply.github.com")
 
   (cd "$dir" && git add -A)
+  printf "DBG staged=[%s] head=[%s]
+" "$(cd "$dir" && git diff --cached --name-only | wc -l)" "$(cd "$dir" && git rev-parse -q --verify HEAD || echo none)" >> /tmp/dbg-push.log
   if (cd "$dir" && git diff --cached --quiet) 2>/dev/null; then
     printf 'already-clean'
     return 0
@@ -113,12 +113,23 @@ gh_push_dir() { # <git_dir> <user/repo> <commit_msg>
 gh_sync_upstream() { # <git_dir> <upstream_repo>
   local dir="$1" up="$2"
   [ -d "$dir/.git" ] || { warn "Not a git repository: $dir"; return 1; }
-  (cd "$dir" && git remote get-url upstream >/dev/null 2>&1) || \
-    (cd "$dir" && git remote add upstream "https://github.com/$up.git")
+  # MSP_UPSTREAM_OVERRIDE lets tests point upstream at a local bare repo.
+  local want_up="${MSP_UPSTREAM_OVERRIDE:-https://github.com/$up.git}"
+  local cur_up
+  cur_up=$(cd "$dir" && git remote get-url upstream 2>/dev/null)
+  if [ "$cur_up" != "$want_up" ]; then
+    (cd "$dir" && git remote remove upstream 2>/dev/null)
+    (cd "$dir" && git remote add upstream "$want_up")
+  fi
   (cd "$dir" && git fetch upstream --prune -q) || { warn "Fetch from upstream failed"; return 1; }
-  local base
+  local base upstream_head
+  if ! (cd "$dir" && git rev-parse -q --verify HEAD >/dev/null 2>&1); then
+    # fresh clone with no commits: adopt upstream state outright
+    (cd "$dir" && git reset -q --hard upstream/main) || { warn "Adopting upstream failed"; return 1; }
+    printf 'rebased'
+    return 0
+  fi
   base=$(cd "$dir" && git merge-base HEAD upstream/main 2>/dev/null)
-  local upstream_head
   upstream_head=$(cd "$dir" && git rev-parse upstream/main 2>/dev/null)
   if [ "$base" = "$upstream_head" ]; then
     printf 'up-to-date'
