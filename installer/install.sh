@@ -597,10 +597,11 @@ for entry in "${PLAN[@]}"; do
     APPLIED+=("$svc")
   else
     # The commonest cause by far on a new cluster is that ArgoCD isn't installed
-    # yet — say so plainly instead of leaving a bare "apply failed".
+    # yet. The one-time warning above already explains the fix, so keep the
+    # per-app line short — repeating the guidance for all 11 media apps buried
+    # the actual list of what was skipped.
     if printf '%s' "$apply_out" | grep -q 'no matches for kind "Application"'; then
-      warn "$svc: ArgoCD is not installed yet (CRD applications.argoproj.io missing)"
-      warn "         deploy the 'core' bundle first, then re-run this selection"
+      warn "$svc: ArgoCD not installed yet — skipped (deploy the 'core' bundle first)"
       SKIPPED+=("$svc (ArgoCD not installed)")
     else
       warn "$svc: application apply failed:"
