@@ -1,0 +1,39 @@
+# Line-ending policy — shell scripts MUST be LF, or they break on Linux/macOS.
+#
+# Why this file exists: with core.autocrlf=true (the Git for Windows default),
+# a Windows checkout converts LF->CRLF in the working tree. Bash on Linux then
+# dies with `syntax error near unexpected token `$'do\r''` on the first
+# multi-line construct, and a CRLF shebang (`#!/usr/bin/env bash\r`) fails with
+# "bad interpreter: No such file or directory". Forcing eol=lf here makes the
+# repo immune to every contributor's local git config.
+
+# Shell scripts — must run on Linux.
+*.sh    text eol=lf
+*.bash  text eol=lf
+
+# Python — shebang-bearing scripts must not carry \r.
+*.py    text eol=lf
+
+# Config that is parsed by tools which may treat \r as data.
+*.service  text eol=lf
+*.timer    text eol=lf
+
+# Everything else: normalize to LF in the repo (harmless for YAML/JSON/MD,
+# and keeps `git diff` clean across platforms).
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+
+# Binary assets — never touch.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.gz    binary
+*.zip   binary
