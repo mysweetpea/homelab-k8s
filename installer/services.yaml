@@ -17,9 +17,9 @@ bundles:
     - argocd
     - argocd-image-updater
     - network-policies
-    - dmz-ingress-routes
-    - private-ingress-routes
-    - monitoring-ingress-routes
+    - dmz/ingress-routes
+    - private/ingress-routes
+    - monitoring/ingress-routes
 
   monitoring:
     - homepage
