@@ -7,6 +7,9 @@
 # "bad interpreter: No such file or directory". Forcing eol=lf here makes the
 # repo immune to every contributor's local git config.
 
+# This file itself — keep LF so the rules stay portable.
+.gitattributes text eol=lf
+
 # Shell scripts — must run on Linux.
 *.sh    text eol=lf
 *.bash  text eol=lf
