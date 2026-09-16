@@ -15,8 +15,8 @@ parent:
   # this repo is public; the token was removed from git in the Aug 28 2026 audit).
   # netdata chart exposes env only via envFrom (parent.env is plain values, not refs).
   envFrom:
-    - secretRef:
-        name: netdata-gotify
+  - secretRef:
+      name: netdata-gotify
   configs:
     telemetry-opt-out:
       enabled: true
@@ -34,7 +34,6 @@ parent:
         # alarm-notify.sh sources this file as shell — the sealed-secret env var expands here
         GOTIFY_APP_TOKEN="${GOTIFY_TOKEN}"
         DEFAULT_RECIPIENT_GOTIFY="alarms"
-
 child:
   resources:
     limits:
@@ -43,7 +42,6 @@ child:
     requests:
       cpu: 50m
       memory: 128Mi
-
 k8sState:
   resources:
     limits:
@@ -52,8 +50,10 @@ k8sState:
     requests:
       cpu: 1m
       memory: 16Mi
-
 service:
   type: LoadBalancer
   loadBalancerIP: 192.168.20.229
   port: 19999
+image:
+  tag: v2.11.1
+  repository: netdata/netdata
