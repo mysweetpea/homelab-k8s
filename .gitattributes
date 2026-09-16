@@ -40,3 +40,6 @@
 *.ttf   binary
 *.gz    binary
 *.zip   binary
+# keep gitignore/env files LF so Windows autocrlf cannot churn them
+.gitignore text eol=lf
+*.env text eol=lf

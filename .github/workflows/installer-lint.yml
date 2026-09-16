@@ -13,9 +13,17 @@ on:
     paths: ['installer/**', '.github/workflows/installer-lint.yml']
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-lint-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -50,6 +58,7 @@ jobs:
   k3d-e2e:
     runs-on: ubuntu-latest
     needs: lint
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -59,7 +68,7 @@ jobs:
           k3d version
           curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl && sudo mv kubectl /usr/local/bin/
-          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash  # official installer; VERIFY_BEFORE_MERGE if pinning needed
 
       - name: create ephemeral cluster
         run: k3d cluster create msp-ci --wait
@@ -67,15 +76,27 @@ jobs:
       - name: kubeconfig sanity
         run: |
           k3d kubeconfig merge msp-ci --kubeconfig-merge-default
-          export KUBECONFIG=$(k3d kubeconfig write-path msp-ci 2>/dev/null || echo ~/.config/k3d/kubeconfig-msp-ci.yaml)
           # k3d writes host.docker.internal into the config — rewrite to 127.0.0.1
-          sed -i 's|https://host.docker.internal|https://0.0.0.0|' ~/.config/k3d/kubeconfig-msp-ci.yaml 2>/dev/null || true
+          find ~/.config/k3d -name 'kubeconfig-*' -exec sed -i 's|https://host.docker.internal|https://0.0.0.0|' {} + || true
+          kubectl config use-context k3d-msp-ci
           kubectl get nodes
+
+      - name: install core bundle (ArgoCD CRDs required by deploy.sh preflight)
+        run: |
+          kubectl config use-context k3d-msp-ci
+          YES=1 ./installer/install.sh BUNDLES=core || true
+          # wait for the Application CRD to be served (metallb/longhorn failures are
+          # non-fatal in k3d; only the CRD matters for the next step)
+          for i in $(seq 1 36); do
+            kubectl get crd applications.argoproj.io >/dev/null 2>&1 && break
+            sleep 5
+          done
+          kubectl get crd applications.argoproj.io
 
       - name: run the real wizard plan end-to-end (appliance mode, dry secrets)
         run: |
-          export KUBECONFIG=$(ls ~/.config/k3d/kubeconfig-*.yaml 2>/dev/null | head -1)
-          # plan: core infra + one app, appliance mode
+          kubectl config use-context k3d-msp-ci
+          # plan: one app, appliance mode
           cat > ci-plan.env <<EOF
           MSP_METHOD=appliance
           MSP_EXPOSURE=lan
