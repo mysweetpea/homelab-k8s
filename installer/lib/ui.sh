@@ -14,6 +14,7 @@ UI_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$UI_DIR/common.sh"
 
 UI_BACKEND=""
+printf -v _UI_CR "\r"
 
 # fractional read -t needs bash >= 4; probe once (rc 1 = ok, 2 = rejected).
 _ui_frac=0
@@ -112,7 +113,7 @@ _ui_multi_plain() {
       fi
     done
     printf 'Numbers to toggle (spaces/commas), a=all, n=none, Enter=confirm, q=cancel: ' >&2
-    IFS= read -r line || line=""
+    IFS= read -r line || { warn "Input closed - cancelling."; return 1; }
     case "$line" in
       q|Q) return 1 ;;
       a|A) for ((i=0; i<n; i++)); do
@@ -209,9 +210,10 @@ _ui_multi_ansi() {
     done
     printf 'j/k move  space toggle  a all  n none  Enter confirm  q cancel\033[0K\n' >&2
     _UI_DRAWN=$((n+1))
-    IFS= read -rsn1 key || key=""
+    IFS= read -rsn1 key || { warn "Input closed - cancelling."; return 1; }
+    [ "$key" = "$_UI_CR" ] && key=""
     case "$key" in
-      "") break ;;                                  # Enter = confirm
+      "") break ;;
       j|J) _ui_next_row ;;
       k|K) _ui_prev_row ;;
       " ") if [ "${selectable[$cur]}" = 1 ]; then
@@ -282,7 +284,8 @@ _ui_single_ansi() {
     done
     printf 'space pick  Enter confirm  q cancel\033[0K\n' >&2
     _UI_DRAWN=$((n+1))
-    IFS= read -rsn1 key || key=""
+    IFS= read -rsn1 key || { warn "Input closed - cancelling."; return 1; }
+    [ "$key" = "$_UI_CR" ] && key=""
     case "$key" in
       "") mark[$cur]=1; break ;;
       j|J) [ "$n" -gt 0 ] && cur=$(( (cur+1) % n )) ;;
