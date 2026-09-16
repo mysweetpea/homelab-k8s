@@ -484,6 +484,7 @@ say ""
 say "── Deploying"
 TODO_SECRETS=()
 SKIPPED=()
+APPLIED=()
 for entry in "${PLAN[@]}"; do
   IFS='|' read -r svc dir ns <<< "$entry"
   say ""
@@ -507,7 +508,8 @@ for entry in "${PLAN[@]}"; do
   # 0b) helm-managed component? (argocd, cert-manager, longhorn, ...)
   HELM_SPEC="$(helm_spec_for "$svc" || true)"
   if [ -n "$HELM_SPEC" ]; then
-    helm_install_component "$HELM_SPEC" || SKIPPED+=("$svc (helm install failed)")
+    if helm_install_component "$HELM_SPEC"; then APPLIED+=("$svc")
+    else SKIPPED+=("$svc (helm install failed)"); fi
     continue
   fi
 
@@ -559,6 +561,7 @@ for entry in "${PLAN[@]}"; do
     ok "application would be applied"
   elif apply_out=$(kubectl apply -f "$dir/application.yaml" 2>&1); then
     ok "application applied"
+    APPLIED+=("$svc")
   else
     # The commonest cause by far on a new cluster is that ArgoCD isn't installed
     # yet — say so plainly instead of leaving a bare "apply failed".
@@ -578,10 +581,20 @@ done
 # ---------- summary ----------
 say ""
 say "${BOLD}Done.${RESET}"
+
+# Only claim ArgoCD is syncing when ArgoCD actually exists AND something was
+# actually handed to it. Otherwise say what is true instead.
 if [ "${DRY_RUN}" = "0" ]; then
-  say "ArgoCD is now syncing your selection."
-  say "Watch: ${DIM}kubectl -n argocd get applications -w${RESET}"
-  if [ "$FORK_HTTPS" != "$SRC_REPO" ]; then
+  if kubectl get crd applications.argoproj.io >/dev/null 2>&1 && [ ${#APPLIED[@]} -gt 0 ]; then
+    say "ArgoCD is now syncing your selection."
+    say "Watch: ${DIM}kubectl -n argocd get applications -w${RESET}"
+  elif ! kubectl get crd applications.argoproj.io >/dev/null 2>&1; then
+    warn "ArgoCD is not installed on this cluster, so nothing will sync from it yet."
+    say "  ${DIM}Deploy the 'core' bundle first (it installs ArgoCD), then re-run this selection.${RESET}"
+  else
+    say "Nothing was handed to ArgoCD — see the list below."
+  fi
+  if [ "$FORK_HTTPS" != "$SRC_REPO" ] && [ ${#APPLIED[@]} -gt 0 ]; then
     say ""
     warn "IMPORTANT — commit and push so ArgoCD sees the rewritten values:"
     say "    git add -A && git commit -m 'install: target my domain + fork' && git push"
