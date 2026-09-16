@@ -20,7 +20,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const d = $input.first().json.body || {};\nlet err = null;\nif (!d.name || d.name.trim().length < 2) err = 'Name is required (min 2 characters)';\nelse if (!d.email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(d.email.trim())) err = 'Valid email is required';\nelse if (!d.services || d.services.trim().length < 2) err = 'Please list the services you want';\n// Form does not send a username - generate a unique placeholder from the email\nconst base = (d.email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 20) || 'user';\nd.username = base + '_' + Math.random().toString(36).slice(2, 6);\nreturn [{json: {...d, validation_error: err}}];"
+        "jsCode": "const d = $input.first().json.body || {};\nlet err = null;\nif (!d.name || d.name.trim().length < 2) err = 'Name is required (min 2 characters)';\nelse if (!d.email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(d.email.trim())) err = 'Valid email is required';\nelse if (d.services && d.services.trim().length > 0 && d.services.trim().length < 2) err = 'Please describe what you need in a few characters';\n// Form does not send a username - generate a unique placeholder from the email\nconst base = (d.email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 20) || 'user';\nd.username = base + '_' + Math.random().toString(36).slice(2, 6);\nreturn [{json: {...d, validation_error: err}}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -86,7 +86,7 @@
         "operation": "executeQuery",
         "query": "INSERT INTO donors (name, email, username, services, message, status, tier, donation_amount) VALUES ($1, $2, $3, $4, $5, 'pending', 'sweetpea', 0.00) RETURNING id;",
         "options": {
-          "queryReplacement": "={{ $json.name }}, {{ $json.email }}, {{ $json.username }}, {{ $json.services }}, {{ $json.message || '' }}"
+          "queryReplacement": "={{ $json.name }}, {{ $json.email }}, {{ $json.username }}, '{{ $json.services || '' }}', {{ $json.message || '' }}"
         }
       },
       "type": "n8n-nodes-base.postgres",
@@ -106,7 +106,7 @@
     },
     {
       "parameters": {
-        "message": "={{ 'New Sweet Pea request from ' + $('Validate Input').item.json.name + '\\nEmail: ' + $('Validate Input').item.json.email + '\\nServices: ' + $('Validate Input').item.json.services + ($('Validate Input').item.json.message ? '\\nMessage: ' + $('Validate Input').item.json.message : '') }}",
+        "message": "={{ 'New Sweet Pea request from ' + $('Validate Input').item.json.name + '\\nEmail: ' + $('Validate Input').item.json.email + ($('Validate Input').item.json.message ? '\\nNote: ' + $('Validate Input').item.json.message : '') }}",
         "additionalFields": {
           "priority": 5,
           "title": "Sweet Pea Request"
