@@ -7,6 +7,10 @@
 # Backs up: sealed-secrets key, k3s state.db, pg-dumps, config-backup
 set -euo pipefail
 
+# single-instance guard (added 2026-09-16 after two racing runs corrupted staging)
+exec 9>/run/restic-backup.lock
+flock -n 9 || { echo "restic-backup.sh: another instance already running, exiting"; exit 0; }
+
 export RESTIC_PASSWORD="$(cat /root/.restic-passphrase)"
 VPS_REPO="${VPS_REPO:-}"
 PC_REPO="${PC_REPO:-}"
@@ -155,6 +159,7 @@ fi
 
 # 4a. Restic backup to VPS (primary, off-site)
 export RESTIC_REPOSITORY="$VPS_REPO"
+restic unlock >/dev/null 2>&1   # clear stale locks from killed runs (added 2026-09-16)
 if restic backup "$STAGE" --tag "$TAG" --exclude "*.log" >> "$LOG" 2>&1; then
   restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune >> "$LOG" 2>&1 || true
   echo "[$DATE] VPS backup OK" >> "$LOG"
@@ -165,6 +170,7 @@ fi
 
 # 4b. Restic backup to PC (secondary, local)
 export RESTIC_REPOSITORY="$PC_REPO"
+restic unlock >/dev/null 2>&1   # clear stale locks from killed runs (added 2026-09-16)
 if restic backup "$STAGE" --tag "$TAG" --exclude "*.log" >> "$LOG" 2>&1; then
   restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune >> "$LOG" 2>&1 || true
   echo "[$DATE] PC backup OK" >> "$LOG"
