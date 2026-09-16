@@ -1,0 +1,93 @@
+name: installer-lint
+
+# Guards the installer against the two portability killers found the hard way:
+#   1. syntax errors (bash -n)
+#   2. CRLF line endings (Linux bash dies on CRLF scripts; Windows bash tolerates
+#      them, which is exactly why they slip through local testing)
+# Plus: wizard/test suite run (MSYS-free, real Linux bash) with stubbed cluster.
+
+on:
+  push:
+    paths: ['installer/**', '.github/workflows/installer-lint.yml']
+  pull_request:
+    paths: ['installer/**', '.github/workflows/installer-lint.yml']
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: bash -n on every installer script
+        run: |
+          set -e
+          fail=0
+          for f in installer/*.sh installer/lib/*.sh installer/test/*.sh; do
+            bash -n "$f" || fail=1
+          done
+          exit $fail
+
+      - name: CRLF guard
+        run: |
+          set -e
+          bad=$(grep -rl $'\r' installer/ --include='*.sh' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::CRLF line endings found in: $bad"
+            echo "Fix: python -c \"from pathlib import Path; p=Path('FILE'); b=p.read_bytes(); p.write_bytes(b.replace(b'\\r\\n', b'\\n'))\""
+            exit 1
+          fi
+
+      - name: unit test suite (no cluster needed)
+        run: |
+          set -e
+          for t in catalog ui wizard github appliance provision deploy; do
+            echo "::group::test-$t"
+            bash "installer/test/test-$t.sh"
+            echo "::endgroup::"
+          done
+
+  k3d-e2e:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install k3d + kubectl + helm
+        run: |
+          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+          k3d version
+          curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: create ephemeral cluster
+        run: k3d cluster create msp-ci --wait
+
+      - name: kubeconfig sanity
+        run: |
+          k3d kubeconfig merge msp-ci --kubeconfig-merge-default
+          export KUBECONFIG=$(k3d kubeconfig write-path msp-ci 2>/dev/null || echo ~/.config/k3d/kubeconfig-msp-ci.yaml)
+          # k3d writes host.docker.internal into the config — rewrite to 127.0.0.1
+          sed -i 's|https://host.docker.internal|https://0.0.0.0|' ~/.config/k3d/kubeconfig-msp-ci.yaml 2>/dev/null || true
+          kubectl get nodes
+
+      - name: run the real wizard plan end-to-end (appliance mode, dry secrets)
+        run: |
+          export KUBECONFIG=$(ls ~/.config/k3d/kubeconfig-*.yaml 2>/dev/null | head -1)
+          # plan: core infra + one app, appliance mode
+          cat > ci-plan.env <<EOF
+          MSP_METHOD=appliance
+          MSP_EXPOSURE=lan
+          MSP_DOMAIN=
+          MSP_SSO=no
+          MSP_SECRETS=guided
+          MSP_MODE=guided
+          MSP_APPS="uptime-kuma"
+          MSP_RAM_TOTAL_MB=512
+          EOF
+          bash installer/deploy.sh --plan ci-plan.env --dry-run
+
+      - name: cleanup
+        if: always()
+        run: k3d cluster delete msp-ci || true
