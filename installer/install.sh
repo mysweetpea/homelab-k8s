@@ -428,6 +428,33 @@ for svc in "${SELECTED[@]}"; do
 done
 [ ${#PLAN[@]} -gt 0 ] || die "nothing deployable after resolving names"
 
+# ---------- deploy order ----------
+# Applications cannot be applied until ArgoCD serves the Application CRD, and
+# that CRD appears when the 'argocd' helm release installs — which happens
+# INSIDE this loop. Walking the bundle in listed order therefore applied
+# Applications before ArgoCD existed: 'core' lists metallb first but argocd
+# fifth, so metallb was skipped and a fresh install came up with no
+# LoadBalancer IPs (MetalLB is what gives traefik its EXTERNAL-IP).
+# Order: argocd -> other helm/k3s components -> ArgoCD Applications.
+declare -a PLAN_INFRA=() PLAN_APPS=()
+for _e in "${PLAN[@]}"; do
+  _svc="${_e%%|*}"
+  if [ "$_svc" = "traefik-k3s" ] || [ -n "$(helm_spec_for "$_svc" || true)" ]; then
+    PLAN_INFRA+=("$_e")
+  else
+    PLAN_APPS+=("$_e")
+  fi
+done
+declare -a PLAN_ORDERED=()
+for _e in "${PLAN_INFRA[@]}"; do
+  [ "${_e%%|*}" = "argocd" ] && PLAN_ORDERED+=("$_e")
+done
+for _e in "${PLAN_INFRA[@]}"; do
+  [ "${_e%%|*}" != "argocd" ] && PLAN_ORDERED+=("$_e")
+done
+for _e in "${PLAN_APPS[@]}"; do PLAN_ORDERED+=("$_e"); done
+PLAN=("${PLAN_ORDERED[@]}")
+
 # ---------- namespaces (Applications use CreateNamespace=false) ----------
 say ""
 say "── Namespaces"
@@ -449,34 +476,24 @@ done
 
 # ---------- ArgoCD presence ----------
 # Everything except the helm/k3s core components arrives as an ArgoCD
-# Application. If ArgoCD is absent and the selection needs it, say so once.
+# Application. Warn once if this selection needs ArgoCD but neither has it nor
+# installs it — warning during a 'core' run (which DOES install argocd) was
+# simply wrong. The CRD wait now happens right after that install, in the loop.
 NEEDS_ARGOCD=0
 for entry in "${PLAN[@]}"; do
   IFS='|' read -r _ d _ <<< "$entry"
-  [ -f "$d/application.yaml" ] && { NEEDS_ARGOCD=1; break; }
+  if [ -f "$d/application.yaml" ]; then NEEDS_ARGOCD=1; break; fi
 done
-if [ "$NEEDS_ARGOCD" = "1" ] && ! kubectl get crd applications.argoproj.io >/dev/null 2>&1; then
+INSTALLS_ARGOCD=0
+for _e in "${SELECTED[@]}"; do
+  if [ "$_e" = "argocd" ]; then INSTALLS_ARGOCD=1; break; fi
+done
+if [ "$NEEDS_ARGOCD" = "1" ] && [ "$INSTALLS_ARGOCD" = "0" ] \
+   && ! kubectl get crd applications.argoproj.io >/dev/null 2>&1; then
   say ""
   warn "ArgoCD is not installed on this cluster."
   warn "Most of this selection is delivered as ArgoCD Applications, so those will"
   warn "be skipped. Deploy the 'core' bundle first (it installs ArgoCD), then re-run."
-fi
-
-# ---------- ArgoCD CRD readiness ----------
-# Applications cannot be applied until ArgoCD's CRDs are Established. On a fresh
-# cluster the helm release can finish before the API server serves the new kind,
-# which produced 'no matches for kind "Application"' on first runs.
-if printf '%s
-' "${SELECTED[@]}" | grep -qE '^argocd$' && [ "${DRY_RUN}" = "0" ]; then
-  if command -v kubectl >/dev/null 2>&1; then
-    say ""
-    say "── Waiting for ArgoCD CRDs"
-    for _i in $(seq 1 60); do
-      if kubectl get crd applications.argoproj.io >/dev/null 2>&1; then ok "applications.argoproj.io is available"; break; fi
-      sleep 5
-      [ "$_i" = "60" ] && warn "ArgoCD CRDs not ready after 5m — Applications may fail to apply"
-    done
-  fi
 fi
 
 # ---------- per-app deploy ----------
@@ -508,7 +525,23 @@ for entry in "${PLAN[@]}"; do
   # 0b) helm-managed component? (argocd, cert-manager, longhorn, ...)
   HELM_SPEC="$(helm_spec_for "$svc" || true)"
   if [ -n "$HELM_SPEC" ]; then
-    if helm_install_component "$HELM_SPEC"; then APPLIED+=("$svc")
+    if helm_install_component "$HELM_SPEC"; then
+      APPLIED+=("$svc")
+      # ArgoCD's CRDs are served only once this release settles. Applications
+      # applied before then fail with 'no matches for kind "Application"', so
+      # wait HERE — immediately after the install that creates them. Waiting
+      # before the loop could never succeed: the CRD does not exist yet.
+      if [ "$svc" = "argocd" ] && [ "${DRY_RUN}" = "0" ] && command -v kubectl >/dev/null 2>&1; then
+        say ""
+        say "── Waiting for ArgoCD CRDs"
+        for _i in $(seq 1 60); do
+          if kubectl get crd applications.argoproj.io >/dev/null 2>&1; then
+            ok "applications.argoproj.io is available"; break
+          fi
+          sleep 5
+          if [ "$_i" = "60" ]; then warn "ArgoCD CRDs not ready after 5m — Applications may fail to apply"; fi
+        done
+      fi
     else SKIPPED+=("$svc (helm install failed)"); fi
     continue
   fi
