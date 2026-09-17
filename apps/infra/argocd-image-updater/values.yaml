@@ -222,8 +222,6 @@ extraObjects:
             - alias: gotify
               imageName: gotify/server
               commonUpdateSettings:
-                ignoreTags:
-                  - '3\.1\.1'
                 updateStrategy: semver
                 allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
               manifestTargets:
