@@ -1003,6 +1003,65 @@ configMaps:
             return True
 
 
+        def git_log_scan(state, cr):
+            """Durable detection: scan origin/main git log for 'build: automatic update of <app>'
+            commits since the cursor. Immune to recentUpdates per-pass eviction."""
+            found = []
+            if not (REPO_DIR / ".git").is_dir():
+                return found
+            since = state.get("cursor")
+            args = ["git", "-C", str(REPO_DIR), "log", "origin/main", "--format=%H|%s|%cI",
+                    "-20", "--"]
+            if since:
+                args += [f"--since={since}"]
+            r = sh(args, timeout=60)
+            if r.returncode != 0:
+                return found
+            # map values.yaml path -> alias
+            path_to_alias = {}
+            for alias, app in HEALTH_MAP["apps"].items():
+                ref, img = updater_config_for_alias(cr, alias)
+                if ref is None:
+                    continue
+                target = (ref.get("writeBackConfig", {}).get("gitConfig", {})
+                             .get("writeBackTarget", ""))
+                rel = target.split("helmvalues:", 1)[-1]
+                try:
+                    values_path = find_values_path(ref, img)
+                    path_to_alias[str(values_path.relative_to(REPO_DIR)).replace("\\", "/")] = (alias, img, dotted_tag(img), values_path)
+                except (RuntimeError, OSError):
+                    continue
+            for line in r.stdout.splitlines():
+                try:
+                    sha, subject, when = line.split("|", 2)
+                except ValueError:
+                    continue
+                if "automatic update of" not in subject.lower():
+                    continue
+                # files touched by this commit
+                r2 = sh(["git", "-C", str(REPO_DIR), "show", "--name-only", "--format=", sha],
+                        timeout=30)
+                for fpath in r2.stdout.splitlines():
+                    fpath = fpath.strip().replace("\\", "/")
+                    if fpath in path_to_alias:
+                        alias, img, dotted, values_path = path_to_alias[fpath]
+                        try:
+                            new_tag = get_tag_at_path(values_path, dotted)
+                        except Exception:  # noqa: BLE001
+                            continue
+                        vkey = f"{alias}@{new_tag}"
+                        if vkey in state.get("verified", {}):
+                            continue  # already handled via recentUpdates path
+                        found.append({"alias": alias, "newVersion": new_tag,
+                                      "git_tag": new_tag,
+                                      "updatedAt": when})
+            return found
+
+
+        def dotted_tag(img):
+            return (img.get("manifestTargets", {}).get("helm", {}) or {}).get("tag", "")
+
+
         def drift_scan(state, cr):
             """Catch updates the per-pass recentUpdates list evicted before a cycle read them.
             Compare live workload image tag vs git values tag for every managed app; any mismatch
@@ -1172,15 +1231,20 @@ configMaps:
 
             state = load_state()
             updates, cr = read_recent_updates()
+            ensure_repo()   # clone/fetch: needed by git-log scan, values lookups, and rollbacks
             if updates or state.get("drift_armed"):
-                ensure_repo()   # clone/fetch before any values.yaml lookups
-            drift = drift_scan(state, cr) if cr else []
+                drift = git_log_scan(state, cr) + (drift_scan(state, cr) if cr else [])
+            else:
+                drift = []
+            seen_keys = {f'{u.get("alias")}@{u.get("newVersion")}' for u in updates}
             seen_aliases = {u.get("alias") for u in updates}
             for d in drift:
                 key = f'{d["alias"]}@{d["newVersion"]}'
-                if d["alias"] in seen_aliases or key in state.get("verified", {}):
+                if d["alias"] in seen_aliases or key in seen_keys or key in state.get("verified", {}):
                     continue
-                log("INFO", f"drift-scan caught {d['alias']}: git={d['git_tag']} live={d['newVersion']} (missed by recentUpdates)")
+                log("INFO", f"git-log/drift caught {d['alias']}: -> {d['newVersion']} (missed by recentUpdates)")
+                seen_keys.add(key)
+                seen_aliases.add(d["alias"])
                 updates.append(d)
             if not updates:
                 log("INFO", "no recentUpdates or drift; done")
