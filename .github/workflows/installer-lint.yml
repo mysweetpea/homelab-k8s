@@ -85,7 +85,7 @@ jobs:
       - name: install core bundle (ArgoCD CRDs required by deploy.sh preflight)
         run: |
           kubectl config use-context k3d-msp-ci
-          YES=1 ./installer/install.sh BUNDLES=core || true
+          YES=1 BUNDLES=core ./installer/install.sh || true
           # wait for the Application CRD to be served (metallb/longhorn failures are
           # non-fatal in k3d; only the CRD matters for the next step)
           for i in $(seq 1 36); do
