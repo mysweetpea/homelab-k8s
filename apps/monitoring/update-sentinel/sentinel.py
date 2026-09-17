@@ -435,11 +435,21 @@ def drift_scan(state, cr):
         kind = app.get("workload_kind", "Deployment")
         name = app.get("workload") or alias
         r = sh(["kubectl", "get", kind, name, "-n", app["ns"],
-                "-o", "jsonpath={.spec.template.spec.containers[0].image}"], timeout=30)
+                "-o", "json"], timeout=30)
         if r.returncode != 0 or not r.stdout.strip():
             continue
-        image = r.stdout.strip()
-        live_tag = image.rsplit(":", 1)[-1] if ":" in image.rsplit("/", 1)[-1] else "latest"
+        w = json.loads(r.stdout)
+        image_name = (img.get("imageName") or "").split("/")[-1]  # e.g. 'grafana'
+        live_tag = None
+        for c in w.get("spec", {}).get("template", {}).get("spec", {}).get("containers", []):
+            cimg = c.get("image", "")
+            base = cimg.split("/")[-1]                      # 'grafana/grafana:13.2.1' -> 'grafana:13.2.1'
+            if base.split(":")[0] == image_name or image_name in base:
+                live_tag = base.rsplit(":", 1)[-1] if ":" in base else "latest"
+                break
+        if not live_tag:
+            continue  # managed container not found in this workload
+
         if live_tag != git_tag:
             found.append({"alias": alias, "newVersion": live_tag, "git_tag": git_tag,
                           "updatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
