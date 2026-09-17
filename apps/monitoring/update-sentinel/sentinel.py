@@ -79,9 +79,10 @@ def sh(cmd, timeout=60, check=False, env_extra=None, input=None, cwd=None):
 
 
 def notify(title, message, priority):
+    """Returns True on confirmed delivery; False otherwise (skipped or failed)."""
     if not GOTIFY_TOKEN:
         log("WARN", "no GOTIFY_TOKEN; skipping notify")
-        return
+        return False
     body = json.dumps({"title": title[:200], "message": message[:1500],
                        "priority": int(priority)}).encode()
     req = urllib.request.Request(
@@ -91,8 +92,10 @@ def notify(title, message, priority):
         with urllib.request.urlopen(req, timeout=10) as resp:
             resp.read()
         log("INFO", f"notified: {title}")
+        return True
     except (urllib.error.URLError, OSError) as e:
         log("WARN", f"notify failed: {e}")
+        return False
 
 
 # ---------------------------------------------------------------- state (ConfigMap)
@@ -120,6 +123,7 @@ def load_state():
         state = {"cursor": None, "rollbacks": [], "verified": {}}
     state.setdefault("cursor", None)
     state.setdefault("rollbacks", [])
+    state.setdefault("verified", {})
     return state
 
 
@@ -503,13 +507,15 @@ def process_alias(alias, entry, state, cr):
             if state.setdefault("verified", {}).get(vkey):
                 log("INFO", f"{alias} {new_version}: already verified (re-emitted update); skip notify")
             else:
-                state["verified"][vkey] = datetime.now(timezone.utc).isoformat()
-                # trim: keep last 200
-                if len(state["verified"]) > 200:
-                    for k2 in sorted(state["verified"], key=state["verified"].get)[:-200]:
-                        del state["verified"][k2]
-                notify(f"✅ {alias} {new_version} verified",
-                       f"update healthy after verification: {why}", 3)
+                sent = notify(f"✅ {alias} {new_version} verified",
+                              f"update healthy after verification: {why}", 3)
+                if sent:
+                    # record only on confirmed delivery; a failed send retries on the
+                    # next re-emitted pass (at-least-once for the verified signal)
+                    state["verified"][vkey] = datetime.now(timezone.utc).isoformat()
+                    if len(state["verified"]) > 200:
+                        for k2 in sorted(state["verified"], key=state["verified"].get)[:-200]:
+                            del state["verified"][k2]
             return
         if time.time() >= deadline:
             break
