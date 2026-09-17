@@ -48,12 +48,13 @@ jobs:
 
       - name: unit test suite (no cluster needed)
         run: |
-          set -e
+          fail=0
           for t in catalog ui wizard github appliance provision deploy; do
             echo "::group::test-$t"
-            bash "installer/test/test-$t.sh"
+            bash "installer/test/test-$t.sh" || { echo "::error::test-$t failed (rc=$?)"; fail=1; }
             echo "::endgroup::"
           done
+          exit $fail
 
   k3d-e2e:
     runs-on: ubuntu-latest
