@@ -82,16 +82,12 @@ jobs:
           kubectl config use-context k3d-msp-ci
           kubectl get nodes
 
-      - name: install core bundle (ArgoCD CRDs required by deploy.sh preflight)
+      - name: install ArgoCD CRDs (required by deploy.sh preflight)
         run: |
           kubectl config use-context k3d-msp-ci
-          YES=1 BUNDLES=core ./installer/install.sh || true
-          # wait for the Application CRD to be served (metallb/longhorn failures are
-          # non-fatal in k3d; only the CRD matters for the next step)
-          for i in $(seq 1 36); do
-            kubectl get crd applications.argoproj.io >/dev/null 2>&1 && break
-            sleep 5
-          done
+          # deploy.sh (next step) validates ArgoCD is functional; a full install.sh run
+          # needs kubeseal + real git remote, which CI doesn't have. Only the CRDs matter.
+          kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/crds/application-crd.yaml
           kubectl get crd applications.argoproj.io
 
       - name: run the real wizard plan end-to-end (appliance mode, dry secrets)
