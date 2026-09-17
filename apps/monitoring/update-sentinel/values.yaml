@@ -57,7 +57,7 @@ controllers:
           python3 /scripts/sentinel.py --once
         env:
         - name: DRY_RUN
-          value: "1"                 # burn-in: flip to "0" after clean dry-run window
+          value: "0"                 # burn-in: flip to "0" after clean dry-run window
         - name: POD_NS
           valueFrom:
             fieldRef:
