@@ -37,6 +37,11 @@ UPDATER_CR = os.environ.get("UPDATER_CR", "homelab-image-updater")
 UPDATER_NS = os.environ.get("UPDATER_NS", "argocd")
 DRY_RUN = os.environ.get("DRY_RUN", "1") == "1"
 HEALTH_GRACE_S = int(os.environ.get("HEALTH_GRACE_S", "420"))
+# Apps with a k8s readiness probe: k8s itself proves unhealthiness (pod never
+# Ready) before we fire, so a short grace suffices. Unprobed apps keep the long
+# grace for heavyweight boot variance (e.g. jellyfin plugin stack).
+HEALTH_GRACE_S_PROBED = int(os.environ.get("HEALTH_GRACE_S_PROBED", "120"))
+HEALTH_GRACE_S_DEFAULT = int(os.environ.get("HEALTH_GRACE_S_DEFAULT", "420"))
 POLL_INTERVAL_S = int(os.environ.get("POLL_INTERVAL_S", "30"))
 PER_APP_COOLDOWN_H = float(os.environ.get("PER_APP_COOLDOWN_H", "24"))
 MAX_ROLLBACKS_24H = int(os.environ.get("MAX_ROLLBACKS_24H", "3"))
@@ -77,6 +82,20 @@ def sh(cmd, timeout=60, check=False, env_extra=None, input=None, cwd=None):
         raise RuntimeError(f"cmd failed rc={r.returncode}: {cmd}\n{r.stderr[-400:]}")
     return r
 
+
+
+def _has_readiness_probe(app: dict) -> bool:
+    """True if the app's main workload pod template has any readinessProbe.
+    Probed apps get the short grace: k8s already proved unhealthiness."""
+    kind = app.get("workload_kind"); name = app.get("workload"); ns = app.get("ns")
+    if not (kind and name and ns):
+        return False
+    res = f"deploy/{name}" if kind == "Deployment" else (f"sts/{name}" if kind == "StatefulSet" else None)
+    if not res:
+        return False
+    jp = "{.spec.template.spec.containers[*].readinessProbe.httpGet.path}"
+    r = sh(["kubectl", "get", res, "-n", ns, "-o", f"jsonpath={jp}"], timeout=30)
+    return bool((r.stdout or "").strip())
 
 def notify(title, message, priority):
     """Returns True on confirmed delivery; False otherwise (skipped or failed)."""
@@ -556,7 +575,9 @@ def process_alias(alias, entry, state, cr):
         return
 
     # health verify with grace
-    deadline = time.time() + HEALTH_GRACE_S
+    grace_s = HEALTH_GRACE_S_PROBED if _has_readiness_probe(app) else HEALTH_GRACE_S_DEFAULT
+    log("INFO", f"grace={grace_s}s (probed={grace_s == HEALTH_GRACE_S_PROBED})")
+    deadline = time.time() + grace_s
     last_why = "not checked"
     while True:
         ok, why = healthy(app)
