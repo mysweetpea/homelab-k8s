@@ -198,7 +198,8 @@ service:
 image:
   tag: 13.2.1
   repository: grafana/grafana
-deploymentStrategy: RollingUpdate
+deploymentStrategy:
+  type: RollingUpdate
 readinessProbe:
   enabled: true
   path: /api/health
