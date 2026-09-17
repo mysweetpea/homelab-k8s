@@ -18,6 +18,17 @@ grafana.ini:
     enabled: true
   analytics:
     check_for_updates: false
+  plugins:
+    # Grafana 13.2.x runs a BACKGROUND PLUGIN INSTALLER at boot that tries to UPDATE every
+    # "installed" plugin from the catalog into the pod. For plugins bundled in the image
+    # (/usr/share/grafana/data/plugins-bundled — loki, prometheus, influxdb, tempo, ...) the
+    # update step unlinks the SOURCE directory, which fails on the chart's readOnlyRootFilesystem
+    # ("unlinkat .../plugins-bundled/loki: read-only file system") and the plugin is then
+    # DE-REGISTERED. Net effect: the Loki datasource dies and every Loki-backed alert rule wedges
+    # in health=error ([plugin.notRegistered] plugin not registered), firing Gotify spam.
+    # Upstream chart 13.2.5 added exactly this key to fix it. Bundled plugins already match the
+    # image version, so freezing their auto-update costs nothing and keeps them registering.
+    preinstall_auto_update: "false"
   users:
     allow_sign_up: false
     auto_assign_org_role: Admin
