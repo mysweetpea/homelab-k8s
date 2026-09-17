@@ -420,10 +420,10 @@ def git_log_scan(state, cr):
     if not (REPO_DIR / ".git").is_dir():
         return found
     since = state.get("cursor")
-    args = ["git", "-C", str(REPO_DIR), "log", "origin/main", "--format=%H|%s|%cI",
-            "-20", "--"]
+    args = ["git", "-C", str(REPO_DIR), "log", "origin/main", "--format=%H|%s|%cI", "-20"]
     if since:
         args += [f"--since={since}"]
+    args += ["--"]
     r = sh(args, timeout=60)
     if r.returncode != 0:
         return found
