@@ -200,6 +200,9 @@ image:
   repository: grafana/grafana
 deploymentStrategy:
   type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
 readinessProbe:
   enabled: true
   path: /api/health
