@@ -147,7 +147,10 @@ extraObjects:
               imageName: library/nextcloud
               commonUpdateSettings:
                 updateStrategy: semver
-                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+                # TEMP 2026-09-16: upstream 35.0.0 tag published as EMPTY OCI index
+                # ({"manifests":[]} - no platforms) -> ImagePullBackOff crash loop.
+                # Restricted to 34.x until upstream republishes; revert to ^\d+\.\d+\.\d+$ then.
+                allowTags: "regexp:^34\\." 
               manifestTargets:
                 helm:
                   name: image.repository
