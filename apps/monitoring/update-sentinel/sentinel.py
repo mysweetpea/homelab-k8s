@@ -409,6 +409,43 @@ def git_commit_push(alias, new_version, old_tag):
     return True
 
 
+def drift_scan(state, cr):
+    """Catch updates the per-pass recentUpdates list evicted before a cycle read them.
+    Compare live workload image tag vs git values tag for every managed app; any mismatch
+    is treated as an update event (newVersion = live tag). Cheap: 1 kubectl get per app."""
+    import re as _re
+    found = []
+    for alias, app in HEALTH_MAP["apps"].items():
+        if alias in ROLLBACK_EXCLUDE:
+            continue
+        ref, img = updater_config_for_alias(cr, alias)
+        if ref is None:
+            continue
+        dotted = (img.get("manifestTargets", {}).get("helm", {}) or {}).get("tag", "")
+        if not dotted:
+            continue
+        try:
+            values_path = find_values_path(ref, img)
+        except (RuntimeError, OSError):
+            continue
+        try:
+            git_tag = get_tag_at_path(values_path, dotted)
+        except Exception:  # noqa: BLE001 — skip unreadable entries
+            continue
+        kind = app.get("workload_kind", "Deployment")
+        name = app.get("workload") or alias
+        r = sh(["kubectl", "get", kind, name, "-n", app["ns"],
+                "-o", "jsonpath={.spec.template.spec.containers[0].image}"], timeout=30)
+        if r.returncode != 0 or not r.stdout.strip():
+            continue
+        image = r.stdout.strip()
+        live_tag = image.rsplit(":", 1)[-1] if ":" in image.rsplit("/", 1)[-1] else "latest"
+        if live_tag != git_tag:
+            found.append({"alias": alias, "newVersion": live_tag, "git_tag": git_tag,
+                          "updatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
+    return found
+
+
 # ---------------------------------------------------------------- main cycle
 
 def process_alias(alias, entry, state, cr):
@@ -529,10 +566,18 @@ def main():
 
     state = load_state()
     updates, cr = read_recent_updates()
-    if updates:
+    if updates or state.get("drift_armed"):
         ensure_repo()   # clone/fetch before any values.yaml lookups
+    drift = drift_scan(state, cr) if cr else []
+    seen_aliases = {u.get("alias") for u in updates}
+    for d in drift:
+        key = f'{d["alias"]}@{d["newVersion"]}'
+        if d["alias"] in seen_aliases or key in state.get("verified", {}):
+            continue
+        log("INFO", f"drift-scan caught {d['alias']}: git={d['git_tag']} live={d['newVersion']} (missed by recentUpdates)")
+        updates.append(d)
     if not updates:
-        log("INFO", "no recentUpdates; done")
+        log("INFO", "no recentUpdates or drift; done")
         return
 
     def ts_key(u):
@@ -542,6 +587,7 @@ def main():
 
     if not state["cursor"]:
         state["cursor"] = newest_ts
+        state["drift_armed"] = True   # drift-scan starts NEXT cycle (baseline first)
         save_state(state)
         notify("Update Sentinel armed",
                f"Baseline set at {newest_ts}. Managed apps: "
@@ -562,6 +608,7 @@ def main():
             notify("sentinel: per-app error",
                    f"{u['alias']}: {e!r}", 6)
     state["cursor"] = newest_ts
+    state["drift_armed"] = True
     # trim ledger
     cutoff = datetime.now(timezone.utc) - timedelta(days=7)
     state["rollbacks"] = [rb for rb in state["rollbacks"]
