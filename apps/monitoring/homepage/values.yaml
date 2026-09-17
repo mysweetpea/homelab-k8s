@@ -83,6 +83,9 @@ controllers:
               periodSeconds: 20
               timeoutSeconds: 3
               failureThreshold: 3
+              httpHeaders:
+              - name: Host
+                value: homepage.mysweetpea.cc
             enabled: true
     type: deployment
 # Pinned to worker-b: master VM disk is failing (Aug 19 SSD incident) — keep
