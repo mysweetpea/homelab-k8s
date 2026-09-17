@@ -204,8 +204,9 @@ deploymentStrategy:
     maxSurge: 0
     maxUnavailable: 1
 readinessProbe:
-  enabled: true
-  path: /api/health
+  httpGet:
+    path: /api/health
+    port: grafana
   initialDelaySeconds: 30
   periodSeconds: 20
   timeoutSeconds: 3
