@@ -1206,9 +1206,14 @@ configMaps:
             patch_live_cr(cr, alias, new_version)  # close re-bump window during ArgoCD lag
             state["rollbacks"].append({"ts": now.isoformat(), "alias": alias,
                                        "tag": new_version, "restored": old_tag})
-            notify(f"⛔ ROLLED BACK {alias}",
-                   f"{new_version} -> {old_tag} after grace expiry. Reason: {last_why}. "
-                   f"ignoreTags += {re.escape(new_version)}; ArgoCD will sync the revert.", 8)
+            notify(f"⛔ ROLLED BACK {alias} — manual update required",
+                   f"{alias} {new_version} was unhealthy ({last_why}); reverted to {old_tag}.\n"
+                   f"The broken tag {new_version} is pinned (ignoreTags in "
+                   f"apps/infra/argocd-image-updater/values.yaml) so the updater skips it.\n"
+                   f"TO RETRY LATER: ask Hermes to \"retry {alias} update\" — it removes the "
+                   f"pin and re-bumps; the sentinel re-verifies and rolls back again if still "
+                   f"broken. Upstream fixes also arrive automatically once a newer tag "
+                   f"publishes.", 8)
 
 
         HEALTH_MAP = {}
