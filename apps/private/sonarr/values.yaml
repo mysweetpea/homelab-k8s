@@ -12,6 +12,19 @@ controllers:
           limits:
             cpu: 500m
             memory: 1Gi
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /ping
+                port: 8989
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:

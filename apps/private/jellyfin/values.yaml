@@ -19,6 +19,19 @@ controllers:
             # the warmer is fixed at the source, this is headroom against
             # future startup-scan spikes).
             memory: 6Gi
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /health
+                port: 8096
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:
@@ -32,7 +45,7 @@ persistence:
   media:
     existingClaim: media-storage-lh
     globalMounts:
-      - path: /data
+    - path: /data
   # Transcodes in RAM (tmpfs) - instant transcode I/O, no Longhorn network round-trips
   transcodes:
     type: emptyDir

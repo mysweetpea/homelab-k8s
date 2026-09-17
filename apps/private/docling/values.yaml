@@ -31,6 +31,23 @@ controllers:
           limits:
             cpu: "2"
             memory: 4Gi
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /health
+                port: 5001
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
+    strategy: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
 persistence:
   models:
     type: persistentVolumeClaim

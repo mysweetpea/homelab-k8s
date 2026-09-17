@@ -18,7 +18,24 @@ controllers:
           limits:
             cpu: 1000m
             memory: 1Gi
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /healthz
+                port: 8080
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
     type: deployment
+    strategy: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
 configMaps:
   config:
     enabled: true

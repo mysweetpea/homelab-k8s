@@ -13,27 +13,27 @@ controllers:
             cpu: 1500m
             memory: 2Gi
         ports:
-          - name: http
-            containerPort: 8282
-            protocol: TCP
+        - name: http
+          containerPort: 8282
+          protocol: TCP
         env:
-          - name: TZ
-            value: America/New_York
-          - name: PUID
-            value: "1000"
-          - name: PGID
-            value: "1000"
-          - name: DECYPHARR_DEBRIDS__0__NAME
-            value: "RD Primary"
-          - name: DECYPHARR_DEBRIDS__0__PROVIDER
-            value: "realdebrid"
-          - name: DECYPHARR_ARRS__0__NAME
-            value: "Radarr"
-          - name: DECYPHARR_ARRS__1__NAME
-            value: "Sonarr"
+        - name: TZ
+          value: America/New_York
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: DECYPHARR_DEBRIDS__0__NAME
+          value: "RD Primary"
+        - name: DECYPHARR_DEBRIDS__0__PROVIDER
+          value: "realdebrid"
+        - name: DECYPHARR_ARRS__0__NAME
+          value: "Radarr"
+        - name: DECYPHARR_ARRS__1__NAME
+          value: "Sonarr"
         envFrom:
-          - secretRef:
-              name: decypharr-secrets
+        - secretRef:
+            name: decypharr-secrets
         # DB lock hygiene: the state PVC holds exclusive lock files
         # (entries.db.lock, items.db.lock, ...). Give the process a moment on
         # SIGTERM so it releases locks before the replacement pod can open
@@ -42,31 +42,44 @@ controllers:
           preStop:
             exec:
               command: ["/bin/sh", "-c", "sleep 5"]
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /
+                port: 8282
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
     initContainers:
       init:
         image:
           repository: busybox
           tag: "1.36"
         command:
-          - /bin/sh
-          - -c
-          - |
-            cp /app-config/config.json /app/config.json
-            # Preserve auth.json across restarts: Decypharr generates its API
-            # token on first boot and saves it here. Overwriting with the
-            # configmap copy would re-generate a NEW token every restart and
-            # invalidate API consumers (e.g. the strm-repair-bridge).
-            if [ ! -f /app/auth.json ]; then
-              cp /app-config/auth.json /app/auth.json
-            fi
-            # Inject the RD API key into config.json (env overrides run AFTER
-            # setDefaults, which pre-computes DownloadAPIKeys from an empty
-            # APIKey — file-based key survives that ordering)
-            sed -i "s|\"api_key\": \"\"|\"api_key\": \"$DECYPHARR_DEBRIDS__0__API_KEY\"|" /app/config.json
-            chmod 644 /app/config.json /app/auth.json
+        - /bin/sh
+        - -c
+        - |
+          cp /app-config/config.json /app/config.json
+          # Preserve auth.json across restarts: Decypharr generates its API
+          # token on first boot and saves it here. Overwriting with the
+          # configmap copy would re-generate a NEW token every restart and
+          # invalidate API consumers (e.g. the strm-repair-bridge).
+          if [ ! -f /app/auth.json ]; then
+            cp /app-config/auth.json /app/auth.json
+          fi
+          # Inject the RD API key into config.json (env overrides run AFTER
+          # setDefaults, which pre-computes DownloadAPIKeys from an empty
+          # APIKey — file-based key survives that ordering)
+          sed -i "s|\"api_key\": \"\"|\"api_key\": \"$DECYPHARR_DEBRIDS__0__API_KEY\"|" /app/config.json
+          chmod 644 /app/config.json /app/auth.json
         envFrom:
-          - secretRef:
-              name: decypharr-secrets
+        - secretRef:
+            name: decypharr-secrets
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:

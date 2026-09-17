@@ -18,6 +18,18 @@ controllers:
           limits:
             memory: 512Mi
             cpu: 500m
+        probes:
+          readiness:
+            custom: true
+            type: TCP
+            spec:
+              tcpSocket:
+                port: 21116
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
   hbbr:
     type: deployment
     containers:
@@ -35,6 +47,18 @@ controllers:
           limits:
             memory: 512Mi
             cpu: 500m
+        probes:
+          readiness:
+            custom: true
+            type: TCP
+            spec:
+              tcpSocket:
+                port: 21117
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
 service:
   hbbs:
     controller: hbbs

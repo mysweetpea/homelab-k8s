@@ -26,6 +26,18 @@ controllers:
           limits:
             cpu: "1"
             memory: 1Gi
+        probes:
+          readiness:
+            custom: true
+            type: TCP
+            spec:
+              tcpSocket:
+                port: 8000
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
 persistence:
   data:
     enabled: true

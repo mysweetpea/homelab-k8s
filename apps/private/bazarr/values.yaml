@@ -15,6 +15,19 @@ controllers:
             # daily-backup window): subtitle library grows + backup I/O spikes
             # pushed it past the old limit ~daily, causing false DOWN blips.
             memory: 1Gi
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /
+                port: 6767
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
     type: deployment
 # Pinned to worker-b: media-storage-lh is RWO (single-node attach)
 defaultPodOptions:

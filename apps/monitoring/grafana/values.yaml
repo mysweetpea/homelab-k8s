@@ -51,85 +51,85 @@ alerting:
   contactpoints.yaml:
     apiVersion: 1
     contactPoints:
-      - orgId: 1
-        name: gotify
-        receivers:
-          - uid: gotify-webhook
-            type: webhook
-            settings:
-              url: "http://gotify.private.svc.cluster.local:80/message?token=$__env{GOTIFY_TOKEN}"
-              httpMethod: POST
-              title: "{{ `{{ template \"default.title\" . }}` }}"
-              body: "{{ `{{ template \"default.message\" . }}` }}"
-            disableResolveMessage: false
+    - orgId: 1
+      name: gotify
+      receivers:
+      - uid: gotify-webhook
+        type: webhook
+        settings:
+          url: "http://gotify.private.svc.cluster.local:80/message?token=$__env{GOTIFY_TOKEN}"
+          httpMethod: POST
+          title: "{{ `{{ template \"default.title\" . }}` }}"
+          body: "{{ `{{ template \"default.message\" . }}` }}"
+        disableResolveMessage: false
   policies.yaml:
     apiVersion: 1
     policies:
-      - orgId: 1
-        receiver: gotify
-        group_by: ["grafana_folder", "alertname"]
+    - orgId: 1
+      receiver: gotify
+      group_by: ["grafana_folder", "alertname"]
   rules.yaml:
     apiVersion: 1
     groups:
-      - orgId: 1
-        name: cluster-log-errors
-        folder: MySweetPea
-        interval: 60s
-        rules:
-          - uid: error-log-spike
-            title: "High ERROR log volume (5m)"
-            condition: B
-            data:
-              - refId: A
-                datasourceUid: P8E80F9AEF21F6940
-                model:
-                  expr: |
-                    sum(count_over_time({job=~".+"} | detected_level="error" [5m]))
-                  refId: A
-                  datasource:
-                    type: loki
-                    uid: P8E80F9AEF21F6940
-                  intervalMs: 1000
-                  maxDataPoints: 43200
-                  queryType: "instant"
-                  supportMixedQueries: false
-                relativeTimeRange:
-                  from: 300
-                  to: 0
-                queryType: ""
-              - refId: B
-                datasourceUid: __expr__
-                model:
-                  conditions:
-                    - evaluator:
-                        params:
-                          - 750
-                        type: gt
-                      operator:
-                        type: and
-                      query:
-                        params:
-                          - B
-                      reducer:
-                        type: last
-                      type: query
-                  datasource:
-                    type: __expr__
-                    uid: "__expr__"
-                  expression: A
-                  intervalMs: 1000
-                  maxDataPoints: 43200
-                  refId: B
-                  type: threshold
-                relativeTimeRange:
-                  from: 0
-                  to: 0
-            noDataState: NoData
-            for: 5m
-            annotations:
-              summary: "High ERROR logs detected in cluster"
-            labels:
-              severity: warning
+    - orgId: 1
+      name: cluster-log-errors
+      folder: MySweetPea
+      interval: 60s
+      rules:
+      - uid: error-log-spike
+        title: "High ERROR log volume (5m)"
+        condition: B
+        data:
+        - refId: A
+          datasourceUid: P8E80F9AEF21F6940
+          model:
+            expr: |
+              sum(count_over_time({job=~".+"} | detected_level="error" [5m]))
+            refId: A
+            datasource:
+              type: loki
+              uid: P8E80F9AEF21F6940
+            intervalMs: 1000
+            maxDataPoints: 43200
+            queryType: "instant"
+            supportMixedQueries: false
+          relativeTimeRange:
+            from: 300
+            to: 0
+          queryType: ""
+        - refId: B
+          datasourceUid: __expr__
+          model:
+            conditions:
+            - evaluator:
+                params:
+                - 750
+                type: gt
+              operator:
+                type: and
+              query:
+                params:
+                - B
+              reducer:
+                type: last
+              type: query
+            datasource:
+              type: __expr__
+              uid: "__expr__"
+            expression: A
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: B
+            type: threshold
+          relativeTimeRange:
+            from: 0
+            to: 0
+        noDataState: NoData
+        for: 5m
+        annotations:
+          summary: "High ERROR logs detected in cluster"
+        labels:
+          severity: warning
 sidecar:
   dashboards:
     enabled: true
@@ -198,3 +198,11 @@ service:
 image:
   tag: 13.2.1
   repository: grafana/grafana
+deploymentStrategy: RollingUpdate
+readinessProbe:
+  enabled: true
+  path: /api/health
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  timeoutSeconds: 3
+  failureThreshold: 3

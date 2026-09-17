@@ -31,7 +31,24 @@ controllers:
         image:
           repository: n8nio/n8n
           tag: "2.40.2"
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /healthz
+                port: 5678
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
     type: deployment
+    strategy: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
 persistence:
   data:
     accessMode: ReadWriteOnce

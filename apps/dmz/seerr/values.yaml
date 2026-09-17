@@ -6,9 +6,9 @@ controllers:
           repository: ghcr.io/seerr-team/seerr
           tag: v3.4.1
         command:
-          - sh
-          - -c
-          - node /app/config/patch.js && node /app/config/patch4.js && cd /app && node dist/index.js
+        - sh
+        - -c
+        - node /app/config/patch.js && node /app/config/patch4.js && cd /app && node dist/index.js
         securityContext:
           runAsGroup: 1000
           runAsUser: 1000
@@ -19,6 +19,19 @@ controllers:
           limits:
             cpu: 500m
             memory: 1Gi
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /api/v1/status
+                port: 5055
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
     pod:
       securityContext:
         fsGroup: 1000

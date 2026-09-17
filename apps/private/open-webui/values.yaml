@@ -28,6 +28,19 @@ controllers:
             # event loop ~60s after startup (liveness fails → kubelet SIGKILLs, exit 137).
             # Verified with 6 test pods: no probes = stable 4min+; probes = death at ~110s.
             # Monitored externally by Uptime Kuma (monitor #9).
+        probes:
+          readiness:
+            custom: true
+            type: HTTP
+            spec:
+              httpGet:
+                path: /health
+                port: 8080
+              initialDelaySeconds: 15
+              periodSeconds: 20
+              timeoutSeconds: 3
+              failureThreshold: 3
+            enabled: true
 service:
   main:
     controller: main
