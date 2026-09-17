@@ -96,9 +96,17 @@ MSP_SSO=no
 
 # ---------------------------------------------------------------- test 5
 P="$TMP/plan5.env"; rm -f "$P"
-FAKE="$TMP/fakebin"; rm -rf "$FAKE"; mkdir -p "$FAKE"
-# t5: gh missing everywhere else; wizard must still complete (appliance mode needs no gh)
-out=$(printf '%s\n\n\n1\nn\n2\n1\nexample.com\ny\n' "$UCN" | run_wizard "$P" 2>/dev/null); rc=$?
+# t5: gh+git MISSING -> wizard must still complete via appliance mode.
+# Deterministic on any machine (GitHub runners ship gh preinstalled): sandbox PATH
+# containing only the unix tools wizard.sh needs; git/gh deliberately absent, so
+# have git / have gh fail exactly as on a bare box.
+FAKE="$TMP/sandbox"; rm -rf "$FAKE"; mkdir -p "$FAKE"
+for tool in awk sed grep cat sort uniq tr wc head tail cut printf mkdir rm cp \
+            chmod dirname basename date uname id tee find touch env sh bash; do
+  p=$(command -v "$tool" 2>/dev/null) && ln -sf "$p" "$FAKE/$tool"
+done
+out=$(printf '%s\n\n\n1\nn\n2\n1\nexample.com\ny\n' "$UCN" | \
+  PATH="$FAKE" run_wizard "$P" 2>/dev/null); rc=$?
 check "t5 completes after gh-missing re-ask" "$rc" "0"
 . "$P"
 check "t5 method appliance" "$MSP_METHOD" "appliance"

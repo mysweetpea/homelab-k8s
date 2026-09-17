@@ -28,10 +28,19 @@ check "t2 non-linux rc" "$rc" "1"
 contains "t2 non-linux msg" "$out" "targets Linux"
 
 # t3 non-root without sudo dies
-out=$(PATH="/usr/bin:/bin" bash "$S" 2>&1 </dev/null); rc=$?
-# on MSYS test env, uname=Linux, id -u!=0, sudo absent => die; if sudo exists it proceeds to
-# systemctl check which also fails in MSYS. Either way it must NOT reach "cluster ready".
-case "$out" in *"cluster ready"*) check "t3 no early success" 1 0;; *) check "t3 no early success" 0 0;; esac
+# t3 no early success: must NEVER reach a real install or "cluster ready".
+# Deterministic on any machine (GitHub runners run as root WITH sudo+systemctl — the
+# old assumption "no sudo" fails there and t3 attempted a REAL k3s install):
+# sandbox PATH without systemctl => script dies at the systemd check.
+SBS="$TMP/sandbox"; rm -rf "$SBS"; mkdir -p "$SBS"
+for tool in uname id awk grep sed cat sh bash seq sleep curl; do
+  p=$(command -v "$tool" 2>/dev/null) && ln -sf "$p" "$SBS/$tool"
+done
+out=$(PATH="$SBS" bash "$S" 2>&1 </dev/null); rc=$?
+case "$out" in
+  *"cluster ready"*) check "t3 no early success" 1 0;;
+  *) check "t3 no early success" 0 0;;
+esac
 
 # t4 idempotent branch: fake k3s present -> message, no install
 SB2="$TMP/withk3s"; rm -rf "$SB2"; mkdir -p "$SB2"
