@@ -7,7 +7,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
   annotations:
     argocd-image-updater.argoproj.io/image-list: nextcloud=docker.io/nextcloud
-    argocd-image-updater.argoproj.io/nextcloud.update-strategy: semver
+    argocd-image-updater.argoproj.io/nextcloud.update-strategy: digest
     argocd-image-updater.argoproj.io/nextcloud.allow-tags: regexp:^3[0-4]\.
     argocd-image-updater.argoproj.io/nextcloud.helm.image-spec: controllers.main.containers.main.image
     argocd-image-updater.argoproj.io/write-back-method: git
