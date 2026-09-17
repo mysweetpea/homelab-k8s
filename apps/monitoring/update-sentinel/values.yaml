@@ -699,7 +699,7 @@ configMaps:
             r = sh(["kubectl", "get", "cm", STATE_CM, "-n", POD_NS, "-o", "json"], timeout=30)
             if r.returncode != 0:
                 log("INFO", "state ConfigMap absent; creating empty")
-                state = {"cursor": None, "rollbacks": []}
+                state = {"cursor": None, "rollbacks": [], "verified": {}}
                 save_state(state)
                 return state
             data = json.loads(r.stdout)
@@ -707,7 +707,7 @@ configMaps:
             try:
                 state = json.loads(raw)
             except json.JSONDecodeError:
-                state = {"cursor": None, "rollbacks": []}
+                state = {"cursor": None, "rollbacks": [], "verified": {}}
             state.setdefault("cursor", None)
             state.setdefault("rollbacks", [])
             return state
@@ -1042,8 +1042,17 @@ configMaps:
                 ok, why = healthy(app)
                 last_why = why
                 if ok:
-                    notify(f"✅ {alias} {new_version} verified",
-                           f"update healthy after verification: {why}", 3)
+                    vkey = f"{alias}@{new_version}"
+                    if state.setdefault("verified", {}).get(vkey):
+                        log("INFO", f"{alias} {new_version}: already verified (re-emitted update); skip notify")
+                    else:
+                        state["verified"][vkey] = datetime.now(timezone.utc).isoformat()
+                        # trim: keep last 200
+                        if len(state["verified"]) > 200:
+                            for k2 in sorted(state["verified"], key=state["verified"].get)[:-200]:
+                                del state["verified"][k2]
+                        notify(f"✅ {alias} {new_version} verified",
+                               f"update healthy after verification: {why}", 3)
                     return
                 if time.time() >= deadline:
                     break
