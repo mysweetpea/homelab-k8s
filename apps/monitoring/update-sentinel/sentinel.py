@@ -172,22 +172,32 @@ def ensure_repo():
 
 
 def find_values_path(ref, img):
-    """Resolve the values.yaml path for an alias from CR writeBackTarget."""
+    """Resolve the values.yaml path for an alias from CR writeBackTarget.
+
+    Pure-Python walk (busybox grep has no --include; keep the pod deps minimal)."""
     target = (ref.get("writeBackConfig", {}).get("gitConfig", {})
                  .get("writeBackTarget", ""))
     rel = target.split("helmvalues:", 1)[-1]
     name_pattern = ref.get("namePattern", "")
-    # locate the application.yaml declaring this app name
-    r = sh(["grep", "-rl", "-x", f"  name: {name_pattern}",
-            "--include=application.yaml", "apps"], cwd=REPO_DIR, timeout=30)
-    if r.returncode != 0 or not r.stdout.strip():
-        # fallback: match with flexible indentation
-        r = sh(["grep", "-rl", "-E", fr"^\s+name: {re.escape(name_pattern)}\s*$",
-                "--include=application.yaml", "apps"], cwd=REPO_DIR, timeout=30)
-    for cand in [ln.strip() for ln in r.stdout.splitlines() if ln.strip()]:
-        p = ((REPO_DIR / cand).parent / rel).resolve()
-        if p.is_file():
-            return p
+    for cand in REPO_DIR.glob("apps/*/*/application.yaml"):
+        try:
+            text = cand.read_text()
+        except OSError:
+            continue
+        for line in text.splitlines():
+            if line.strip() == f"name: {name_pattern}":
+                # writeBackTarget is normally repo-relative ("apps/..."). App-of-apps
+                # style charts (hindsight) use chart-relative paths ("../values.yaml"
+                # from apps/<zone>/<app>/chart) — resolve those against the chart dir.
+                if rel.startswith(".."):
+                    p = (cand.parent / "chart" / rel).resolve()
+                    if not p.is_file():
+                        p = (cand.parent / rel).resolve()
+                else:
+                    p = (REPO_DIR / rel).resolve()
+                if p.is_file():
+                    return p
+                break
     raise RuntimeError(f"no application.yaml named {name_pattern} has values at {rel}")
 
 

@@ -41,29 +41,68 @@ controllers:
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          apk add --no-cache git curl openssh-client >/dev/null
+          KV=$(curl -sL https://dl.k8s.io/release/stable.txt)
+          curl -fsSLo /usr/local/bin/kubectl "https://dl.k8s.io/release/${KV}/bin/linux/amd64/kubectl"
+          chmod +x /usr/local/bin/kubectl
+          export HOME=/tmp
+          pip install --quiet --user ruamel.yaml
+          export PATH="$HOME/.local/bin:$PATH"
+          cp /git-ssh/sshPrivateKey /tmp/id_ed25519 && chmod 600 /tmp/id_ed25519
+          python3 /scripts/sentinel.py --once
+        env:
+        - name: DRY_RUN
+          value: "1"                 # burn-in: flip to "0" after clean dry-run window
+        - name: POD_NS
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: GIT_REPO_URL
+          value: "git@github.com:mysweetpea/homelab-k8s.git"
+        - name: GOTIFY_URL
+          value: "http://gotify.private.svc.cluster.local"
+        - name: GOTIFY_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: update-sentinel-secrets
+              key: GOTIFY_TOKEN
+        - name: HEALTH_GRACE_S
+          value: "420"
+        - name: POLL_INTERVAL_S
+          value: "30"
+        - name: HEALTH_MAP_PATH
+          value: "/config/health-map.json"
+        resources:
+          requests: {cpu: 50m, memory: 64Mi}
+          limits: {cpu: 500m, memory: 256Mi}
 persistence:
   git-ssh:
     type: secret
     name: update-sentinel-git-ssh    # SealedSecret copy of argocd/ssh-git-creds
     globalMounts:
-      - path: /git-ssh
-        readOnly: true
+    - path: /git-ssh
+      readOnly: true
   health-map:
     type: configMap
     identifier: health
     globalMounts:
-      - path: /config
-        readOnly: true
+    - path: /config
+      readOnly: true
   scripts:
     type: configMap
     identifier: scripts
     globalMounts:
-      - path: /scripts
-        readOnly: true
+    - path: /scripts
+      readOnly: true
   tmp:
     type: emptyDir
     globalMounts:
-      - path: /tmp
+    - path: /tmp
 defaultPodOptions:
   # no runAsUser pin: container boots as root to apk-add git/openssh, then all real
   # work (git, sentinel) runs with HOME=/tmp and no privileged ops
@@ -723,22 +762,32 @@ configMaps:
 
 
         def find_values_path(ref, img):
-            """Resolve the values.yaml path for an alias from CR writeBackTarget."""
+            """Resolve the values.yaml path for an alias from CR writeBackTarget.
+
+            Pure-Python walk (busybox grep has no --include; keep the pod deps minimal)."""
             target = (ref.get("writeBackConfig", {}).get("gitConfig", {})
                          .get("writeBackTarget", ""))
             rel = target.split("helmvalues:", 1)[-1]
             name_pattern = ref.get("namePattern", "")
-            # locate the application.yaml declaring this app name
-            r = sh(["grep", "-rl", "-x", f"  name: {name_pattern}",
-                    "--include=application.yaml", "apps"], cwd=REPO_DIR, timeout=30)
-            if r.returncode != 0 or not r.stdout.strip():
-                # fallback: match with flexible indentation
-                r = sh(["grep", "-rl", "-E", fr"^\s+name: {re.escape(name_pattern)}\s*$",
-                        "--include=application.yaml", "apps"], cwd=REPO_DIR, timeout=30)
-            for cand in [ln.strip() for ln in r.stdout.splitlines() if ln.strip()]:
-                p = ((REPO_DIR / cand).parent / rel).resolve()
-                if p.is_file():
-                    return p
+            for cand in REPO_DIR.glob("apps/*/*/application.yaml"):
+                try:
+                    text = cand.read_text()
+                except OSError:
+                    continue
+                for line in text.splitlines():
+                    if line.strip() == f"name: {name_pattern}":
+                        # writeBackTarget is normally repo-relative ("apps/..."). App-of-apps
+                        # style charts (hindsight) use chart-relative paths ("../values.yaml"
+                        # from apps/<zone>/<app>/chart) — resolve those against the chart dir.
+                        if rel.startswith(".."):
+                            p = (cand.parent / "chart" / rel).resolve()
+                            if not p.is_file():
+                                p = (cand.parent / rel).resolve()
+                        else:
+                            p = (REPO_DIR / rel).resolve()
+                        if p.is_file():
+                            return p
+                        break
             raise RuntimeError(f"no application.yaml named {name_pattern} has values at {rel}")
 
 
@@ -1119,9 +1168,9 @@ rawResources:
         name: update-sentinel
         namespace: monitoring
       rules:
-        - apiGroups: [""]
-          resources: [configmaps]
-          verbs: [get, list, watch, create, update, patch]
+      - apiGroups: [""]
+        resources: [configmaps]
+        verbs: [get, list, watch, create, update, patch]
   sentinel-clusterrole:
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRole
@@ -1129,12 +1178,12 @@ rawResources:
       metadata:
         name: update-sentinel-workloads-read
       rules:
-        - apiGroups: [apps]
-          resources: [deployments, statefulsets, daemonsets]
-          verbs: [get, list]
-        - apiGroups: [""]
-          resources: [pods, services]
-          verbs: [get, list]
+      - apiGroups: [apps]
+        resources: [deployments, statefulsets, daemonsets]
+        verbs: [get, list]
+      - apiGroups: [""]
+        resources: [pods, services]
+        verbs: [get, list]
   sentinel-clusterrolebinding:
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding
@@ -1146,9 +1195,9 @@ rawResources:
         kind: ClusterRole
         name: update-sentinel-workloads-read
       subjects:
-        - kind: ServiceAccount
-          name: update-sentinel
-          namespace: monitoring
+      - kind: ServiceAccount
+        name: update-sentinel
+        namespace: monitoring
   sentinel-rolebinding-monitoring:
     apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
@@ -1161,9 +1210,9 @@ rawResources:
         kind: Role
         name: update-sentinel
       subjects:
-        - kind: ServiceAccount
-          name: update-sentinel
-          namespace: monitoring
+      - kind: ServiceAccount
+        name: update-sentinel
+        namespace: monitoring
   sentinel-role-argocd:
     apiVersion: rbac.authorization.k8s.io/v1
     kind: Role
@@ -1172,9 +1221,9 @@ rawResources:
         name: update-sentinel
         namespace: argocd
       rules:
-        - apiGroups: [argocd-image-updater.argoproj.io]
-          resources: [imageupdaters]
-          verbs: [get, list, watch, patch]
+      - apiGroups: [argocd-image-updater.argoproj.io]
+        resources: [imageupdaters]
+        verbs: [get, list, watch, patch]
   sentinel-rolebinding-argocd:
     apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
@@ -1187,6 +1236,6 @@ rawResources:
         kind: Role
         name: update-sentinel
       subjects:
-        - kind: ServiceAccount
-          name: update-sentinel
-          namespace: monitoring
+      - kind: ServiceAccount
+        name: update-sentinel
+        namespace: monitoring
