@@ -147,10 +147,16 @@ extraObjects:
               imageName: library/nextcloud
               commonUpdateSettings:
                 updateStrategy: semver
-                # TEMP 2026-09-16: upstream 35.0.0 tag published as EMPTY OCI index
-                # ({"manifests":[]} - no platforms) -> ImagePullBackOff crash loop.
-                # Restricted to 34.x until upstream republishes; revert to ^\d+\.\d+\.\d+$ then.
-                allowTags: "regexp:^34\\." 
+                # HOLD AT 34.x — deliberate major-version gate (reviewed 2026-09-17).
+                # 35.0.0 is a .0 release (published Sep 15) and 15 enabled Nextcloud apps still
+                # declare max-version 34; two of them (drawio, previewgenerator) have no NC35
+                # release at all. Upgrading now would disable 13 apps pending updates + leave
+                # those 2 dark. Decision: wait for 35.0.1+ and app releases.
+                # TO UNBLOCK LATER: revert to "regexp:^\\d+\\.\\d+\\.\\d+$" and let the updater
+                # drive it, or bump image.tag in apps/private/nextcloud/values.yaml directly.
+                # (The earlier empty-OCI-index problem for 35.0.0 is FIXED upstream — the tag now
+                # carries 12 platforms / 22 layers, so that is no longer a reason to hold.)
+                allowTags: "regexp:^34\\."
               manifestTargets:
                 helm:
                   name: image.repository
