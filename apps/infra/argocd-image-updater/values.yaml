@@ -68,8 +68,6 @@ extraObjects:
             - alias: n8n
               imageName: n8nio/n8n
               commonUpdateSettings:
-                ignoreTags:
-                  - '2\.40\.3'
                 updateStrategy: semver
                 allowTags: "regexp:^2\\.\\d+\\.\\d+$"
               manifestTargets:
@@ -557,8 +555,6 @@ extraObjects:
             - alias: searxng
               imageName: searxng/searxng
               commonUpdateSettings:
-                ignoreTags:
-                  - '2026\.9\.19\-367fb6537'
                 updateStrategy: newest-build
                 allowTags: "regexp:^20\\d{2}\\.\\d+\\.\\d+.*$"
               manifestTargets:
