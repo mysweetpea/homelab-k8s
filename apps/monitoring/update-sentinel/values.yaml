@@ -656,6 +656,12 @@ configMaps:
 
         FAIL_REASONS = {"ImagePullBackOff", "ErrImagePull", "CrashLoopBackOff",
                         "CreateContainerConfigError"}
+        # Waiting states that are INFRA (volume attach / scheduling), never a bad image.
+        INFRA_WAITING = {"ContainerCreating", "Pending"}
+        # Aliases whose verified push is ledger-only (chatty upstreams, e.g. searxng
+        # publishing several builds/day).
+        NOTIFY_QUIET_ALIASES = {a.strip() for a in os.environ.get("NOTIFY_QUIET_ALIASES", "").split(",") if a.strip()}
+        # msp-sentinel-v2
 
 
         def log(level, msg):
@@ -735,6 +741,7 @@ configMaps:
             state.setdefault("cursor", None)
             state.setdefault("rollbacks", [])
             state.setdefault("verified", {})
+            state.setdefault("notified", {})
             return state
 
 
@@ -860,7 +867,19 @@ configMaps:
 
         # ---------------------------------------------------------------- health gates
 
-        def k8s_gate(app):
+        def k8s_gate(app, expect_tag=None):
+            """Health gate. When expect_tag is set (update verification), the
+            pod running THAT tag is the source of truth — "any pod ready" is
+            meaningless during rollouts (the old pod can mask a broken new
+            one, and a maxSurge=0 gap looks like downtime).
+            Returns (ok, why, cls) where cls:
+              ok        — healthy
+              pending   — new-version pod not created yet (ArgoCD lag; keep waiting)
+              infra     — new pod stuck ContainerCreating/Pending (volume attach)
+              bad-image — CrashLoop/ImagePull/Failed on the new pod
+              app-broken — new pod Running but probes/HTTP failing
+              query     — kubectl errors (transient; treat as pending)
+            """
             ns, kind, name = app["ns"], app.get("workload_kind", "Deployment"), app.get("workload", "")
             alias = app["_alias"]
             if kind == "DaemonSet" and not name:
@@ -869,43 +888,49 @@ configMaps:
                 name = alias
             r = sh(["kubectl", "get", kind, name, "-n", ns, "-o", "json"], timeout=30)
             if r.returncode != 0:
-                return False, f"{kind}/{name} query failed: {r.stderr[:120]}"
+                return False, f"{kind}/{name} query failed: {r.stderr[:120]}", "query"
             w = json.loads(r.stdout)
-            st = w.get("status", {})
-            if kind == "Deployment":
-                conds = st.get("conditions", [])
-                avail = any(c.get("type") == "Available" and c.get("status") == "True"
-                            for c in conds)
-                want = st.get("replicas", 1)
-                ready = st.get("readyReplicas", 0) or 0
-                if want > 0 and (not avail or ready < want):
-                    return False, f"Deployment not Available/ready ({ready}/{want})"
-            elif kind == "StatefulSet":
-                want = st.get("replicas", 1)
-                ready = st.get("readyReplicas", 0) or 0
-                if want > 0 and ready < want:
-                    return False, f"StatefulSet not ready ({ready}/{want})"
-            elif kind == "DaemonSet":
-                desired = st.get("desiredNumberScheduled", 0)
-                numready = st.get("numberReady", 0) or 0
-                if desired > 0 and numready < desired:
-                    return False, f"DaemonSet not ready ({numready}/{desired})"
-            # fail-fast pod scan
+            # pod-level classification is the source of truth for update health
             sel = (w.get("spec", {}).get("selector", {}) or {}).get("matchLabels", {})
-            if sel:
-                sel_arg = ",".join(f"{k}={v}" for k, v in sel.items())
-                r = sh(["kubectl", "get", "pods", "-n", ns, "-l", sel_arg, "-o", "json"],
-                       timeout=30)
-                if r.returncode == 0:
-                    for pod in json.loads(r.stdout).get("items", []):
-                        if pod.get("status", {}).get("phase") == "Failed":
-                            return False, f"pod {pod['metadata']['name']} phase Failed"
-                        for cs in pod.get("status", {}).get("containerStatuses", []) + \
-                                  pod.get("status", {}).get("initContainerStatuses", []):
-                            wait = (cs.get("state", {}).get("waiting") or {}).get("reason", "")
-                            if wait in FAIL_REASONS:
-                                return False, f"{cs.get('name')}: {wait}"
-            return True, "k8s ok"
+            if not sel:
+                return True, "k8s ok (no selector)", "ok"
+            sel_arg = ",".join(f"{k}={v}" for k, v in sel.items())
+            r = sh(["kubectl", "get", "pods", "-n", ns, "-l", sel_arg, "-o", "json"],
+                   timeout=30)
+            if r.returncode != 0:
+                return False, "pod query failed", "query"
+            pods = json.loads(r.stdout).get("items", [])
+            new_pod = None
+            for pod in pods:
+                found = None
+                for cs in pod.get("status", {}).get("containerStatuses", []):
+                    img = cs.get("image", "")
+                    tag = img.rsplit(":", 1)[-1].split("@", 1)[0] if ":" in img else ""
+                    if ":" in img and "/" not in tag and expect_tag and tag == expect_tag:
+                        found = cs
+                        break
+                if found is not None:
+                    new_pod = (pod, found)
+                    break
+            if expect_tag and new_pod is None:
+                return False, (f"no pod running {expect_tag} yet "
+                               "(rollout pending — ArgoCD lag or waiting slot)"), "pending"
+            if new_pod:
+                pod, cs = new_pod
+                pname = pod["metadata"]["name"]
+                if pod.get("status", {}).get("phase") == "Failed":
+                    return False, f"new-version pod {pname} phase Failed", "bad-image"
+                wait = (cs.get("state", {}).get("waiting") or {}).get("reason", "")
+                if wait in FAIL_REASONS:
+                    return False, f"new pod {cs.get('name')}: {wait}", "bad-image"
+                if wait in INFRA_WAITING:
+                    started = pod.get("status", {}).get("startTime", "?")
+                    return False, (f"new pod {pname} stuck in {wait} since {started} "
+                                   "(volume attach / infra)"), "infra"
+                if not cs.get("ready", False):
+                    return False, f"new-version pod {pname} not Ready (probes failing)", "app-broken"
+                return True, f"new-version pod {pname} Ready", "ok"
+            return True, "k8s ok", "ok"
 
 
         def http_gate(app):
@@ -939,14 +964,41 @@ configMaps:
             return False, f"http got {got!r}, expect {code}"
 
 
-        def healthy(app):
-            ok, why = k8s_gate(app)
+        def healthy(app, expect_tag=None):
+            ok, why, cls = k8s_gate(app, expect_tag)
             if not ok:
-                return False, why
+                return False, why, cls
             ok2, why2 = http_gate(app)
             if not ok2:
-                return False, why2
-            return True, why2
+                return False, why2, "app-broken"
+            return True, why2, "ok"
+
+
+        def notify_once(state, key, hours, title, message, priority):
+            """Dedupe: only push when this key has not been pushed within `hours`.
+            Records intent in state (persisted by the caller via save_state)."""
+            now = datetime.now(timezone.utc)
+            seen = state.setdefault("notified", {})
+            prev = seen.get(key)
+            if prev:
+                try:
+                    if now - datetime.fromisoformat(prev) < timedelta(hours=hours):
+                        return False
+                except ValueError:
+                    pass
+            seen[key] = now.isoformat()
+            cutoff = now - timedelta(days=2)
+            for k in [k for k, v in seen.items()
+                      if _parse_ts(v) < cutoff]:
+                del seen[k]
+            return notify(title, message, priority)
+
+
+        def _parse_ts(v):
+            try:
+                return datetime.fromisoformat(v)
+            except (ValueError, TypeError):
+                return datetime.now(timezone.utc) - timedelta(days=99)
 
 
         # ---------------------------------------------------------------- rollback
@@ -1166,18 +1218,22 @@ configMaps:
                 log("INFO", f"{alias}: git tag {current} != {new_version} — already moved; skip")
                 return
 
-            # health verify with grace
+            # health verify with grace — the NEW version pod is what must go Ready
             grace_s = HEALTH_GRACE_S_PROBED if _has_readiness_probe(app) else HEALTH_GRACE_S_DEFAULT
             log("INFO", f"grace={grace_s}s (probed={grace_s == HEALTH_GRACE_S_PROBED})")
             deadline = time.time() + grace_s
             last_why = "not checked"
+            last_cls = "unknown"
             while True:
-                ok, why = healthy(app)
-                last_why = why
+                ok, why, cls = healthy(app, expect_tag=new_version)
+                last_why, last_cls = why, cls
                 if ok:
                     vkey = f"{alias}@{new_version}"
                     if state.setdefault("verified", {}).get(vkey):
                         log("INFO", f"{alias} {new_version}: already verified (re-emitted update); skip notify")
+                    elif alias in NOTIFY_QUIET_ALIASES:
+                        log("INFO", f"{alias} {new_version}: verified (quiet alias — ledger only, no push)")
+                        state["verified"][vkey] = datetime.now(timezone.utc).isoformat()
                     else:
                         sent = notify(f"✅ {alias} {new_version} verified",
                                       f"update healthy after verification: {why}", 3)
@@ -1189,25 +1245,54 @@ configMaps:
                                 for k2 in sorted(state["verified"], key=state["verified"].get)[:-200]:
                                     del state["verified"][k2]
                     return
+                if last_cls == "infra":
+                    # volume-attach / scheduling stall — the IMAGE is fine; rolling back
+                    # cannot help and loses the update (the n8n 2.40.3 false rollback).
+                    break
                 if time.time() >= deadline:
                     break
-                log("INFO", f"{alias} unhealthy ({why}); grace poll…")
+                log("INFO", f"{alias} unhealthy ({cls}: {why}); grace poll…")
                 time.sleep(POLL_INTERVAL_S)
+
+            if last_cls == "infra":
+                notify_once(state, f"infra:{alias}", 6,
+                            f"🧱 {alias} update stuck on infra (NOT rolling back)",
+                            f"{last_why}\n"
+                            "The new image is fine — this is a cluster/volume issue "
+                            "(RWO attach class). Rolling back cannot help; the rollout "
+                            "completes when the pod attaches. If it stays stuck >1h, "
+                            "ask Hermes to clear the stall.", 6)
+                log("WARN", f"{alias}: infra stall, no rollback ({last_why})")
+                return
+            if last_cls == "pending":
+                # new-version pod never materialized — ArgoCD/updater lag, not a bad
+                # image. Old versions keep serving; a rollback would be a no-op or
+                # worse (race with the still-in-flight rollout).
+                notify_once(state, f"pending:{alias}", 6,
+                            f"⏳ {alias} rollout never materialized (NOT rolling back)",
+                            f"{last_why}\n"
+                            f"after {grace_s}s grace. Likely ArgoCD/updater lag; "
+                            "will re-verify if the update re-fires.", 5)
+                log("WARN", f"{alias}: rollout pending past grace, no rollback ({last_why})")
+                return
+            # last_cls in {bad-image, app-broken, unknown} → rollback is meaningful
 
             # still unhealthy -> rollback with breakers
             now = datetime.now(timezone.utc)
             recent_same = [rb for rb in state["rollbacks"] if rb["alias"] == alias
-                           and now - datetime.fromisoformat(rb["ts"]) < timedelta(hours=PER_APP_COOLDOWN_H)]
+                           and now - _parse_ts(rb["ts"]) < timedelta(hours=PER_APP_COOLDOWN_H)]
             if recent_same:
-                notify(f"⚠️ {alias} cooldown", f"still unhealthy after {new_version}, but a "
-                       "rollback already ran within cooldown — MANUAL attention needed", 7)
+                notify_once(state, f"cooldown:{alias}", 6,
+                            f"⚠️ {alias} cooldown", f"still unhealthy after {new_version}, but a "
+                            "rollback already ran within cooldown — MANUAL attention needed", 7)
                 return
             recent_all = [rb for rb in state["rollbacks"]
-                          if now - datetime.fromisoformat(rb["ts"]) < timedelta(hours=24)]
+                          if now - _parse_ts(rb["ts"]) < timedelta(hours=24)]
             if len(recent_all) >= MAX_ROLLBACKS_24H:
-                notify("⛔ sentinel circuit breaker",
-                       f"{MAX_ROLLBACKS_24H} rollbacks in 24h; {alias} still unhealthy on "
-                       f"{new_version}. MANUAL INTERVENTION REQUIRED", 9)
+                notify_once(state, "circuit-breaker", 6,
+                            "⛔ sentinel circuit breaker",
+                            f"{MAX_ROLLBACKS_24H} rollbacks in 24h; {alias} still unhealthy on "
+                            f"{new_version}. MANUAL INTERVENTION REQUIRED", 9)
                 return
 
             sha, subject = find_updater_commit(str(values_path.relative_to(REPO_DIR)))
@@ -1250,11 +1335,14 @@ configMaps:
                 alias = sys.argv[2]
                 app_def = HEALTH_MAP["apps"].get(alias)
                 if app_def is None:
-                    app_def = HEALTH_MAP["apps"][HEALTH_MAP.get("subaliases", {}).get(alias)]
+                    app_def = HEALTH_MAP["apps"].get(HEALTH_MAP.get("subaliases", {}).get(alias))
+                if app_def is None:  # sentinel-v2-fix2: unknown alias — clean error, not KeyError
+                    print(f"{alias}: UNKNOWN — no health-map entry")
+                    sys.exit(2)
                 app = dict(app_def)
                 app["_alias"] = alias
-                ok, why = healthy(app)
-                print(f"{alias}: {'HEALTHY' if ok else 'UNHEALTHY'} — {why}")
+                ok, why, cls = healthy(app)
+                print(f"{alias}: {'HEALTHY' if ok else 'UNHEALTHY'} [{cls}] — {why}")
                 sys.exit(0 if ok else 1)
 
             state = load_state()
@@ -1287,9 +1375,10 @@ configMaps:
                 state["cursor"] = newest_ts
                 state["drift_armed"] = True   # drift-scan starts NEXT cycle (baseline first)
                 save_state(state)
-                notify("Update Sentinel armed",
-                       f"Baseline set at {newest_ts}. Managed apps: "
-                       f"{len(HEALTH_MAP['apps'])}.", 3)
+                notify_once(state, "armed", 87600,
+                            "Update Sentinel armed",
+                            f"Baseline set at {newest_ts}. Managed apps: "
+                            f"{len(HEALTH_MAP['apps'])}.", 3)
                 log("INFO", f"armed at cursor {newest_ts}")
                 return
 
@@ -1310,12 +1399,13 @@ configMaps:
             # trim ledger
             cutoff = datetime.now(timezone.utc) - timedelta(days=7)
             state["rollbacks"] = [rb for rb in state["rollbacks"]
-                                  if datetime.fromisoformat(rb["ts"]) > cutoff]
+                                  if _parse_ts(rb["ts"]) > cutoff]
             save_state(state)
 
 
         if __name__ == "__main__":
             main()
+
 rawResources:
   sentinel-sa:
     apiVersion: v1
