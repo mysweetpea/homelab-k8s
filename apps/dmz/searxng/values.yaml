@@ -32,10 +32,7 @@ controllers:
               failureThreshold: 3
             enabled: true
     type: deployment
-    strategy: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 0
+    strategy: Recreate
 configMaps:
   config:
     enabled: true

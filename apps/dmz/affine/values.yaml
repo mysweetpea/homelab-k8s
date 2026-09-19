@@ -246,10 +246,7 @@ controllers:
       - ip: "104.21.44.229"
         hostnames:
         - auth.mysweetpea.cc
-    strategy: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 0
+    strategy: Recreate
   indexer:
     enabled: true
     type: deployment
@@ -275,10 +272,7 @@ controllers:
                 path: /
                 port: 9308
               initialDelaySeconds: 10
-    strategy: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 0
+    strategy: Recreate
 service:
   main:
     controller: main

@@ -44,10 +44,7 @@ controllers:
               timeoutSeconds: 3
               failureThreshold: 3
             enabled: true
-    strategy: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 0
+    strategy: Recreate
 persistence:
   models:
     type: persistentVolumeClaim
