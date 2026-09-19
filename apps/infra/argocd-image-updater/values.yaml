@@ -557,6 +557,8 @@ extraObjects:
             - alias: searxng
               imageName: searxng/searxng
               commonUpdateSettings:
+                ignoreTags:
+                  - '2026\.9\.19\-367fb6537'
                 updateStrategy: newest-build
                 allowTags: "regexp:^20\\d{2}\\.\\d+\\.\\d+.*$"
               manifestTargets:
