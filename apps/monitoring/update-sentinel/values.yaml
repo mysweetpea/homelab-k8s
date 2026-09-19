@@ -74,7 +74,9 @@ controllers:
         - name: HEALTH_GRACE_S
           value: "420"
         - name: HEALTH_GRACE_S_PROBED
-          value: "120"              # k8s probe already proved unhealthiness -> short grace
+          value: "300"              # covers pull time in maxSurge=0 flow (probe-backed)
+        - name: NOTIFY_QUIET_ALIASES
+          value: "searxng"          # multi-builds/day: verify silently, ledger only
         - name: POLL_INTERVAL_S
           value: "30"
         - name: HEALTH_MAP_PATH
