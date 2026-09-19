@@ -5,8 +5,11 @@
 # ──────────────────────────────────────────────
 
 # Shared configuration across all Immich components
+# RWO library PVC + replicas=1: chart vendored bjw-s accepts strategy as a
+# STRING only; Recreate avoids the RWO surge-pod Multi-Attach stall.
 controllers:
   main:
+    strategy: Recreate
     containers:
       main:
         image:

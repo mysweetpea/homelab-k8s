@@ -179,6 +179,10 @@ extraSecrets:
     invite_client_location: "https://chat.mysweetpea.cc"
     # --- JWT config removed (MAS handles backchannel logout itself) ---
 synapse:
+  # RWO PV + replicas=1: RollingUpdate surge pod can never attach (chart docs
+  # recommend Recreate here). Brief gap per update instead of hours-long stall.
+  strategy:
+    type: Recreate
   nodeSelector:
     kubernetes.io/hostname: k3s-master
   resources:

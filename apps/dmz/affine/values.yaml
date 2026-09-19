@@ -248,8 +248,8 @@ controllers:
         - auth.mysweetpea.cc
     strategy: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+      maxUnavailable: 1
+      maxSurge: 0
   indexer:
     enabled: true
     type: deployment
@@ -277,8 +277,8 @@ controllers:
               initialDelaySeconds: 10
     strategy: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
+      maxUnavailable: 1
+      maxSurge: 0
 service:
   main:
     controller: main

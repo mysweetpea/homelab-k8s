@@ -97,6 +97,13 @@ initContainers:
   - name: disclaimer
     mountPath: /disclaimer
     readOnly: true
+# RWO PVC + replicas=1: maxSurge 0 avoids the RWO surge-pod Multi-Attach stall
+# (brief maxUnavailable=1 gap per update instead of hours-long rollout stall).
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
 image:
   tag: "1.37.3"
   repository: vaultwarden/server

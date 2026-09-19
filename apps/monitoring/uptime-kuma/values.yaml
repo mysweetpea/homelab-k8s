@@ -4,6 +4,11 @@ volume:
   size: 5Gi
   storageClassName: longhorn
   existingClaim: uptime-kuma-pvc
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 0
+    maxUnavailable: 1
 image:
   tag: "2.5.5"
   repository: louislam/uptime-kuma
