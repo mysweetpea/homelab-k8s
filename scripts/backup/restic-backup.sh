@@ -103,6 +103,9 @@ TAG="homelab-$(date +%Y%m%d)"
 mkdir -p "$STAGE/uptime-kuma"
 if kubectl exec -n monitoring deploy/uptime-kuma -- tar czf - -C /app/data --exclude=screenshots . > "$STAGE/uptime-kuma/data.tar.gz" 2>/dev/null; then
     echo "uptime-kuma data captured ($(du -h "$STAGE/uptime-kuma/data.tar.gz" | cut -f1))"
+elif [ -s "$STAGE/uptime-kuma/data.tar.gz" ]; then
+    # tar rc=1 = kuma.db-wal changed mid-read (Kuma writes continuously); archive still valid
+    echo "uptime-kuma data captured ($(du -h "$STAGE/uptime-kuma/data.tar.gz" | cut -f1)) (live-DB tolerated)"
 else
     echo "WARNING: uptime-kuma backup failed"
 fi
@@ -157,45 +160,6 @@ else
   echo "[$DATE] WARNING: grafana config backup failed" >> "$LOG"
 fi
 
-# 4a. Restic backup to VPS (primary, off-site)
-export RESTIC_REPOSITORY="$VPS_REPO"
-restic unlock >/dev/null 2>&1   # clear stale locks from killed runs (added 2026-09-16)
-if restic backup "$STAGE" --tag "$TAG" --exclude "*.log" >> "$LOG" 2>&1; then
-  restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune >> "$LOG" 2>&1 || true
-  echo "[$DATE] VPS backup OK" >> "$LOG"
-else
-  echo "[$DATE] VPS BACKUP FAILED" >> "$LOG"
-  notify_fail "VPS restic push" "Nightly backup to VPS failed at $DATE (VPS down? network?)"
-fi
-
-# 4b. Restic backup to PC (secondary, local)
-export RESTIC_REPOSITORY="$PC_REPO"
-restic unlock >/dev/null 2>&1   # clear stale locks from killed runs (added 2026-09-16)
-if restic backup "$STAGE" --tag "$TAG" --exclude "*.log" >> "$LOG" 2>&1; then
-  restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune >> "$LOG" 2>&1 || true
-  echo "[$DATE] PC backup OK" >> "$LOG"
-else
-  echo "[$DATE] PC BACKUP FAILED" >> "$LOG"
-  notify_fail "PC restic push" "Nightly backup to PC failed at $DATE (IP drift? PC asleep?)"
-fi
-
-# 6. Heartbeat to Uptime Kuma push monitor (alerts if the whole chain stops running)
-KUMA_PUSH_URL="http://uptime-kuma.monitoring.svc.cluster.local:3001/api/push/${KUMA_PUSH_TOKEN}"
-curl -s -m 10 "$KUMA_PUSH_URL?msg=ok&ping=" > /dev/null 2>&1 || true
-
-
-# 3q. Nextcloud data (user files + DB-adjacent data dir; previews regenerable - excluded)
-mkdir -p "$STAGE/nextcloud"
-if kubectl exec -n private deploy/nextcloud -c nextcloud -- tar czf - -C /var/www/html/data --exclude="*/files_trashbin" --exclude="*/files_versions" . > "$STAGE/nextcloud/data.tar.gz" 2>/dev/null; then
-  echo "[$DATE] nextcloud data captured ($(du -h "$STAGE/nextcloud/data.tar.gz" | cut -f1))" >> "$LOG"
-else
-  echo "[$DATE] WARNING: nextcloud backup failed" >> "$LOG"
-fi
-
-# 5. Cleanup
-rm -rf "$STAGE" /tmp/sealed-secrets-key.yaml /tmp/k3s-state.db
-
-echo "[$DATE] === RESTIC BACKUP DONE ===" >> "$LOG"
 
 # 3m. Immich library + uploads + internal DB backups (data PVC at /data; thumbs/encoded-video regenerable)
 mkdir -p "$STAGE/immich"
@@ -241,3 +205,43 @@ fi
 
 # 3s. RustDesk identity keys + peer DB (id_ed25519 + db_v2.sqlite3 + RustDesk.toml — CRITICAL: clients verify server pubkey; exec-less container so use busybox probe pod)
 kubectl run rustdesk-backup -n private --rm -i --restart=Never --image=busybox --quiet --command -- sh -c 'tar czf - -C /root . 2>/dev/null' --overrides='{"spec":{"nodeSelector":{"kubernetes.io/hostname":"k3s-worker-b"},"containers":[{"name":"rustdesk-backup","image":"busybox","command":["sh","-c","tar czf - -C /root . 2>/dev/null"],"volumeMounts":[{"name":"data","mountPath":"/root"}]}],"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"rustdesk-data"}}]}}' > "$STAGE/rustdesk-data.tar.gz" 2>/dev/null && echo "rustdesk data: OK ($(du -h $STAGE/rustdesk-data.tar.gz | cut -f1))" || echo "rustdesk data: FAILED"
+
+# 3q. Nextcloud data (user files + DB-adjacent data dir; previews regenerable - excluded)
+mkdir -p "$STAGE/nextcloud"
+if kubectl exec -n private deploy/nextcloud -c nextcloud -- tar czf - -C /var/www/html/data --exclude="*/files_trashbin" --exclude="*/files_versions" . > "$STAGE/nextcloud/data.tar.gz" 2>/dev/null; then
+  echo "[$DATE] nextcloud data captured ($(du -h "$STAGE/nextcloud/data.tar.gz" | cut -f1))" >> "$LOG"
+else
+  echo "[$DATE] WARNING: nextcloud backup failed" >> "$LOG"
+fi
+
+# 4a. Restic backup to VPS (primary, off-site)
+export RESTIC_REPOSITORY="$VPS_REPO"
+restic unlock >/dev/null 2>&1 || true   # clear stale locks; repo-unreachable must NOT kill the set -e script (fixed 2026-09-22)
+if restic backup "$STAGE" --tag "$TAG" --exclude "*.log" >> "$LOG" 2>&1; then
+  restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune >> "$LOG" 2>&1 || true
+  echo "[$DATE] VPS backup OK" >> "$LOG"
+else
+  echo "[$DATE] VPS BACKUP FAILED" >> "$LOG"
+  notify_fail "VPS restic push" "Nightly backup to VPS failed at $DATE (VPS down? network?)"
+fi
+
+# 4b. Restic backup to PC (secondary, local)
+export RESTIC_REPOSITORY="$PC_REPO"
+restic unlock >/dev/null 2>&1 || true   # clear stale locks; repo-unreachable must NOT kill the set -e script (fixed 2026-09-22)
+if restic backup "$STAGE" --tag "$TAG" --exclude "*.log" >> "$LOG" 2>&1; then
+  restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune >> "$LOG" 2>&1 || true
+  echo "[$DATE] PC backup OK" >> "$LOG"
+else
+  echo "[$DATE] PC BACKUP FAILED" >> "$LOG"
+  notify_fail "PC restic push" "Nightly backup to PC failed at $DATE (IP drift? PC asleep?)"
+fi
+
+# 6. Heartbeat to Uptime Kuma push monitor (alerts if the whole chain stops running)
+KUMA_PUSH_URL="http://uptime-kuma.monitoring.svc.cluster.local:3001/api/push/${KUMA_PUSH_TOKEN}"
+curl -s -m 10 "$KUMA_PUSH_URL?msg=ok&ping=" > /dev/null 2>&1 || true
+
+
+# 5. Cleanup
+rm -rf "$STAGE" /tmp/sealed-secrets-key.yaml /tmp/k3s-state.db
+
+echo "[$DATE] === RESTIC BACKUP DONE ===" >> "$LOG"
