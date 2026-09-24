@@ -18,7 +18,7 @@ controllers:
       main:
         image:
           repository: cloudflare/cloudflared
-          tag: "2026.9.2"
+          tag: "2026.9.3"
           pullPolicy: IfNotPresent
         args:
         - tunnel
