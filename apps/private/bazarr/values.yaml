@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/hotio/bazarr
-          tag: release-v1.6.1
+          tag: release-v1.6.2
         resources:
           requests:
             cpu: 100m
