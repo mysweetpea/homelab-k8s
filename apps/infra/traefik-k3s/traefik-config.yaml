@@ -45,3 +45,13 @@ spec:
         forwardedHeaders:
           trustedIPs:
             - 10.42.0.0/16
+    # PIN (post-crash 2026-09-26): chart default image 3.6.x does not know
+    # --entryPoints.*.http.aliasHeadersStrategy (3.7+ only) -> pod CrashLoopBackOff
+    # 'field not found, node: aliasHeadersStrategy' whenever k3s re-renders from the
+    # bundled chart at boot. 3.7.12 verified running 18d before the crash; the pin
+    # lived only in the live cluster (drift) until now. library/traefik = official
+    # Docker Hub image (same artifact family k3s mirrors).
+    image:
+      registry: docker.io
+      repository: library/traefik
+      tag: "3.7.12"
