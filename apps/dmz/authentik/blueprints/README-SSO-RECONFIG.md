@@ -246,7 +246,7 @@ YAML into `apps/dmz/authentik/blueprints/`.
 Then on k3s-master (or here, if you copy the files in):
 
 ```bash
-cd /home/user/homelab-k8s/apps/dmz/authentik/blueprints
+cd /home/user/mysweetpea-homelab/apps/dmz/authentik/blueprints
 
 # 1. Sanitize every exported blueprint (rewrites secrets to !Env tags)
 python3 sanitize-blueprints.py *.yaml

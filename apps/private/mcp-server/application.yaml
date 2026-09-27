@@ -10,7 +10,7 @@ metadata:
     argocd-image-updater.argoproj.io/mcpserver.update-strategy: semver
     argocd-image-updater.argoproj.io/mcpserver.helm.image-spec: controllers.main.containers.main.image
     argocd-image-updater.argoproj.io/write-back-method: git
-    argocd-image-updater.argoproj.io/git.repository: git@github.com:mysweetpea/homelab-k8s.git
+    argocd-image-updater.argoproj.io/git.repository: git@github.com:mysweetpea/mysweetpea-homelab.git
     argocd-image-updater.argoproj.io/git.branch: main
     argocd-image-updater.argoproj.io/write-back-target: helmvalues:apps/private/mcp-server/values.yaml
 spec:
@@ -25,10 +25,10 @@ spec:
     helm:
       valueFiles:
       - $values/apps/private/mcp-server/values.yaml
-  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+  - repoURL: https://github.com/mysweetpea/mysweetpea-homelab.git
     targetRevision: HEAD
     ref: values
-  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+  - repoURL: https://github.com/mysweetpea/mysweetpea-homelab.git
     targetRevision: HEAD
     path: apps/private/mcp-server/rbac
   syncPolicy:

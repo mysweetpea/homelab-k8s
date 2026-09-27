@@ -275,9 +275,9 @@ case "$FORK" in
   *)              die "unrecognised fork URL: $FORK" ;;
 esac
 
-if [ "$FORK_HTTPS" = "https://github.com/mysweetpea/homelab-k8s.git" ]; then
+if [ "$FORK_HTTPS" = "https://github.com/mysweetpea/mysweetpea-homelab.git" ]; then
   warn "fork still points at the upstream repo — your edits will NOT reach the cluster"
-  warn "push to your own account and re-run with FORK=https://github.com/YOU/homelab-k8s.git"
+  warn "push to your own account and re-run with FORK=https://github.com/YOU/mysweetpea-homelab.git"
 fi
 ok "applications will read values from: $FORK_HTTPS"
 
@@ -299,8 +299,8 @@ if [ "${DRY_RUN}" = "0" ]; then
 fi
 
 # ---------- rewrite repo URLs (incl. image-updater write-back) ----------
-SRC_REPO="https://github.com/mysweetpea/homelab-k8s.git"
-SRC_REPO_SSH="git@github.com:mysweetpea/homelab-k8s.git"
+SRC_REPO="https://github.com/mysweetpea/mysweetpea-homelab.git"
+SRC_REPO_SSH="git@github.com:mysweetpea/mysweetpea-homelab.git"
 if [ "$FORK_HTTPS" != "$SRC_REPO" ]; then
   n_https=$(grep -rl "$SRC_REPO" apps 2>/dev/null | wc -l | tr -d ' ' || true)
   n_ssh=$(grep -rlF "$SRC_REPO_SSH" apps 2>/dev/null | wc -l | tr -d ' ' || true)

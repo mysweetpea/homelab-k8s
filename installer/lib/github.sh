@@ -11,7 +11,7 @@ GH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$GH_DIR/common.sh"
 
 
-UPSTREAM_REPO="${UPSTREAM_REPO:-mysweetpea/homelab-k8s}"
+UPSTREAM_REPO="${UPSTREAM_REPO:-mysweetpea/mysweetpea-homelab}"
 
 gh_hint() {
   warn "GitHub CLI (gh) is required. Install it:"
@@ -56,7 +56,7 @@ gh_fork_ready() { # <owner/repo>
   return 1
 }
 
-gh_ensure_fork() { # <upstream> -> echoes "<user>/homelab-k8s"
+gh_ensure_fork() { # <upstream> -> echoes "<user>/mysweetpea-homelab"
   gh_have || { gh_hint; return 127; }
   local up="$1" out user
   info "Ensuring your fork of $up exists..."

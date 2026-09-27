@@ -11,7 +11,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: private
   sources:
-  - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+  - repoURL: https://github.com/mysweetpea/mysweetpea-homelab.git
     targetRevision: HEAD
     path: apps/private/media-storage
   syncPolicy:

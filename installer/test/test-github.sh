@@ -38,7 +38,7 @@ case "$1 $2" in
       *) echo '{"login":"tester","id":"42","email":null}' ;;
     esac ;;
   *) exit 0 ;;
-  "repo fork") echo "Created fork tester/homelab-k8s" ;;
+  "repo fork") echo "Created fork tester/mysweetpea-homelab" ;;
   *) exit 0 ;;
 esac
 STUB
@@ -67,7 +67,7 @@ check "t1 gh_have rc!=0 without gh" "$([ "$rc" != 0 ] && echo yes || echo no)" "
 # ---------------------------------------------------------------- t2 hint
 err=$(PATH="$SANDBOX" TEST_DIR="$TEST_DIR" bash -c '
   source "$TEST_DIR/../lib/github.sh"
-  gh_ensure_fork mysweetpea/homelab-k8s
+  gh_ensure_fork mysweetpea/mysweetpea-homelab
 ' 2>&1 >/dev/null); rc=$?
 check "t2 gh_ensure_fork rc=127 without gh" "$rc" "127"
 contains "t2 hint mentions GitHub CLI" "$err" "GitHub CLI"
@@ -75,7 +75,7 @@ contains "t2 hint mentions GitHub CLI" "$err" "GitHub CLI"
 # ---------------------------------------------------------------- t3 push bad dir
 out=$(PATH="$SANDBOX:$PATH" TEST_DIR="$TEST_DIR" bash -c '
   source "$TEST_DIR/../lib/github.sh"
-  gh_push_dir "'"$TMP"'/not-a-repo" tester/homelab-k8s "msg"
+  gh_push_dir "'"$TMP"'/not-a-repo" tester/mysweetpea-homelab "msg"
 ' 2>&1 >/dev/null); rc=$?
 check "t3 bad dir rc=1" "$rc" "1"
 contains "t3 gh-missing message" "$err" "GitHub CLI"
@@ -91,13 +91,13 @@ printf "seed\n" > "$WORK/values.yaml"
 STUB="$TMP/stubgh"; rm -rf "$STUB"; make_stub_gh "$STUB"
 export PATH="$STUB:$PATH"
 
-out=$(MSP_ORIGIN_OVERRIDE="$(msp "$BARE")" gh_push_dir "$WORK" "tester/homelab-k8s" "install: configure homelab" 2>/dev/null); rc=$?
+out=$(MSP_ORIGIN_OVERRIDE="$(msp "$BARE")" gh_push_dir "$WORK" "tester/mysweetpea-homelab" "install: configure homelab" 2>/dev/null); rc=$?
 check "t4 first push rc=0" "$rc" "0"
 contains "t4 first push says pushed" "$out" "pushed"
 head1=$(cd "$WORK" && git ls-remote origin HEAD 2>/dev/null | awk '{print $1}')
 [ -n "$head1" ]; check "t4 bare repo has commit" "$([ -n "$head1" ] && echo yes || echo no)" "yes"
 
-out=$(MSP_ORIGIN_OVERRIDE="$(msp "$BARE")" gh_push_dir "$WORK" "tester/homelab-k8s" "install: configure homelab" 2>/dev/null); rc=$?
+out=$(MSP_ORIGIN_OVERRIDE="$(msp "$BARE")" gh_push_dir "$WORK" "tester/mysweetpea-homelab" "install: configure homelab" 2>/dev/null); rc=$?
 check "t4 second run rc=0" "$rc" "0"
 contains "t4 second run already-clean" "$out" "already-clean"
 

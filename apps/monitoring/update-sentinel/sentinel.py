@@ -27,7 +27,7 @@ from pathlib import Path
 
 from ruamel.yaml import YAML
 
-GIT_REPO_URL = os.environ.get("GIT_REPO_URL", "git@github.com:mysweetpea/homelab-k8s.git")
+GIT_REPO_URL = os.environ.get("GIT_REPO_URL", "git@github.com:mysweetpea/mysweetpea-homelab.git")
 SSH_KEY_FILE = os.environ.get("SSH_KEY_FILE", "/tmp/id_ed25519")
 GOTIFY_URL = os.environ.get("GOTIFY_URL", "http://gotify.private.svc.cluster.local")
 GOTIFY_TOKEN = os.environ.get("GOTIFY_TOKEN", "")

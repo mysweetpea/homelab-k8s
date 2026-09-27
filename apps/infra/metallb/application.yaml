@@ -11,7 +11,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: metallb-system
   source:
-    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    repoURL: https://github.com/mysweetpea/mysweetpea-homelab.git
     targetRevision: HEAD
     path: apps/infra/metallb
   syncPolicy:

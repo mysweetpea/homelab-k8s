@@ -56,7 +56,7 @@ extraObjects:
       writeBackConfig:
         method: git:secret:argocd/ssh-git-creds
         gitConfig:
-          repository: git@github.com:mysweetpea/homelab-k8s.git
+          repository: git@github.com:mysweetpea/mysweetpea-homelab.git
           branch: main
       applicationRefs:
         - namePattern: n8n

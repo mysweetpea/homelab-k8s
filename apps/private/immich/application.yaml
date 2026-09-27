@@ -15,9 +15,9 @@ spec:
         valueFiles:
           - $values/apps/private/immich/values.yaml
     - ref: values
-      repoURL: https://github.com/mysweetpea/homelab-k8s.git
+      repoURL: https://github.com/mysweetpea/mysweetpea-homelab.git
       targetRevision: HEAD
-    - repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    - repoURL: https://github.com/mysweetpea/mysweetpea-homelab.git
       targetRevision: HEAD
       path: apps/private/immich
       directory:

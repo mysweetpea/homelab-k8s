@@ -4,7 +4,7 @@
 
 **A production-grade, self-hosting platform on Kubernetes — with an installer anyone can run.**
 
-[![installer CI](https://github.com/mysweetpea/homelab-k8s/actions/workflows/installer-lint.yml/badge.svg)](https://github.com/mysweetpea/homelab-k8s/actions/workflows/installer-lint.yml)
+[![installer CI](https://github.com/mysweetpea/mysweetpea-homelab/actions/workflows/installer-lint.yml/badge.svg)](https://github.com/mysweetpea/mysweetpea-homelab/actions/workflows/installer-lint.yml)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.36-326CE5?logo=kubernetes&logoColor=white)
 ![GitOps](https://img.shields.io/badge/GitOps-ArgoCD-EF7B4D?logo=argo&logoColor=white)
 ![Apps](https://img.shields.io/badge/apps-56-8FAFB5)
@@ -39,9 +39,9 @@ resolves what to deploy, in what order, with what dependencies, and hands you wo
 
 ```bash
 # on the target machine (Ubuntu/Debian, 8GB+ RAM):
-curl -fsSL https://raw.githubusercontent.com/mysweetpea/homelab-k8s/main/installer/provision-k3s.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mysweetpea/mysweetpea-homelab/main/installer/provision-k3s.sh | bash
 
-git clone https://github.com/mysweetpea/homelab-k8s.git && cd homelab-k8s
+git clone https://github.com/mysweetpea/mysweetpea-homelab.git && cd mysweetpea-homelab
 ./installer/wizard.sh     # pick what you want, in plain language
 ./installer/deploy.sh --plan homelab-plan.env
 ```
@@ -49,7 +49,7 @@ git clone https://github.com/mysweetpea/homelab-k8s.git && cd homelab-k8s
 ### Path B — you already run Kubernetes
 
 ```bash
-git clone https://github.com/mysweetpea/homelab-k8s.git && cd homelab-k8s
+git clone https://github.com/mysweetpea/mysweetpea-homelab.git && cd mysweetpea-homelab
 ./installer/wizard.sh
 ./installer/deploy.sh --plan homelab-plan.env
 ```

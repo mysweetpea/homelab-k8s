@@ -27,7 +27,7 @@ defaults; the only question that matters is creating your user account.
 ### 2. Copy/paste this (one line)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mysweetpea/homelab-k8s/main/installer/provision-k3s.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mysweetpea/mysweetpea-homelab/main/installer/provision-k3s.sh | bash
 ```
 
 What just happened: your machine became a Kubernetes node. The script checks your hardware,
@@ -37,8 +37,8 @@ it `--with-metallb-range <ip-range>` — gives your future apps real IPs on your
 ### 3. Get this repository onto the machine
 
 ```bash
-git clone https://github.com/mysweetpea/homelab-k8s.git
-cd homelab-k8s
+git clone https://github.com/mysweetpea/mysweetpea-homelab.git
+cd mysweetpea-homelab
 ```
 
 ### 4. The wizard

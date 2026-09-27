@@ -13,7 +13,7 @@
 #   appliance_render <app_dir> <out_file>   renders one Application
 #   appliance_backup_ss_cert <out_file>     export kubeseal cert
 #
-# Env: MSP_UPSTREAM_REPO (default https://github.com/mysweetpea/homelab-k8s.git)
+# Env: MSP_UPSTREAM_REPO (default https://github.com/mysweetpea/mysweetpea-homelab.git)
 #      MSP_DOMAIN_OVERRIDE, MSP_SSO (yes/no), MSP_EXPOSURE (lan|domain)
 #
 # bash 3.2-safe. No yaml libs: transforms are line-based, verified after.
@@ -22,8 +22,8 @@ APPLIANCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=common.sh
 . "$APPLIANCE_DIR/common.sh"
 
-APPLIANCE_UPSTREAM="${MSP_UPSTREAM_REPO:-https://github.com/mysweetpea/homelab-k8s.git}"
-APPLIANCE_UPSTREAM_SSH="${MSP_UPSTREAM_REPO_SSH:-git@github.com:mysweetpea/homelab-k8s.git}"
+APPLIANCE_UPSTREAM="${MSP_UPSTREAM_REPO:-https://github.com/mysweetpea/mysweetpea-homelab.git}"
+APPLIANCE_UPSTREAM_SSH="${MSP_UPSTREAM_REPO_SSH:-git@github.com:mysweetpea/mysweetpea-homelab.git}"
 
 # _app_values_path <app_dir> — apps/<ns>/<name>/values.yaml path as it appears
 # in $values valueFiles entries
@@ -51,7 +51,7 @@ _repoint_values_ref() {
   ssh_from="${APPLIANCE_UPSTREAM_SSH%%:*}"
   # generic: any github.com git-ref second source -> upstream
   sed -i \
-    -e "s|repoURL: https://github.com/[^/]*/homelab-k8s.git|repoURL: $APPLIANCE_UPSTREAM|" \
+    -e "s|repoURL: https://github.com/[^/]*/mysweetpea-homelab.git|repoURL: $APPLIANCE_UPSTREAM|" \
     "$f"
 }
 

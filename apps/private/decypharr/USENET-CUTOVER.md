@@ -37,7 +37,7 @@ cutover itself is a credentials drop + arr priority flip + indexer adds.
 On the master (kubeseal + cluster key live there):
 ```bash
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-cd homelab-k8s
+cd mysweetpea-homelab
 
 # Build the PLAIN secret delta (keys not yet in the sealed secret):
 cat > /tmp/decy-usenet.yaml <<'EOF'

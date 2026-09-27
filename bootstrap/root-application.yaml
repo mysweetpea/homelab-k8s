@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://github.com/mysweetpea/homelab-k8s.git
+    repoURL: https://github.com/mysweetpea/mysweetpea-homelab.git
     path: apps
     targetRevision: HEAD
     directory:
