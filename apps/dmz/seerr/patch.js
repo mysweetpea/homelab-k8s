@@ -28,6 +28,9 @@ if (src.includes(old)) {
   console.log('PATCH 1 (library toggle) OK');
 } else if (src.includes('if (req.query.enable) {')) {
   console.log('PATCH 1 (library toggle) ALREADY APPLIED');
+} else if (src.includes('enabled: existing?.enabled ?? false')) {
+  // v3.5.0+ ships the upstream fix (sync preserves enabled) - patch obsolete, no-op.
+  console.log('PATCH 1 (library toggle) UPSTREAM FIXED - SKIPPED');
 } else {
   console.log('PATCH 1 (library toggle) PATTERN NOT FOUND');
   process.exit(1);
