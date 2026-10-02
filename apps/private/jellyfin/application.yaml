@@ -9,7 +9,11 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: jellyfin=jellyfin/jellyfin
     argocd-image-updater.argoproj.io/jellyfin.update-strategy: semver
     argocd-image-updater.argoproj.io/jellyfin.helm.image-spec: controllers.main.containers.main.image
-    argocd-image-updater.argoproj.io/write-back-method: git
+    # JF12 migration Oct 2026: updater fought the migration (its tag list still
+    # served 10.11.11 as latest semver and it "downgraded" 12.1 four times).
+    # Disabled until 12.x is verified; re-enable by deleting the two lines below.
+    argocd-image-updater.argoproj.io/jellyfin.enabled: "false"
+    argocd-image-updater.argoproj.io/write-back-method: none
     argocd-image-updater.argoproj.io/git.repository: git@github.com:mysweetpea/mysweetpea-homelab.git
     argocd-image-updater.argoproj.io/git.branch: main
     argocd-image-updater.argoproj.io/write-back-target: helmvalues:apps/private/jellyfin/values.yaml
