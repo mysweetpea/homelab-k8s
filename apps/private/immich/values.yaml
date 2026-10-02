@@ -108,10 +108,14 @@ machine-learning:
             TRANSFORMERS_CACHE: /cache
             HF_XET_CACHE: /cache/huggingface-xet
             MPLCONFIGDIR: /cache/matplotlib-config
-          persistence:
-            cache:
-              enabled: true
-              size: 10Gi
-              type: persistentVolumeClaim
-              accessMode: ReadWriteOnce
-              storageClass: longhorn
+  # Chart 0.12.0 reads ML cache persistence at THIS level — machine-learning.persistence
+  # (sibling of controllers; chart default layout). The old controllers.main.persistence
+  # nesting was silently ignored → live deploy rendered emptyDir → models re-downloaded
+  # on every ML restart. Shape verified by local helm template render Oct 2 2026.
+  persistence:
+    cache:
+      enabled: true
+      size: 10Gi
+      type: persistentVolumeClaim
+      accessMode: ReadWriteOnce
+      storageClass: longhorn
