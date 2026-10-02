@@ -124,10 +124,14 @@ cronjob:
   sidecar:
     resources:
       requests:
-        cpu: 50m
+        cpu: 100m
         memory: 128Mi
       limits:
-        cpu: 250m
+        # Memories indexing launches perl exiftool (~0.8s CPU). At 250m the
+        # CFS stretch blows the app's hardcoded 3s exec timeout → cron logged
+        # "Indexing exception: Timeout" every run since the Sep 26 reboot.
+        # 1 core = exiftool boots in <1s. Verified by audit Oct 2 2026.
+        cpu: 1
         memory: 512Mi
 postgresql:
   enabled: false
