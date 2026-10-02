@@ -43,6 +43,10 @@ child:
       cpu: 50m
       memory: 128Mi
 k8sState:
+  persistence:
+    enabled: true
+    storageclass: longhorn
+    size: 5Gi
   resources:
     limits:
       cpu: 500m
