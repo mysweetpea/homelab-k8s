@@ -544,12 +544,22 @@ def main():
         # the health probe can disagree with reality (RD check passes,
         # unrestrict 451s), and the sticky Bad flag can outlive the real
         # failure. Only act on entries that EMPIRICALLY fail to stream.
-        # Use the real file name from the strm URL (multi-file entries).
-        fname = file_from_strm(strms[0]) if strms else ""
-        if not decy.streamable(name, fname or None):
-            log(f"  VERIFIED-DEAD: {name[:70]} reason={reason}")
+        # Multi-file entries can be MIXED (some episodes alive, some dead —
+        # e.g. a season folder where episodes 10-22 came from a dead
+        # re-release): probing only strms[0] proves nothing about the rest
+        # and permanently false-alarms the entry. Probe ALL files; the entry
+        # counts as dead if ANY file fails.
+        strms_sorted = sorted(strms)
+        dead_file = None
+        for sp in strms_sorted:
+            fname = file_from_strm(sp)
+            if not decy.streamable(name, fname or None):
+                dead_file = fname or sp
+                break
+        if dead_file is not None:
+            log(f"  VERIFIED-DEAD: {name[:70]} file={dead_file[-50:]} reason={reason}")
         else:
-            log(f"  FALSE-ALARM: {name[:70]} streams fine (206) — skipping")
+            log(f"  FALSE-ALARM: {name[:70]} all {len(strms_sorted)} files stream — skipping")
             ledger[name] = {**led, "last_seen": now.isoformat(), "status": "false_alarm"}
             continue
 
