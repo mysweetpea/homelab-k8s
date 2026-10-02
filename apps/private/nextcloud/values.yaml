@@ -52,6 +52,10 @@ nextcloud:
         php /var/www/html/occ group:adduser admin "$SSO_UID" || true
       fi
       echo "==> mysweetpea: OIDC provider config OK"
+      # Long-lived sessions: 14d PHP session, 30d remember-me cookie (idempotent)
+      php /var/www/html/occ config:system:set session_lifetime --value=1209600 >/dev/null
+      php /var/www/html/occ config:system:set remember_login_cookie_lifetime --value=2592000 >/dev/null
+      echo "==> mysweetpea: session lifetimes OK"
   extraVolumes:
   - name: nextcloud-oidc
     secret:
