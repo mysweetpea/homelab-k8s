@@ -114,7 +114,7 @@ extraObjects:
               imageName: jellyfin/jellyfin
               commonUpdateSettings:
                 updateStrategy: semver
-                allowTags: "regexp:^\\d+\\.\\d+\\.\\d+$"
+                allowTags: "regexp:^\\d+\\.\\d+(\\.\\d+)?$"
               manifestTargets:
                 helm:
                   name: controllers.main.containers.main.image.repository
