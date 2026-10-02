@@ -6,7 +6,8 @@ metadata:
   finalizers:
   - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd-image-updater.argoproj.io/image-list: jellyfin=jellyfin/jellyfin
+    argocd-image-updater.argoproj.io/image-list: ""
+    argocd-image-updater.argoproj.io/jellyfin.update-strategy: none
     argocd-image-updater.argoproj.io/jellyfin.update-strategy: semver
     argocd-image-updater.argoproj.io/jellyfin.helm.image-spec: controllers.main.containers.main.image
     # JF12 migration Oct 2026: updater fought the migration (its tag list still
